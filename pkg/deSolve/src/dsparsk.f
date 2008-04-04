@@ -659,7 +659,7 @@ c        3) sparse formats for right hand sides and guesses are not
 c        supported.
 c-----------------------------------------------------------------------
       character title*72,key*8,type*3,ptrfmt*16,indfmt*16,valfmt*20,
-     *	        guesol*2, rhstyp*3
+     *	        guesol*2, rhstyp*3, ix*80
       integer totcrd, ptrcrd, indcrd, valcrd, rhscrd, nrow, ncol,
      1     nnz, nrhs, len, nperli, nrwindx
       integer ja(*), ia(*) 	
@@ -672,13 +672,15 @@ c--------------
       nperli = 80/len
       ptrcrd = ncol/nperli + 1
       if (len .gt. 9) then
-         assign 101 to ix
+c         assign 101 to ix
+         ix = '(''('',i2,''I'',i2,'')'')'
       else
-         assign 100 to ix
+c         assign 100 to ix
+         ix = '(''('',i2,''I'',i1,'')'')'
       endif
       write (ptrfmt,ix) nperli,len
  100  format(1h(,i2,1HI,i1,1h) )
- 101  format(1h(,i2,1HI,i2,1h) )
+c 101  format(1h(,i2,1HI,i2,1h) )
 c----------------------------
 c compute ROW index format
 c----------------------------
@@ -701,17 +703,20 @@ c
          nperli = 80/len
 c     
          if (len .le. 9 ) then
-            assign 102 to ix
+c            assign 102 to ix
+            ix = '(''('',i2,''F'',i1,''.'',i1,'')'' )'
          elseif (ifmt .le. 9) then
-            assign 103 to ix
+c            assign 103 to ix
+            ix = '(''('',i2,''F'',i1,''.'',i1,'')'' )'
          else 
-            assign 104 to ix
+c            assign 104 to ix
+            ix = '(''('',i2,''F'',i2,''.'',i2,'')'' )'
          endif
 c     
          write(valfmt,ix) nperli,len,ifmt
- 102     format(1h(,i2,1hF,i1,1h.,i1,1h) )
- 103     format(1h(,i2,1hF,i2,1h.,i1,1h) )
- 104     format(1h(,i2,1hF,i2,1h.,i2,1h) )
+c 102     format(1h(,i2,1hF,i1,1h.,i1,1h) )
+c 103     format(1h(,i2,1hF,i2,1h.,i1,1h) )
+c 104     format(1h(,i2,1hF,i2,1h.,i2,1h) )
 C
       else
          len = ifmt + 6
@@ -719,29 +724,35 @@ C
 c     try to minimize the blanks in the format strings.
          if (nperli .le. 9) then
 	    if (len .le. 9 ) then
-	       assign 105 to ix
+c	       assign 105 to ix
+               ix = '(''('',i1,''D'',i1,''.'',i1,'')'' )'
 	    elseif (ifmt .le. 9) then
-	       assign 106 to ix
+c	       assign 106 to ix
+               ix = '(''('',i1,''D'',i2,''.'',i1,'')'' )'
 	    else 
-	       assign 107 to ix
+c	       assign 107 to ix
+               ix = '(''('',i1,''D'',i2,''.'',i2,'')'' )'
 	    endif
 	 else 
 	    if (len .le. 9 ) then
-	       assign 108 to ix
+c	       assign 108 to ix
+               ix = '(''('',i1,''D'',i2,''.'',i2,'')'')'
 	    elseif (ifmt .le. 9) then
-	       assign 109 to ix
+c	       assign 109 to ix
+               ix = '(''('',i2,''D'',i2,''.'',i1,'')'')'
 	    else 
-               assign 110 to ix
+c               assign 110 to ix
+               ix = '(''('',i2,''D'',i2,''.'',i2,'')'',)'
             endif
          endif
 c-----------
          write(valfmt,ix) nperli,len,ifmt
- 105     format(1h(,i1,1hD,i1,1h.,i1,1h) )
- 106     format(1h(,i1,1hD,i2,1h.,i1,1h) )
- 107     format(1h(,i1,1hD,i2,1h.,i2,1h) )
- 108     format(1h(,i2,1hD,i1,1h.,i1,1h) )
- 109     format(1h(,i2,1hD,i2,1h.,i1,1h) )
- 110     format(1h(,i2,1hD,i2,1h.,i2,1h) )
+c 105     format(1h(,i1,1hD,i1,1h.,i1,1h) )
+c 106     format(1h(,i1,1hD,i2,1h.,i1,1h) )
+c 107     format(1h(,i1,1hD,i2,1h.,i2,1h) )
+c 108     format(1h(,i2,1hD,i1,1h.,i1,1h) )
+c 109     format(1h(,i2,1hD,i2,1h.,i1,1h) )
+c 110     format(1h(,i2,1hD,i2,1h.,i2,1h) )
 c     
       endif 	    
       valcrd = (nnz-1)/nperli+1
