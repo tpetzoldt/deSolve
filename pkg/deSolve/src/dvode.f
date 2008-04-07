@@ -1,7 +1,6 @@
 C*********************************************************************
 C       MAIN VODE DRIVER
 C*********************************************************************
-
       SUBROUTINE DVODE (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,    &
      &            ISTATE, IOPT, RWORK, LRW, IWORK, LIW, JAC, MF,        &
      &            RPAR, IPAR)
@@ -263,7 +262,6 @@ C
       DATA  MORD(1) /12/, MORD(2) /5/, MXSTP0 /500/, MXHNL0 /10/
       DATA ZERO /0.0D0/, ONE /1.0D0/, TWO /2.0D0/, FOUR /4.0D0/,         &
      &     PT2 /0.2D0/, HUN /100.0D0/
-
 C-----------------------------------------------------------------------
 C Block A.
 C This code block is executed on every call.
@@ -296,12 +294,10 @@ C-----------------------------------------------------------------------
       IF (ITOL .LT. 1 .OR. ITOL .GT. 4) GO TO 606
       IF (IOPT .LT. 0 .OR. IOPT .GT. 1) GO TO 607
       JSV = SIGN(1,MF)
-
 C Karline: applied changes from 941222
       MFA = ABS(MF)
       METH = MFA/10
       MITER = MFA - 10*METH
-
       IF (METH .LT. 1 .OR. METH .GT. 2) GO TO 608
       IF (MITER .LT. 0 .OR. MITER .GT. 5) GO TO 608
       IF (MITER .LE. 3) GO TO 30
@@ -513,7 +509,6 @@ C-----------------------------------------------------------------------
         IF (RWORK(I+LEWT-1) .LE. ZERO) GO TO 510
         RWORK(I+LEWT-1) = ONE/RWORK(I+LEWT-1)
 260   CONTINUE     
-
  270  TOLSF = UROUND*DVNORM (N, RWORK(LYH), RWORK(LEWT))
       IF (TOLSF .LE. ONE) GO TO 280
       TOLSF = TOLSF*TWO
@@ -870,7 +865,6 @@ C
       RETURN
 C----------------------- End of Subroutine DVODE -----------------------
       END
-
 C***********************************************************************
 CDECK DVHIN
       SUBROUTINE DVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,   &
@@ -971,12 +965,10 @@ C Revision 941222 included (KS)
       DO 60 I = 1, N
         Y(I) = Y0(I) + H*YDOT(I)
 60    CONTINUE     
-
       CALL F (N, T1, Y, TEMP, RPAR, IPAR)
       DO 70 I = 1, N
         TEMP(I) = (TEMP(I) - YDOT(I))/H
 70    CONTINUE     
-
       YDDNRM = DVNORM (N, TEMP, EWT)
 C Get the corresponding new value of h. --------------------------------
       IF (YDDNRM*HUB*HUB .GT. TWO) THEN
@@ -1016,7 +1008,6 @@ C Error return for TOUT - T0 too small. --------------------------------
 C----------------------- End of Subroutine DVHIN -----------------------
       END
 CDECK DVINDY
-
 C***********************************************************************
       SUBROUTINE DVINDY (T, K, YH, LDYH, DKY, IFLAG)
       DOUBLE PRECISION T, YH, DKY
@@ -1107,7 +1098,6 @@ C
       DO 10 JJ = JJ1, NQ
         IC = IC*JJ
  10   CONTINUE     
-
  15   C = REAL(IC)
       DO 20 I = 1, N
         DKY(I) = C*YH(I,L)
@@ -1147,12 +1137,10 @@ C
      1 'dvode -- T not in interval TCUR-HU (=R1) to TCUR (=R2)')
       write (MSG, '(6X,2D21.13)') TP,TN
       call rwarn(msg)
-
       IFLAG = -2
       RETURN
 C----------------------- End of Subroutine DVINDY ----------------------
       END
-
 C***********************************************************************
 CDECK DVSTEP
       SUBROUTINE DVSTEP (Y, YH, LDYH, YH1, EWT, SAVF, VSAV, ACOR,       &
@@ -1399,7 +1387,6 @@ C-----------------------------------------------------------------------
         DO 210 I = I1, NQNYH
           YH1(I) = YH1(I) + YH1(I+LDYH)
  210    CONTINUE     
-
  220  CONTINUE
       CALL DVSET
       RL1 = ONE/EL(2)
@@ -1428,7 +1415,6 @@ C-----------------------------------------------------------------------
           DO 420 I = I1, NQNYH
             YH1(I) = YH1(I) - YH1(I+LDYH)
  420      CONTINUE     
-
  430      CONTINUE
         IF (NFLAG .LT. -1) GO TO 680
         IF (ABS(H) .LE. HMIN*ONEPSM) GO TO 670
@@ -1490,7 +1476,6 @@ C-----------------------------------------------------------------------
         DO 510 I = I1, NQNYH
           YH1(I) = YH1(I) - YH1(I+LDYH)
  510    CONTINUE     
-
  520  CONTINUE
       IF (ABS(H) .LE. HMIN*ONEPSM) GO TO 660
       ETAMAX = ONE
@@ -1601,7 +1586,6 @@ C-----------------------------------------------------------------------
       RETURN
 C----------------------- End of Subroutine DVSTEP ----------------------
       END
-
 C***********************************************************************
 CDECK DVSET
       SUBROUTINE DVSET
@@ -1818,7 +1802,6 @@ C In EL, construct coefficients of (1+x/xi(1))*...*(1+x/xi(j+1)). ------
       RETURN
 C----------------------- End of Subroutine DVSET -----------------------
       END
-
 C***********************************************************************
 CDECK DVJUST
       SUBROUTINE DVJUST (YH, LDYH, IORD)
@@ -1887,7 +1870,6 @@ C      GO TO (100, 200), METH
         CASE(2)
           GOTO 200
       END SELECT
-
 C-----------------------------------------------------------------------
 C Nonstiff option...
 C Check to see if the order is being increased or decreased.
@@ -1998,7 +1980,6 @@ C Add correction terms to YH array. ------------------------------------
       RETURN
 C----------------------- End of Subroutine DVJUST ----------------------
       END
-
 C***********************************************************************
 CDECK DVNLSD
       SUBROUTINE DVNLSD (Y, YH, LDYH, VSAV, SAVF, EWT, ACOR, IWM, WM,   &
@@ -2235,7 +2216,6 @@ C Return for successful step. ------------------------------------------
       RETURN
 C----------------------- End of Subroutine DVNLSD ----------------------
       END
-
 C***********************************************************************
 CDECK DVJAC
       SUBROUTINE DVJAC (Y, YH, LDYH, EWT, FTEM, SAVF, WM, IWM, F, JAC,  &
@@ -2523,7 +2503,6 @@ C End of code block for MITER = 4 or 5. --------------------------------
 C
 C----------------------- End of Subroutine DVJAC -----------------------
       END
-
 C***********************************************************************
 CDECK DACOPY
       SUBROUTINE DACOPY (NROW, NCOL, A, NROWA, B, NROWB)
@@ -2551,7 +2530,6 @@ C
       RETURN
 C----------------------- End of Subroutine DACOPY ----------------------
       END
-
 C***********************************************************************
 CDECK DVSOL
       SUBROUTINE DVSOL (WM, IWM, X, IERSL)
@@ -2635,9 +2613,7 @@ C     GO TO (100, 100, 300, 400, 400), MITER
         CASE(5)
           GOTO 400
       END SELECT
-
  100  CALL DGESL (WM(3), N, N, IWM(31), X, 0)
-
       RETURN
 C
  300  PHRL1 = WM(2)
@@ -2665,421 +2641,13 @@ C
       RETURN
 C----------------------- End of Subroutine DVSOL -----------------------
       END
-
-
-
-
 C********************************************************************
-      integer function xidamax(n,dx,incx)
-
-C-------------------------------------------------------------------*
-C Subroutine obtained from LINPACK (ftp-site netlib.att.com)        &
-C-------------------------------------------------------------------*
-C
-C     finds the index of element having max. absolute value.
-C     jack dongarra, linpack, 3/11/78.
-C     modified 3/93 to return if incx .le. 0.
-C     modified 12/3/93, array(1) declarations changed to array(*)
-C
-      double precision dx(*),dmax
-      integer i,incx,ix,n
-C
-      xidamax = 0
-      if( n.lt.1 .or. incx.le.0 ) return
-      xidamax = 1
-      if(n.eq.1)return
-      if(incx.eq.1)go to 20
-C
-C        code for increment not equal to 1
-C
-      ix = 1
-      dmax = dabs(dx(1))
-      ix = ix + incx
-      do 10 i = 2,n
-         if(dabs(dx(ix)).le.dmax) go to 5
-         xidamax = i
-         dmax = dabs(dx(ix))
-    5    ix = ix + incx
-   10 continue
-      return
-C
-C        code for increment equal to 1
-C
-   20 dmax = dabs(dx(1))
-      do 30 i = 2,n
-         if(dabs(dx(i)).le.dmax) go to 30
-         xidamax = i
-         dmax = dabs(dx(i))
-   30 continue
-      return
-      end                                        
 C of xidamax
-
-
-
 C********************************************************************
-
-      subroutine  xdscal(n,da,dx,incx)
-
-C-------------------------------------------------------------------*
-C Subroutine obtained from LINPACK (ftp-site netlib.att.com)        &
-C-------------------------------------------------------------------*
-C
-C     scales a vector by a constant.
-C     uses unrolled loops for increment equal to one.
-C     jack dongarra, linpack, 3/11/78.
-C     modified 3/93 to return if incx .le. 0.
-C     modified 12/3/93, array(1) declarations changed to array(*)
-C
-C***BEGIN PROLOGUE  xDSCAL
-C***PURPOSE  Multiply a vector by a constant.
-C***LIBRARY   SLATEC (BLAS)
-C***CATEGORY  D1A6
-C***TYPE      DOUBLE PRECISION (SSCAL-S, xDSCAL-D, CSCAL-C)
-C***KEYWORDS  BLAS, LINEAR ALGEBRA, SCALE, VECTOR
-C***AUTHOR  Lawson, C. L., (JPL)
-C           Hanson, R. J., (SNLA)
-C           Kincaid, D. R., (U. of Texas)
-C           Krogh, F. T., (JPL)
-C***DESCRIPTION
-C
-C                B L A S  Subprogram
-C    Description of Parameters
-C
-C     --Input--
-C        N  number of elements in input vector(s)
-C       DA  double precision scale factor
-C       DX  double precision vector with N elements
-C     INCX  storage spacing between elements of DX
-C
-C     --Output--
-C       DX  double precision result (unchanged if N.LE.0)
-C
-C     Replace double precision DX by double precision DA*DX.
-C     For I = 0 to N-1, replace DX(IX+I*INCX) with  DA * DX(IX+I*INCX),
-C     where IX = 1 if INCX .GE. 0, else IX = 1+(1-N)*INCX.
-C
-C***REFERENCES  C. L. Lawson, R. J. Hanson, D. R. Kincaid and F. T.
-C                 Krogh, Basic linear algebra subprograms for Fortran
-C                 usage, Algorithm No. 539, Transactions on Mathematical
-C                 Software 5, 3 (September 1979), pp. 308-323.
-C***ROUTINES CALLED  (NONE)
-C***REVISION HISTORY  (YYMMDD)
-C   791001  DATE WRITTEN
-C   890831  Modified array declarations.  (WRB)
-C   890831  REVISION DATE from Version 3.2
-C   891214  Prologue converted to Version 4.0 format.  (BAB)
-C   900821  Modified to correct problem with a negative increment.
-C           (WRB)
-C   920501  Reformatted the REFERENCES section.  (WRB)
-C***END PROLOGUE  xDSCAL
-
-      double precision da,dx(*)
-      integer i,incx,m,mp1,n,nincx
-C
-      if( n.le.0 .or. incx.le.0 )return
-      if(incx.eq.1)go to 20
-C
-C        code for increment not equal to 1
-C
-      nincx = n*incx
-      do 10 i = 1,nincx,incx
-        dx(i) = da*dx(i)
-   10 continue
-      return
-C
-C        code for increment equal to 1
-C
-C
-C        clean-up loop
-C
-   20 m = mod(n,5)
-      if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
-        dx(i) = da*dx(i)
-   30 continue
-      if( n .lt. 5 ) return
-   40 mp1 = m + 1
-      do 50 i = mp1,n,5
-        dx(i) = da*dx(i)
-        dx(i + 1) = da*dx(i + 1)
-        dx(i + 2) = da*dx(i + 2)
-        dx(i + 3) = da*dx(i + 3)
-        dx(i + 4) = da*dx(i + 4)
-   50 continue
-      return
-      end                                        
 C of xDscal
-
-
-
-
 C********************************************************************
-      subroutine xdaxpy(n,da,dx,incx,dy,incy)
-
-C-------------------------------------------------------------------*
-C Subroutine obtained from LINPACK (ftp-site netlib.att.com)        &
-C-------------------------------------------------------------------*
-C***BEGIN PROLOGUE  xDAXPY
-C***PURPOSE  Compute a constant times a vector plus a vector.
-C***LIBRARY   SLATEC (BLAS)
-C***CATEGORY  D1A7
-C***TYPE      DOUBLE PRECISION (SAXPY-S, xDAXPY-D, CAXPY-C)
-C***KEYWORDS  BLAS, LINEAR ALGEBRA, TRIAD, VECTOR
-C***AUTHOR  Lawson, C. L., (JPL)
-C           Hanson, R. J., (SNLA)
-C           Kincaid, D. R., (U. of Texas)
-C           Krogh, F. T., (JPL)
-C***DESCRIPTION
-C
-C                B L A S  Subprogram
-C    Description of Parameters
-C
-C     --Input--
-C        N  number of elements in input vector(s)
-C       DA  double precision scalar multiplier
-C       DX  double precision vector with N elements
-C     INCX  storage spacing between elements of DX
-C       DY  double precision vector with N elements
-C     INCY  storage spacing between elements of DY
-C
-C     --Output--
-C       DY  double precision result (unchanged if N .LE. 0)
-C
-C     Overwrite double precision DY with double precision DA*DX + DY.
-C     For I = 0 to N-1, replace  DY(LY+I*INCY) with DA*DX(LX+I*INCX) +
-C       DY(LY+I*INCY),
-C     where LX = 1 if INCX .GE. 0, else LX = 1+(1-N)*INCX, and LY is
-C     defined in a similar way using INCY.
-C
-C***REFERENCES  C. L. Lawson, R. J. Hanson, D. R. Kincaid and F. T.
-C                 Krogh, Basic linear algebra subprograms for Fortran
-C                 usage, Algorithm No. 539, Transactions on Mathematical
-C                 Software 5, 3 (September 1979), pp. 308-323.
-C***ROUTINES CALLED  (NONE)
-C***REVISION HISTORY  (YYMMDD)
-C   791001  DATE WRITTEN
-C   890831  Modified array declarations.  (WRB)
-C   890831  REVISION DATE from Version 3.2
-C   891214  Prologue converted to Version 4.0 format.  (BAB)
-C   920310  Corrected definition of LX in DESCRIPTION.  (WRB)
-C   920501  Reformatted the REFERENCES section.  (WRB)
-C***END PROLOGUE  xDAXPY
-
-C
-C     constant times a vector plus a vector.
-C     uses unrolled loops for increments equal to one.
-C     jack dongarra, linpack, 3/11/78.
-C     modified 12/3/93, array(1) declarations changed to array(*)
-C
-      double precision dx(*),dy(*),da
-      integer i,incx,incy,ix,iy,m,mp1,n
-C
-      if(n.le.0)return
-      if (da .eq. 0.0d0) return
-      if(incx.eq.1.and.incy.eq.1)go to 20
-C
-C        code for unequal increments or equal increments
-C          not equal to 1
-C
-      ix = 1
-      iy = 1
-      if(incx.lt.0)ix = (-n+1)*incx + 1
-      if(incy.lt.0)iy = (-n+1)*incy + 1
-      do 10 i = 1,n
-        dy(iy) = dy(iy) + da*dx(ix)
-        ix = ix + incx
-        iy = iy + incy
-   10 continue
-      return
-C
-C        code for both increments equal to 1
-C
-C
-C        clean-up loop
-C
-   20 m = mod(n,4)
-      if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
-        dy(i) = dy(i) + da*dx(i)
-   30 continue
-      if( n .lt. 4 ) return
-   40 mp1 = m + 1
-      do 50 i = mp1,n,4
-        dy(i) = dy(i) + da*dx(i)
-        dy(i + 1) = dy(i + 1) + da*dx(i + 1)
-        dy(i + 2) = dy(i + 2) + da*dx(i + 2)
-        dy(i + 3) = dy(i + 3) + da*dx(i + 3)
-   50 continue
-      return
-      end                                        
 C of xdaxpy
-
 C********************************************************************
-
-      double precision function xddot(n,dx,incx,dy,incy)
-
-C-------------------------------------------------------------------*
-C Subroutine obtained from LINPACK (ftp-site netlib.att.com)        &
-C-------------------------------------------------------------------*
-C
-C     forms the dot product of two vectors.
-C     uses unrolled loops for increments equal to one.
-C     jack dongarra, linpack, 3/11/78.
-C     modified 12/3/93, array(1) declarations changed to array(*)
-C
-      double precision dx(*),dy(*),dtemp
-      integer i,incx,incy,ix,iy,m,mp1,n
-C
-      xddot = 0.0d0
-      dtemp = 0.0d0
-      if(n.le.0)return
-      if(incx.eq.1.and.incy.eq.1)go to 20
-C
-C        code for unequal increments or equal increments
-C          not equal to 1
-C
-      ix = 1
-      iy = 1
-      if(incx.lt.0)ix = (-n+1)*incx + 1
-      if(incy.lt.0)iy = (-n+1)*incy + 1
-      do 10 i = 1,n
-        dtemp = dtemp + dx(ix)*dy(iy)
-        ix = ix + incx
-        iy = iy + incy
-   10 continue
-      xddot = dtemp
-      return
-C
-C        code for both increments equal to 1
-C
-C
-C        clean-up loop
-C
-   20 m = mod(n,5)
-      if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
-        dtemp = dtemp + dx(i)*dy(i)
-   30 continue
-      if( n .lt. 5 ) go to 60
-   40 mp1 = m + 1
-      do 50 i = mp1,n,5
-        dtemp = dtemp + dx(i)*dy(i) + dx(i + 1)*dy(i + 1) +                &
-     &   dx(i + 2)*dy(i + 2) + dx(i + 3)*dy(i + 3) + dx(i + 4)*dy(i + 4)
-   50 continue
-   60 xddot = dtemp
-      return
-      end                                        
 C of xDDOT
-
-
-
-      subroutine xdswap (n,dx,incx,dy,incy)
-C
-C     interchanges two vectors.
-C     uses unrolled loops for increments equal one.
-C     jack dongarra, linpack, 3/11/78.
-C     modified 12/3/93, array(1) declarations changed to array(*)
-C
-      double precision dx(*),dy(*),dtemp
-      integer i,incx,incy,ix,iy,m,mp1,n
-C
-      if(n.le.0)return
-      if(incx.eq.1.and.incy.eq.1)go to 20
-C
-C       code for unequal increments or equal increments not equal
-C         to 1
-C
-      ix = 1
-      iy = 1
-      if(incx.lt.0)ix = (-n+1)*incx + 1
-      if(incy.lt.0)iy = (-n+1)*incy + 1
-      do 10 i = 1,n
-        dtemp = dx(ix)
-        dx(ix) = dy(iy)
-        dy(iy) = dtemp
-        ix = ix + incx
-        iy = iy + incy
-   10 continue
-      return
-C
-C       code for both increments equal to 1
-C
-C
-C       clean-up loop
-C
-   20 m = mod(n,3)
-      if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
-        dtemp = dx(i)
-        dx(i) = dy(i)
-        dy(i) = dtemp
-   30 continue
-      if( n .lt. 3 ) return
-   40 mp1 = m + 1
-      do 50 i = mp1,n,3
-        dtemp = dx(i)
-        dx(i) = dy(i)
-        dy(i) = dtemp
-        dtemp = dx(i + 1)
-        dx(i + 1) = dy(i + 1)
-        dy(i + 1) = dtemp
-        dtemp = dx(i + 2)
-        dx(i + 2) = dy(i + 2)
-        dy(i + 2) = dtemp
-   50 continue
-      return
-      end
-
-
 C***********************************************************************
-      SUBROUTINE XDCOPY(N,DX,INCX,DY,INCY)
-C
-C     COPIES A VECTOR, X, TO A VECTOR, Y.
-C     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
-C     JACK DONGARRA, LINPACK, 3/11/78.
-C
-      DOUBLE PRECISION DX(1),DY(1)
-      INTEGER I,INCX,INCY,IX,IY,M,MP1,N
-C
-      IF(N.LE.0)RETURN
-      IF(INCX.EQ.1.AND.INCY.EQ.1)GO TO 20
-C
-C        CODE FOR UNEQUAL INCREMENTS OR EQUAL INCREMENTS
-C          NOT EQUAL TO 1
-C
-      IX = 1
-      IY = 1
-      IF(INCX.LT.0)IX = (-N+1)*INCX + 1
-      IF(INCY.LT.0)IY = (-N+1)*INCY + 1
-      DO 10 I = 1,N
-        DY(IY) = DX(IX)
-        IX = IX + INCX
-        IY = IY + INCY
-   10 CONTINUE
-      RETURN
-C
-C        CODE FOR BOTH INCREMENTS EQUAL TO 1
-C
-C
-C        CLEAN-UP LOOP
-C
-   20 M = MOD(N,7)
-      IF( M .EQ. 0 ) GO TO 40
-      DO 30 I = 1,M
-        DY(I) = DX(I)
-   30 CONTINUE
-      IF( N .LT. 7 ) RETURN
-   40 MP1 = M + 1
-      DO 50 I = MP1,N,7
-        DY(I) = DX(I)
-        DY(I + 1) = DX(I + 1)
-        DY(I + 2) = DX(I + 2)
-        DY(I + 3) = DX(I + 3)
-        DY(I + 4) = DX(I + 4)
-        DY(I + 5) = DX(I + 5)
-        DY(I + 6) = DX(I + 6)
-   50 CONTINUE
-      RETURN
-      END
       

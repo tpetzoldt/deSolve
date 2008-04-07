@@ -339,7 +339,6 @@ C**End
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -574,67 +573,6 @@ C
 C----------------------- END OF SUBROUTINE DSOLSY ----------------------
       END
 *DECK DSRCOM
-      SUBROUTINE DSRCOM (RSAV, ISAV, JOB)
-C***BEGIN PROLOGUE  DSRCOM
-C***SUBSIDIARY
-C***PURPOSE  Save/restore ODEPACK COMMON blocks.
-C***TYPE      DOUBLE PRECISION (SSRCOM-S, DSRCOM-D)
-C***AUTHOR  Hindmarsh, Alan C., (LLNL)
-C***DESCRIPTION
-C
-C  This routine saves or restores (depending on JOB) the contents of
-C  the COMMON block DLS001, which is used internally
-C  by one or more ODEPACK solvers.
-C
-C  RSAV = real array of length 218 or more.
-C  ISAV = integer array of length 37 or more.
-C  JOB  = flag indicating to save or restore the COMMON blocks:
-C         JOB  = 1 if COMMON is to be saved (written to RSAV/ISAV)
-C         JOB  = 2 if COMMON is to be restored (read from RSAV/ISAV)
-C         A call with JOB = 2 presumes a prior call with JOB = 1.
-C
-C***SEE ALSO  DLSODE
-C***ROUTINES CALLED  (NONE)
-C***COMMON BLOCKS    DLS001
-C***REVISION HISTORY  (YYMMDD)
-C   791129  DATE WRITTEN
-C   890501  Modified prologue to SLATEC/LDOC format.  (FNF)
-C   890503  Minor cosmetic changes.  (FNF)
-C   921116  Deleted treatment of block /EH0001/.  (ACH)
-C   930801  Reduced Common block length by 2.  (ACH)
-C   930809  Renamed to allow single/double precision versions. (ACH)
-C   010418  Reduced Common block length by 209+12. (ACH)
-C   031105  Restored 'own' variables to Common block /DLS001/, to
-C           enable interrupt/restart feature. (ACH)
-C   031112  Added SAVE statement for data-loaded constants.
-C***END PROLOGUE  DSRCOM
-C**End
-      INTEGER ISAV, JOB
-      INTEGER ILS
-      INTEGER I, LENILS, LENRLS
-      DOUBLE PRECISION RSAV,   RLS
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS
-      COMMON /DLS001/ RLS(218), ILS(37)
-      DATA LENRLS/218/, LENILS/37/
-C
-C***FIRST EXECUTABLE STATEMENT  DSRCOM
-      IF (JOB .EQ. 2) GO TO 100
-C
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      RETURN
-C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      RETURN
-C----------------------- END OF SUBROUTINE DSRCOM ----------------------
-      END
 *DECK DSTODE
       SUBROUTINE DSTODE (NEQ, Y, YH, NYH, YH1, EWT, SAVF, ACOR,
      1   WM, IWM, F, JAC, PJAC, SLVS,RPAR,IPAR)
@@ -735,7 +673,6 @@ C**End
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
      1   ACOR(*), WM(*), IWM(*)
@@ -1232,7 +1169,6 @@ C----------------------- END OF FUNCTION DVNORM ------------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, IA, JA, IPFLAG
       DOUBLE PRECISION Y, RWORK
       DIMENSION NEQ(*), Y(*), RWORK(*), IA(*), JA(*)
@@ -1308,7 +1244,6 @@ C----------------------- End of Subroutine DIPREP ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, IA, JA, IWK, IPPER
       DOUBLE PRECISION Y, YH, SAVF, EWT, FTEM, WK
       DIMENSION NEQ(*), Y(*), YH(*), SAVF(*), EWT(*), FTEM(*),
@@ -1701,7 +1636,6 @@ C----------------------- End of Subroutine CNTNZU ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWK
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WK
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -1982,56 +1916,6 @@ C
 C----------------------- End of Subroutine DSOLSS ----------------------
       END
 *DECK DSRCMS
-      SUBROUTINE DSRCMS (RSAV, ISAV, JOB)
-C-----------------------------------------------------------------------
-C This routine saves or restores (depending on JOB) the contents of
-C the Common blocks DLS001, DLSS01, which are used
-C internally by one or more ODEPACK solvers.
-C
-C RSAV = real array of length 224 or more.
-C ISAV = integer array of length 71 or more.
-C JOB  = flag indicating to save or restore the Common blocks:
-C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
-C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
-C        A call with JOB = 2 presumes a prior call with JOB = 1.
-C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSS
-      INTEGER I, LENILS, LENISS, LENRLS, LENRSS
-      DOUBLE PRECISION RSAV,   RLS, RLSS
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRSS, LENISS
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSS01/ RLSS(6), ILSS(34)
-      DATA LENRLS/218/, LENILS/37/, LENRSS/6/, LENISS/34/
-C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 15 I = 1,LENRSS
- 15     RSAV(LENRLS+I) = RLSS(I)
-C
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 25 I = 1,LENISS
- 25     ISAV(LENILS+I) = ILSS(I)
-C
-      RETURN
-C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRSS
- 115     RLSS(I) = RSAV(LENRLS+I)
-C
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 125 I = 1,LENISS
- 125     ILSS(I) = ISAV(LENILS+I)
-C
-      RETURN
-C----------------------- End of Subroutine DSRCMS ----------------------
-      END
 *DECK ODRV
       subroutine odrv
      *     (n, ia,ja,a, p,ip, nsp,isp, path, flag)
@@ -3847,7 +3731,6 @@ c  ******  solve  lt x = y  by back substitution  **********************
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -4489,7 +4372,6 @@ C----------------------- End of Subroutine DSTODA ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -4726,57 +4608,6 @@ C-----------------------------------------------------------------------
 C----------------------- End of Function DBNORM ------------------------
       END
 *DECK DSRCMA
-      SUBROUTINE DSRCMA (RSAV, ISAV, JOB)
-C-----------------------------------------------------------------------
-C This routine saves or restores (depending on JOB) the contents of
-C the Common blocks DLS001, DLSA01, which are used
-C internally by one or more ODEPACK solvers.
-C
-C RSAV = real array of length 240 or more.
-C ISAV = integer array of length 46 or more.
-C JOB  = flag indicating to save or restore the Common blocks:
-C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
-C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
-C        A call with JOB = 2 presumes a prior call with JOB = 1.
-C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSA
-      INTEGER I, LENRLS, LENILS, LENRLA, LENILA
-      DOUBLE PRECISION RSAV
-      DOUBLE PRECISION RLS, RLSA
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLA, LENILA
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSA01/ RLSA(22), ILSA(9)
-      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
-C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 15 I = 1,LENRLA
- 15     RSAV(LENRLS+I) = RLSA(I)
-C
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 25 I = 1,LENILA
- 25     ISAV(LENILS+I) = ILSA(I)
-C
-      RETURN
-C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRLA
- 115     RLSA(I) = RSAV(LENRLS+I)
-C
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 125 I = 1,LENILA
- 125     ILSA(I) = ISAV(LENILS+I)
-C
-      RETURN
-C----------------------- End of Subroutine DSRCMA ----------------------
-      END
 *DECK DRCHEK
       SUBROUTINE DRCHEK (JOB, G, NEQ, Y, YH,NYH, G0, G1, GX, JROOT, IRT,      &
      1   rpar, ipar)
@@ -5163,71 +4994,6 @@ C No sign changes in this interval.  Set X = X1, return JFLAG = 4. -----
 C----------------------- End of Subroutine DROOTS ----------------------
       END
 *DECK DSRCAR
-      SUBROUTINE DSRCAR (RSAV, ISAV, JOB)
-C-----------------------------------------------------------------------
-C This routine saves or restores (depending on JOB) the contents of
-C the Common blocks DLS001, DLSA01, DLSR01, which are used
-C internally by one or more ODEPACK solvers.
-C
-C RSAV = real array of length 245 or more.
-C ISAV = integer array of length 55 or more.
-C JOB  = flag indicating to save or restore the Common blocks:
-C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
-C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
-C        A call with JOB = 2 presumes a prior call with JOB = 1.
-C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSA, ILSR
-      INTEGER I, IOFF, LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
-      DOUBLE PRECISION RSAV
-      DOUBLE PRECISION RLS, RLSA, RLSR
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSA01/ RLSA(22), ILSA(9)
-      COMMON /DLSR01/ RLSR(5), ILSR(9)
-      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
-      DATA LENRLR/5/, LENILR/9/
-C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-       DO 15 I = 1,LENRLA
- 15     RSAV(LENRLS+I) = RLSA(I)
-      IOFF = LENRLS + LENRLA
-      DO 20 I = 1,LENRLR
- 20     RSAV(IOFF+I) = RLSR(I)
-C
-      DO 30 I = 1,LENILS
- 30     ISAV(I) = ILS(I)
-      DO 35 I = 1,LENILA
- 35     ISAV(LENILS+I) = ILSA(I)
-      IOFF = LENILS + LENILA
-      DO 40 I = 1,LENILR
- 40     ISAV(IOFF+I) = ILSR(I)
-C
-      RETURN
-C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRLA
- 115     RLSA(I) = RSAV(LENRLS+I)
-      IOFF = LENRLS + LENRLA
-      DO 120 I = 1,LENRLR
- 120     RLSR(I) = RSAV(IOFF+I)
-C
-      DO 130 I = 1,LENILS
- 130     ILS(I) = ISAV(I)
-      DO 135 I = 1,LENILA
- 135     ILSA(I) = ISAV(LENILS+I)
-      IOFF = LENILS + LENILA
-      DO 140 I = 1,LENILR
- 140     ILSR(I) = ISAV(IOFF+I)
-C
-      RETURN
-C----------------------- End of Subroutine DSRCAR ----------------------
-      END
 *DECK DSTODPK
       SUBROUTINE DSTODPK (NEQ, Y, YH, NYH, YH1, EWT, SAVF, SAVX, ACOR,
      1   WM, IWM, F, JAC, PSOL,rpar,ipar)
@@ -5235,7 +5001,6 @@ C----------------------- End of Subroutine DSRCAR ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, SAVX, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -5750,7 +5515,6 @@ C----------------------- End of Subroutine DSTODPK ---------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, IWM
       DOUBLE PRECISION Y, YSV, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YSV(*), EWT(*), FTEM(*), SAVF(*),
@@ -7093,48 +6857,6 @@ C-----------------------------------------------------------------------
 C----------------------- End of Subroutine DUSOL -----------------------
       END
 *DECK DSRCPK
-      SUBROUTINE DSRCPK (RSAV, ISAV, JOB)
-C-----------------------------------------------------------------------
-C This routine saves or restores (depending on JOB) the contents of
-C the Common blocks DLS001, DLPK01, which are used
-C internally by the DLSODPK solver.
-C
-C RSAV = real array of length 222 or more.
-C ISAV = integer array of length 50 or more.
-C JOB  = flag indicating to save or restore the Common blocks:
-C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
-C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
-C        A call with JOB = 2 presumes a prior call with JOB = 1.
-C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSP
-      INTEGER I, LENILP, LENRLP, LENILS, LENRLS
-      DOUBLE PRECISION RSAV,   RLS, RLSP
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLP, LENILP
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLPK01/ RLSP(4), ILSP(13)
-      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
-C
-      IF (JOB .EQ. 2) GO TO 100
-      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
-      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+1), 1)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 40 I = 1,LENILP
- 40     ISAV(LENILS+I) = ILSP(I)
-      RETURN
-C
- 100  CONTINUE
-      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
-      CALL DCOPY (LENRLP, RSAV(LENRLS+1), 1, RLSP, 1)
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 140 I = 1,LENILP
- 140     ILSP(I) = ISAV(LENILS+I)
-      RETURN
-C----------------------- End of Subroutine DSRCPK ----------------------
-      END
 *DECK DHEFA
       SUBROUTINE DHEFA (A, LDA, N, IPVT, INFO, JOB)
       INTEGER LDA, N, IPVT(*), INFO, JOB
@@ -7755,7 +7477,6 @@ C----------------------- End of Subroutine DLHIN -----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, SAVX, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -8316,7 +8037,6 @@ C----------------------- End of Subroutine DSTOKA ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, JOK, IWM
       DOUBLE PRECISION Y, YSV, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YSV(*), EWT(*), FTEM(*), SAVF(*),
@@ -8381,71 +8101,6 @@ CKS
 C----------------------- End of Subroutine DSETPK ----------------------
       END
 *DECK DSRCKR
-      SUBROUTINE DSRCKR (RSAV, ISAV, JOB)
-C-----------------------------------------------------------------------
-C This routine saves or restores (depending on JOB) the contents of
-C the Common blocks DLS001, DLS002, DLSR01, DLPK01, which
-C are used internally by the DLSODKR solver.
-C
-C RSAV = real array of length 228 or more.
-C ISAV = integer array of length 63 or more.
-C JOB  = flag indicating to save or restore the Common blocks:
-C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
-C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
-C        A call with JOB = 2 presumes a prior call with JOB = 1.
-C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILS2, ILSR, ILSP
-      INTEGER I, IOFF, LENILP, LENRLP, LENILS, LENRLS, LENILR, LENRLR
-      DOUBLE PRECISION RSAV,   RLS, RLS2, RLSR, RLSP
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLP, LENILP, LENRLR, LENILR
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLS002/ RLS2, ILS2(4)
-      COMMON /DLSR01/ RLSR(5), ILSR(9)
-      COMMON /DLPK01/ RLSP(4), ILSP(13)
-      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
-      DATA LENRLR/5/, LENILR/9/
-C
-      IF (JOB .EQ. 2) GO TO 100
-      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
-      RSAV(LENRLS+1) = RLS2
-      CALL DCOPY (LENRLR, RLSR, 1, RSAV(LENRLS+2), 1)
-      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+LENRLR+2), 1)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      ISAV(LENILS+1) = ILS2(1)
-      ISAV(LENILS+2) = ILS2(2)
-      ISAV(LENILS+3) = ILS2(3)
-      ISAV(LENILS+4) = ILS2(4)
-      IOFF = LENILS + 2
-      DO 30 I = 1,LENILR
- 30     ISAV(IOFF+I) = ILSR(I)
-      IOFF = IOFF + LENILR
-      DO 40 I = 1,LENILP
- 40     ISAV(IOFF+I) = ILSP(I)
-      RETURN
-C
- 100  CONTINUE
-      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
-      RLS2 = RSAV(LENRLS+1)
-      CALL DCOPY (LENRLR, RSAV(LENRLS+2), 1, RLSR, 1)
-      CALL DCOPY (LENRLP, RSAV(LENRLS+LENRLR+2), 1, RLSP, 1)
-      DO 120 I = 1,LENILS
- 120    ILS(I) = ISAV(I)
-      ILS2(1) = ISAV(LENILS+1)
-      ILS2(2) = ISAV(LENILS+2)
-      ILS2(3) = ISAV(LENILS+3)
-      ILS2(4) = ISAV(LENILS+4)
-      IOFF = LENILS + 2
-      DO 130 I = 1,LENILR
- 130    ILSR(I) = ISAV(IOFF+I)
-      IOFF = IOFF + LENILR
-      DO 140 I = 1,LENILP
- 140    ILSP(I) = ISAV(IOFF+I)
-      RETURN
-C----------------------- End of Subroutine DSRCKR ----------------------
-      END
 *DECK DAINVG
       SUBROUTINE DAINVG (RES, ADDA, NEQ, T, Y, YDOT, MITER,
      1                   ML, MU, PW, IPVT, IER,rpar,ipar )
@@ -8515,7 +8170,6 @@ C----------------------- End of Subroutine DAINVG ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, SAVR, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -8982,7 +8636,6 @@ C----------------------- End of Subroutine DSTODI ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, RTEM, SAVR, S, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), RTEM(*),
@@ -9203,7 +8856,6 @@ C----------------------- End of Subroutine DAIGBT ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, RTEM, SAVR, S, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), RTEM(*),
@@ -9565,7 +9217,6 @@ C----------------------- End of Subroutine DSOLBT ----------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, IA, JA, IC, JC, IPFLAG
       DOUBLE PRECISION Y, S, RWORK
       DIMENSION NEQ(*), Y(*), S(*), RWORK(*), IA(*), JA(*), IC(*), JC(*)
@@ -9640,7 +9291,6 @@ C----------------------- End of Subroutine DIPREPI ---------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, IA, JA, IC, JC, IWK, IPPER
       DOUBLE PRECISION Y, S, YH, SAVR, EWT, RTEM, WK
       DIMENSION NEQ(*), Y(*), S(*), YH(*), SAVR(*), EWT(*), RTEM(*),
@@ -10105,7 +9755,6 @@ C----------------------- End of Subroutine DAINVGS ---------------------
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-
       INTEGER NEQ, NYH, IWK
       DOUBLE PRECISION Y, YH, EWT, RTEM, SAVR, S, WK
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), RTEM(*),
@@ -10257,4 +9906,3 @@ C Error return for IRES = 2 or IRES = 3 return from RES. ---------------
       RETURN
 C----------------------- End of Subroutine DPRJIS ----------------------
       END
-
