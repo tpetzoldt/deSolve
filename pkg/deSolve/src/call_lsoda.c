@@ -1,6 +1,6 @@
 #include <time.h>
 #include <string.h>
-#include "desolve.h"
+#include "deSolve.h"
 
 void F77_NAME(dlsoda)(void (*)(int *, double *, double *, double *, double *, int *),
 		     int *, double *, double *, double *,
