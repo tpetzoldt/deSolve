@@ -126,6 +126,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       rho <- NULL
 
     } else {
+      initpar <- NULL # parameter initialisation not needed if function is not a DLL    
       rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
