@@ -189,6 +189,8 @@ daspk          <- function(y,               # state variables
         
 
     }    else {
+        initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+    
         rho <- environment(func)
       # func or res and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
