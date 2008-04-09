@@ -21,7 +21,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 	tcrit = NULL, jacfunc=NULL, jactype = "fullint", rootfunc=NULL,
   verbose=FALSE, dllname=NULL,initfunc=dllname,
   initpar=parms, rpar=NULL, ipar=NULL,
-  ynames=TRUE, nout=0, outnames=NULL, nroot = 0, hmin=0, hmax=Inf, hini=0, 
+  ynames=TRUE, nout=0, outnames=NULL, nroot = 0, hmin=0, hmax=NULL, hini=0, 
   maxordn = 12, maxords = 5, bandup = NULL, banddown = NULL, maxsteps = 5000,
   ...)   
 {
@@ -47,9 +47,10 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
         stop("`rtol' must either be a scaler, or as long as `y'")
     if (!is.numeric(hmin))    stop("`hmin' must be numeric")
     if (hmin < 0) stop ("`hmin' must be a non-negative value")
+    if (is.null(hmax))
+       hmax <- ifelse (is.null(times), 0, max(abs(diff(times))))
     if (!is.numeric(hmax))    stop("`hmax' must be numeric")
     if (hmax < 0) stop ("`hmax' must be a non-negative value")
-    if (hmax == Inf) hmax <- 0 # in lsoda.f 0 is internally handled as Inf    
     if (hini < 0)             stop("`hini' must be a non-negative value")
     if (!is.numeric(maxordn)) stop("`maxordn' must be numeric")
     if(maxordn < 1 || maxordn > 12) stop("`maxord' must be >1 and <=12")
@@ -136,6 +137,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       rho <- NULL
 
     } else {
+      initpar <- NULL # parameter initialisation not needed if function is not a DLL    
       rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
