@@ -117,8 +117,8 @@
     \cr If \code{y} has a names attribute, it will be used to label the columns of the output value.
       
       The output will have the attributes \code{istate}, and \code{rstate}, two vectors with several useful elements. 
-      See <link>lsoda</link> for details.
-      \cr The first element of istate returns the conditions under which the last call to lsodar returned. Normal is \code{istate = 2}.
+      See details.
+      The first element of istate returns the conditions under which the last call to lsoda returned. Normal is \code{istate[1] = 2}.
       If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen
       \cr if a root has been found, the output will also have the attribute \code{iroot}, an integer indicating which root has been found.
   
