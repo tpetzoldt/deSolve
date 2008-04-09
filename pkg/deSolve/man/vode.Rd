@@ -109,50 +109,27 @@
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{# The enzymatic chemical model from Soetaert and Herman, book in prep                                     
-  
-  #==================#
-  # model equations: #
-  #==================#
-  
-  model<-function(t,state,parameters){#
-  
-   with(as.list(c(state,parameters)),{  
-      dD <- -k1*E*D + k2*I
-      dI <-  k1*E*D - k2*I - k3*I*F
-      dE <- -k1*E*D + k2*I + k3*I*F
-      dF <-                - k3*I*F
-      dG <-                  k3*I*F
-      list(c(dD,dI,dE,dF,dG),DE=D*E,IF=I*F)  # the output, a list
-      })
-  }
-  
-  #==================#
-  # Model application#
-  #==================#
-  parameters<-c(k1=0.01/24,       # parameter values
-                k2=0.1/24,
-                k3=0.1/24)
-  
-  state     <-c(D=100,            # state variable initial conditions
-                I=10,
-                E=1,
-                F=1,
-                G=0)
-  
-  times     <-seq(0,300,0.5)         
-  
-  out <-as.data.frame(vode(state,times,model,parameters))
-  
-  #==================#
-  # PLOTTING output: #
-  #==================#
-  opar <- par(mfrow=c(2,2))   
-  plot (times,out$D,type="l",main="D",xlab="time, hours",ylab="mol/m3")
-  plot (times,out$F,type="l",main="F",xlab="time, hours",ylab="mol/m3")
-  plot (times,out$E,type="l",main="E",xlab="time, hours",ylab="mol/m3")
-  plot (times,out$I,type="l",main="I",xlab="time, hours",ylab="mol/m3")
-  par(mfrow=opar)}
+\examples{# The famous Lorenz equations: chaos in the earth's atmosphere
+# Lorenz 1963. J. Atmos. Sci. 20, 130-141.
+
+chaos<-function(t,state,parameters)
+  {
+  with(as.list(c(state)),{
+
+    dx     <- -8/3*x+y*z
+    dy     <- -10*(y-z)
+    dz     <- -x*y+28*y-z
+
+    list(c(dx,dy,dz))            })
+
+ }  # end of model
+
+state <-c(x=1, y=1, z=1)
+times <-seq(0,100,0.01)
+out   <-as.data.frame(vode(state,times,chaos,0))
+
+plot(out$x,out$y,type="l",main="Lorenz butterfly")
+}
 \references{\item P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989. 
     VODE: A Variable Coefficient ODE Solver," SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.  
     \cr Also, LLNL Report UCRL-98412, June 1988.
