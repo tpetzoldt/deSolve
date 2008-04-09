@@ -19,7 +19,7 @@
   jacfunc=NULL, jactype="fullint", rootfunc=NULL, verbose=FALSE,   
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL, 
   ipar=NULL, ynames=TRUE, nout=0, outnames=NULL, nroot=0, 
-  hmin=0, hmax=Inf, hini=0, maxordn=12, maxords = 5, 
+  hmin=0, hmax=NULL, hini=0, maxordn=12, maxords = 5, 
   bandup=NULL, banddown=NULL, maxsteps=5000, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
