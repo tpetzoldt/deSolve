@@ -72,9 +72,10 @@ c PAR, on-off function depending on the hour within a day
        PAR = 0.d0
       endif
 
-c the output variables
-      PhytoC           = PROTEIN + RESERVE + LMW       ! all components contain carbon
-      PhytoN           = PROTEIN * rNCProtein          ! only proteins contain nitrogen
+c the output variables - all components contain carbon
+c only proteins contain nitrogen
+      PhytoC           = PROTEIN + RESERVE + LMW        
+      PhytoN           = PROTEIN * rNCProtein           
       NCratio          = PhytoN / PhytoC
       Chlorophyll      = PhytoN * rChlN
       TotalN           = PhytoN + DIN
