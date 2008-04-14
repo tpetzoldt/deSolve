@@ -1,8 +1,8 @@
 \name{ode.1D}
 \alias{ode.1D}
-\title{Solver for ordinary differential equations; assumes a banded jacobian obtained by rearranging state variables}
-\description{Solves a system of ordinary differential equations. 
-    \cr Assumes a banded jacobian matrix. To create this matrix, 
+\title{Steady-state solver for multicomponent 1-D ordinary differential equations}
+\description{Solves the steady-state of a system of ordinary differential equations. 
+    \cr Assumes a banded or sparse jacobian matrix. To create the banded matrix, 
     state variables are rearranged. 
     \cr Suitable for 1-D models that include transport only between adjacent layers and that model many species (e.g. multi-component reactive-transport models).}
 \usage{ode.1D(y, times, func, nspec, method="lsode", ...)}
@@ -10,9 +10,9 @@
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
   \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
-       		See details}
+       		If \code{func} is a character string then integrator \code{lsodes} will be used. See details}
   \item{nspec }{the number of *species* (components) in the model. }
-  \item{method }{the integrator to use, one of "vode", "lsode", "lsoda", "lsodar" }
+  \item{method }{the integrator to use, one of "vode", "lsode", "lsoda", "lsodar", "lsodes" }
   \item{... }{additional arguments passed to the integrator}
 }
 \value{
@@ -27,8 +27,92 @@
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{# Biochemical Oxygen Demand (BOD) and oxygen (O2) dynamics
+\examples{# example 1
+
+  #=======================================================
+  # a predator and its prey diffusing on a flat surface
+  # in concentric circles
+  # 1-D model with using cylindrical coordinates
+  # Lotka-Volterra type biology
+  #=======================================================
+
+  #==================#
+  # Model equations  #
+  #==================#
+
+  lvmod <- function (time, state, parms,N,rr,ri,dr,dri)
+
+  {
+    with (as.list(parms),{
+    PREY <- state[1:N]
+    PRED <- state[(N+1):(2*N)]
+    
+    # Fluxes due to diffusion 
+    # at internal and external boundaries: zero gradient
+    FluxPrey <- -Da * diff(c(PREY[1],PREY,PREY[N]))/dri   
+    FluxPred <- -Da * diff(c(PRED[1],PRED,PRED[N]))/dri   
+
+    # Biology: Lotka-Volterra model
+    Ingestion     <- rIng * PREY*PRED
+    GrowthPrey    <- rGrow* PREY*(1-PREY/cap)
+    MortPredator  <- rMort* PRED
+
+    # Rate of change = Flux gradient + Biology   
+    dPREY    <- -diff(ri * FluxPrey)/rr/dr   +
+                GrowthPrey - Ingestion
+    dPRED    <- -diff(ri * FluxPred)/rr/dr   +
+                Ingestion*assEff -MortPredator
+
+    return (list(c(dPREY,dPRED)))
+   }) 
+  }
+  
+  #==================#
+  # Model application#
+  #==================#
+  # model parameters: 
+
+  R  <- 20                    # total radius of surface, m
+  N  <- 100                   # 100 concentric circles
+  dr <- R/N                   # thickness of each layer
+  r  <- seq(dr/2,by=dr,len=N) # distance of center to mid-layer
+  ri <- seq(0,by=dr,len=N+1)  # distance to layer interface
+  dri<- dr                    # dispersion distances
+
+  parms <- c( Da     =0.05,   # m2/d, dispersion coefficient 
+              rIng   =0.2,    # /day, rate of ingestion
+              rGrow  =1.0,    # /day, growth rate of prey
+              rMort  =0.2 ,   # /day, mortality rate of pred
+              assEff =0.5,    # -, assimilation efficiency
+              cap    =10  )   # density, carrying capacity
+
+  # Initial conditions: both present in central circle (box 1) only
+  state <- rep(0,2*N)
+  state[1] <- state[N+1] <- 10
+                  
+  # RUNNING the model:   #
+  times  <-seq(0,200,by=1)   # output wanted at these time intervals           
+
+  out    <- ode.1D(y=state,times=times,func=lvmod,parms=parms,nspec=2,
+                    N=N,rr=r,ri=ri,dr=dr,dri=dri)  
+
+  #==================#
+  # Plotting output  #
+  #==================#
+  # the data in 'out' consist of: 1st col times, 2-N+1: the prey
+  # N+2:2*N+1: predators
+
+  PREY   <- out[,2:(N  +1)]
+
+  filled.contour(x=times,y=r,PREY,color= topo.colors,
+                 xlab="time, days", ylab= "Distance, m",
+                 main="Prey density")
+ 
+  # Example 2.
+  #=======================================================
+  # Biochemical Oxygen Demand (BOD) and oxygen (O2) dynamics
   # in a river
+  #=======================================================
   
   #==================#
   # Model equations  #
@@ -51,7 +135,7 @@
   
     return(list(c(dBOD=dBOD,dO2=dO2)))
   
-   }    # END O2BOD
+  }    # END O2BOD
    
    
   #==================#
@@ -87,7 +171,8 @@
                  xlab="time, days", ylab= "Distance from river, m",
                  main="Oxygen")}
 \details{This is the method of choice for multi-species 1-dimensional models, that are only subjected to transport between adjacent layers 
-    \cr More specifically, this method can only be used if the state variables are arranged per species: A[1],A[2],A[3],....B[1],B[2],B[3],.... (for species A, B)) 
+    \cr More specifically, this method is to be used if the state variables are arranged per species: 
+    \cr A[1],A[2],A[3],....B[1],B[2],B[3],.... (for species A, B)) 
   
   
     For single-species 1-D models, use \code{\link{ode.band}}. 
@@ -95,6 +180,10 @@
   If state variables are arranged as (e.g. A[1],B[1],A[2],B[2],A[3],B[3],.... . 
   it is generally more efficient to use \code{\link{ode.band}} 
   
+  If the integrator chosen is not \code{lsodes} then a banded Jacobian is created by rearranging state variables.
+  \cr If the integrator chosen is \code{lsodes} then state variables are not rearranged, and the sparse Jacobian is selected.
+  \cr If the model is specified in a DLL, then \code{lsodes} is used.
+
   See the selected integrator for the additional options}
 \seealso{\item \code{\link{ode.band}}, for integrating, when the jacobian matrix is banded, and where the state variables need NOT be rearranged 
   	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}

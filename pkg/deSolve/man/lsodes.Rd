@@ -279,7 +279,7 @@
 \details{The work is done by the Fortran subroutine \code{lsodes},
     whose documentation should be consulted for details (it is included as
     comments in the source file \file{src/opkdmain.f}).  The implementation is based on the
-    November, 2003 version of lsode, from Netlib. 
+    November, 2003 version of lsodes, from Netlib. 
     
     \code{lsodes} is applied for stiff problems, where the Jacobian has a sparse structure. 
   \cr There are four choices depending on whether \code{jacvec} and \code{inz} is specified.
@@ -301,7 +301,7 @@
    
   \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. 
   \cr If \code{func} or \code{jacvec} are a string, then they are assumed to be compiled code.
-  \cr In this case, \code{dllname} must give the name of the shared library (without extension) which must be loaded before lsode() is called. 
+  \cr In this case, \code{dllname} must give the name of the shared library (without extension) which must be loaded before lsodes() is called. 
   See the description of \code{\link{lsoda}} for details about how to specify \code{func}; in Fortran, the calling sequence for \code{jacvec} is:
   
   \code{SUBROUTINE JAC (NEQ, T, Y, J, IAN, JAN, PDJ, OUT, IP)}\cr
@@ -312,8 +312,8 @@
       \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
       
       the following elements of \bold{istate} are meaningful:    
-      \item el 1 : returns the conditions under which the last call to lsode returned. 
-      2  if lsode was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small), 
+      \item el 1 : returns the conditions under which the last call to lsodes returned. 
+      2  if lsodes was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small), 
   -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
   -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
   -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
