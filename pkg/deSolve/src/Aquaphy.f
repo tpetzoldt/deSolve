@@ -17,7 +17,7 @@ c=======================================================================
 c Initialise parameter common block
 c=======================================================================
 
-      subroutine initaquaphy(odeparms)
+      subroutine iniaqua(odeparms)
 
       external odeparms
       double precision pars(19)

@@ -10,7 +10,7 @@ names(y) <- c("DIN","PROTEIN","RESERVE","LMW")
 outnames <- c("PAR","TotalN","PhotoSynthesis",
                "NCratio","ChlCratio","Chlorophyll")
 vode(y,times,dllname="deSolve",
-    func="aquaphy",initfunc="initaquaphy",
+    func="aquaphy",initfunc="iniaqua",
     parms=parms,nout=6,outnames=outnames,...)
 }
 
