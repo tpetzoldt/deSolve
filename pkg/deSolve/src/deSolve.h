@@ -31,9 +31,6 @@ void my_unprotect(int);
 /*void Initvodeparms(long int *, double *);*/
 void Initdeparms(int *, double *);
 
-/* Fortran "top-level" functions: */
-void F77_NAME(xsetf)(long int *);
-
 /* use in daspk */
 long int n_eq;
 long int mu;
