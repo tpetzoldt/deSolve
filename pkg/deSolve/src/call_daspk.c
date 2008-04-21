@@ -203,8 +203,11 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       
     } else {
       Resfun = (res_func *) daspk_res;
-      PROTECT(daspk_res_func = res) ; incr_N_Protect();
-      PROTECT(daspk_envir = rho)    ; incr_N_Protect();
+/* KS removed protect      PROTECT(daspk_res_func = res) ; incr_N_Protect();
+      PROTECT(daspk_envir = rho)    ; incr_N_Protect(); */
+      daspk_res_func = res; 
+      daspk_envir = rho; 
+
     }
   if (!isNull(jacfunc))
     {

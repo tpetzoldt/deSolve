@@ -145,10 +145,10 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   nroot  = INTEGER(nRoot)[0]; 
   solver = INTEGER(Solver)[0]; 
   
-  /*  1= lsoda, 2=lsode -FUTURE: 3=lsodeS, 4=lsodar*/
+  /*  1= lsoda, 2=lsode: 3=lsodeS, 4=lsodar*/
   
-  /*dummy parameters RPAR and IPAR in lsoda: used to pass output variables 
-    note: fortran function lsoda and dependencies have been altered to also
+  /*dummy parameters RPAR and IPAR in lsodx: used to pass output variables 
+    note: fortran function lsodx and dependencies have been altered to also
     pass RPAR and IPAR*/
   
   if (inherits(func, "NativeSymbol"))  /* function is a dll */
@@ -225,8 +225,13 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 	  
     } else {
       derivs = (deriv_func *) lsoda_derivs;
+/* KS: removed the PROTECT part...   
       PROTECT(odesolve_deriv_func = func);        incr_N_Protect();
-      PROTECT(odesolve_envir = rho);              incr_N_Protect();
+      PROTECT(odesolve_envir = rho);              incr_N_Protect();  */
+      
+      odesolve_deriv_func = func;
+      odesolve_envir = rho;
+
     }
 
   if (!isNull(jacfunc) && solver !=3)
@@ -260,7 +265,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
       root = (root_func *) R_ExternalPtrAddr(rootfunc);
     } else {
       root = (root_func *) lsoda_root;
-      PROTECT(odesolve_root_func = rootfunc);   incr_N_Protect();
+/* and here      PROTECT(odesolve_root_func = rootfunc);   incr_N_Protect(); */
+      odesolve_root_func = rootfunc; 
     }
   }
 

@@ -161,8 +161,11 @@ SEXP call_dvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 
     } else {  
       derivs = (deriv_func *) vode_derivs;  
-      PROTECT(vode_deriv_func = func);             incr_N_Protect();
-      PROTECT(vode_envir = rho);                   incr_N_Protect();
+/*      PROTECT(vode_deriv_func = func);             incr_N_Protect();
+      PROTECT(vode_envir = rho);                   incr_N_Protect(); */
+      vode_deriv_func = func; 
+      vode_envir = rho;       
+  
     }
     
    if (!isNull(jacfunc))
