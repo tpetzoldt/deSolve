@@ -113,7 +113,8 @@
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{########################################
+\examples{
+  ########################################
   # EXAMPLE 1	
   # Various ways to solve the same model.
   ########################################
@@ -182,37 +183,33 @@
   # partially specified jacobian
   ########################################
   
-  diffusion2D <- function(t,Y,par)
+diffusion2D <- function(t,Y,par)
   {
    y <- matrix(nr=n,nc=n,data=Y)
-  
-   dY[] <- r*y     #production
-  
-   for (i in 1:n)  #diffusion in X-direction
-   {
-     Flux      <- -Dx*diff(c(0,y[i,],0))/dx
-     dY[i,]    <- dY[i,]-diff(Flux)/dx
-   }
-   for (i in 1:n)  #diffusion in Y-direction
-   {
-     Flux      <- -Dy*diff(c(0,y[,i],0))/dy
-     dY[,i]    <- dY[,i]-diff(Flux)/dy
-   }
+   dY   <- r*y     #production
+
+   #diffusion in X-direction; boundaries=0-concentration
+   Flux <- -Dx * rbind(y[1,],(y[2:n,]-y[1:(n-1),]),-y[n,])/dx
+   dY   <- dY - (Flux[2:(n+1),]-Flux[1:n,])/dx
+
+   #diffusion in Y-direction
+   Flux <- -Dy * cbind(y[,1],(y[,2:n]-y[,1:(n-1)]),-y[,n])/dy
+   dY    <- dY - (Flux[,2:(n+1)]-Flux[,1:n])/dy
+
    return(list(as.vector(dY)))
   }
-  
+
   # parameters
   dy    <- dx <- 1   # grid size
   Dy    <- Dx <- 1   # diffusion coeff, X- and Y-direction
   r     <- 0.025     # production rate
   times <- c(0,1)
-  
-  n  <- 20
+
+  n  <- 50
   y  <- matrix(nr=n,nc=n,0.)
-  dY <- matrix(nr=n,nc=n,0.)
-  
+
   pa <-par(ask=FALSE)
-  
+
   # initial condition
   for (i in 1:n)
     for (j in 1:n)
@@ -220,26 +217,27 @@
        y[i,j]<-max(0.,1.-1./(n*n)*(dst-n)^2)
        }
   filled.contour(y,color.palette=terrain.colors)
-  
+
   # jacfunc need not be estimated exactly;
   # a crude approximation, with a smaller bandwidth will do.
   # Here the half-bandwidth 1 is used, whereas the true
   # half-bandwidths are equal to n.
   # This corresponds to ignoring the y-direction coupling in the ODEs.
-  
+
   print(system.time(
   for (i in 1:20)
   {
   out  <-  lsode(func=diffusion2D,y=as.vector(y),times=times,
             parms=NULL,jactype="bandint", bandup=1,banddown=1)
-                
+
   filled.contour(matrix(nr=n,nc=n,out[2,-1]),zlim=c(0,1),
-                color.palette=terrain.colors,main=i) 
-  
+                color.palette=terrain.colors,main=i)
+
   y <- out[2,-1]
   }
   ))
-  par(ask=pa)}
+  par(ask=pa)
+}
 \references{\item Alan C. Hindmarsh, "ODEPACK, A Systematized Collection of ODE
    Solvers," in Scientific Computing, R. S. Stepleman, et al., Eds.
    (North-Holland, Amsterdam, 1983), pp. 55-64.}
