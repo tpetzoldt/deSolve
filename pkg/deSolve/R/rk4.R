@@ -19,13 +19,10 @@ rk4 <- function(y, times, func, parms, ...) {
                  length(tmp[[1]]),
                  "must equal the length of the initial conditions vector (",
                  length(y),")",sep=""))
-    ## KS: made this compatible with other integrators
-        Nglobal <- if (length(tmp) > 1)   
-            length(unlist(tmp[-1]))  else 0   
-        Nmtot <- attr(unlist(tmp[-1]),"names")
 
-    
-    ## KS: added "..." to func
+    Nglobal <- if (length(tmp) > 1) length(unlist(tmp[-1])) else 0
+    Nmtot <- attr(unlist(tmp[-1]), "names")
+
     y0 <- y
     out <- c(times[1], y0)
     for (i in 1:(length(times)-1)) {
@@ -45,15 +42,13 @@ rk4 <- function(y, times, func, parms, ...) {
             names(y) else as.character(1:n))
     if (Nglobal > 0) {
         out2 <- matrix(nrow=nrow(out), ncol=Nglobal)
-    ## KS: added "..." and changed [[2]] for [-1]
         for (i in 1:nrow(out2))
             out2[i,] <- func(out[i,1], out[i,-1], parms, ...)[-1]
         out <- cbind(out, out2)
         nm <- c(nm,
-# KS: changed that too...
-#                if (!is.null(attr(tmp[[2]],"names"))) names(tmp[[2]])
-                if (!is.null(Nmtot)) Nmtot 
-                else as.character((n+1) : (n + Nglobal)))
+
+        if (!is.null(Nmtot)) Nmtot 
+        else as.character((n+1) : (n + Nglobal)))
     }
     dimnames(out) <- list(NULL, nm)
     out
