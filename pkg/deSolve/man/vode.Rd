@@ -105,8 +105,6 @@
       The first element of istate returns the conditions under which the last call to lsoda returned. Normal is \code{istate[1] = 2}.
       If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen
 
-  
-  
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{# The famous Lorenz equations: chaos in the earth's atmosphere

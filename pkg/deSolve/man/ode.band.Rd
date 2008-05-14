@@ -4,13 +4,14 @@
 \description{Solves a system of ordinary differential equations. 
     \cr Assumes a banded jacobian matrix, but does not rearrange the state variables (in contrast to ode.1D). 
   Suitable for 1-D models that include transport only between adjacent layers and that model only one species}
-\usage{ode.band(y, times, func, nspec=NULL, 
+\usage{ode.band(y, times, func, parms, nspec=NULL, 
   bandup=nspec, banddown=nspec, method="lsode",...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
   \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
        		See details}
+  \item{parms }{parameters passed to the integrator}
   \item{nspec }{the number of *species* (components) in the model. }
   \item{bandup }{the number of nonzero bands above the jacobian diagonal}
   \item{banddown }{the number of nonzero bands below the jacobian diagonal}

@@ -122,7 +122,6 @@
       If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen
       \cr if a root has been found, the output will also have the attribute \code{iroot}, an integer indicating which root has been found.
   
-  
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{### example 1: from lsodar source code

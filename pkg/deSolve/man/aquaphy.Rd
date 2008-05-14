@@ -21,7 +21,7 @@
   \item{times }{time sequence for which output is wanted; the first value of times must be the initial time}
   \item{y }{the initial (state) values ("DIN","PROTEIN","RESERVE","LMW"), in that order.}
   \item{parms }{vector or list with the aquaphy model parameters; see the example for the order in which these have to be defined}
-  \item{... }{ any other parameters passed to the integrator vode (which solves the model)}
+  \item{... }{ any other parameters passed to the integrator ode (which solves the model)}
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{#-----------------------#

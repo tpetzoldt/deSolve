@@ -104,6 +104,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          Nmtot <- outnames[1:nout] else
          Nmtot <- c(outnames,(length(outnames)+1):nout)
       rho <- NULL
+      if (is.null(ipar)) ipar<-0
+      if (is.null(rpar)) rpar<-0
 
     } else {
       initpar <- NULL # parameter initialisation not needed if function is not a DLL    
@@ -276,7 +278,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                                      as.character((n+1) : (n + Nglobal)))
     }
     attr(out,"istate") <- istate
-    attr(out, "rstate") <- rstate        
+    attr(out, "rstate")<- rstate    
+
     dimnames(out) <- list(nm,NULL)
     
     if (verbose)

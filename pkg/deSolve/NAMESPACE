@@ -1,4 +1,4 @@
 useDynLib(deSolve)
 
-export(aquaphy, ccl4model, daspk, lsoda, lsodar, lsode, lsodes, ode.1D, ode.band, rk4, vode)
+export(aquaphy, ccl4model, daspk, lsoda, lsodar, lsode, lsodes, ode, ode.1D, ode.band, rk4, vode)
 

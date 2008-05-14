@@ -124,6 +124,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          Nmtot <- c(outnames,(length(outnames)+1):nout)
 
       rho <- NULL
+      if (is.null(ipar)) ipar<-0
+      if (is.null(rpar)) rpar<-0
 
     } else {
       initpar <- NULL # parameter initialisation not needed if function is not a DLL    
@@ -254,7 +256,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 ### calling solver
     storage.mode(y) <- storage.mode(times) <- "double"
     IN <-2
-
+    
     out <- .Call("call_lsoda",y,times,Func,as.double(initpar),
                  rtol, atol, rho, tcrit, JacFunc, ModelInit,  
                  as.integer(verbose), as.integer(itask), as.double(rwork),
@@ -285,6 +287,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     }
     attr(out,"istate") <- istate
     attr(out, "rstate") <- rstate        
+
     dimnames(out) <- list(nm,NULL)
     
     if (verbose)

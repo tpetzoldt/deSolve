@@ -122,7 +122,7 @@
       See details.
       The first element of istate returns the conditions under which the last call to lsoda returned. Normal is \code{istate[1] = 2}.
       If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen
-  
+
 }
 \author{R. Woodrow Setzer <setzer.woodrow@epa.gov>}
 \examples{### lsexamp -- example from lsoda source code

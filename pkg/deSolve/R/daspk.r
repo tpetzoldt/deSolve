@@ -1,5 +1,5 @@
 
-### daskr -- solves differential algebraic and ordinary differential equation 
+### daspk -- solves differential algebraic and ordinary differential equation 
 ###          systems defined in res (DAE) or func (ODE)
 ###          and outputs values for the times in `times'
 ###          includes a root finding facility
@@ -186,7 +186,9 @@ daspk          <- function(y,               # state variables
       if (length(outnames) > nout) 
          Nmtot <- outnames[1:nout] else
          Nmtot <- c(outnames,(length(outnames)+1):nout)
-        
+      if (is.null(ipar)) ipar<-0
+      if (is.null(rpar)) rpar<-0
+  
 
     }    else {
         initpar <- NULL # parameter initialisation not needed if function is not a DLL    
@@ -385,6 +387,7 @@ daspk          <- function(y,               # state variables
 
     attr(out, "istate") <- istate
     attr(out, "rstate") <- rstate        
+
     dimnames(out) <- list(nm, NULL)
 
     if (verbose)

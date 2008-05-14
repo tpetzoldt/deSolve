@@ -2,11 +2,12 @@
 \alias{ccl4model}
 \title{the CCl4 inhalation model}
 \description{the CCl4 inhalation model implemented in \code{.Fortran}}
-\usage{ccl4model(times, y, parms)}
+\usage{ccl4model(times, y, parms, ...)}
 \arguments{
   \item{times }{time sequence for which the model has to be integrated}
   \item{y }{the initial values for the state variables ("AI","AAM","AT","AF","AL","CLT" and "AM"), in that order.}
   \item{parms }{vector or list holding the ccl4 model parameters; see the example for the order in which these have to be defined}
+  \item{... }{ any other parameters passed to the integrator ode (which solves the model)}
 }
 \author{R. Woodrow Setzer <setzer.woodrow@epa.gov>}
 \examples{##====================================
