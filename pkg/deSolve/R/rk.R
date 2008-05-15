@@ -1,5 +1,5 @@
 
-## Generalized sover for Runge-Kutta methods with variable time step
+## Generalized solver for Runge-Kutta methods with variable time step
 ## This function is internal and not intended for the end user
 rkAuto <- function(
   y, times, func, parms, rtol = 1e-6, atol = 1e-6,
@@ -9,7 +9,7 @@ rkAuto <- function(
   #ynames=TRUE, nout=0, outnames=NULL,
   hmin = 0, hmax = NULL, hini = 0, 
   method = rkMethod("rk45f", ... ), maxsteps = 5000, ...) {
-   
+
   stage <- method$stage
   A     <- method$A
   bb1   <- method$b1
@@ -17,7 +17,14 @@ rkAuto <- function(
   cc    <- method$c
   qerr  <- 1/method$Qerr
   
-  FF      <- matrix(0, nrow=length(y), ncol=stage)
+  ## track essential internal information
+  ## experimental! Do it similar like lsoda
+  istate <- numeric(23)
+
+
+  Nstates <- length(y)
+  FF      <- matrix(0, nrow = Nstates, ncol = stage)
+
   steps <- 0
   
   y0   <- y
@@ -27,11 +34,12 @@ rkAuto <- function(
     cat("hini=", hini, "\n")
   }
   t    <- min(times)
-  tmax <- max(times, tcrit) # NULL is handles automatically by max()
+  tmax <- max(times, tcrit) # NULL is handled automatically by max()
   dt   <- min(hmax, hini)
+  hmax <- min(hmax, tmax - t) # limit hmax to the time range (esp. if hmax = Inf)
   
   ## function evaluations
-  while ((t + dt) < tmax) {
+  while ((t + dt) <= tmax) {
     for (j in 1:stage) {
       Fj <- 0
       k  <- 1 
@@ -47,8 +55,9 @@ rkAuto <- function(
     y1   <- y0 + dt * dy1
     y2   <- y0 + dt * dy2
 
-    ## stepsize adjustment
-    err  <- abs(y2 - y1) / (rtol * abs(y2) + atol     )
+    ## stepsize adjustment after Algorithm 17.12 of Engeln-Müllges and Reutter (1996)
+if (MUELLGES) { ## old version
+    err  <- abs(y2 - y1) / (rtol * abs(y2) + atol)
     err  <- err[is.finite(err)] # remove Inf, in case of atol == rtol == 0    
     if (length(err) > 0)
       S  <- (dt / max(err)) ^ qerr
@@ -65,6 +74,7 @@ rkAuto <- function(
        dtnew <- dt
        if (verbose) cat("t=", t, " S=", S, " h=", dt, " = \n")
     }
+    ## Final checks ...
     if (dt < hmin) {
       if (verbose) cat("h < hmin \n")
       warning("h < hmin")
@@ -72,10 +82,58 @@ rkAuto <- function(
     }
     ## data storage. Store also imprecise results, but warn if h < hmin
     if ((S >= 1) | (dt < hmin)) {
+      cat("*")
       t   <- t + dt
       y0  <- y2
       out <- rbind(out, c(t, y0))
     }
+} else {
+    #---------------------------------------------------------------------------
+    ## stepsize adjustment after Press et. al (2007), Numerical Recipes in C
+    yabs  <- pmax(abs(y0), abs(y2))
+    scal  <- atol + yabs * rtol
+    delta <- abs(y2 - y1)
+
+    err <- delta / scal
+    err  <- err[is.finite(err)] # remove Inf, in case of atol == rtol == 0
+    if (length(err) > 0) {
+      ## Press (2007): maximum is fine ...
+      err <- max(err)
+      ## ... but we take the euklidean norm
+      #err <- sqrt(sum(delta/scale)^2 / Nstates)
+    } else {
+      err  <- 1
+    }
+
+    if (err == 0) {
+       dtnew <- hmax # hmax must not be Inf, NULL, ... !!!
+       if (verbose) cat("t=", t, " err=", err, " h=", dt, " +++ \n")
+    } else if (err < 1) {  # accept
+       ## safety = 0.9
+       dtnew  <- max(hmax, dt * 0.9 * (err ^ -qerr))
+       if (verbose) cat("t=", t, " err=", err, " h=", dt, " + \n")
+    } else if (err > 1){  # reject
+       dtnew  <- dt * max(0.9 * (err ^ -qerr), 0.2)
+       if (verbose) cat("t=", t, " err=", err, " h=", dt, " - \n")
+    } else { # err == 1
+       dtnew <- dt
+       if (verbose) cat("t=", t, " err=", err, " h=", dt, " = \n")
+    }
+
+    ## Final checks ...
+    if (dt < hmin) {
+      if (verbose) cat("h < hmin \n")
+      warning("h < hmin")
+      istate[1] <- -2
+      dtnew <- hmin
+    }
+    ## data storage. Store also imprecise results, but warn if h < hmin
+    if ((err <= 1) | (dt < hmin)) {
+      t   <- t + dt
+      y0  <- y2
+      out <- rbind(out, c(t, y0))
+    }
+}
     steps <- steps + 1
     if (steps > maxsteps) 
       stop("
@@ -84,9 +142,16 @@ rkAuto <- function(
         increase maxsteps, increase atol/rtol, check your equations
         or select an alternative algorithm.
         ")
-    dt  <- dtnew
-    #if (t == tmax) break  ## should be redundant !?
+    dt  <- min(dtnew, tmax - t)
+    if (t >= tmax) break
   }
+  ## attach essential internal information
+  ## experimental! Codes similar like lsoda
+  istate[12] <- steps         # number of steps
+  istate[13] <- steps * stage # number of function evaluations
+  istate[15] <- method$Qerr   # order of the method
+  attr(out, "istate") <- istate
+  
   out
 }
 
@@ -214,13 +279,15 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     } else {       # fixed step methods
       out <- rkFixed(y, times, func, parms, tcrit = tcrit,
          verbose = verbose, hini = hini, method = method, ...)
-    }  
+    }
+    istate <- attr(out, "istate") # remember internal information
     ## -----------------------------------------------------------------------
     nm <- c("time",
       if (!is.null(attr(y, "names"))) names(y) else as.character(1:n)
     )
     
-    ## interpolation
+    ## interpolation (simple linear approximation,
+    ## future versions will use dense output for some rk variants
     m   <- ncol(out)
     res <- matrix(0, nrow = length(times), ncol = m)
     res[,1] <- times
@@ -246,5 +313,6 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     #  res[,i] <- as.vector(approx(out[,1], out[,i], times)$y)
     #}
     dimnames(out) <- list(NULL, nm)
+    attr(out, "istate") <- istate
     out
 }
