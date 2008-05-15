@@ -3,11 +3,8 @@
 ## This function is internal and not intended for the end user
 rkAuto <- function(
   y, times, func, parms, rtol = 1e-6, atol = 1e-6,
-	tcrit = NULL, #jacfunc=NULL, jactype = "fullint", 
-  verbose = FALSE,# dllname=NULL, initfunc=dllname, 
-  #initpar = parms,# rpar=NULL, ipar=NULL,
-  #ynames=TRUE, nout=0, outnames=NULL,
-  hmin = 0, hmax = NULL, hini = 0, 
+	tcrit = NULL, verbose = FALSE,
+  hmin = 0, hmax = NULL, hini = 0,
   method = rkMethod("rk45f", ... ), maxsteps = 5000, ...) {
 
   stage <- method$stage
@@ -21,12 +18,10 @@ rkAuto <- function(
   ## experimental! Do it similar like lsoda
   istate <- numeric(23)
 
-
   Nstates <- length(y)
   FF      <- matrix(0, nrow = Nstates, ncol = stage)
 
   steps <- 0
-  
   y0   <- y
   out  <- c(times[1], y0)
   if (verbose) {
@@ -55,40 +50,6 @@ rkAuto <- function(
     y1   <- y0 + dt * dy1
     y2   <- y0 + dt * dy2
 
-    ## stepsize adjustment after Algorithm 17.12 of Engeln-Müllges and Reutter (1996)
-if (MUELLGES) { ## old version
-    err  <- abs(y2 - y1) / (rtol * abs(y2) + atol)
-    err  <- err[is.finite(err)] # remove Inf, in case of atol == rtol == 0    
-    if (length(err) > 0)
-      S  <- (dt / max(err)) ^ qerr
-    else
-      S  <- 1
-    
-    if (S > 1) {
-       dtnew  <- min(hmax, dt * c(S, 2))
-       if (verbose) cat("t=", t, " S=", S, " h=", dt, " + \n")
-    } else if (S < 1){
-       dtnew <- dt * min(S, 0.5)
-       if (verbose) cat("t=", t, " S=", S, " h=", dt, " - \n")
-    } else { # S ==1
-       dtnew <- dt
-       if (verbose) cat("t=", t, " S=", S, " h=", dt, " = \n")
-    }
-    ## Final checks ...
-    if (dt < hmin) {
-      if (verbose) cat("h < hmin \n")
-      warning("h < hmin")
-      dtnew <- hmin
-    }
-    ## data storage. Store also imprecise results, but warn if h < hmin
-    if ((S >= 1) | (dt < hmin)) {
-      cat("*")
-      t   <- t + dt
-      y0  <- y2
-      out <- rbind(out, c(t, y0))
-    }
-} else {
-    #---------------------------------------------------------------------------
     ## stepsize adjustment after Press et. al (2007), Numerical Recipes in C
     yabs  <- pmax(abs(y0), abs(y2))
     scal  <- atol + yabs * rtol
@@ -99,17 +60,17 @@ if (MUELLGES) { ## old version
     if (length(err) > 0) {
       ## Press (2007): maximum is fine ...
       err <- max(err)
-      ## ... but we take the euklidean norm
-      #err <- sqrt(sum(delta/scale)^2 / Nstates)
+      ## ... but he takes the euklidean norm
+      #err <- sqrt(sum(err)^2 / length(err))
     } else {
       err  <- 1
     }
 
     if (err == 0) {
-       dtnew <- hmax # hmax must not be Inf, NULL, ... !!!
+       dtnew <- hmax # hmax must not be Inf or NULL !!!
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " +++ \n")
     } else if (err < 1) {  # accept
-       ## safety = 0.9
+       ## safety factor = 0.9
        dtnew  <- max(hmax, dt * 0.9 * (err ^ -qerr))
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " + \n")
     } else if (err > 1){  # reject
@@ -120,20 +81,19 @@ if (MUELLGES) { ## old version
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " = \n")
     }
 
-    ## Final checks ...
+    ## Final check
     if (dt < hmin) {
       if (verbose) cat("h < hmin \n")
       warning("h < hmin")
       istate[1] <- -2
       dtnew <- hmin
     }
-    ## data storage. Store also imprecise results, but warn if h < hmin
+    ## data storage. Store imprecise results too, but warn if h < hmin
     if ((err <= 1) | (dt < hmin)) {
       t   <- t + dt
       y0  <- y2
       out <- rbind(out, c(t, y0))
     }
-}
     steps <- steps + 1
     if (steps > maxsteps) 
       stop("
@@ -147,24 +107,16 @@ if (MUELLGES) { ## old version
   }
   ## attach essential internal information
   ## experimental! Codes similar like lsoda
-  istate[12] <- steps         # number of steps
-  istate[13] <- steps * stage # number of function evaluations
-  istate[15] <- method$Qerr   # order of the method
+  istate[12] <- steps                   # number of steps
+  istate[13] <- steps * stage           # number of function evaluations
+  istate[15] <- method$Qerr             # order of the method
   attr(out, "istate") <- istate
-  
   out
 }
 
 ## Generalized sover for Runge-Kutta methods with fixed time step
-rkFixed <- function(
-  y, times, func, parms, #rtol=1e-6, atol=1e-6,
-	tcrit = NULL, #jacfunc=NULL, jactype = "fullint", 
-  verbose=FALSE,# dllname=NULL, initfunc=dllname, 
-  #initpar=parms,# rpar=NULL, ipar=NULL,
-  #ynames=TRUE, nout=0, outnames=NULL,
-  #hmin=0, hmax=NULL, 
-  hini=0, 
-  method = rkMethod("rk4", ... ), ...) {
+rkFixed <- function( y, times, func, parms, tcrit = NULL,
+  verbose=FALSE, hini=0, method = rkMethod("rk4", ... ), ...) {
     
   stage <- method$stage
   A     <- method$A
@@ -182,11 +134,11 @@ rkFixed <- function(
     cat("hini=", hini, "\n")
   }
   t    <- min(times)
-  tmax <- max(times, tcrit) # NULL is handled automatically by max
+  tmax <- max(times, tcrit)                  # NULL is handled automatically by max
   dt <- hini
   ## derive internal (!) time step
   times <- unique(c(seq(t, tmax, dt), tmax)) # last step may possibly be shorter
-  if (!is.matrix(A)) { # "A" coefficients given as subdiagonal
+  if (!is.matrix(A)) {                       # "A" coefficients given as subdiagonal
     for (i in 1:(length(times) - 1)) {
       t  <- times[i]
       for (j in 1:stage) {
@@ -198,7 +150,7 @@ rkFixed <- function(
       out<- rbind(out, c(times[i + 1], y1))
       y0 <- y1
     }
-  } else { # "A" coefficients given as matrix, not well tested !   
+  } else {                                   # "A" coefficients as matrix, not well tested !
     for (i in 1:(length(times) - 1)) {
       t  <- times[i]
       for (j in 1:stage) {
@@ -221,11 +173,7 @@ rkFixed <- function(
 }
 
 rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
-	tcrit = NULL, #jacfunc=NULL, jactype = "fullint", 
-  verbose=FALSE,# dllname=NULL, initfunc=dllname, 
-  #initpar=parms, rpar=NULL, ipar=NULL,
-  #ynames=TRUE, nout=0, outnames=NULL,
-  hmin = 0, hmax = NULL, hini = hmax, 
+	tcrit = NULL, verbose=FALSE, hmin = 0, hmax = NULL, hini = hmax,
   method = rkMethod("rk45f", ... ), maxsteps = 5000, ...) {
 
 ### check input
@@ -286,8 +234,8 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (!is.null(attr(y, "names"))) names(y) else as.character(1:n)
     )
     
-    ## interpolation (simple linear approximation,
-    ## future versions will use dense output for some rk variants
+    ## interpolation: simple linear approximation,
+    ## future versions may use dense output for some rk variants
     m   <- ncol(out)
     res <- matrix(0, nrow = length(times), ncol = m)
     res[,1] <- times
