@@ -19,7 +19,9 @@ rkMethod(method = NULL, ...)
   \item{\dots}{specification of user-defined solver, see example below.}
 }
 \details{
-  This function is normally called by \code{\link{rk}}
+  This function supplies \code{method} settings for \code{\link{rk}} or 
+  \code{\link{ode}}. If called without arguments, the names of all implemented
+  solvers of the Runge-Kutta family is returned.
 }
 \value{
   A list with the following elements:
@@ -62,6 +64,26 @@ rkMethod(method = NULL, ...)
 
 \seealso{\code{\link{rk}}}
 \examples{
+rkMethod()        # returns the names of all methods
+rkMethod("rk45m7") # parameters of the Dormand-Prince 5(4) method
+
+func <- function(t, x, parms) {
+  with(as.list(c(parms)),{
+    dp <- a * x[1]        - b * x[2] *x[1]
+    dk <- b * x[2] *x[1]  - c * x[2]
+    res<-c(dp, dk)
+    list(res)
+  })
+}
+times  <- seq(0, 20, length = 21)
+parms  <- c(a = 0.1, b = 0.1, c = 0.1)
+x<- c(p=2, k=1)
+
+rk4(x, times, func, parms)
+
+rk(x, times, func, parms, method = rkMethod("rk4"))
+
+ode(x, times, func, parms, method = rkMethod("rk45m7"))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -123,7 +123,7 @@ rkAuto <- function(
   ## attach essential internal information
   ## experimental! Codes similar like lsoda
   istate[12] <- steps                   # number of steps
-  istate[13] <- steps * stage           # number of function evaluations
+  istate[13] <- steps * (stage - FSAL)  # number of function evaluations
   istate[15] <- method$Qerr             # order of the method
   attr(out, "istate") <- istate
   out
