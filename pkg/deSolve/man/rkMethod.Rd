@@ -25,6 +25,7 @@ rkMethod(method = NULL, ...)
   A list with the following elements:
   \item{ID}{name of the method (character)}
   \item{varstep}{boolean value specifying if the method allows for variable time step (\code{TRUE}) or not (\code{FALSE}).}
+    \item{FSAL}{(first step as last) boolean value specifying if the method allows re-use of the last function evaluation (\code{TRUE}) or not (\code{FALSE}).}
   \item{A}{coefficient matrix of the method. 
     As \code{link{rk}} supports only explicit methods, this matrix must be lower triangular.
     \code{A} can also be a vector if only the subdiagonal values are different from zero}
@@ -36,10 +37,10 @@ rkMethod(method = NULL, ...)
   ...
 }
 \references{
-  Runge, C. (1895) Über die numerische Auflösung von Differentialgleichungen,
+  Runge, C. (1895) Ueber die numerische Aufloesung von Differentialgleichungen,
   Math. Ann. 46, 167-178.
 
-  Kutta, W. (1901) Beitrag zur näherungsweisen Integration totaler Differentialgleichungen,
+  Kutta, W. (1901) Beitrag zur naeherungsweisen Integration totaler Differentialgleichungen,
   Z. Math. Phys. 46, 435-453.
 
   Dormand, J. R. and Prince, P. J. (1980) A family of embedded Runge-Kutta formulae,
@@ -48,7 +49,7 @@ rkMethod(method = NULL, ...)
   Dormand, J. R. and Prince, P. J. (1981) High order embedded Runge-Kutta formulae,
   J. Comut. Appl. Math. 7(1), 67-75.
 
-  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fünfter and siebenter Ordnung mit
+  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fuenfter and siebenter Ordnung mit
   Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) 4, 93-106.
 
   Butcher, J. C. (1987) The numerical analysis of ordinary differential equations,

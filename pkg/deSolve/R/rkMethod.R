@@ -104,6 +104,7 @@ rkMethod <- function(method = NULL, ...) {
       ## Prince-Dormand 5(4)7m -- recomended by the Octave developers
       rk45m7 = list(ID = "rk45m7",
            varstep = TRUE,
+           FSAL    = TRUE,
            A  = matrix(c(0, 0, 0, 0, 0, 0,
                         1/5, 0, 0, 0, 0, 0,
                         3/40, 9/40, 0, 0, 0, 0,

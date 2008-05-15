@@ -154,10 +154,10 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     %written to the screen
 }
 \references{
-  Runge, C. (1895) Über die numerische Auflösung von Differentialgleichungen,
+  Runge, C. (1895) Ueber die numerische Aufloesung von Differentialgleichungen,
   Math. Ann. 46, 167-178.
 
-  Kutta, W. (1901) Beitrag zur näherungsweisen Integration totaler Differentialgleichungen,
+  Kutta, W. (1901) Beitrag zur naeherungsweisen Integration totaler Differentialgleichungen,
   Z. Math. Phys. 46, 435-453.
 
   Dormand, J. R. and Prince, P. J. (1980) A family of embedded Runge-Kutta formulae,
@@ -166,7 +166,7 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   Dormand, J. R. and Prince, P. J. (1981) High order embedded Runge-Kutta formulae,
   J. Comut. Appl. Math. 7(1), 67-75.
 
-  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fünfter and siebenter Ordnung mit
+  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fuenfter and siebenter Ordnung mit
   Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) 4, 93-106.
 
   Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and

@@ -13,6 +13,7 @@ rkAuto <- function(
   bb2   <- method$b2
   cc    <- method$c
   qerr  <- 1/method$Qerr
+  FSAL  <- ifelse(is.null(method$FSAL), FALSE, method$FSAL)
   
   ## track essential internal information
   ## experimental! Do it similar like lsoda
@@ -24,6 +25,8 @@ rkAuto <- function(
   steps <- 0
   y0   <- y
   out  <- c(times[1], y0)
+  accept <- FALSE
+  
   if (verbose) {
     cat("method=", method$ID, "\n")
     cat("hini=", hini, "\n")
@@ -35,7 +38,14 @@ rkAuto <- function(
   
   ## function evaluations
   while ((t + dt) <= tmax) {
-    for (j in 1:stage) {
+    ## save one step if the coefficients allow this (first same as last)
+    if (FSAL & accept) {
+          j1 <- 2
+          FF[, 1] <- FF[, stage]
+        } else {
+          j1 <- 1
+    }
+    for (j in j1:stage) {
       Fj <- 0
       k  <- 1 
       while (k < j) {
@@ -67,29 +77,34 @@ rkAuto <- function(
     }
 
     if (err == 0) {
+       accept <- TRUE
        dtnew <- hmax # hmax must not be Inf or NULL !!!
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " +++ \n")
     } else if (err < 1) {  # accept
+       accept <- TRUE
        ## safety factor = 0.9
        dtnew  <- max(hmax, dt * 0.9 * (err ^ -qerr))
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " + \n")
     } else if (err > 1){  # reject
+       accept <- FALSE
        dtnew  <- dt * max(0.9 * (err ^ -qerr), 0.2)
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " - \n")
     } else { # err == 1
+       accept <- TRUE
        dtnew <- dt
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " = \n")
     }
 
     ## Final check
     if (dt < hmin) {
+      accept <- TRUE
       if (verbose) cat("h < hmin \n")
       warning("h < hmin")
       istate[1] <- -2
       dtnew <- hmin
     }
     ## data storage. Store imprecise results too, but warn if h < hmin
-    if ((err <= 1) | (dt < hmin)) {
+    if (accept) {
       t   <- t + dt
       y0  <- y2
       out <- rbind(out, c(t, y0))
