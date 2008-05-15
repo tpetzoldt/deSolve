@@ -154,12 +154,31 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     %written to the screen
 }
 \references{
+  Runge, C. (1895) Über die numerische Auflösung von Differentialgleichungen,
+  Math. Ann. 46, 167-178.
+
+  Kutta, W. (1901) Beitrag zur näherungsweisen Integration totaler Differentialgleichungen,
+  Z. Math. Phys. 46, 435-453.
+
+  Dormand, J. R. and Prince, P. J. (1980) A family of embedded Runge-Kutta formulae,
+  J. Comput. Appl. Math. 6(1), 19-26.
+
+  Dormand, J. R. and Prince, P. J. (1981) High order embedded Runge-Kutta formulae,
+  J. Comut. Appl. Math. 7(1), 67-75.
+
+  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fünfter and siebenter Ordnung mit
+  Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) 4, 93-106.
+
   Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and
-  Flannery, B. P. (1992) Numerical Recipes in C. Cambridge
+  Flannery, B. P. (2007) Numerical Recipes in C. Cambridge
   University Press.
   
-  %% add more references here; textbooks and original references
-  }
+  Butcher, J. C. (1987) The numerical analysis of ordinary differential equations,
+  Runge-Kutta and general linear methods, Wiley, Chichester and New York.
+  
+  Engeln-Muellges, G. and Reutter, F. (1996) Numerik Algorithmen:
+  Entscheidungshilfe zur Auswahl und Nutzung. VDI Verlag, Duesseldorf.
+}
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
 \note{
