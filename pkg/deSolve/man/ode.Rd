@@ -10,7 +10,8 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk"), ...)}
   \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
      		See details}
   \item{parms }{parameters passed to the integrator}
-  \item{method }{the integrator to use, either a string ("lsoda","lsode","lsodes","lsodar","vode",or "daspk") or a function that performs integration}
+  \item{method }{the integrator to use, either a string ("lsoda","lsode","lsodes","lsodar","vode",or "daspk") or a function that performs integration, or
+    a list of class \code{rkMethod}.}
   \item{... }{additional arguments passed to the integrator}
 }
 \value{
@@ -29,6 +30,7 @@ See the selected integrator for the additional options}
 \seealso{\item \code{\link{ode.band}}, and \code{\link{ode.1D}} when the jacobian is banded
  	\item \code{\link{aquaphy}}, \code{\link{ccl4model}}, where \code{ode} is used
 
-	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}
+	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
+  \item  \code{\link{rk}}, \code{\link{rkMethod}}}
 \keyword{math}
 

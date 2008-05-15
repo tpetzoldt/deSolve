@@ -126,5 +126,6 @@ rkMethod <- function(method = NULL, ...) {
     out <- vector("list",0)
   }
   out[names(ldots)] <- ldots
+  class(out) <- c("list", "rkMethod")
   out
 }

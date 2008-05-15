@@ -12,9 +12,10 @@ ode    <- function (y,
                     ...)
 {
   if (is.null(method)) method <- "lsoda"
-  if ( is.list(method)) 
-    out <- NULL # Thomas: 
-  else if (is.function(method))
+  if (is.list(method)) {
+    if (!is(method, "rkMethod")) stop("method is not of class rkMethod")
+    out <- rk(y, times, func, parms, method=method, ...)
+  } else if (is.function(method))
     out <- method(y,times,func,parms,...)
   else
    out <- switch(match.arg(method),
