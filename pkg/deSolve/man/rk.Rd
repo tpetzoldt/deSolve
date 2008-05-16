@@ -84,7 +84,7 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
 
   \item{method}{the integrator to use. This can either be a string constant naming one of the
-    pre-defined methods or a call to function \code{link{rkMethod}} specifying a user-defined method.
+    pre-defined methods or a call to function \code{\link{rkMethod}} specifying a user-defined method.
     The most common methods are the fixed-step methods "euler", "rk2", "rk4" 
     or the variable step methods "rk34", "rk45f" or "rk45m7".}
   \item{maxsteps }{maximal number of steps during one call to the solver}
