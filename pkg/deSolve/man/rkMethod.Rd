@@ -16,7 +16,7 @@ rkMethod(method = NULL, ...)
     pre-defined methods of the Runge-Kutta family of solvers.
     The most common methods are the fixed-step methods "euler", "rk2", "rk4" 
     or the variable step methods "rk34", "rk45f" or "rk45m7".}
-  \item{\dots}{specification of user-defined solver, see example below.}
+  \item{\dots}{specification of user-defined solver, see \emph{Value} and example below.}
 }
 \details{
   This function supplies \code{method} settings for \code{\link{rk}} or 
@@ -27,13 +27,17 @@ rkMethod(method = NULL, ...)
   A list with the following elements:
   \item{ID}{name of the method (character)}
   \item{varstep}{boolean value specifying if the method allows for variable time step (\code{TRUE}) or not (\code{FALSE}).}
-    \item{FSAL}{(first step as last) boolean value specifying if the method allows re-use of the last function evaluation (\code{TRUE}) or not (\code{FALSE}).}
+    \item{FSAL}{(first step as last) boolean value specifying if the method allows
+      re-use of the last function evaluation (\code{TRUE}) or not (\code{FALSE} or \code{NULL}).}
   \item{A}{coefficient matrix of the method. 
     As \code{link{rk}} supports only explicit methods, this matrix must be lower triangular.
     \code{A} can also be a vector if only the subdiagonal values are different from zero}
   \item{b1}{weighting coefficients for averaging the function evaluations of method 1}
-  \item{b2}{weighting coefficients for averaging the function evaluations of method 2 (for embedded methods that allow variable time step)}
+  \item{b2}{weighting coefficients for averaging the function evaluations of method 2
+    (optional, for embedded methods that allow variable time step)}
   \item{c}{coefficients for calculating the intermediate time steps}  
+  \item{d}{coefficients for polynomial interpolation of the outputs from internal
+    steps (dense output), currently only available for method \code{rk45m7} (Dormand-Prince).}
   \item{stage}{number of function evaluations needed (corresponds to number of rows in A)}  
   \item{Qerr}{global error order of the method, important for automatic time-step adjustment.}    
   ...
@@ -62,7 +66,7 @@ rkMethod(method = NULL, ...)
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
-\seealso{\code{\link{rk}}}
+\seealso{\code{\link{rk}}, \code{\link{ode}}}
 \examples{
 rkMethod()         # returns the names of all methods
 rkMethod("rk45m7") # parameters of the Dormand-Prince 5(4) method
@@ -79,9 +83,13 @@ times  <- seq(0, 20, length = 21)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
 x<- c(p=2, k=1)
 
-rk(x, times, func, parms, method = rkMethod("rk4"))
+ode(x, times, func, parms, method = rkMethod("rk4"))
 
 ode(x, times, func, parms, method = rkMethod("rk45m7"))
+
+## disable polynomial interpolation (dense output)
+## and fall back to linear approximation
+ode(x, times, func, parms, method = rkMethod("rk45m7", d = NULL))
 
 ## define and use a new rk method
 ode(x, times, func, parms, 

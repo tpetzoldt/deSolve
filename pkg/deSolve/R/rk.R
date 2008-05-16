@@ -12,6 +12,7 @@ rkAuto <- function(
   bb1   <- method$b1
   bb2   <- method$b2
   cc    <- method$c
+  dd    <- method$d
   qerr  <- 1/method$Qerr
   FSAL  <- ifelse(is.null(method$FSAL), FALSE, method$FSAL)
   
@@ -105,9 +106,20 @@ rkAuto <- function(
     }
     ## data storage. Store imprecise results too, but warn if h < hmin
     if (accept) {
+      ## polynomial interpolation ("dense output")
+      if (!is.null(dd)) { # i.e. polynomial constants available
+          densr <- denspar(FF, y0, y1, dt, stage, dd)
+          tdens <- times[times > t & times <= (t + dt)]
+          if (length(tdens) > 0) {
+            newout <- densout(densr, t, tdens, dt) # ??t
+            out <- rbind(out, cbind(tdens, newout))
+          }
+      }  else {
+         newout <- y0
+         out <- rbind(out, c(t, newout))
+      }
       t   <- t + dt
       y0  <- y2
-      out <- rbind(out, c(t, y0))
     }
     steps <- steps + 1
     if (steps > maxsteps) 
@@ -248,16 +260,17 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     nm <- c("time",
       if (!is.null(attr(y, "names"))) names(y) else as.character(1:n)
     )
-    
-    ## interpolation: simple linear approximation,
-    ## future versions may use dense output for some rk variants
-    m   <- ncol(out)
-    res <- matrix(0, nrow = length(times), ncol = m)
-    res[,1] <- times
-    for (i in 2:m) {
-      res[,i] <- as.vector(approx(out[,1], out[,i], times)$y)
+    if (is.null(method$d)) {
+      ## simple linear interpolation
+      ## for all the methods that have no polynomial coefficients d
+      m   <- ncol(out)
+      res <- matrix(0, nrow = length(times), ncol = m)
+      res[,1] <- times
+      for (i in 2:m) {
+        res[,i] <- as.vector(approx(out[,1], out[,i], times)$y)
+      }
+      out <- res
     }
-    out <- res
     ## external outputs
     if (Nglobal > 0) {
       out2 <- matrix(nrow = nrow(out), ncol = Nglobal)
@@ -268,13 +281,6 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
         if (!is.null(Nmtot)) Nmtot else as.character((n + 1) : (n + Nglobal))
       )
     }
-    ## interpolation
-    #m   <- ncol(out)
-    #res <- matrix(0, nrow = length(times), ncol = m)
-    #res[,1] <- times
-    #for (i in 2:m) {
-    #  res[,i] <- as.vector(approx(out[,1], out[,i], times)$y)
-    #}
     dimnames(out) <- list(NULL, nm)
     attr(out, "istate") <- istate
     out
