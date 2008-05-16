@@ -115,8 +115,8 @@ rkAuto <- function(
             out <- rbind(out, cbind(tdens, newout))
           }
       }  else {
-         newout <- y0
-         out <- rbind(out, c(t, newout))
+         newout <- y2
+         out <- rbind(out, c(t + dt, newout))
       }
       t   <- t + dt
       y0  <- y2
@@ -132,6 +132,7 @@ rkAuto <- function(
     dt  <- min(dtnew, tmax - t)
     if (t >= tmax) break
   }
+
   ## attach essential internal information
   ## experimental! Codes similar like lsoda
   istate[12] <- steps                   # number of steps
