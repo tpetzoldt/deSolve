@@ -64,7 +64,7 @@ rkMethod(method = NULL, ...)
 
 \seealso{\code{\link{rk}}}
 \examples{
-rkMethod()        # returns the names of all methods
+rkMethod()         # returns the names of all methods
 rkMethod("rk45m7") # parameters of the Dormand-Prince 5(4) method
 
 func <- function(t, x, parms) {
@@ -79,14 +79,25 @@ times  <- seq(0, 20, length = 21)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
 x<- c(p=2, k=1)
 
-rk4(x, times, func, parms)
-
 rk(x, times, func, parms, method = rkMethod("rk4"))
 
 ode(x, times, func, parms, method = rkMethod("rk45m7"))
 
+## define and use a new rk method
+ode(x, times, func, parms, 
+  method = rkMethod(ID = "midpoint",
+    varstep = FALSE,
+    #A       = matrix(c(0, 0, 1/2, 0), nrow=2, byrow=TRUE), 
+    # or simply, because this A is nonzero only in the subdiagonal
+    A      = c(0, 1/2),
+    b1      = c(0, 1),
+    c       = c(0, 1/2),
+    stage   = 2,
+    Qerr    = 1
+  )
+)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{ math }
 

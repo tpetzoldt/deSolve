@@ -165,24 +165,24 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
       out<- rbind(out, c(times[i + 1], y1))
       y0 <- y1
     }
-  } else {                                   # "A" coefficients as matrix, not well tested !
+  } else {                                   # "A" coefficients as matrix
     for (i in 1:(length(times) - 1)) {
       t  <- times[i]
       for (j in 1:stage) {
-        Fj <- 0
-        k  <- 1 
+        k  <- 1
+        Fj <- 0 
         while (k < j) {
-          if (k>0) Fj <- Fj + A[j, k] * FF[ ,k]
+          #if (j == 1) Fj <- 0 else Fj <- Fj + A[j, k] * FF[ , k]
+          Fj <- Fj + A[j, k] * FF[ , k]
           k <- k + 1
         }
         FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms, ...)[[1]]
       }
+      dy <- FF %*% bb1
+      y1 <- y0 + dy
+      out<- rbind(out, c(times[i + 1], y1))
+      y0 <- y1
     }
-    ## Estimation of new values
-    dy1  <- FF %*% bb1
-    y1   <- y0 + dy1
-    ## data storage
-    out <- rbind(out, c(t, y0))
   } # end if
   out
 }
