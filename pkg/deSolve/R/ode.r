@@ -8,7 +8,8 @@ ode    <- function (y,
                     times,
                     func,
                     parms,
-                    method= c("lsoda","lsode","lsodes","lsodar","vode","daspk"),
+                    method= c("lsoda","lsode","lsodes","lsodar","vode","daspk",
+                              "euler", "rk4", "ode23", "ode45"),
                     ...)
 {
   if (is.null(method)) method <- "lsoda"
@@ -37,7 +38,9 @@ ode.1D    <- function (y,
                        method= "lsode",
                        ...)
 {
-  if (hasArg(jacfunc)) stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
+  if (any(!is.na(pmatch(names(list(...)), "jacfunc")))) 
+    stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
+  #if (hasArg(jacfunc)) stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
   if (is.null(nspec)  ) stop ("cannot run ode.1D: nspec is not specified")
   N     <- length(y)
 
