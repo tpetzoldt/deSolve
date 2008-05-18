@@ -25,7 +25,12 @@ ode    <- function (y,
     lsode = lsode(y,times,func,parms,...),
     lsodes=lsodes(y,times,func,parms,...),
     lsodar=lsodar(y,times,func,parms,...),
-    daspk = daspk(y,times,func,parms,...))
+    daspk = daspk(y,times,func,parms,...),
+    euler = rk(y,times,func,parms, method="euler", ...),
+    rk4   = rk(y,times,func,parms, method="rk4",...),
+    ode23 = rk(y,times,func,parms, method="ode23",...),
+    ode45 = rk(y,times,func,parms, method="ode45",...)
+    )
 
   return(out)
 }
