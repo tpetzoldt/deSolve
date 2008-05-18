@@ -23,29 +23,30 @@ rkMethod(method = NULL, ...)
   \code{\link{ode}}. If called without arguments, the names of all implemented
   solvers of the Runge-Kutta family is returned.
   
-  The following comparison should an idea how the algorithms of \pkg{deSolve}
+  The following comparison gives an idea how the algorithms of \pkg{deSolve}
   are related to similar algorithms of other simulation languages:
   
-  \tabular{llll}{
-    \bold{\R}      \tab \bold{Gnu Octave} \tab \bold{MATLAB (R)} \tab \bold{Description} \cr
-    "euler"   \tab \tab \tab Euler's Method\cr
-    "rk2"     \tab \tab \tab 2nd order Runge-Kutta, fixed time step (Heun's method)\cr
-    "rk4"     \tab \tab \tab classical 4th order Runge-Kutta, fixed time step\cr
-%    "rk12"    \tab \tab \tab Euler-Heun, order 1(2)\cr
-    "rk23"   \tab "ode23" \tab \tab Runge-Kutta, order 2(3)\cr
-    "rk23bs"   \tab \tab "ode23" \tab Bogacki-Shampine, order 2(3)\cr
-    "rk34f"   \tab \tab \tab Runge-Kutta-Fehlberg, order 3(4)\cr
-    "rk45f"   \tab "ode45", pair=1 \tab \tab Runge-Kutta-Fehlberg, order 4(5) \cr
-    "rk45e"   \tab \tab \tab Runke-Kutta-England, order 4(5)\cr
-    "rk45dp6"  \tab  \tab \tab Dormand-Price, order 4(5), local order 6\cr
-    "rk45dp7"  \tab "ode45", (default) \tab "ode45" \tab Dormand-Prince 4(5) coefficients (also known as \bold{dopri5})\cr
+  \tabular{lll}{
+    \bold{\R}       \tab | \tab \bold{Description} \cr
+    "euler"         \tab | \tab Euler's Method\cr
+    "rk2"           \tab | \tab 2nd order Runge-Kutta, fixed time step (Heun's method)\cr
+    "rk4"           \tab | \tab classical 4th order Runge-Kutta, fixed time step\cr
+%    "rk12"         \tab | \tab Euler-Heun, order 1(2)\cr
+    "rk23"          \tab | \tab Runge-Kutta, order 2(3), Octave: \bold{ode23}\cr
+    "rk23bs", "ode23"   \tab | \tab Bogacki-Shampine, order 2(3), Matlab: \bold{ode23}\cr
+    "rk34f"         \tab | \tab Runge-Kutta-Fehlberg, order 3(4)\cr
+    "rk45f"         \tab | \tab Runge-Kutta-Fehlberg, order 4(5), Octave: \bold{ode45, pair=1} \cr
+    "rk45e"         \tab | \tab Runke-Kutta-England, order 4(5)\cr
+    "rk45dp6"       \tab | \tab Dormand-Price, order 4(5), local order 6\cr
+    "rk45dp7", "ode45"  \tab | \tab Dormand-Prince 4(5) coefficients 
+        (also known as \bold{dopri5}, Matlab: \bold{ode45}, Octave: \bold{ode45, pair=0})\cr
   }
   
-  Note that this comparison is related to Runge-Kutta coefficients only, 
-  but that the algorithms differ in their implementations and in particular
-  their adaptive stepsize strategy and interpolation methods.
-  
+  Note that this table is based on the Runge-Kutta coefficients only, 
+  but  the algorithms do also differ in their implementation and in
+  their stepsize adaption strategy and interpolation methods.
 }
+
 \note{  
   \itemize{
    \item The Runge-Kutta solvers are primarily provided for didactic reasons. 
@@ -119,8 +120,9 @@ rkMethod(method = NULL, ...)
 
 \seealso{\code{\link{rk}}, \code{\link{ode}}}
 \examples{
-rkMethod()         # returns the names of all methods
+rkMethod()          # returns the names of all methods
 rkMethod("rk45dp7") # parameters of the Dormand-Prince 5(4) method
+rkMethod("ode45")   # an alias for the same method
 
 func <- function(t, x, parms) {
   with(as.list(c(parms)),{
@@ -136,7 +138,7 @@ x<- c(p=2, k=1)
 
 ode(x, times, func, parms, method = rkMethod("rk4"))
 
-ode(x, times, func, parms, method = rkMethod("rk45dp7"))
+ode(x, times, func, parms, method = "ode45")
 
 ## disable polynomial interpolation (dense output)
 ## and fall back to linear approximation

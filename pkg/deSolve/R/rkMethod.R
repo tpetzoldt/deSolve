@@ -146,11 +146,16 @@ rkMethod <- function(method = NULL, ...) {
          Qerr  = 4
     )
   )
-  ## look if the method is known
-  knownMethods <- lapply(methods,"[[", "ID")
+  ## look if the method is known, ode23 and ode34 are used as synonyms
+  knownMethods <- c(lapply(methods,"[[", "ID"), "ode23", "ode45")
 
   if (!is.null(method)) {
-    match.arg(method, knownMethods)
+    method <- unlist(match.arg(method, knownMethods))
+    if (method == "ode23") 
+      method <- "rk23bs"
+    else if (method == "ode45") 
+      method <- "rk45dp7"
+      
     out <- methods[[method]]
   } else {
     out <- vector("list", 0)
