@@ -1,6 +1,6 @@
 ## polynomial interpolation for dense output
 denspar <- function(FF, y0, y1, dt, stage, d) {
-  r <- matrix(0, nrow=length(y0), ncol=5)
+  r <- matrix(0, nrow = length(y0), ncol = 5)
   r[,1] <- y0
   ydiff <- y1 - y0
   r[,2] <- ydiff
@@ -8,6 +8,7 @@ denspar <- function(FF, y0, y1, dt, stage, d) {
   r[,3] <- bspl
   r[,4] <- ydiff - dt * FF[, stage] - bspl
   for (i in 1:stage) r[,5]  <- r[,5] * d[i] * FF[,i]
+  #r[,5] <- colSums(t(FF) * d) # this is slower
   r[,5] <- r[,5] * dt
   return(r)
 }

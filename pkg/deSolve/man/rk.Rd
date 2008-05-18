@@ -1,9 +1,8 @@
 \name{rk}
 \alias{rk}
-\alias{rkAuto}
-\alias{rkFixed}
 
-\title{Explicit one-step solvers for ordinary differential equations (ODE)}
+
+\title{Explicit One-Step Solvers for Ordinary Differential Equations (ODE)}
 \description{
   Solving initial value problems for 
   non-stiff systems of first-order ordinary differential equations
@@ -26,14 +25,7 @@
 \usage{
 rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06, 
   tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax, 
-  method = rkMethod("rk45f", ...), maxsteps = 5000, ...)
-  
-rkFixed(y, times, func, parms, tcrit = NULL, verbose = FALSE, hini = 0, 
-  method = rkMethod("rk4", ...), ...)
-
-rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06, 
-  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = 0, 
-  method = rkMethod("rk45f", ...), maxsteps = 5000, ...)  
+  method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -86,18 +78,27 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \item{method}{the integrator to use. This can either be a string constant naming one of the
     pre-defined methods or a call to function \code{\link{rkMethod}} specifying a user-defined method.
     The most common methods are the fixed-step methods "euler", "rk2", "rk4" 
-    or the variable step methods "rk34", "rk45f" or "rk45m7".}
+    or the variable step methods "rk23bs", "rk34f", "rk45f" or "rk45dp7".}
   \item{maxsteps }{maximal number of steps during one call to the solver}
   \item{... }{additional arguments passed to \code{func} allowing this to be a generic function}
 
 }
 \details{
   %% introductory sentence
-  
-  %% sentence about fixed anv variable time step methods
-  \code{rk}  ...
-  
-  %% sentence about \code{\link{rkMethod}} and the coefficients defined therein
+  The Runge-Kutta solvers are primarily provided for didactic reasons. 
+  For most practical cases, solvers of the Livermore family 
+  (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
+  \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}})
+  are superior because of higher efficiency and faster implementation 
+  (FORTRAN and C). 
+  In addition to this, some of the Livermore solvers are also suitable for stiff 
+  ODEs, differential algebraic equations (DAEs), or partial differential equations 
+  (PDEs).
+
+  Function \code{rk} is a generalized implementation that can be used to evaluate
+  different solvers of the Runge-Kutta family. A pre-definded set of common
+  method parameters is pre-defined in function \code{\link{rkMethod}} which also 
+  allows to supply user-defined Butcher tables. 
     
   The input parameters \code{rtol}, and \code{atol} determine the error
   control performed by the solver.  The solver will control the vector
@@ -111,15 +112,15 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \deqn{\mathbf{rtol} \times \mathrm{abs}(\mathbf{y}) + \mathbf{atol}}{\bold{rtol} * abs(\bold{y}) + \bold{atol}}
   
   where multiplication of two vectors is element-by-element.
-    
-  
-  \bold{Models} can be defined in R as a user-supplied \bold{R-function}, 
+     
+  \bold{Models} can be defined in \R as a user-supplied \bold{R-function}, 
   that must be called as: yprime = func(t, y, parms). 
   t is the current time point in the integration, 
   y is the current estimate of the variables in the ODE system. 
   The return value of \code{func} should be a list, whose first element is a 
   vector containing the derivatives of y with respect to time, 
-  and whose second element contains output variables that are required at each point in time. 
+  and whose second element contains output variables that are required at each 
+  point in time. 
   \cr An example is given below:
   
     \code{model<-function(t,Y,parameters)}\cr
@@ -131,44 +132,34 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
       \code{list(c(dy1,dy2,dy3))}\cr         
       \code{\})}\cr
   \code{\}}\cr
-  
- 
- %% write something about istate and rstate (if eventually implemented)
  
 }
 \value{
-    A matrix with up to as many rows as elements in \code{times} and as
-    many columns as elements in \code{y} plus the number of "global"
-    values returned in the next elements of the return from \code{func},
-    plus and additional column for the time value.  There will be a row
-    for each element in \code{times} unless the solver
-    returns with an unrecoverable error.  If \code{y} has a names
-    attribute, it will be used to label the columns of the output value.
+  A matrix with up to as many rows as elements in \code{times} and as
+  many columns as elements in \code{y} plus the number of "global"
+  values returned in the next elements of the return from \code{func},
+  plus and additional column for the time value.  There will be a row
+  for each element in \code{times} unless the solver
+  returns with an unrecoverable error.  If \code{y} has a names
+  attribute, it will be used to label the columns of the output value.
+
+  The output will have the attributes \code{istate}, and \code{rstate}, 
+  two vectors with several useful elements. 
+  See details.
+
+  The output will have the \bold{attributes *istate*, and *rstate*}, 
+  two vectors with several useful elements, whose interpretation is
+  compatible with \code{\link{lsoda}}:
   
-    The output will have the attributes \code{istate}, and \code{rstate}, 
-    two vectors with several useful elements. 
-    See details.
-    %The first element of istate returns the conditions under which the last 
-    %call to lsoda returned. Normal is \code{istate[1] = 2}.
-    %If \code{verbose} = TRUE, the settings of istate and rstate will be 
-    %written to the screen
+  \itemize{
+    \item{el 1:}{0 for normal return,  -2 means excess accuracy requested.}
+      (Tolerances too small),
+    \item{el 12:}{The number of steps taken for the problem so far.}
+    \item{el 13:}{The number of function evaluations for the problem so far.}
+    \item{el 15:}{The order of the method.}
+  }   
 }
 \references{
-  Runge, C. (1895) Ueber die numerische Aufloesung von Differentialgleichungen,
-  Math. Ann. 46, 167-178.
-
-  Kutta, W. (1901) Beitrag zur naeherungsweisen Integration totaler Differentialgleichungen,
-  Z. Math. Phys. 46, 435-453.
-
-  Dormand, J. R. and Prince, P. J. (1980) A family of embedded Runge-Kutta formulae,
-  J. Comput. Appl. Math. 6(1), 19-26.
-
-  Dormand, J. R. and Prince, P. J. (1981) High order embedded Runge-Kutta formulae,
-  J. Comut. Appl. Math. 7(1), 67-75.
-
-  Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fuenfter and siebenter Ordnung mit
-  Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) 4, 93-106.
-
   Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and
   Flannery, B. P. (2007) Numerical Recipes in C. Cambridge
   University Press.
@@ -181,14 +172,6 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
-\note{
-  \code{\link{rkAuto}} and \code{\link{rkFixed}} are the core functions that
-  perform the integration and that normally should not be called directly 
-  by the user. 
-  Note that, in contrast to the top-level function \code{\link{rk}} 
-  these two functions do not check their arguments
-  and several arguments have slightly different meaning.
-}
 
 \seealso{\code{\link{rkMethod}}
          \code{\link{lsoda}}, 
@@ -234,7 +217,7 @@ rkAuto(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini = 1, method="rk4"))
   
   ## Dormand-Prince method of order 5(4)
-  out3 <- as.data.frame(rk(xstart, times, lvmodel, parms, hmax=1, method = "rk45m7"))
+  out3 <- as.data.frame(rk(xstart, times, lvmodel, parms, hmax=1, method = "rk45dp7"))
   
   par(mfrow=c(2,2))
   plot (out1$time, out1$s,  type="l",   ylim=c(0,3))

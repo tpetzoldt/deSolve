@@ -1,8 +1,8 @@
 \name{rkMethod}
 \alias{rkMethod}
 
-\title{Collection of parameter sets (Butcher arrays) for common methods
-  of the Runge-Kutta family of ODE solvers.}
+\title{Collection of Parameter Sets (Butcher Arrays) for 
+  the Runge-Kutta Family of ODE Solvers}
 \description{
   This function returns a list specifying coefficients and properties of
   ODE solver methods from the Runge-Kutta family.
@@ -15,13 +15,57 @@ rkMethod(method = NULL, ...)
   \item{method}{a string constant naming one of the
     pre-defined methods of the Runge-Kutta family of solvers.
     The most common methods are the fixed-step methods "euler", "rk2", "rk4" 
-    or the variable step methods "rk34", "rk45f" or "rk45m7".}
+    or the variable step methods "rk23bs", "rk34f", "rk45f" or "rk45dp7".}
   \item{\dots}{specification of user-defined solver, see \emph{Value} and example below.}
 }
 \details{
   This function supplies \code{method} settings for \code{\link{rk}} or 
   \code{\link{ode}}. If called without arguments, the names of all implemented
   solvers of the Runge-Kutta family is returned.
+  
+  The following comparison should an idea how the algorithms of \pkg{deSolve}
+  are related to similar algorithms of other simulation languages:
+  
+  \tabular{llll}{
+    \bold{\R}      \tab \bold{Gnu Octave} \tab \bold{MATLAB (R)} \tab \bold{Description} \cr
+    "euler"   \tab \tab \tab Euler's Method\cr
+    "rk2"     \tab \tab \tab 2nd order Runge-Kutta, fixed time step (Heun's method)\cr
+    "rk4"     \tab \tab \tab classical 4th order Runge-Kutta, fixed time step\cr
+%    "rk12"    \tab \tab \tab Euler-Heun, order 1(2)\cr
+    "rk23"   \tab "ode23" \tab \tab Runge-Kutta, order 2(3)\cr
+    "rk23bs"   \tab \tab "ode23" \tab Bogacki-Shampine, order 2(3)\cr
+    "rk34f"   \tab \tab \tab Runge-Kutta-Fehlberg, order 3(4)\cr
+    "rk45f"   \tab "ode45", pair=1 \tab \tab Runge-Kutta-Fehlberg, order 4(5) \cr
+    "rk45e"   \tab \tab \tab Runke-Kutta-England, order 4(5)\cr
+    "rk45dp6"  \tab  \tab \tab Dormand-Price, order 4(5), local order 6\cr
+    "rk45dp7"  \tab "ode45", (default) \tab "ode45" \tab Dormand-Prince 4(5) coefficients (also known as \bold{dopri5})\cr
+  }
+  
+  Note that this comparison is related to Runge-Kutta coefficients only, 
+  but that the algorithms differ in their implementations and in particular
+  their adaptive stepsize strategy and interpolation methods.
+  
+}
+\note{  
+  \itemize{
+   \item The Runge-Kutta solvers are primarily provided for didactic reasons. 
+     For most practical cases, solvers of the Livermore family 
+     (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
+     \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}})
+     are superior because of higher efficiency and faster implementation 
+     (FORTRAN and C). 
+     In addition to this, some of the Livermore solvers are also suitable for stiff 
+     ODEs, differential algebraic equations (DAEs), or partial differential equations 
+     (PDEs).
+   \item Among the \code{rk} solvers, "rk45dp7" is used by default,
+     because of its high order (4), re-use of the last intermediate
+     steps (FSAL = first same as last) and built-in polynomial interpolation 
+     (dense output). Solver "rk23bs", that supports also FSAL, may be useful
+     for slightly stiff systems if demands on precision are low. Classical 
+     "rk4" is traditionally used in cases where an adequate stepsize is
+     known a-priori or if external forcing data are provided
+     for fixed time steps only and interpolation of external data is not desired.
+  }
 }
 \value{
   A list with the following elements:
@@ -37,39 +81,46 @@ rkMethod(method = NULL, ...)
     (optional, for embedded methods that allow variable time step)}
   \item{c}{coefficients for calculating the intermediate time steps}  
   \item{d}{coefficients for polynomial interpolation of the outputs from internal
-    steps (dense output), currently only available for method \code{rk45m7} (Dormand-Prince).}
+    steps (dense output), currently only available for method \code{rk45dp7} (Dormand-Prince).}
   \item{stage}{number of function evaluations needed (corresponds to number of rows in A)}  
   \item{Qerr}{global error order of the method, important for automatic time-step adjustment.}    
-  ...
 }
 \references{
   Runge, C. (1895) Ueber die numerische Aufloesung von Differentialgleichungen,
-  Math. Ann. 46, 167-178.
+  Math. Ann. \bold{46}, 167--178.
 
   Kutta, W. (1901) Beitrag zur naeherungsweisen Integration totaler Differentialgleichungen,
-  Z. Math. Phys. 46, 435-453.
+  Z. Math. Phys. \bold{46}, 435--453.
 
   Dormand, J. R. and Prince, P. J. (1980) A family of embedded Runge-Kutta formulae,
-  J. Comput. Appl. Math. 6(1), 19-26.
+  J. Comput. Appl. Math. \bold{6}(1), 19--26.
 
   Dormand, J. R. and Prince, P. J. (1981) High order embedded Runge-Kutta formulae,
-  J. Comut. Appl. Math. 7(1), 67-75.
+  J. Comput. Appl. Math. \bold{7}(1), 67--75.
+  
+  Bogacki, P. and Shampine L.F. (1989) A 3(2) pair of Runge-Kutta formulas, 
+    Appl. Math. Lett. \bold{2}, 1--9. 
 
   Fehlberg, E. (1967) Klassische Runge-Kutta-Formeln fuenfter and siebenter Ordnung mit
-  Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) 4, 93-106.
+  Schrittweiten-Kontrolle, Computing (Arch. Elektron. Rechnen) \bold{4}, 93--106.
 
   Butcher, J. C. (1987) The numerical analysis of ordinary differential equations,
   Runge-Kutta and general linear methods, Wiley, Chichester and New York.
 
   Engeln-Muellges, G. and Reutter, F. (1996) Numerik Algorithmen:
   Entscheidungshilfe zur Auswahl und Nutzung. VDI Verlag, Duesseldorf.
+  
+  Octave-Forge - Extra Packages for GNU Octave, Package OdePkg. 
+    \url{http://octave.sourceforge.net/doc/odepkg.html}
+    
+  MATLAB (R) is a registed property of The Mathworks Inc. \url{http://www.mathworks.com/}  
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
 \seealso{\code{\link{rk}}, \code{\link{ode}}}
 \examples{
 rkMethod()         # returns the names of all methods
-rkMethod("rk45m7") # parameters of the Dormand-Prince 5(4) method
+rkMethod("rk45dp7") # parameters of the Dormand-Prince 5(4) method
 
 func <- function(t, x, parms) {
   with(as.list(c(parms)),{
@@ -85,11 +136,11 @@ x<- c(p=2, k=1)
 
 ode(x, times, func, parms, method = rkMethod("rk4"))
 
-ode(x, times, func, parms, method = rkMethod("rk45m7"))
+ode(x, times, func, parms, method = rkMethod("rk45dp7"))
 
 ## disable polynomial interpolation (dense output)
 ## and fall back to linear approximation
-ode(x, times, func, parms, method = rkMethod("rk45m7", d = NULL))
+ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL))
 
 ## define and use a new rk method
 ode(x, times, func, parms, 

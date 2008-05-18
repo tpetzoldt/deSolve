@@ -79,8 +79,9 @@ system.time(out2x <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=.1,
 
 plotIt("blue")
 
-## rk45f, (currently) default of new generalized implementation
-system.time(out2x <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1)))
+## rk23bs
+system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+  method = rkMethod("rk23bs"))))
 
 plotIt()
  
@@ -92,13 +93,13 @@ plotIt("blue")
 
 ## Prince-Dormand  5(4)7m
 system.time(out2x <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
-  hmax = 1, hmin=0.1, method = rkMethod("rk45m7"))))
+  hmax = 1, hmin=0.1, method = rkMethod("rk45dp7"))))
 
 plotIt()
   
 ##other syntax 
 system.time(out2x <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
-  hmax = 1, hmin=0.1, method = "rk45m7")))  
+  hmax = 1, hmin=0.1, method = "rk45dp7")))  
 
 plotIt("blue")
 
@@ -106,7 +107,7 @@ plotIt("blue")
 ## if all tolerance values are zero, hini is retained as fixed step
 ## Prince-Dormand  5(4)7m
 system.time(out2x <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
-  hmax = 10, method = rkMethod("rk45m7"), atol=c(0, 0, 0), rtol=c(0, 0, 0))))
+  hmax = 10, method = rkMethod("rk45dp7"), atol=c(0, 0, 0), rtol=c(0, 0, 0))))
 
 plotIt()
 

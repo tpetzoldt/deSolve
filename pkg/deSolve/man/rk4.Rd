@@ -1,21 +1,18 @@
 \name{rk4}
 \alias{rk4}
-\title{Solve System of ODE (ordinary differential equation)s by
-    classical Runge-Kutta 4th order integration.}
+\alias{euler}
+\title{Solve System of ODE (Ordinary Differential Equation)s by
+    Euler's Method or Classical Runge-Kutta 4th Order Integration.}
 \description{Solving initial value problems for 
     systems of first-order ordinary differential equations
     (ODEs) using the classical Runge-Kutta 4th order integration.
-    The system of ODE's may be written as an \R function (which
-    may, of course, use \code{\link{.C}}, \code{.Fortran},
-    \code{\link{.Call}}, etc., to call foreign code).
-    A vector of parameters is passed to the ODEs, so the solver may
-    be used as part of a modeling package for ODEs, or for parameter
-    estimation using any appropriate modeling tool for non-linear models
-    in \R such as \code{\link{optim}}, \code{\link[nls]{nls}},
-    \code{\link{nlm}} or \code{\link[nlme]{nlme}}.}
-\usage{rk4(y, times, func, parms, ...)}
+    This function is convenience function which calls itself \code{\link{rk}} .}
+\usage{
+rk4(y, times, func, parms, hini=min(diff(times)), ...)
+euler(y, times, func, parms, hini=min(diff(times)), ...)
+}
 \arguments{
-  \item{y }{the initial values for the ode system.  If \code{y} has a
+  \item{y }{the initial values for the ODE system.  If \code{y} has a
       name attribute, the names will be used to label the output matrix.}
   \item{times }{times at which explicit estimates for \code{y} are
       desired.  The first value in \code{times} must be the initial time.}
@@ -35,69 +32,61 @@
       each point in \code{times}.}
   \item{parms }{vector or list holding the parameters used in \code{func} 
      that should be modifiable without rewriting the function.}
+  \item{hini}{length of the (fixed) internal time step.}
   \item{... }{additional arguments, allowing this to be a generic function}
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
-\examples{## A simple resource limited Lotka-Volterra-Model
-  lvmodel <- function(t, x, parms) {
-    s <- x[1] # substrate
-    p <- x[2] # producer
-    k <- x[3] # consumer
-    with(as.list(parms),{
-      import <- approx(signal$times, signal$import, t)$y
-      ds <- import - b*s*p + g*k
-      dp <- c*s*p  - d*k*p
-      dk <- e*p*k  - f*k
-      res<-c(ds, dp, dk)
-      list(res)
-    })
-  }
-  
-  ## vector of timesteps
-  times  <- seq(0, 100, length=101)
-  
-  ## external signal with rectangle impulse
-  signal <- as.data.frame(list(times = times,
-                              import = rep(0,length(times))))
-  
-  signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
-  
-  ## Parameters for steady state conditions
-  parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
-  
-  ## Start values for steady state
-  y<-xstart <- c(s=1, p=1, k=1)
-  
-  ## Classical RK4 with fixed time step
-  out1  <- as.data.frame(rk4(xstart, times, lvmodel, parms))
-  
-  ## LSODA (default step size)
-  out2 <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
-  
-  ## LSODA: with fixed maximum time step
-  out3 <- as.data.frame(lsoda(xstart, times, lvmodel, parms, hmax=1))
-  
-  par(mfrow=c(2,2))
-  plot (out1$time, out1$s,  type="l",   ylim=c(0,3))
-  lines(out2$time, out2$s, col="red",   lty="dotted")
-  lines(out3$time, out3$s, col="green", lty="dotted")
-  
-  plot (out1$time, out1$p, type="l",    ylim=c(0,3))
-  lines(out2$time, out2$p, col="red",   lty="dotted")
-  lines(out3$time, out3$p, col="green", lty="dotted")
-  
-  plot (out1$time, out1$k, type="l",    ylim=c(0,3))
-  lines(out2$time, out2$k, col="red",   lty="dotted")
-  lines(out3$time, out3$k, col="green", lty="dotted")
-  
-  plot (out1$p, out1$k, type="l")
-  lines(out2$p, out2$k, col="red",   lty="dotted")
-  lines(out3$p, out3$k, col="green", lty="dotted")}
-\references{Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and
-             Flannery, B. P. (1992) Numerical Recipes in C. Cambridge
-  	   University Press.}
-\details{The method is implemented primarily for didactic purposes. Please use
-    \link{lsoda}, \link{lsode} or another integrator for your real work!}
-\seealso{\code{\link{lsoda}}}
+
+\details{See help pages of \code{\link{rk}} and \code{\link{rkMethod}} 
+  for details.
+}
+
+\note{\code{rk4} and \code{euler} are primarily provided for didactic reasons. 
+     For most practical cases, solvers with flexible timestep (e.g. "rk45dp7")
+     and especially solvers of the Livermore family  (e.g. \code{\link{lsoda}} are superior. 
+}
+
+\examples{
+## numeric solution of logistic growth
+logist <- function(t, x, parms) {
+  with(as.list(parms), {
+    dx <- r * x[1] * (1 - x[1]/K)
+    list(dx)
+  })
+
+}
+time  <- 0:100
+N0 <- 0.1; r <- 0.5; K <- 100
+parms  <- c(r=r, K=K)
+x<- c(N=N0)
+
+## analytical solution
+plot(time, K/(1+(K/N0-1)*exp(-r*time)), ylim=c(0, 120), type="l", col="red", lwd=2)
+
+## good solution
+out <- as.data.frame(rk4(x, time, logist, parms, hini=2))
+points(out$time, out$N, pch=16, col="blue", cex=0.5)
+
+## same time step, systematic under-estimation
+out <- as.data.frame(euler(x, time, logist, parms, hini=2))
+points(out$time, out$N, pch=1)
+
+## unstable result
+out <- as.data.frame(euler(x, time, logist, parms, hini=4))
+points(out$time, out$N, pch=8, cex=0.5)
+
+
+## method with automatic time step
+out <- as.data.frame(lsoda(x, time, logist, parms))
+points(out$time, out$N, pch=1, col="green")
+}
+
+
+
+\seealso{
+  \code{\link{rk}}, 
+  \code{\link{ode}}, 
+  \code{\link{rkMethod}}, 
+  \code{\link{lsoda}}}
 \keyword{math}
 

@@ -11,7 +11,7 @@ rkMethod <- function(method = NULL, ...) {
     ## Heun's method (rk2)
     rk2 = list(ID = "rk2",
         varstep = FALSE,
-          A      = c(0,1),
+          A      = c(0, 1),
           b1     = c(0.5, 0.5),
           c      = c(0, 1),
           stage  = 2,
@@ -26,15 +26,40 @@ rkMethod <- function(method = NULL, ...) {
           stage  = 4,
           Qerr   = 4
     ),
-    ## Euler-Heun-Method
-    rk12 = list(ID = "rk12",
-         varstep = TRUE,
-         A  = matrix(c(0, 0, 1, 0), 2, 2, byrow = TRUE),
-         b1 = c(0.5, 0.5),
-         b2 = c(1, 0),
-         c  = c(0, 1),
-         stage = 2,
-         Qerr  = 1
+#    ## Euler-Heun-Method
+#    rk12 = list(ID = "rk12",
+#         varstep = TRUE,
+#         A  = matrix(c(0, 0, 1, 0), 2, 2, byrow = TRUE),
+#         b1 = c(0.5, 0.5),
+#         b2 = c(1, 0),
+#         c  = c(0, 1),
+#         stage = 2,
+#         Qerr  = 1
+#    ),
+    rk23 = list(ID = "rk23",  ## One of the numerous RK23 formulae
+      varstep = TRUE,
+      FSAL    = FALSE,
+      A  = matrix(c(0, 0, 0,
+                  1/2, 0, 0,
+                  -1, 2, 0), 3, 3, byrow = TRUE),
+      b1 = c(0, 1, 0),
+      b2 = c(1/6, 2/3, 1/6),
+      c  = c(0, 1/2, 2),
+      stage = 3,
+      Qerr  = 2
+    ),
+    rk23bs = list(ID = "rk23bs",  ## Bogacki & Shampine 
+      varstep = TRUE,
+      FSAL    = TRUE,
+      A  = matrix(c(0, 0, 0, 0,
+                  1/2, 0, 0, 0,
+                  0, 3/4, 0, 0, 
+                  2/9, 1/3, 4/9, 0), 4, 4, byrow = TRUE),
+      b1 = c(2/9, 1/3, 4/9, 0),
+      b2 = c(7/24, 1/4, 1/3, 1/8),
+      c  = c(0, 1/2, 3/4, 1),
+      stage = 4,
+      Qerr  = 2
     ),
     ## RK-Fehlberg 34
     rk34f = list(ID = "rk34f",
@@ -67,7 +92,7 @@ rkMethod <- function(method = NULL, ...) {
          stage = 6,
          Qerr  = 4
     ),
-    ## England Method  # relatively poor
+    ## England Method
     rk45e = list(ID = "rk45e",
          varstep = TRUE,
          A  = matrix(c(0, 0, 0, 0, 0,
@@ -83,8 +108,8 @@ rkMethod <- function(method = NULL, ...) {
          stage = 6,
          Qerr  = 4
     ),
-    ## Prince-Dormand 5(4)6m -- good method
-    rk45m6 = list(ID = "rk45m6",
+    ## Prince-Dormand 5(4)6m
+    rk45dp6 = list(ID = "rk45dp6",
          varstep = TRUE,
          A  = matrix(c(0, 0, 0, 0, 0,
                       1/5, 0, 0, 0, 0,
@@ -100,7 +125,7 @@ rkMethod <- function(method = NULL, ...) {
          Qerr  = 4
     ),
     ## Prince-Dormand 5(4)7m -- recomended by the Octave developers
-    rk45m7 = list(ID = "rk45m7",
+    rk45dp7 = list(ID = "rk45dp7",
          varstep = TRUE,
          FSAL    = TRUE,
          A  = matrix(c(0, 0, 0, 0, 0, 0,

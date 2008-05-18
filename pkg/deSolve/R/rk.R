@@ -5,7 +5,7 @@ rkAuto <- function(
   y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 	tcrit = NULL, verbose = FALSE,
   hmin = 0, hmax = NULL, hini = 0,
-  method = rkMethod("rk45f", ... ), maxsteps = 5000, ...) {
+  method = rkMethod("rk45dp7", ... ), maxsteps = 5000, ...) {
 
   stage <- method$stage
   A     <- method$A
@@ -62,7 +62,7 @@ rkAuto <- function(
     y2   <- y0 + dt * dy2
 
     ## stepsize adjustment after Press et. al (2007), Numerical Recipes in C
-    yabs  <- pmax(abs(y0), abs(y2))
+    yabs  <- pmax.int(abs(y0), abs(y2))
     scal  <- atol + yabs * rtol
     delta <- abs(y2 - y1)
 
@@ -202,7 +202,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
 
 rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 	tcrit = NULL, verbose=FALSE, hmin = 0, hmax = NULL, hini = hmax,
-  method = rkMethod("rk45f", ... ), maxsteps = 5000, ...) {
+  method = rkMethod("rk45dp7", ... ), maxsteps = 5000, ...) {
 
 ### check input
     if (!is.numeric(y))       stop("`y' must be numeric")
