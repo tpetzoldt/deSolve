@@ -2,7 +2,6 @@
 ### daspk -- solves differential algebraic and ordinary differential equation 
 ###          systems defined in res (DAE) or func (ODE)
 ###          and outputs values for the times in `times'
-###          includes a root finding facility
 ###          on input, y and dy contains the initial values of the state 
 ###          variables and rates of changes for times[1]
 ###          parms is a vector of parameters for func.  They should not
