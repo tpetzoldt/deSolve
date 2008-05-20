@@ -46,17 +46,17 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     ## Pass state names to function
     Func    <- function(time, state, parms) 
     { attr(state,"names") <- Ynames
-         func   (time,state,parms,...)[1]}   
+         func(time, state, parms, ...)[[1]]}   
 
     Func2   <- function(time, state, parms) 
     { attr(state,"names") <- Ynames
-         func   (time, state, parms,...)}    
+         func(time, state, parms, ...)}    
  
 
     ## Call func once to figure out whether and how many "global"
     ## results it wants to return and some other safety checks
     rho <- environment(func)
-    tmp <- eval(func(times[1], y, parms, ...), rho)
+    tmp <- eval(Func2(times[1], y, parms, ...), rho)
     if (!is.list(tmp)) stop("Model function must return a list\n")
     if (length(tmp[[1]]) != length(y))
       stop(paste("The number of derivatives returned by func() (",
@@ -70,11 +70,11 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     ## -----------------------------------------------------------------------
     varstep <- method$varstep
     if (varstep) { # methods with variable step size
-      out <- rkAuto(y, times, Func2, parms, rtol = rtol, atol = atol, tcrit = tcrit,
+      out <- rkAuto(y, times, Func, parms, rtol = rtol, atol = atol, tcrit = tcrit,
                verbose = verbose, hmin = hmin, hmax = hmax, hini = hini, 
                method = method, maxsteps = maxsteps, ...)
     } else {       # fixed step methods
-      out <- rkFixed(y, times, Func2, parms, tcrit = tcrit,
+      out <- rkFixed(y, times, Func, parms, tcrit = tcrit,
          verbose = verbose, hini = hini, method = method, ...)
     }
     istate <- attr(out, "istate") # remember internal information

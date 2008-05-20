@@ -27,7 +27,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
       t  <- times[i]
       for (j in 1:stage) {
         if (j == 1) Fj <- 0 else Fj <- A[j] * FF[ ,j - 1]
-        FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms, ...)[[1]]
+        FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms, ...)
       }
       dy <- FF %*% bb1
       y1 <- y0 + dy
@@ -45,7 +45,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
           Fj <- Fj + A[j, k] * FF[ , k]
           k <- k + 1
         }
-        FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms, ...)[[1]]
+        FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms, ...)
       }
       dy <- FF %*% bb1
       y1 <- y0 + dy
