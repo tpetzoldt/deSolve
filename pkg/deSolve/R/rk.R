@@ -97,7 +97,7 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (Nglobal > 0) {
       out2 <- matrix(nrow = nrow(out), ncol = Nglobal)
       for (i in 1:nrow(out2))
-        out2[i,] <- unlist(func(out[i, 1], out[i, -1], parms, ...)[-1])
+        out2[i,] <- unlist(Func2(out[i, 1], out[i, -1], parms, ...)[-1])
       out <- cbind(out, out2)
       nm  <- c(nm,
         if (!is.null(Nmtot)) Nmtot else as.character((n + 1) : (n + Nglobal))
