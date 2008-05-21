@@ -1,16 +1,21 @@
 
 ### lsodes -- solves ordinary differential equation systems with general
 ### sparse jacobian matrix. The structure of the jacobian is either specified
-### by the user or estimated internally
+### by the user or estimated internally.
+### The sparsity is either estimated internally (default), provided by the user
+### or of a special type. To date, "1D" and "2D" are supported.
+### i.e. sparsity associated with 1- and 2-Dimensional reaction-transport models
 
 lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6, 
-  tcrit = NULL, jacvec=NULL, nnz = NULL, inz = NULL,  
-  verbose=FALSE, dllname=NULL, initfunc=dllname,
+  tcrit = NULL, jacvec=NULL, sparsetype="sparseint",nnz = NULL,  
+  inz = NULL, verbose=FALSE, dllname=NULL, initfunc=dllname,
   initpar=parms, rpar=NULL, ipar=NULL, 
   ynames=TRUE, nout=0, outnames=NULL, hmin=0, hmax=NULL, hini=0, 
   maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL, ...)  
 {
+
 ### check input
+###########################
     if (!is.numeric(y))     stop("`y' must be numeric")
     n <- length(y)
     if (! is.null(times)&&!is.numeric(times))
@@ -36,26 +41,59 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (hmax < 0)            stop("`hmax' must be a non-negative value")
     if (hmax == Inf)  hmax <- 0
     if (hini < 0)            stop("`hini' must be a non-negative value")
+    if (is.null (maxord))       maxord <- 5
+    if (maxord > 5 )         stop ("maxord too large: should be <= 5")
+    if (maxord < 1 )         stop ("`maxord' must be >1")
 
-### Jacobian, method flag
-  #inz supplied,jac supplied
-   if (! is.null(jacvec) && ! is.null(inz)) imp <- 21 else 
-   if (! is.null(jacvec) &&   is.null(inz)) imp <- 121 else       
-  #inz supplied,jac not supplied
-   if (is.null(jacvec)   && ! is.null(inz)) imp <- 22  else
+### Sparsity type and Jacobian method flag imp
+##############################################
+    if(sparsetype=="sparseusr" && is.null(inz)) 
+                             stop("inz must be specified if sparsetype==sparseusr")  
+    if (sparsetype=="1D" && ! is.null(jacvec))
+                             stop("cannot combine sparsetype=1D and jacvec")
+    if (sparsetype=="2D" && ! is.null(jacvec))
+                             stop("cannot combine sparsetype=2D and jacvec")
+
+  # imp = method flag as used in lsodes
+  # inz supplied,jac supplied
+   if (! is.null(jacvec) &&  sparsetype=="sparseusr") imp <- 21 else 
+  # inz internally generated,jac supplied
+   if (! is.null(jacvec) && !sparsetype=="sparseusr") imp <- 121 else       
+  # inz supplied,jac not supplied
+   if (is.null(jacvec) &&  sparsetype%in%c("sparseusr","1D","2D")) imp <- 22  else
   # sparse jacobian, calculated internally
-                                            imp <- 222
+                                                      imp <- 222
 
-     if (! is.null(inz)) nnz = nrow(inz)
-     if (is.null(nnz))   nnz = n*n 
-     if (nnz<1) 
-        stop ("lsodes: cannot perform integration: Jacobian should at least contain one non-zero value")
+### Special-purpose sparsity structures: 1-D and 2-D reaction-transport problems
+  # Typically these applications are called via ode.1D and ode.2D
+  # Here the sparsity is determined in the c-code; this needs extra input:
+  # the number of components *Nspec* and the number of boxes. 
+  # This information is passed by ode.1D and ode.2D in parameter nnz (which is a vector)
+  # nnz is altered to include the number of nonzero elements (element 1).
+  # Type contains the type of sparsity + nspec + num boxes
 
-  if (is.null (maxord))       maxord <- 5
-  if (maxord > 5 ) stop ("maxord too large: should be <= 5")
-  if (maxord < 1 ) stop("`maxord' must be >1")
+     if (sparsetype=="1D")                  {
+       nspec  <- nnz[1] 
+       Type   <- c(2,nnz)
+       nnz    <- n*(2+nspec)-2*nspec   
+      } else if (sparsetype=="2D")          {
+      nspec  <- nnz[1] 
+      dimens <- nnz[2:3]
+      Type   <- c(3,nnz)
+      nnz    <- n*(4+nspec)-2*nspec*(sum(dimens))
+      } else if (sparsetype == "sparseusr") { 
+      Type <- 0 
+      nnz  <- nrow(inz) 
+      } else                                { 
+      Type <- 1
+      if (is.null(nnz))   nnz <- n*n         }
 
-### model and jacobian function  
+     if (nnz<1) stop ("Jacobian should at least contain one non-zero value")
+
+
+
+### model and jacobian function 
+############################### 
     JacFunc <- NULL
     Ynames <- attr(y,"names")
 
@@ -108,7 +146,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (is.null(rpar)) rpar<-0
 
     } else {
-      initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+      if(is.null(initfunc)) initpar <- NULL # parameter initialisation not needed if function is not a DLL    
       rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
@@ -157,39 +195,54 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 
 ### work arrays iwork, rwork
-# length of rwork and iwork 
-  moss  <- imp%/%100
-  meth  <- imp%%100%/%10
-  miter <- imp%%10
+############################
+# 1. Estimate length of rwork and iwork if not provided via arguments lrw, liw
+  moss  <- imp%/%100         # method to be used to obtain sparsity
+  meth  <- imp%%100%/%10     # basic linear multistep method
+  miter <- imp%%10           # corrector iteration method
   lenr = 2     # real to integer wordlength ratio (2 due to double precision)
 
-  if (is.null(lrw))
+  if (is.null(lrw))          # make a guess of real work space needed
   {
+
   lrw = 20+n*(maxord+1)+3*n +20  #extra 20 to make sure
 
   if(miter == 1) lrw = lrw + 2*nnz + 2*n + (nnz+9*n)/lenr
   if(miter == 2) lrw = lrw + 2*nnz + 2*n + (nnz+10*n)/lenr  
   if(miter == 3) lrw = lrw + n + 2
+  
+  if (sparsetype == "1D") lrw <- lrw*1.1 # increase to be sure it is enough...
   }
   
-  if (is.null(liw))
+  if (is.null(liw))          # make a guess of itneger work space needed
   { 
   if (moss == 0 && miter %in% c(1,2)) liw <- 31+n+nnz +30 else  # extra 30
                                       liw <- 30
   }
-# only first 20 elements passed to solver; other will be allocated in C-code
-  iwork <- vector("integer",liw)
+
+# 2. Allocate and set values
+# only first 20 elements of rwork passed to solver; 
+# other elements will be allocated in C-code
+# for iwork: only first 30 elements, except when sparsity imposed
+
   rwork <- vector("double",20)
   rwork[] <- 0.
-  iwork[] <- 0
-  if (imp %in% c(21,22))
+
+# iwork will contain sparsity structure (ian,jan)
+# See documentation of DLSODES how this is done
+  if(sparsetype=="sparseusr")   
   {
+   iwork   <- vector("integer",liw)   
+   iwork[] <- 0
+
    iw       <- 32+n
    iwork[31]<- iw
 
+   # input = 2-columned matrix inz; converted to ian,jan and put in iwork
    # column indices should be sorted...
    rr  <- inz[,2]
-   if (min(rr[2:nnz]-rr[1:(nnz-1)])<0) stop ("cannot proceed: row indices in nnz should be sorted")
+   if (min(rr[2:nnz]-rr[1:(nnz-1)])<0) stop ("cannot proceed: row indices in inz should be sorted")
+
    for(i in 1:n)
    {
     ii <- which (rr==i)
@@ -200,7 +253,12 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (il>0) iwork[i1:i2] <- inz[ii,1]
    }
    iwork[31:(31+n)] <- iwork[31:(31+n)]-31-n
+  } else   {   # sparsity not imposed; only 30 element of iwork allocated.
+   iwork <- vector("integer",30)
+   iwork[] <- 0
   }
+
+# other elements of iwork, rwork  
   iwork[5] <- maxord
   iwork[6] <- maxsteps
   
@@ -215,7 +273,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       itask <- ifelse (is.null (tcrit), 2,5)           # only one step
   if(is.null(times)) times <- c(0,1e8)
 
-# print to screen...
+### print to screen...
+#######################
   if (verbose)
   {
    print("--------------------")
@@ -238,14 +297,20 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
    print("integration method")
    print("--------------------")   
    if (imp == 21)  txt <-" the user has supplied indices to nonzero elements of jacobian, and a jacobian function"
-   if (imp == 22)  txt <-" the user has supplied indices to nonzero elements of jacobian, the jacobian will be estimated internally, by differences"
+   if (imp == 22)  {
+     if (sparsetype=="sparseusr") txt <-" the user has supplied indices to nonzero elements of jacobian, the jacobian will be estimated internally, by differences"
+     if (sparsetype=="1D")        txt <-" the nonzero elements are according to a 1-D model, the jacobian will be estimated internally, by differences"
+     if (sparsetype=="2D")        txt <-" the nonzero elements are according to a 2-D model, the jacobian will be estimated internally, by differences"
+                   }
    if (imp == 122) txt <-" the user has supplied the jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"
    if (imp == 222) txt <-" the jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
    
    print(txt)
   } 
 
+
 ### calling solver
+###################
     storage.mode(y) <- storage.mode(times) <- "double"
     IN <-3
 
@@ -255,10 +320,10 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                  as.integer(iwork), as.integer(imp),as.integer(Nglobal),
                  as.integer(lrw),as.integer(liw),as.integer(IN),
                  NULL, as.integer(0), as.double (rpar), as.integer(ipar),
-                 PACKAGE="deSolve")
+                 as.integer(Type),PACKAGE="deSolve")
 
 ### saving results    
-
+###################
     istate <- attr(out,"istate")
     rstate <- attr(out, "rstate")    
     nm <- c("time",

@@ -5,14 +5,16 @@
     \cr Assumes a banded or sparse jacobian matrix. To create the banded matrix, 
     state variables are rearranged. 
     \cr Suitable for 1-D models that include transport only between adjacent layers and that model many species (e.g. multi-component reactive-transport models).}
-\usage{ode.1D(y, times, func, parms, nspec, method="lsode", ...)}
+\usage{ode.1D(y, times, func, parms, nspec=NULL, dimens=NULL, 
+       method="lsode", ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
   \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
        		If \code{func} is a character string then integrator \code{lsodes} will be used. See details}
-  \item{parms }{parameters passed to the integrator}
-  \item{nspec }{the number of *species* (components) in the model. }
+  \item{parms }{parameters passed to \code{func}}
+  \item{nspec }{the number of *species* (components) in the model. If NULL, then \code{dimens} should be specified}
+  \item{dimens}{the number of *boxes* in the model. If NULL, then \code{nspec} should be specified}
   \item{method }{the integrator to use, one of "vode", "lsode", "lsoda", "lsodar", "lsodes" }
   \item{... }{additional arguments passed to the integrator}
 }
@@ -27,6 +29,8 @@
       If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. See the help for the selected integrator for details.
   
 }
+\note{It is advisable though not mandatory to specify BOTH \code{nspec} and \code{dimens}. In this case, the solver can check whether the input makes sense 
+(as nspec*dimens = length(y))}
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{# example 1
 

@@ -1,8 +1,10 @@
 
-### ode.1D, ode.band -- solves banded ordinary differential equation systems 
+### ode.1D, ode.2D ode.band: special-purpose integration routines
 ### ode.1D is designed for solving multi-component 1-D reaction-transport models 
+### ode.2D is designed for solving multi-component 2-D reaction-transport models 
 ### ode.band is designed for solving single-component 1-D reaction-transport models
-### they offer the choice between the integrators vode, lsode, lsoda, lsodar and lsodes.
+### ode.1D,ode.band offer the choice between the integrators vode, lsode, lsoda, lsodar and lsodes.
+### ode.2D uses lsodes.
 
 ode    <- function (y,
                     times,
@@ -14,7 +16,9 @@ ode    <- function (y,
 {
   if (is.null(method)) method <- "lsoda"
   if (is.list(method)) {
-    if (!is(method, "rkMethod")) stop("method is not of class rkMethod")
+# KS: had to change that... 
+#    if (!is(method, "rkMethod")) stop("method is not of class rkMethod")
+     if (class(method)[[2]]!="rkMethod") stop("method is not of class rkMethod")
     out <- rk(y, times, func, parms, method=method, ...)
   } else if (is.function(method))
     out <- method(y,times,func,parms,...)
@@ -39,21 +43,27 @@ ode.1D    <- function (y,
                        times,
                        func,
                        parms,
-                       nspec,
+                       nspec = NULL,
+                       dimens = NULL,                       
                        method= "lsode",
                        ...)
 {
+# check input
   if (any(!is.na(pmatch(names(list(...)), "jacfunc")))) 
     stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
-  #if (hasArg(jacfunc)) stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
-  if (is.null(nspec)  ) stop ("cannot run ode.1D: nspec is not specified")
-  N     <- length(y)
 
+  if (is.null(nspec) && is.null(dimens)) 
+          stop ("cannot run ode.1D: nspec OR dimens should be specified")
+  N     <- length(y)
+  if (is.null(nspec)  ) nspec = N/dimens  
+  if (N%%nspec !=0    ) stop ("cannot run ode.1D: nspec is not an integer fraction of number of state variables")
+
+# if lsodes is used
   if (is.character(func) || method=="lsodes")
   {
     if ( method != "lsodes") warning("ode.1D: R-function specified in a DLL-> integrating with lsodes") 
-    # use lsodes
-    out <- lsodes(y=y,times=times,func=func,parms,...)                    
+    if (is.null(dimens) ) dimens    <- N/nspec    
+    out <- lsodes(y=y,times=times,func=func,parms,sparsetype="1D",nnz=c(nspec,dimens),...)                    
  
   } else {
   # internal function #
@@ -78,11 +88,38 @@ ode.1D    <- function (y,
    out <- lsoda(y[ii],times,func=bmod,parms=parms,bandup=nspec,banddown=nspec,jactype="bandint",...) 
   else if (method == "lsodar")
    out <- lsodar(y[ii],times,func=bmod,parms=parms,bandup=nspec,banddown=nspec,jactype="bandint",...) 
-   
   else
    stop ("cannot run ode.1D: method should be one of vode, lsoda, lsodar, lsode")   
   out[,(ii+1)] <- out[,2:(N+1)]
   }
+  return(out)
+}
+
+ode.2D    <- function (y,
+                       times,
+                       func,
+                       parms,
+                       nspec=NULL,                       
+                       dimens,
+                       ...)
+{
+ # check input
+  if (any(!is.na(pmatch(names(list(...)), "jacfunc")))) 
+    stop ("cannot run ode.2D with jacfunc specified - remove jacfunc from call list")
+  if (is.null(dimens)) 
+     stop ("cannot run ode.2D: dimens should be specified")
+  if (length(dimens)!=2) 
+     stop ("cannot run ode.2D: dimens should contain 2 values")
+
+  N     <- length(y)
+  if (N%%prod(dimens) !=0    ) stop ("cannot run ode.2D: dimensions are not an integer fraction of number of state variables")
+
+  if (is.null (nspec)) nspec = N/prod(dimens) else 
+    if (nspec*prod(dimens) != N) stop ("cannot run ode.2D: dimens[1]*dimens[2]*nspec is not equal to number of state variables")
+
+  # use lsodes
+   out <- lsodes(y=y,times=times,func=func,parms,sparsetype="2D",nnz=c(nspec,dimens),...)                    
+
   return(out)
 }
 

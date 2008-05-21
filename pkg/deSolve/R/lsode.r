@@ -128,7 +128,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (is.null(rpar)) rpar<-0
 
     } else {
-      initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+      if(is.null(initfunc)) initpar <- NULL # parameter initialisation not needed if function is not a DLL    
       rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
@@ -263,7 +263,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                  as.integer(iwork), as.integer(imp),as.integer(Nglobal),
                  as.integer(lrw),as.integer(liw),as.integer(IN),
                  NULL, as.integer(0), as.double (rpar), as.integer(ipar),
-                 PACKAGE="deSolve")
+                 as.integer(0), PACKAGE="deSolve")
 
 ### saving results    
 

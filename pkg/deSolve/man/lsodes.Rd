@@ -10,8 +10,8 @@
    \cr The system of ODE's is written as an \R function or be defined in
     compiled code that has been dynamically loaded.}
 \usage{lsodes(y, times, func, parms, rtol=1e-6, atol=1e-6, tcrit=NULL, 
-  jacvec=NULL, nnz=NULL, inz=NULL, verbose=FALSE,     
-  dllname=NULL, initfunc=dllname, initpar=parms,  
+  jacvec=NULL, sparsetype = "sparseint", nnz=NULL, inz=NULL,     
+  verbose=FALSE, dllname=NULL, initfunc=dllname, initpar=parms,  
   rpar=NULL, ipar=NULL, ynames=TRUE, nout=0, 
   outnames=NULL, hmin=0, hmax=NULL, hini=0, maxord=NULL, 
   maxsteps=5000, lrw=NULL, liw=NULL, ...)}
@@ -62,9 +62,9 @@
       and \code{jacvec} should return a vector containing column \code{j} of the jacobian, i.e. 
       its i-th value is dydot(i)/dy(j). If this function is absent, \code{lsodes} will generate the 
       jacobian by differences}
+  \item{sparsetype }{the sparsity structure of the Jacobian, one of "sparseint" or "sparseusr", sparsity estimated internally by lsodes or given by user}      
   \item{nnz }{the number of nonzero elements in the sparse Jacobian (if this is unknown, use an estimate)}
-  \item{inz }{(row,column) indices to the nonzero elements in the sparse Jacobian. If this is NULL, the 
-      sparsity will be determined by \code{lsodes}}
+  \item{inz }{(row,column) indices to the nonzero elements in the sparse Jacobian. Necessary if \code{sparsetype} = "sparseusr"; else ignored }
   \item{verbose }{if TRUE: full output to the screen, e.g. will output the settings of vectors *istate* and *rstate* - see details}
   \item{dllname }{a string giving the name of the shared library (without
       extension) that contains all the compiled function or subroutine
@@ -182,9 +182,10 @@
   # lsodes will tell the length actually needed
   #out2<- lsodes(func= chemistry, y = y, parms=parms, times=times,
   #             inz=nonzero, atol=atol,rtol=rtol)  #gives warning
-  out2<- lsodes(func= chemistry, y = y, parms=parms, times=times,
-               inz=nonzero, atol=atol,rtol=rtol,verbose=TRUE,lrw=351)
-  
+  out2<- lsodes(func= chemistry, y = y, parms=parms, times=times, 
+              sparsetype="sparseusr", inz=nonzero,   
+               atol=atol,rtol=rtol,verbose=TRUE,lrw=351)
+                              
   #--------------
   # application 3. lsodes estimates the structure of the jacobian 
   #                the jacobian (vector) function is input
@@ -259,8 +260,8 @@
   #                the jacobian (vector) function is input
   # not very efficient...
   
-  out4<- lsodes(func= chemistry, y = y, parms=parms, times=times, 
-                lrw=351, inz=nonzero, jacvec=chemjac,
+  out4<- lsodes(func= chemistry, y = y, parms=parms, times=times,lrw=351,  
+                sparsetype="sparseusr", inz=nonzero, jacvec=chemjac,
                 atol=atol, rtol=rtol, verbose=TRUE)}
 \references{\item  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
   Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),

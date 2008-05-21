@@ -239,7 +239,7 @@ PD=matrix(nr=3,nc=3,as.double(0)), as.integer(3),as.double(1:3),as.integer(1))$P
 print("Fortran dll passed to R-functions, including initialiser")
 print(system.time(
 for (i in 1:10)
-outDLL <- lsode(Y,times,moddll,parms=parms,dllname="odefor",rtol=RTOL,atol=ATOL,mf=MF,jacfunc=jacdll,verbose=FALSE,ynames=FALSE )        #       )
+outDLL <- lsode(Y,times,moddll,parms=parms,dllname="odefor",initfunc="odefor",rtol=RTOL,atol=ATOL,mf=MF,jacfunc=jacdll,verbose=FALSE,ynames=FALSE )        #       )
 )/10)
 
 

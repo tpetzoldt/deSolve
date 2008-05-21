@@ -28,7 +28,7 @@ void incr_N_Protect(void);
 void unprotect_all(void);
 void my_unprotect(int);
 
-/*void Initvodeparms(long int *, double *);*/
+/* declarations for initideparms;*/
 void Initdeparms(int *, double *);
 
 /* use in daspk */

@@ -3,7 +3,8 @@
 \title{General solver for ordinary differential equations}
 \description{Solves a system of ordinary differential equations.}
 \usage{ode(y, times, func, parms, 
-method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4", "ode23", "ode45"), ...)}
+method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4", 
+         "ode23", "ode45"), ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
@@ -17,7 +18,7 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4", "ode2
       vector containing the derivatives of \code{y} with respect to
       \code{time}, and whose next elements are global values that are required at
       each point in \code{times}. }
-  \item{parms }{parameters passed to the integrator}
+  \item{parms }{parameters passed to \code{func}}
   \item{method }{the integrator to use, either a string ("lsoda","lsode","lsodes",
     "lsodar","vode", "daspk", "euler", "rk4", "ode23" or "ode45") or a function
      that performs integration, or a list of class \code{rkMethod}.}

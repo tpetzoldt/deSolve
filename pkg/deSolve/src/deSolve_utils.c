@@ -6,6 +6,7 @@
 /* some functions for keeping track of how many SEXPs 
  * 	are PROTECTed, and UNPROTECTing them in the case of a fortran stop.
  */
+ 
 long int N_Protected;
 
 void init_N_Protect(void) { N_Protected = 0; }

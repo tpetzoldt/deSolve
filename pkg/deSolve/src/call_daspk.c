@@ -2,9 +2,8 @@
 #include <time.h>
 #include <string.h>
 #include "deSolve.h"
-/*      SUBROUTINE DDASPK (RES, NEQ, T, Y, YPRIME, TOUT, INFO, RTOL, ATOL,
-     *   IDID, RWORK, LRW, IWORK, LIW, RPAR, IPAR, JAC, PSOL) */
-                              
+
+/* definition of the call to the fortran function ddaspk - in file ddaspk.f*/                              
 void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*, double *, int*, double *, int*),
 		     int *, double *, double *, double *, double *, 
 		     int *,double *, double *,  int *,  double *,  int *, 
@@ -19,8 +18,13 @@ static void daspk_psol (int *neq, double *t, double *y, double *yprime,
                         double *wp, int *iwp, double *b, double *eplin, 
                         int *ierr, double *RPAR, int *IPAR)
 {
+/* not yet implemented */
 }
 
+/* interface between fortran function call and R function 
+   Fortran code calls vode_derivs(N, t, y, ydot, yout, iout) 
+   R code called as vode_deriv_func(time, y) and returns ydot 
+   Note: passing of parameter values and "..." is done in R-function vode*/
 
 static void daspk_res (double *t, double *y, double *yprime, double *cj, 
                        double *delta, int *ires, double *yout, int *iout)
@@ -42,7 +46,7 @@ static void daspk_res (double *t, double *y, double *yprime, double *cj,
   my_unprotect(2);
 }
 
-/* deriv function with rearrangement of state variables and rate of change */
+/* deriv output function with rearrangement of state variables and rate of change */
 
 static void daspk_out (int *nout, double *t, double *y, 
                        double *yprime, double *yout)
@@ -65,6 +69,7 @@ static void daspk_out (int *nout, double *t, double *y,
   my_unprotect(2);
 }      
 
+/* interface between fortran call to jacobian and R function */
 
 static void daspk_jac (double *t, double *y, double *yprime, 
                        double *pd,  double *cj, double *RPAR, int *IPAR)
@@ -87,6 +92,7 @@ static void daspk_jac (double *t, double *y, double *yprime,
   my_unprotect(2);
 }
 
+/* give name to data types */
 typedef void res_func(double *, double *, double *, double*, double *, int*, double *, int*);
 typedef void jac_func(double *, double *, double *, double *, double *, double *, int *);
 typedef void psol_func(int *, double *, double *, double *, double *, double *, 
@@ -95,11 +101,18 @@ typedef void kryljac_func(double *, int *, int *, double *, double *, double *, 
            double *, double *, double *, double *, int*, int*, double *, int*);
 typedef void init_func(void (*)(int *, double *));
 
+/* MAIN C-FUNCTION, CALLED FROM R-code */
+
 SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms, 
 		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
 		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,  
     SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar, SEXP Ipar)
 {
+/******************************************************************************/
+/******                   DECLARATION SECTION                            ******/
+/******************************************************************************/
+
+/* These R-structures will be allocated and returned to R*/
   SEXP   yout, yout2, ISTATE, RWORK;
   int    i, j, k, nt, ny, repcount, latol, lrtol, lrw, liw, isDll, maxit;
   double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *delta, cj;
@@ -111,17 +124,42 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   psol_func *psol;  
   init_func *initializer;
   kryljac_func *kryljac;
-/* #### initialisation #### */    
+
+/******************************************************************************/
+/******                         STATEMENTS                               ******/
+/******************************************************************************/
+
+/*                      #### initialisation ####                              */    
 
   init_N_Protect();
 
-  nout  = INTEGER(nOut)[0];
+  ny   = LENGTH(y);  
+  n_eq = ny;                          /* n_eq is a global variable */
+  nt = LENGTH(times);  
+  mflag = INTEGER(verbose)[0];        
+  nout  = INTEGER(nOut)[0]; 
+  ntot  = n_eq+nout;
+
+  ninfo=LENGTH(info);
+  ml = INTEGER(bd)[0]; 
+  mu = INTEGER(bu)[0]; 
+  nrowpd = INTEGER(nRowpd)[0];  
+  maxit = INTEGER(maxIt)[0];
+
+/* The output:
+    Rpar and Ipar: used to pass output variables (number set by nout)
+    followed by other input (e.g. forcing functions) provided 
+    by R-arguments rpar, ipar
+    ipar[0]: number of output variables, ipar[1]: length of rpar, 
+    ipar[2]: length of ipar!*/
+
+
 
   if (inherits(res, "NativeSymbol"))  /* function is a dll */
   {
    isDll = 1; 
-   lrpar = nout + LENGTH(Rpar); /* length of rpar */
-   lipar = 3    + LENGTH(Ipar);    /* length of ipar */
+   lrpar = nout + LENGTH(Rpar);       /* length of rpar */
+   lipar = 3    + LENGTH(Ipar);       /* length of ipar */
 
   } else                              /* function is not a dll */
   {
@@ -134,27 +172,20 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 
    if (isDll ==1)
    {
-    ipar[0] = nout;
+    ipar[0] = nout;          /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
+    /* other elements of ipar are set in R-function lsodx via argument *ipar* */        
     for (j = 0; j < LENGTH(Ipar);j++) ipar[j+3] = INTEGER(Ipar)[j];
+    
+    /* first nout elements of rpar reserved for output variables 
+      other elements are set in R-function lsodx via argument *rpar* */
     for (j = 0; j < nout;        j++) out[j] = 0.;  
     for (j = 0; j < LENGTH(Rpar);j++) out[nout+j] = REAL(Rpar)[j];
    }
 
-  ny   = LENGTH(y);  
-  n_eq = ny;           /* n_eq is a global variable */
-  nt = LENGTH(times);  
-  mflag = INTEGER(verbose)[0];        
-  ntot  = n_eq+nout;
-
-  ninfo=LENGTH(info);
-  ml = INTEGER(bd)[0]; 
-  mu = INTEGER(bu)[0]; 
-  nrowpd = INTEGER(nRowpd)[0];  
-  maxit = INTEGER(maxIt)[0];
    
- /* copies of all variables that will be changed in the FORTRAN subroutine */
+  /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));
    for (j = 0; j < ninfo; j++) Info[j] = INTEGER(info)[j];  
   
@@ -181,6 +212,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
     for (j = 0; j < lrw; j++) rwork[j] = REAL(rWork)[j];
 
   /* initialise global variables... */
+  
   PROTECT(Time = NEW_NUMERIC(1));                    incr_N_Protect();
   PROTECT(Rin  = NEW_NUMERIC(2));                    incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(n_eq)));          incr_N_Protect();
@@ -197,14 +229,16 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
  /* pointers to functions res, psol and jac, passed to the FORTRAN subroutine */
 
   if (isDll == 1) 
-    { Resfun = (res_func *) R_ExternalPtrAddr(res);
+    { /* DLL address passed to fortran */
+      Resfun = (res_func *) R_ExternalPtrAddr(res);
+      /* no need to communicate with R - but output variables set here */            
       delta = (double *) R_alloc(n_eq, sizeof(double));
       for (j = 0; j < n_eq; j++) delta[j] = 0.;
       
     } else {
+      /* interface function between fortran and R passed to Fortran*/     
       Resfun = (res_func *) daspk_res;
-/* KS removed protect      PROTECT(daspk_res_func = res) ; incr_N_Protect();
-      PROTECT(daspk_envir = rho)    ; incr_N_Protect(); */
+      /* needed to communicate with R */      
       daspk_res_func = res; 
       daspk_envir = rho; 
 
@@ -236,6 +270,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 	    }
     }
 
+/*                      #### initial time step ####                           */    
   idid = 1;
   REAL(yout)[0] = REAL(times)[0];
   for (j = 0; j < n_eq; j++)
@@ -249,7 +284,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 	      for (j = 0; j < nout; j++)
 	       REAL(yout)[j + n_eq + 1] = out[j]; 
                }
-/* #### main time loop #### */    
+               
+/*                     ####   main time loop   ####                           */    
                
   for (i = 0; i < nt-1; i++)
   {
@@ -326,6 +362,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       for (j = 0; j < nout; j++)
 	       REAL(yout)[(i+1)*(ntot + 1) + j + n_eq + 1] = out[j]; 
                }
+               
+/*                    ####  an error occurred   ####                          */                     
     if (repcount > maxit || tin < tout) {
 	   warning("Returning early from daspk  Results are accurate, as far as they go\n");
 
@@ -338,7 +376,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       }
   }    /* end main time loop */
 
-/* #### returning output #### */    
+/*                   ####   returning output   ####                           */    
 
   PROTECT(ISTATE = allocVector(INTSXP, 23));incr_N_Protect();
   for (k = 0;k<21;k++) INTEGER(ISTATE)[k+1] = iwork[k];
@@ -357,7 +395,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       setAttrib(yout2, install("istate"), ISTATE);
       setAttrib(yout2, install("rstate"), RWORK);   
     }
-   
+    
+/*                       ####   termination   ####                            */       
   unprotect_all();
   if (idid > 0)
     return(yout);
