@@ -52,7 +52,7 @@ rkAuto <- function(
         if (k>0) Fj <- Fj + A[j, k] * FF[ ,k]  * dt
         k <- k + 1
       }
-      FF[, j] <- func(t + dt * cc[j], y0 + Fj, parms, ...)
+      FF[, j] <- func(t + dt * cc[j], y0 + Fj, parms)
     }
     ## Estimation of new values
     dy1  <- FF %*% bb1

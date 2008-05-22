@@ -16,9 +16,10 @@ ode    <- function (y,
 {
   if (is.null(method)) method <- "lsoda"
   if (is.list(method)) {
-# KS: had to change that... 
-#    if (!is(method, "rkMethod")) stop("method is not of class rkMethod")
-     if (class(method)[[2]]!="rkMethod") stop("method is not of class rkMethod")
+#  is() should work from R 2.7 on ...
+#   if (!is(method, "rkMethod"))
+    if (!"rkMethod" %in% class(method))
+      stop("'method' should be given as string or as a list of class 'rkMethod'")
     out <- rk(y, times, func, parms, method=method, ...)
   } else if (is.function(method))
     out <- method(y,times,func,parms,...)

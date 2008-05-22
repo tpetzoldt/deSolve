@@ -56,7 +56,7 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     ## Call func once to figure out whether and how many "global"
     ## results it wants to return and some other safety checks
     rho <- environment(func)
-    tmp <- eval(Func2(times[1], y, parms, ...), rho)
+    tmp <- eval(Func2(times[1], y, parms), rho)
     if (!is.list(tmp)) stop("Model function must return a list\n")
     if (length(tmp[[1]]) != length(y))
       stop(paste("The number of derivatives returned by func() (",
@@ -97,7 +97,7 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (Nglobal > 0) {
       out2 <- matrix(nrow = nrow(out), ncol = Nglobal)
       for (i in 1:nrow(out2))
-        out2[i,] <- unlist(Func2(out[i, 1], out[i, -1], parms, ...)[-1])
+        out2[i,] <- unlist(Func2(out[i, 1], out[i, -1], parms)[-1])
       out <- cbind(out, out2)
       nm  <- c(nm,
         if (!is.null(Nmtot)) Nmtot else as.character((n + 1) : (n + Nglobal))
