@@ -7,7 +7,7 @@ denspar <- function(FF, y0, y1, dt, stage, d) {
   bspl  <- dt * FF[, 1] - ydiff
   r[,3] <- bspl
   r[,4] <- ydiff - dt * FF[, stage] - bspl
-  for (i in 1:stage) r[,5]  <- r[,5] * d[i] * FF[,i]
+  for (i in 1:stage) r[,5]  <- r[,5] + d[i] * FF[,i]
   #r[,5] <- colSums(t(FF) * d) # this is slower
   r[,5] <- r[,5] * dt
   return(r)

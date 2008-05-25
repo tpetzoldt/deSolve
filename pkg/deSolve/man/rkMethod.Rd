@@ -125,16 +125,16 @@ rkMethod("rk45dp7") # parameters of the Dormand-Prince 5(4) method
 rkMethod("ode45")   # an alias for the same method
 
 func <- function(t, x, parms) {
-  with(as.list(c(parms)),{
-    dp <- a * x[1]        - b * x[2] *x[1]
-    dk <- b * x[2] *x[1]  - c * x[2]
-    res<-c(dp, dk)
+  with(as.list(c(parms, x)),{
+    dP  <- a * P        - b * K * P
+    dK  <- b * P * K  - c * K
+    res <- c(dP, dK)
     list(res)
   })
 }
 times  <- seq(0, 20, length = 21)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
-x<- c(p=2, k=1)
+x <- c(P=2, K=1)
 
 ode(x, times, func, parms, method = rkMethod("rk4"))
 

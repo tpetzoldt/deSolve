@@ -49,7 +49,7 @@ rkAuto <- function(
       Fj <- 0
       k  <- 1
       while (k < j) {
-        if (k>0) Fj <- Fj + A[j, k] * FF[ ,k]  * dt
+        Fj <- Fj + A[j, k] * FF[ ,k]  * dt
         k <- k + 1
       }
       FF[, j] <- func(t + dt * cc[j], y0 + Fj, parms)
@@ -83,7 +83,7 @@ rkAuto <- function(
     } else if (err < 1) {  # accept
        accept <- TRUE
        ## safety factor = 0.9
-       dtnew  <- max(hmax, dt * 0.9 * (err ^ -qerr))
+       dtnew  <- min(hmax, dt * 0.9 * (err ^ -qerr))
        if (verbose) cat("t=", t, " err=", err, " h=", dt, " + \n")
     } else if (err > 1){  # reject
        accept <- FALSE
@@ -114,8 +114,7 @@ rkAuto <- function(
             out <- rbind(out, cbind(tdens, newout))
           }
       }  else {
-         newout <- y2
-         out <- rbind(out, c(t + dt, newout))
+         out <- rbind(out, c(t + dt, y2))
       }
       t   <- t + dt
       y0  <- y2

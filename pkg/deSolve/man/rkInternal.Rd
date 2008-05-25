@@ -8,7 +8,7 @@
  These are the internal workhorses of \code{\link{rk}}, which are normally not
  intended to be called by the end user.
 
- While internal both functions are visible in the user's workspace to allow for
+ Though internal, both functions are visible in the user's workspace to allow for
  easy inspection and fine-tuning of the algorithms by experienced users.
 }
 
