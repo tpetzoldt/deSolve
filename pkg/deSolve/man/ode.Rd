@@ -8,11 +8,14 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
-  \item{func }{either an R-function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
-      If \code{func} is an R-function, it must be called as:
-      \code{yprime = func(t, y, parms, ...)}.  \code{t} is the current time point
+  \item{func }{either an \R-function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
+
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
-      in the ODE system.  \code{parms} is a vector of parameters.
+      in the ODE system.  If the initial values \code{y} has a names
+      attribute, the names will be available inside \code{func}.  \code{parms} is
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
   
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
@@ -36,9 +39,11 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \details{This is simply a wrapper around the various ode solvers.
-\cr See \code{\link{lsoda}} for information about specifying the model in compiled code.
+\cr See package vignette for information about specifying the model in compiled code.
 \cr See the selected integrator for the additional options}
-\seealso{\item \code{\link{ode.band}}, and \code{\link{ode.1D}} when the jacobian is banded
+\seealso{\item \code{\link{ode.band}} for solving models with a banded Jacobian
+\item  \code{\link{ode.1D}} for integrating 1-D models 
+\item \code{\link{ode.2D}} for integrating 2-D models
  	\item \code{\link{aquaphy}}, \code{\link{ccl4model}}, where \code{ode} is used
 
 	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
@@ -46,22 +51,70 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
 \keyword{math}
 \examples{
 
-  ## A simple resource limited Lotka-Volterra-Model
+#########################################
+## Example1: Pred-Prey Lotka-volterra model
+#########################################
+
+LVmod <- function(Time,State,Pars)
+ {
+
+   with(as.list(c(State,Pars)),
+
+    {
+    Ingestion    <- rIng  * Prey*Predator
+    GrowthPrey   <- rGrow * Prey*(1-Prey/K)
+    MortPredator <- rMort * Predator
+
+    dPrey        <- GrowthPrey - Ingestion
+    dPredator    <- Ingestion*assEff -MortPredator
+
+    return(list(c( dPrey, dPredator)))
+
+    })
+ }
+
+
+pars    <- c(rIng   =0.2,    # /day, rate of ingestion
+             rGrow  =1.0,    # /day, growth rate of prey
+             rMort  =0.2 ,   # /day, mortality rate of predator
+             assEff =0.5,    # -, assimilation efficiency
+             K      =10  )   # mmol/m3, carrying capacity
+
+yini    <- c(Prey=1,Predator=2)
+times   <- seq(0,200,by=1)
+out     <- as.data.frame(lsoda(func= LVmod, y=yini,
+                         parms=pars, times=times))
+
+matplot(out$time,out[,2:3],type="l",xlab="time",ylab="Conc",
+        main="Lotka-Volterra",lwd=2)
+legend("topright",c("prey", "predator"),col=1:2, lty=1:2)
+
+#########################################
+## Example2: Resource-producer-consumer Lotka-volterra model
+#########################################
+
+  ## Note:
+  ## 1. parameter and state variable names made
+  ## accessible via "with" statement
+  ## 2. function sigimp passed as an argument (input) to model
+  ## (see also lsoda and rk examples)
+
+  lvmodel <- function(t, x, parms, input)  {
+
+      with(as.list(c(parms,x)),  {
+      
+      import <- input(t)
+      dS <- import - b*S*P + g*K    #substrate
+      dP <- c*S*P  - d*K*P          #producer
+      dK <- e*P*K  - f*K            #consumer
+      res<-c(dS, dP, dK)
+      list(res)                   
+                                  })
+    }
+  
   ## The parameters 
   parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
 
-
-  ## The model
-  lvmodel <- function(t, x, parms, input)  {
-      with(as.list(c(parms,x)),  {
-      import <- input(t)
-      dS <- import - b*S*P + g*K
-      dP <- c*S*P  - d*K*P
-      dK <- e*P*K  - f*K
-      res<-c(dS, dP, dK)
-      list(res)                   })
-    }
-  
   ## vector of timesteps
   times  <- seq(0, 100, length=101)
   
@@ -75,11 +128,11 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
   
   
   ## Start values for steady state
-   xstart <- c(S=1, P=1, K=1)
+  xstart <- c(S=1, P=1, K=1)
   
   ## Solve model
   out <- as.data.frame(ode(y=xstart,times= times, 
                        func=lvmodel, parms, input =sigimp))
-  plot(out$P,out$K,type="l",lwd=2)
+  plot(out$P,out$K,type="l",lwd=2,xlab="producer",ylab="consumer")
 }
 

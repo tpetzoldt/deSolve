@@ -168,7 +168,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   neq = LENGTH(y);              /* number of equations */ 
   nt  = LENGTH(times);
   
-  maxit = 10;                   /* number of roots (lsodar) */ 
+  maxit = 10;                   /* number of iterations */ 
   mflag = INTEGER(verbose)[0];
  
   nout   = INTEGER(nOut)[0];    /* number of output variables */
@@ -176,11 +176,11 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   solver = INTEGER(Solver)[0];  /* 1= lsoda, 2=lsode: 3=lsodeS, 4=lsodar */
 
 /* The output:
-    Rpar and Ipar: used to pass output variables (number set by nout)
+    out and ipar are used to pass output variables (number set by nout)
     followed by other input (e.g. forcing functions) provided 
     by R-arguments rpar, ipar
     ipar[0]: number of output variables, ipar[1]: length of rpar, 
-    ipar[2]: length of ipar!*/
+    ipar[2]: length of ipar */
   
   if (inherits(func, "NativeSymbol"))  /* function is a dll */
   {

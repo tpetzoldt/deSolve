@@ -18,12 +18,11 @@
 
 
 lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
-	tcrit = NULL, jacfunc=NULL, jactype = "fullint", rootfunc=NULL,
-  verbose=FALSE, dllname=NULL,initfunc=dllname,
-  initpar=parms, rpar=NULL, ipar=NULL,
-  ynames=TRUE, nout=0, outnames=NULL, nroot = 0, hmin=0, hmax=NULL, hini=0, 
-  maxordn = 12, maxords = 5, bandup = NULL, banddown = NULL, maxsteps = 5000,
-  ...)   
+	jacfunc=NULL, jactype = "fullint", rootfunc=NULL,
+  verbose=FALSE,  nroot = 0, tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
+  maxordn = 12, maxords = 5, bandup = NULL, banddown = NULL, 
+  maxsteps = 5000, dllname=NULL,initfunc=dllname, initpar=parms,
+   rpar=NULL, ipar=NULL, nout=0, outnames=NULL,...)   
 {
 ### check input
     if (!is.numeric(y))        stop("`y' must be numeric")

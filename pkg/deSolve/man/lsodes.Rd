@@ -9,49 +9,40 @@
     Fortran ODE solver of the same name, written by Alan C. Hindmarsh and Andrew H. Sherman
    \cr The system of ODE's is written as an \R function or be defined in
     compiled code that has been dynamically loaded.}
-\usage{lsodes(y, times, func, parms, rtol=1e-6, atol=1e-6, tcrit=NULL, 
+\usage{lsodes(y, times, func, parms, rtol=1e-6, atol=1e-6, 
   jacvec=NULL, sparsetype = "sparseint", nnz=NULL, inz=NULL,     
-  verbose=FALSE, dllname=NULL, initfunc=dllname, initpar=parms,  
-  rpar=NULL, ipar=NULL, ynames=TRUE, nout=0, 
-  outnames=NULL, hmin=0, hmax=NULL, hini=0, maxord=NULL, 
-  maxsteps=5000, lrw=NULL, liw=NULL, ...)}
+  verbose=FALSE, tcrit=NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
+  maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL,  
+ dllname=NULL, initfunc=dllname, initpar=parms,  
+  rpar=NULL, ipar=NULL, nout=0, outnames=NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time; if only one step is to be taken; set \code{times} = NULL}
-  \item{func }{either a user-supplied function that computes the values of the
+  \item{func }{either an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time
       t, or a character string
       giving the name of a compiled function in a dynamically loaded
       shared library.
   
-      If \code{func}  is a user-supplied function, it must be called as:
-      \code{yprime = func(t, y, parms)}.  \code{t} is the current time point
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
       in the ODE system.  If the initial values \code{y} has a names
       attribute, the names will be available inside \code{func}.  \code{parms} is
-      a vector of parameters (which
-      may have a names attribute, desirable in a large system).
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
   
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements (possibly with a
-      \code{\link{names}} attribute) are global values that are required at
+      \code{time}, and whose next elements are global values that are required at
       each point in \code{times}.
           If \code{func} is a string, then \code{dllname} must give the name
       of the shared library (without extension) which must be loaded
-      before \code{lsodes()} is called.  see Details for more information.}
-  \item{parms }{any parameters used in \code{func} that should be
-      modifiable without rewriting the function.}
+      before \code{lsodes()} is called. See package vignette for more details.}
+  \item{parms }{vector or list of parameters used in \code{func} or \code{jacfunc}.}
   \item{rtol }{relative error tolerance, either a scalar or an array as
       long as \code{y}.  See details. }
   \item{atol }{absolute error tolerance, either a scalar or an array as
       long as \code{y}.  See details.}
-  \item{tcrit }{if not \code{NULL}, then \code{lsodes} cannot integrate past \code{tcrit}. The Fortran routine \code{lsodes} overshoots its targets (times points in the vector \code{times}), and interpolates values
-      for the desired time points.  If there is a time beyond which integration should not proceed (perhaps because of a singularity),
-      that should be provided in \code{tcrit}.  Note that it does not make sense (though it is not an error) to include times in
-      \code{times} past \code{tcrit}, since the solver will stop and
-      return at the last point in \code{times} that is earlier than
-      \code{tcrit}.}
   \item{jacvec }{if not \code{NULL}, an \R function that computes
       a column of the jacobian of the system of differential equations
       dydot(i)/dy(j), or a string giving the name of a function or
@@ -66,22 +57,15 @@
   \item{nnz }{the number of nonzero elements in the sparse Jacobian (if this is unknown, use an estimate)}
   \item{inz }{(row,column) indices to the nonzero elements in the sparse Jacobian. Necessary if \code{sparsetype} = "sparseusr"; else ignored }
   \item{verbose }{if TRUE: full output to the screen, e.g. will output the settings of vectors *istate* and *rstate* - see details}
-  \item{dllname }{a string giving the name of the shared library (without
-      extension) that contains all the compiled function or subroutine
-      definitions refered to in \code{func} and \code{jacfunc}.}
-  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See details.}
-  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
-  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for multi-D models}
-  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
-      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - see help of daspk or lsoda}
-  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
+  \item{tcrit }{if not \code{NULL}, then \code{lsodes} cannot integrate past \code{tcrit}. The Fortran routine \code{lsodes} overshoots its targets (times points in the vector \code{times}), and interpolates values
+      for the desired time points.  If there is a time beyond which integration should not proceed (perhaps because of a singularity),
+      that should be provided in \code{tcrit}.}
   \item{hmin }{an optional minimum value of the integration
       stepsize. In special situations this parameter may speed up computations with
       the cost of precision. Don't use \code{hmin} if you don't know why!}
   \item{hmax }{an optional maximum value of the integration stepsize. If not specified, \code{hmax} is set to the largest difference in \code{times}, to avoid that the simulation possibly ignores short-term events. If 0, no maximal size is specified}
   \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
+  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for multi-D models}
   \item{maxord }{the maximum order to be allowed. NULL uses the default, i.e. order 12 if implicit Adams method (meth=1), order 5 if BDF method (meth=2). Reduce maxord to save storage space}
   \item{maxsteps }{maximal number of steps during one call to the solver}
   \item{lrw }{the length of the real work array rwork; due to the sparsicity, this cannot be readily predicted. If NULL, a guess will be made, and 
@@ -90,6 +74,16 @@
   \item{liw }{the length of the integer work array iwork; due to the sparsicity, this cannot be readily predicted. If NULL, a guess will be made, and 
   		if not sufficient, \code{lsodes} will return with a message indicating the size of iwork actually required. 
       Therefore, some experimentation may be necessary to estimate the value of \code{liw} }
+  \item{dllname }{a string giving the name of the shared library (without
+      extension) that contains all the compiled function or subroutine
+      definitions refered to in \code{func} and \code{jacfunc}. See package vignette.}
+  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette.}
+  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
+  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
+      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code. See package vignette.}
+  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{... }{additional arguments passed to \code{func} and \code{jacfunc} allowing this to be a generic function}
 }
 \value{
@@ -298,14 +292,8 @@
   control} performed by the solver. 
   See \code{\link{lsoda}} for details.
    
-  \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. 
-  \cr If \code{func} or \code{jacvec} are a string, then they are assumed to be compiled code.
-  \cr In this case, \code{dllname} must give the name of the shared library (without extension) which must be loaded before lsodes() is called. 
-  See the description of \code{\link{lsoda}} for details about how to specify \code{func}; in Fortran, the calling sequence for \code{jacvec} is:
+  \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   
-  \code{SUBROUTINE JAC (NEQ, T, Y, J, IAN, JAN, PDJ, OUT, IP)}\cr
-  \code{DOUBLE PRECISION T, Y(*), IAN(*), JAN(*), PDJ(*), OUT(*)}\cr
-  \code{INTEGER NEQ, J, IP(*)}
   
   The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements. 
       \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
@@ -334,6 +322,6 @@
       \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
       
       For more information, see the comments in the original code lsodes.f}
-\seealso{\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}}
+\seealso{\item \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
 \keyword{math}
 

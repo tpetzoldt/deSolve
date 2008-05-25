@@ -87,7 +87,7 @@
          legend=c("data","model"))}
 \details{The model is implemented primarily to demonstrate the linking of FORTRAN with R-code.
   \cr The source can be found in the \file{dynload} subdirectory of the package.}
-\seealso{try demo(CCL4model) for how this model has been fitted to the datasets \code{\link{ccl4data}} and \code{\link{ccl4data.avg}}
+\seealso{try demo(CCL4model) for how this model has been fitted to the dataset \code{\link{ccl4data}}
   \cr \code{\link{aquaphy}}, another Fortran model, describing growth in aquatic phytoplankton.}
 \keyword{models}
 

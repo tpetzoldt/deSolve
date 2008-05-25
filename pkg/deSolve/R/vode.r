@@ -14,15 +14,16 @@
 ### in lsode is then equivalent to a mf = -21 in vode.
 
 
-vode          <- function(y, times, func, parms, rtol=1e-6, atol=1e-8,
-  tcrit = NULL, jacfunc=NULL, jactype = "fullint", mf = NULL, 
-  verbose=FALSE, dllname=NULL, initfunc=dllname,
-  initpar=parms, rpar=NULL, ipar=NULL,
-  ynames=TRUE, nout=0, outnames=NULL, hmin=0, hmax=NULL, hini=0, 
-  maxord=NULL, bandup=NULL, banddown=NULL, maxsteps=5000, ...)
+vode          <- function(y, times, func, parms, 
+  rtol=1e-6, atol=1e-8, jacfunc=NULL, jactype = "fullint", mf = NULL, 
+  verbose=FALSE,  tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord=NULL, 
+  bandup=NULL, banddown=NULL, maxsteps=5000, dllname=NULL, 
+  initfunc=dllname, initpar=parms, rpar=NULL, ipar=NULL,
+   nout=0, outnames=NULL, ...)
 {
 ### check input
-    if (!is.numeric(y))     stop("`y' must be numeric")
+    if (!is.numeric(y))     
+        stop("`y' must be numeric")
     n <- length(y)
     if (! is.null(times)&&!is.numeric(times))
         stop("`times' must be NULL or numeric")
@@ -30,72 +31,94 @@ vode          <- function(y, times, func, parms, rtol=1e-6, atol=1e-8,
         stop("`func' must be a function or character vector")
     if (is.character(func) && (is.null(dllname) || !is.character(dllname)))
         stop("You need to specify the name of the dll or shared library where func can be found (without extension)")
-    if (!is.numeric(rtol))  stop("`rtol' must be numeric")
-    if (!is.numeric(atol))  stop("`atol' must be numeric")
-    if (!is.null(tcrit) & !is.numeric(tcrit)) stop("`tcrit' must be numeric")
+    if (!is.numeric(rtol))  
+        stop("`rtol' must be numeric")
+    if (!is.numeric(atol))  
+        stop("`atol' must be numeric")        
+    if (!is.null(tcrit) & !is.numeric(tcrit)) 
+        stop("`tcrit' must be numeric")
     if (!is.null(jacfunc) && !(is.function(jacfunc) || is.character(jacfunc)))
         stop("`jacfunc' must be a function or character vector")
     if (length(atol) > 1 && length(atol) != n)
         stop("`atol' must either be a scaler, or as long as `y'")
     if (length(rtol) > 1 && length(rtol) != n)
         stop("`rtol' must either be a scaler, or as long as `y'")
-    if (!is.numeric(hmin))  stop("`hmin' must be numeric")
-    if (hmin < 0)           stop("`hmin' must be a non-negative value")
+    if (!is.numeric(hmin))  
+        stop("`hmin' must be numeric")
+    if (hmin < 0)           
+        stop("`hmin' must be a non-negative value")
     if (is.null(hmax))
        hmax <- ifelse (is.null(times), 0, max(abs(diff(times))))
-    if (!is.numeric(hmax))  stop("`hmax' must be numeric")
-    if (hmax < 0)           stop("`hmax' must be a non-negative value")
-    if (hmax == Inf) hmax <- 0
-    if (hini < 0)           stop("`hini' must be a non-negative value")
+    if (!is.numeric(hmax))  
+       stop("`hmax' must be numeric")
+    if (hmax < 0)           
+       stop("`hmax' must be a non-negative value")
+    if (hmax == Inf) 
+       hmax <- 0
+    if (hini < 0)           
+       stop("`hini' must be a non-negative value")
     if (!is.null(maxord)) 
-        if(maxord < 1)      stop("`maxord' must be >1")
+        if(maxord < 1)      
+           stop("`maxord' must be >1")
 
 ### Jacobian, method flag
     if (is.null(mf)){ 
-       if (jactype == "fullint" ) imp <- 22 # full jacobian, calculated internally
-  else if (jactype == "fullusr" ) imp <- 21 # full jacobian, specified by user function
-  else if (jactype == "bandusr" ) imp <- 24 # banded jacobian, specified by user function
-  else if (jactype == "bandint" ) imp <- 25 # banded jacobian, specified internally
-  else stop("jactype must be one of fullint, fullusr, bandusr or bandint if mf not specified")
-                    } else imp <- mf
+       if (jactype == "fullint" ) 
+          imp <- 22 # full jacobian, calculated internally
+       else if (jactype == "fullusr" ) 
+          imp <- 21 # full jacobian, specified by user function
+       else if (jactype == "bandusr" ) 
+          imp <- 24 # banded jacobian, specified by user function
+       else if (jactype == "bandint" ) 
+          imp <- 25 # banded jacobian, specified internally
+       else 
+          stop("jactype must be one of fullint, fullusr, bandusr or bandint if mf not specified")
+                    } 
+    else imp <- mf
 
-  if (! imp %in% c(10:17, 20:27, -11,-12,-14,-15,-21, -22, -24: -27)) 
-    stop ("vode: cannot perform integration: method flag mf not allowed")
+    if (! imp %in% c(10:17, 20:27, -11,-12,-14,-15,-21, -22, -24: -27)) 
+       stop ("vode: cannot perform integration: method flag mf not allowed")
   
   # check if jacfunc is specified if it is needed. 
-  miter <- abs(imp)%%10 
-  if (miter %in% c(1,4) & is.null(jacfunc)) 
-  stop ("vode: cannot perform integration: *jacfunc* NOT specified; either specify *jacfunc* or change *jactype* or *mf*")
+     miter <- abs(imp)%%10 
+     if (miter %in% c(1,4) & is.null(jacfunc)) 
+        stop ("vode: cannot perform integration: *jacfunc* NOT specified; either specify *jacfunc* or change *jactype* or *mf*")
 
   # check other specifications depending on jacobian
-  meth <- abs(imp)%/%10   # basic linear multistep method
-  jsv  <- sign(imp)
-  if (is.null (maxord))       maxord <- ifelse(meth==1,12,5)
-  if (meth==1 && maxord > 12) stop ("vode: maxord too large: should be <= 12")
-  if (meth==2 && maxord > 5 ) stop ("vode: maxord too large: should be <= 5")
-  if (miter %in% c(4,5) && is.null(bandup))   
-      stop("vode: bandup must be specified if banded jacobian")
-  if (miter %in% c(4,5) && is.null(banddown)) 
-      stop("vode: banddown must be specified if banded jacobian")
-  if (is.null(banddown)) banddown <-1
-  if (is.null(bandup  )) bandup   <-1  
+     meth <- abs(imp)%/%10   # basic linear multistep method
+     jsv  <- sign(imp)
+     if (is.null (maxord))       
+        maxord <- ifelse(meth==1,12,5)
+     if (meth==1 && maxord > 12) 
+        stop ("vode: maxord too large: should be <= 12")
+     if (meth==2 && maxord > 5 ) 
+        stop ("vode: maxord too large: should be <= 5")
+     if (miter %in% c(4,5) && is.null(bandup))   
+        stop("vode: bandup must be specified if banded jacobian")
+     if (miter %in% c(4,5) && is.null(banddown)) 
+        stop("vode: banddown must be specified if banded jacobian")
+     if (is.null(banddown)) 
+        banddown <-1
+     if (is.null(bandup  )) 
+        bandup   <-1  
 
 ### model and jacobian function  
     Func <- NULL
     JacFunc <- NULL
     
     # if (miter == 4) jacobian should have banddown empty rows-vode only! 
-    if (miter == 4 && banddown>0) erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
+    if (miter == 4 && banddown>0) 
+       erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
     Ynames <- attr(y,"names")
 
     ModelInit <- NULL
     if(!is.null(dllname))
     {
-        if (is.loaded(initfunc, PACKAGE = dllname,
-           type = "") || is.loaded(initfunc, PACKAGE = dllname,
-            type = "Fortran")) 
+        if (is.loaded(initfunc, PACKAGE = dllname, type = "") || 
+           is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) 
         { ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
-        } else if (initfunc != dllname && ! is.null(initfunc))
+        } 
+        else if (initfunc != dllname && ! is.null(initfunc))
             stop(paste("cannot integrate: initfunc not loaded ",initfunc))        
      }
 
@@ -110,60 +133,64 @@ vode          <- function(y, times, func, parms, rtol=1e-6, atol=1e-8,
         } else stop(paste("cannot integrate: dyn function not loaded ",funcname))
 
       ## Finally, is there a jacobian?
-        if (!is.null(jacfunc)) {
-          if (!is.character(jacfunc))
-            stop("If 'func' is dynloaded, so must 'jacfunc' be")
+    if (!is.null(jacfunc)) {
+       if (!is.character(jacfunc))
+          stop("If 'func' is dynloaded, so must 'jacfunc' be")
            #  if (miter == 4) jacobian should have empty banddown empty rows-vode only!                 
-          if (miter == 4&& banddown>0)
-            stop("The combination of user-supplied banded jacobian in a dll is NOT allowed")           
-          jacfuncname <- jacfunc
-          if(is.loaded(jacfuncname, PACKAGE = dllname))
-            {JacFunc <- getNativeSymbolInfo(jacfuncname, PACKAGE = dllname)$address
-          } else stop(paste("cannot integrate: jacobian function not loaded ",jacfunc))
-         }
+       if (miter == 4&& banddown>0)
+           stop("The combination of user-supplied banded jacobian in a dll is NOT allowed")           
+       jacfuncname <- jacfunc
+       if(is.loaded(jacfuncname, PACKAGE = dllname))
+          {JacFunc <- getNativeSymbolInfo(jacfuncname, PACKAGE = dllname)$address
+       } 
+       else stop(paste("cannot integrate: jacobian function not loaded ",jacfunc))
+    }
 
       ## If we go this route, the number of "global" results is in nout
       ## and output variable names are in outnames
 
-        Nglobal <- nout
-        rho     <- NULL
-      if (is.null(outnames))
-         { Nmtot   <- NULL} else
-      if (length(outnames) == nout) 
-         { Nmtot   <- outnames} else
-      if (length(outnames) > nout) 
-         Nmtot <- outnames[1:nout] else
-         Nmtot <- c(outnames,(length(outnames)+1):nout)
-      if (is.null(ipar)) ipar<-0
-      if (is.null(rpar)) rpar<-0
+     Nglobal <- nout
+     rho     <- NULL
+    if (is.null(outnames))
+       { Nmtot   <- NULL} else
+    if (length(outnames) == nout) 
+       { Nmtot   <- outnames} else
+    if (length(outnames) > nout) 
+       Nmtot <- outnames[1:nout] else
+       Nmtot <- c(outnames,(length(outnames)+1):nout)
+    if (is.null(ipar)) 
+       ipar<-0
+    if (is.null(rpar)) 
+       rpar<-0
 
     }  else {
-      if(is.null(initfunc)) initpar <- NULL # parameter initialisation not needed if function is not a DLL    
-        rho <- environment(func)
+    if(is.null(initfunc)) 
+       initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+    rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
         
-        if(ynames)
-        {
-         Func    <- function(time,state) 
-         { attr(state,"names") <- Ynames 
-           func   (time,state,parms,...)[1]}   
+    if(ynames)
+       {
+       Func    <- function(time,state) 
+       { attr(state,"names") <- Ynames 
+         func   (time,state,parms,...)[1]}   
          
-         Func2   <- function(time,state) 
+       Func2   <- function(time,state) 
          { attr(state,"names") <- Ynames
            func   (time,state,parms,...)}    
          
-         JacFunc <- function(time,state) 
+       JacFunc <- function(time,state) 
          { attr(state,"names") <- Ynames
            rbind(jacfunc(time,state,parms,...),erow)}    
         } else {                            # no ynames...
-         Func    <- function(time,state) 
+       Func    <- function(time,state) 
            func   (time,state,parms,...)[1] 
         
-         Func2   <- function(time,state) 
+       Func2   <- function(time,state) 
            func   (time,state,parms,...)    
          
-         JacFunc <- function(time,state) 
+       JacFunc <- function(time,state) 
            rbind(jacfunc(time,state,parms,...),erow)
         }
         
@@ -196,12 +223,17 @@ vode          <- function(y, times, func, parms, rtol=1e-6, atol=1e-8,
 ### work arrays iwork, rwork
 # length of rwork and iwork 
 
-  lrw = 20+n*(maxord+1)+3*n
-  if(miter %in% c(1,2) && imp>0) lrw = lrw + 2*n*n+2
-  if(miter %in% c(1,2) && imp<0) lrw = lrw + n*n+2
-  if(miter ==3)                  lrw = lrw + n+2
-  if(miter %in% c(4,5) && imp>0) lrw = lrw + (3*banddown+2*bandup+2)*n+2
-  if(miter %in% c(4,5) && imp<0) lrw = lrw + (2*banddown+bandup+1)*n+2
+  lrw <- 20+n*(maxord+1)+3*n
+  if(miter %in% c(1,2) && imp>0) 
+     lrw <- lrw + 2*n*n+2
+  if(miter %in% c(1,2) && imp<0) 
+     lrw <- lrw + n*n+2
+  if(miter ==3)                  
+     lrw <- lrw + n+2
+  if(miter %in% c(4,5) && imp>0) 
+     lrw <- lrw + (3*banddown+2*bandup+2)*n+2
+  if(miter %in% c(4,5) && imp<0) 
+     lrw <- lrw + (2*banddown+bandup+1)*n+2
 
   liw   <- ifelse(miter %in% c(0,3),30,30+n)
 

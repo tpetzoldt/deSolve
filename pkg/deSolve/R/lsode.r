@@ -10,12 +10,11 @@
 
 
 lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6, 
-  tcrit = NULL, jacfunc=NULL, jactype = "fullint", mf = NULL, 
-  verbose=FALSE, dllname=NULL,initfunc=dllname, 
-  initpar=parms, rpar=NULL, ipar=NULL, 
-  ynames=TRUE, nout=0, outnames=NULL,
-  hmin=0, hmax=NULL, hini=0, 
-  maxord=NULL, bandup=NULL, banddown=NULL, maxsteps=5000, ...)  
+  jacfunc=NULL, jactype = "fullint", mf = NULL, verbose=FALSE, 
+  tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
+  maxord=NULL, bandup=NULL, banddown=NULL, maxsteps=5000, 
+  dllname=NULL,initfunc=dllname, initpar=parms, 
+  rpar=NULL, ipar=NULL, nout=0, outnames=NULL,...)  
 {
 ### check input
     if (!is.numeric(y))     stop("`y' must be numeric")

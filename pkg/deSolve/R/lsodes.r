@@ -7,11 +7,12 @@
 ### i.e. sparsity associated with 1- and 2-Dimensional reaction-transport models
 
 lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6, 
-  tcrit = NULL, jacvec=NULL, sparsetype="sparseint",nnz = NULL,  
-  inz = NULL, verbose=FALSE, dllname=NULL, initfunc=dllname,
+  jacvec=NULL, sparsetype="sparseint",nnz = NULL, inz = NULL, verbose=FALSE,   
+  tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
+  maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL, 
+  dllname=NULL, initfunc=dllname,
   initpar=parms, rpar=NULL, ipar=NULL, 
-  ynames=TRUE, nout=0, outnames=NULL, hmin=0, hmax=NULL, hini=0, 
-  maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL, ...)  
+  nout=0, outnames=NULL,...)  
 {
 
 ### check input

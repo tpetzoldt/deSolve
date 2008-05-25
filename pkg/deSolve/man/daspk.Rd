@@ -3,7 +3,7 @@
 \title{General solver for differential algebraic equations (DAE)}
 \description{Solves either: 
     \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...)}
-    \item a system of differential algebraic equations (DAE) of the form \deqn{G(t,y,y')=0}
+    \item a system of differential algebraic equations (DAE) of the form \deqn{F(t,y,y')=0}
     \cr using a combination of backward differentiation formula (BDF) and a direct linear system solution method (dense or banded). 
   
     The \R function \code{daspk} provides an interface to the
@@ -13,58 +13,51 @@
     \code{\link{.Call}}, etc., to call foreign code) or be defined in
     compiled code that has been dynamically loaded.}
 \usage{daspk(y, times, func=NULL, parms, dy=NULL, res=NULL, nalg=0,
-  rtol=1e-6, atol=1e-8, tcrit=NULL, jacfunc=NULL, jacres=NULL,
+  rtol=1e-6, atol=1e-8, jacfunc=NULL, jacres=NULL,
   jactype="fullint", estini = NULL, verbose=FALSE, 
+  tcrit=NULL, hmin=0, hmax=NULL, hini = 0, ynames =TRUE, maxord = 5,
+  bandup=NULL, banddown=NULL, maxsteps = 5000,   
   dllname=NULL, initfunc=dllname, initpar=parms, 
-  rpar=NULL, ipar=NULL, ynames =TRUE, nout= 0, outnames=NULL, 
-  hmin=0, hmax=NULL, hini = 0, maxord = 5,
-  bandup=NULL, banddown=NULL, maxsteps = 5000, ...)}
+  rpar=NULL, ipar=NULL, nout= 0, outnames=NULL, 
+  ...)}
 \arguments{
   \item{y }{the initial (state) values for the DE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time; if only one step is to be taken; set times = NULL}
-  \item{func }{cannot be used if the model is a DAE system. If an ODE system, \code{func} should be a user-supplied function that computes the values of the
+  \item{func }{cannot be used if the model is a DAE system. If an ODE system, \code{func} should be an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time t.
-      \cr  \code{func} must be called as:
-      \code{yprime = func(t, y, parms)}.  
+      \cr  \code{func} must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  
       \cr \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
       in the ODE system.  If the initial values \code{y} has a names
       attribute, the names will be available inside \code{func}, unless \code{ynames} is FALSE.  \code{parms} is
-      a vector of parameters (which
-      may have a names attribute, desirable in a large system).
+      a vector or list of parameters. ... (optional) are any other arguments passed to the function.
+      
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements (possibly with a
-      \code{\link{names}} attribute) are global values that are required at
+      \code{time}, and whose next elements are global values that are required at
       each point in \code{times}.
       \cr Note that it is not possible to define \code{func} as a compiled function in a dynamically loaded
       shared library. Use \code{res} instead.}
-  \item{parms }{any parameters used in \code{func}, \code{jacfunc}, or \code{res} that should be
-      modifiable without rewriting the function.}
+  \item{parms }{vector or list of parameters used in \code{func}, \code{jacfunc}, or \code{res}}
   \item{dy }{the initial derivatives of the state variables of the DE system. Ignored if an ODE.}
-  \item{res }{if a DAE system: either a user-supplied function that computes the residual function G(t,y,y') of the DAE system (the model defininition) at time t, 
+  \item{res }{if a DAE system: either an \R-function that computes the residual function F(t,y,y') of the DAE system (the model defininition) at time t, 
       or a character string giving the name of a compiled function in a dynamically loaded shared library. 
-  \cr If \code{res} is a user-supplied R-function, it must be called as: G = func(t, y, dy, parms, ...).
+  \cr If \code{res} is a user-supplied R-function, it must be called as: F = func(t, y, dy, parms, ...).
   \cr   Here \code{t} is the current time point in the integration, \code{y} is the current estimate of the variables in the ODE system, \code{dy} are the corresponding rates of change.
         If the initial \code{y} or \code{dy} have a names attribute, the names will be available inside \code{func}, unless \code{ynames} is FALSE.
-     \code{parms} is a vector of parameters (which may have a names attribute).
-  \cr The return value of \code{res} should be a list, whose first element is a vector containing the residuals of the DAE system, i.e. delta=G(t,y,y'),
+     \code{parms} is a vector of parameters.
+  \cr The return value of \code{res} should be a list, whose first element is a vector containing the residuals of the DAE system, i.e. delta=F(t,y,y'),
   and whose next elements contain output variables that are required at each point in \code{times}.
   \cr If \code{res} is a string, then \code{dllname} must give the name
       of the shared library (without extension) which must be loaded
-      before \code{daspk()} is called.  see Details for more information.
+      before \code{daspk()} is called.  see package vignette for more information.
   }
   \item{nalg }{if a DAE system: the number of algebraic equations (equations not involving derivatives). 
       Algebraic equations should always be the last, i.e. preceeded by the differential equations.
       \cr Only used if \code{estini} = 1}
   \item{rtol }{relative error tolerance, either a scalar or a vector, one value for each y }
   \item{atol }{absolute error tolerance, either a scalar or a vector, one value for each y}
-  \item{tcrit }{the Fortran routine \code{daspk} overshoots its targets (times points in the vector \code{times}), and interpolates values
-      for the desired time points.  If there is a time beyond which integration should not proceed (perhaps because of a singularity),
-      that should be provided in \code{tcrit}.  Note that it does not make sense (though it is not an error) to include times in
-      \code{times} past \code{tcrit}, since the solver will stop and
-      return at the last point in \code{times} that is earlier than
-      \code{tcrit}.}
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the jacobian of the system of differential equations. Only used in case the system is an ODE (y'=f(t,y)), specified by \code{func}.   
       The \R calling sequence for \code{jacfunc} is identical to that of \code{func}.     
       \cr If the jacobian is a full matrix, \code{jacfunc} should return a matrix dydot/dy, where the ith
@@ -72,7 +65,7 @@
       or a vector containing the matrix elements by columns (the way \R and Fortran store matrices).
       \cr If the jacobian is banded, \code{jacfunc} should return a matrix containing only the 
       nonzero bands of the jacobian, rotated row-wise. See first example of lsode.}
-  \item{jacres }{ \code{jacres} and not \code{jacfunc} should be used if the system is specified by the residual function G(t,y,y'), i.e. \code{jacres} is used in 
+  \item{jacres }{ \code{jacres} and not \code{jacfunc} should be used if the system is specified by the residual function F(t,y,y'), i.e. \code{jacres} is used in 
       conjunction with \code{res}. 
      \cr If \code{jacres} is an R-function, the calling sequence for \code{jacres} is identical to that of \code{res}, but with extra parameter \code{cj}. 
      thus it should be called as: jacres = func(t, y, dy, parms, cj, ...).
@@ -87,28 +80,32 @@
      See details for the calling sequence when \code{jacres} is a string.
       }
   \item{jactype }{the structure of the jacobian, one of "fullint", "fullusr", "bandusr" or "bandint" - either full or banded and estimated internally or by the user}
-  \item{estini }{only if a DAE system, and if initial values of \code{y} and \code{dy }are not consistent (i.e. G(t,y,dy) is not=0), 
+  \item{estini }{only if a DAE system, and if initial values of \code{y} and \code{dy }are not consistent (i.e. F(t,y,dy) is not=0), 
       setting \code{estini}=1 or 2, will solve for them.  
       If \code{estini} = 1: dy and the algebraic variables are estimated from \code{y}; in this case, the number of algebraic equations must be given (\code{nalg}). 
       If \code{estini} = 2: \code{y} will be estimated from \code{dy}. }
   \item{verbose }{if TRUE: full output to the screen, e.g. will output the settings of vector *istate* and *rstate* - see details}
-  \item{dllname }{a string giving the name of the shared library (without extension) that contains all the compiled function or subroutine definitions referred to in \code{func}/or \code{res} and \code{jacfunc}.}
-  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See details.}
-  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
-  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for large models}
-  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
-      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - see details}
-  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
+  \item{tcrit }{the Fortran routine \code{daspk} overshoots its targets (times points in the vector \code{times}), and interpolates values
+      for the desired time points.  If there is a time beyond which integration should not proceed (perhaps because of a singularity),
+      that should be provided in \code{tcrit}.}
   \item{hmin }{an optional minimum value of the integration stepsize. In special situations this parameter may speed up computations with the cost of precision. Don't use \code{hmin} if you don't know why!}
   \item{hmax }{an optional maximum value of the integration stepsize. If not specified, \code{hmax} is set to the largest difference in \code{times}, to avoid that the simulation possibly ignores short-term events. If 0, no maximal size is specified}
   \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
+  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for large models}
   \item{maxord }{the maximum order to be allowed. Reduce \code{maxord} to save storage space (<=5) }
   \item{bandup }{number of non-zero bands above the diagonal, in case the jacobian is banded (and \code{jactype} one of "bandint","bandusr")}
   \item{banddown }{number of non-zero bands below the diagonal, in case the jacobian is banded (and \code{jactype} one of "bandint","bandusr")}
   \item{maxsteps }{maximal number of steps during one call to the solver; will be recalculated to be at least 500 and a multiple of 500; the solver will give a warning if more than 
       500 steps are taken, but it will continue till \code{maxsteps} steps}
+  \item{dllname }{a string giving the name of the shared library (without extension) that contains all the compiled function or subroutine definitions referred to in \code{func}/or \code{res} and \code{jacfunc}.
+  See package vignette}
+  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette.}
+  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
+  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{nout }{only used if \file{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
+      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code -   See package vignette}
+  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{... }{additional arguments passed to \code{func}, \code{jacfunc}, \code{res} and \code{jacres}, allowing this to be a generic function}
 }
 \value{
@@ -124,7 +121,8 @@
 
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{#------------------------------------------------------
+\examples{
+  #------------------------------------------------------
   # Coupled chemical reactions including an equilibrium
   # modeled as (1) an ODE and (2) as a DAE
   #
@@ -247,7 +245,9 @@
            res=Res_DAE, jacres=jacres_DAE, jactype="fullusr",
            parms=pars,atol=1e-10,rtol=1e-10))
            
-  max(abs(DAE-DAE2))}
+  max(abs(DAE-DAE2))
+# See \dynload subdirectory for a FORTRAN implementation of this model 
+  }
 \references{\item 1.  L. R. Petzold, A Description of DASSL: A Differential/Algebraic
    System Solver, in Scientific Computing, R. S. Stepleman et al.
    (Eds.), North-Holland, Amsterdam, 1983, pp. 65-68.
@@ -269,12 +269,12 @@
 \details{The daspk solver uses the backward differentiation formulas of orders one through five (specified with \code{maxord})
   to solve either:
   \item an ODE system of the form \deqn{y'=f(t,y,...)}  for y = Y, or
-  \item a DAE system of the form \deqn{G(t,y,y') = 0} for y = Y and y' = YPRIME.
+  \item a DAE system of the form \deqn{F(t,y,y') = 0} for y = Y and y' = YPRIME.
   
   ODEs are specified in \code{func}, DAEs are specified in \code{res}.   
   
   If a DAE system, Values for Y \emph{and} YPRIME at the initial time must be given as input. Ideally,these values should be consistent, 
-  that is, if T, Y, YPRIME are the given initial values, they should satisfy G(T,Y,YPRIME) = 0.  
+  that is, if T, Y, YPRIME are the given initial values, they should satisfy F(T,Y,YPRIME) = 0.  
   \cr However, if consistent values are not known, in many cases daspk can solve for them: when \code{estini} = 1, 
   y' and algebraic variables (their number specified with \code{nalg}) will be estimated, when \code{estini} = 2, y will be estimated.
   
@@ -291,95 +291,7 @@
   If the request for precision exceeds the capabilities of the machine, 
   daspk will return an error code. See \code{\link{lsoda}} for details.
   
-  \bold{res and jacres} may be defined in compiled C or Fortran code, as well as in an R-function.
-  \cr If \code{res} and \code{jacres} are a string, then they are assumed to be compiled code.
-  \cr In this case, \code{dllname} must give the name of the shared library (without extension) which must be loaded before daspk() is called.
-  
-    For \bold{code written in C}, the calling sequence for \code{res} must be:
-    
-    \code{void myres(double *t, double *y, double *ydot, double *cj,}\cr
-    \code{double *delta, int *ires, double *yout, int *ip)}\cr
-  
-    where \code{*t} is the value
-    of the independent variable, \code{y} points to a double precision
-    array that contains the current value of the
-    state variables, \code{ydot} points to an array that will contain
-    the derivatives, \code{delta} points to an array that will contain
-    the calculated residuals. \code{cj} points to a scalar, which is normally proportional to the inverse of the stepsize, while \code{ires} points to an integer (not used).
-    \code{yout} points to any other output variables (different from the state variables y), followed by the double precision values as passed via 
-    \code{rpar}; finally \code{*ip} is an integer vector containing at least 3 elements, its first value (ip[0]) the number of output variables, calculated in the model 
-    (and which should be equal to \code{nout}), its second element the total length of *yout, its third element the total length of *ip, and finally the 
-    integer values as passed via \code{ipar}. 
-  
-    For \bold{code written in Fortran}, the calling sequence for \code{res} must be as in the following
-    example:
-    
-    \code{subroutine myresf(t, y, ydot, cj, delta, ires, out, ip)}\cr
-    \code{integer            :: ires, ip(*)}\cr
-    \code{integer, parameter :: neq = 3}\cr
-    \code{double precision   :: t, y(neq), ydot(neq), delta(neq), out(*)}\cr
-    \code{double precision   :: K, ka, r, prod, ra, rb}\cr
-    \code{common /myparms/K,ka,r,prod} 
-  
-    \code{if(ip(1) < 1) call rexit("nout should be at least 1")}\cr
-    \code{ra  = ka* y(3)            }\cr
-    \code{rb  = ka/K *y(1) * y(2)   } 
-  
-    \code{!! residuals of rates of changes}\cr
-    \code{delta(3) = -ydot(3)  -  ra + rb + prod}\cr
-    \code{delta(1) = -ydot(1)  +  ra - rb}\cr
-    \code{delta(2) = -ydot(2)  +  ra - rb - r*y(2)}\cr
-    \code{out(1)   = y(1) + y(2) + y(3)}\cr
-    \code{return }\cr
-    \code{end }\cr
-  
-    In this example, parameters are kept in a common block (called myparms) in the Fortran code
-  
-    In order to put parameters in the common block from the calling R code, an initialisation subroutine should be defined and its name 
-    passed to R with \code{initfunc}. This function has as its sole argument a function \code{daspkparms} that fills a double array with double precision
-    values.  In the example here, the initialisation subroutine:
-    
-  \code{subroutine initpar(daspkparms)}
-  
-  \code{external daspkparms}\cr
-  \code{integer, parameter :: N = 4}\cr
-  \code{double precision parms(N)}\cr
-  \code{common /myparms/parms}\cr
-  \code{call daspkparms(N, parms)}\cr
-  \code{return}\cr
-  \code{end}\cr
-  
-  will be required to initialize the parameter vector.  Here
-    \code{initpar} just calls \code{daspkparms} with the dimension of the parameter vector, and the array \code{parms} that will contain the parameter values.
-  
-  See \code{\link{lsoda}} for an example of parameter initialisation in \code{C}
-  
-  For \bold{code written in Fortran}, the \code{jacres} must be as:
-  
-  \code{subroutine resjacfor (t, y, dy, pd, cj, out, ipar)} 
-  
-  \code{integer, parameter :: neq = 3}\cr
-  \code{integer            :: ipar(*)}\cr
-  \code{double precision   :: K, ka, r, prod }\cr
-  \code{double precision   :: pd(neq,neq),y(neq),dy(neq),out(*)}\cr
-  \code{common /myparms/K,ka,r,prod }
-  
-  \code{!res1 = -dD  - ka*D + ka/K *A*B + prod}\cr
-  \code{PD(1,1) = ka/K *y(2)}\cr
-  \code{PD(1,2) = ka/K *y(1)}\cr
-  \code{PD(1,3) = -ka -cj }\cr
-  \code{!res2 = -dA  + ka*D - ka/K *A*B }\cr
-  \code{PD(2,1) = -ka/K *y(2) -cj }\cr
-  \code{PD(2,2) = -ka/K *y(2) }\cr
-  \code{PD(2,3) = ka  }\cr
-  \code{!res3 = -dB  + ka*D - ka/K *A*B - r*B  }\cr
-  \code{PD(3,1) = -ka/K *y(2)}\cr
-  \code{PD(3,2) = -ka/K *y(2) -r -cj }\cr
-  \code{PD(3,3) = ka }\cr
-  
-  \code{return }\cr
-  \code{end  }\cr
-  
+  \bold{res and jacres} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   Examples in Fortran are in the \file{dynload} subdirectory of
   the \code{deSolve} package directory.
   

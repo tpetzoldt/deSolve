@@ -15,53 +15,41 @@
     \item It switches automatically between stiff and nonstiff methods (similar as lsoda).
     \item It finds the root of at least one of a set of constraint
   functions g(i) of the independent and dependent variables.}
-\usage{lsodar(y, times, func, parms, rtol=1e-6, atol=1e-6, tcrit=NULL, 
+\usage{lsodar(y, times, func, parms, rtol=1e-6, atol=1e-6, 
   jacfunc=NULL, jactype="fullint", rootfunc=NULL, verbose=FALSE,   
+  nroot=0, tcrit=NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
+  maxordn=12, maxords = 5, bandup=NULL, banddown=NULL, maxsteps=5000, 
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL, 
-  ipar=NULL, ynames=TRUE, nout=0, outnames=NULL, nroot=0, 
-  hmin=0, hmax=NULL, hini=0, maxordn=12, maxords = 5, 
-  bandup=NULL, banddown=NULL, maxsteps=5000, ...)}
+  ipar=NULL, nout=0, outnames=NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{times at which explicit estimates for \code{y} are desired.  The first value in \code{times} must be the initial time.}
-  \item{func }{either a user-supplied function that computes the values of the
+  \item{func }{either an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time
       t, or a character string
       giving the name of a compiled function in a dynamically loaded
       shared library.
   
-      If \code{func} is a user-supplied function, it must be called as:
-      \code{yprime = func(t, y, parms)}.  \code{t} is the current time point
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
       in the ODE system.  If the initial values \code{y} has a names
       attribute, the names will be available inside \code{func}.  \code{parms} is
-      a vector of parameters (which
-      may have a names attribute, desirable in a large system).
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
   
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements (possibly with a
-      \code{\link{names}} attribute) are global values that are required at
+      \code{time}, and whose next elements are global values that are required at
       each point in \code{times}.
   
       If \code{func} is a string, then \code{dllname} must give the name
       of the shared library (without extension) which must be loaded
-      before \code{lsodar()} is called.  see Details for more information.}
-  \item{parms }{any parameters used in \code{func} that should be
-      modifiable without rewriting the function.}
+      before \code{lsodar()} is called. See package vignette for more details}
+  \item{parms }{vector or list of parameters used in \code{func} or \code{jacfunc}.}
   \item{rtol }{relative error tolerance, either a scalar or an array as
       long as \code{y}.  See details. }
   \item{atol }{absolute error tolerance, either a scalar or an array as
       long as \code{y}.  See details.}
-  \item{tcrit }{if not \code{NULL}, then \code{lsodar} cannot integrate past \code{tcrit}. The Fortran routine \code{lsodar} overshoots its targets
-      (times points in the vector \code{times}), and interpolates values
-      for the desired time points.  If there is a time beyond which
-      integration should not proceed (perhaps because of a singularity),
-      that should be provided in \code{tcrit}.  Note that it does not
-      make sense (though it is not an error) to include times in
-      \code{times} past \code{tcrit}, since the solver will stop and
-      return at the last point in \code{times} that is earlier than
-      \code{tcrit}.}
   \item{jacfunc }{if not \code{NULL}, an \R function, that computes
       the jacobian of the system of differential equations
       dydot(i)/dy(j), or a string giving the name of a function or
@@ -83,28 +71,33 @@
       return a vector with the function values whose root is sought}
   \item{verbose }{a logical value that, when TRUE, triggers more
       verbose output from the ODE solver.  Will output the settings of vectors *istate* and *rstate* - see details}
-  \item{dllname }{a string giving the name of the shared library (without
-      extension) that contains all the compiled function or subroutine
-      definitions refered to in \code{func} and \code{jacfunc}.}
-  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See details.}
-  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
-  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for multi-D models}
-  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
-      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - see help of daspk or lsoda}
-  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{nroot }{only used if \file{dllname}  is specified: the number of constraint functions whose roots are desired during the integration; if \code{rootfunc} is an R-function, the solver estimates the number of roots}
+  \item{tcrit }{if not \code{NULL}, then \code{lsodar} cannot integrate past \code{tcrit}. The Fortran routine \code{lsodar} overshoots its targets
+      (times points in the vector \code{times}), and interpolates values
+      for the desired time points.  If there is a time beyond which
+      integration should not proceed (perhaps because of a singularity),
+      that should be provided in \code{tcrit}.}
   \item{hmin }{an optional minimum value of the integration
       stepsize. In special situations this parameter may speed up computations with
       the cost of precision. Don't use \code{hmin} if you don't know why!}
   \item{hmax }{an optional maximum value of the integration stepsize. If not specified, \code{hmax} is set to the largest difference in \code{times}, to avoid that the simulation possibly ignores short-term events. If 0, no maximal size is specified}
   \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
+  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for multi-D models}
   \item{maxordn }{the maximum order to be allowed in case the method is non-stiff. Should be <=12. Reduce maxord to save storage space}
   \item{maxords }{the maximum order to be allowed in case the method is stiff. Should be <=5. Reduce maxord to save storage space}
   \item{bandup }{number of non-zero bands above the diagonal, in case the Jacobian is banded}
   \item{banddown }{number of non-zero bands below the diagonal, in case the Jacobian is banded}
   \item{maxsteps }{maximal number of steps during one call to the solver}
+  \item{dllname }{a string giving the name of the shared library (without
+      extension) that contains all the compiled function or subroutine
+      definitions refered to in \code{func} and \code{jacfunc}. See package vignette}
+  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette. }
+  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
+  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
+      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - See package vignette}
+  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{... }{additional arguments passed to \code{func} and \code{jacfunc} allowing this to be a generic function}
 }
 \value{
@@ -124,7 +117,10 @@
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{### example 1: from lsodar source code
+\examples{
+#########################################
+### example 1: from lsodar source code
+#########################################
   
   Fun <- function (t,y,parms)
   {
@@ -154,8 +150,10 @@
   print(paste("root is found for eqn",which(attributes(out)$iroot==1)))
   print(out[nrow(out),])
   
-  ### example 2:
-  ### using lsodar to estimate steady-state conditions
+#########################################
+### example 2:
+### using lsodar to estimate steady-state conditions
+#########################################
   
   # Bacteria (Bac) are growing on a substrate (Sub)
   model <- function(t,state,pars)
@@ -224,27 +222,7 @@
   The input parameters \code{rtol}, and \code{atol} determine the \bold{error
   control} performed by the solver. See \code{\link{lsoda}} for details.
   
-  \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. 
-  \cr If \code{func} or \code{jacfunc} are a string, then they are assumed to be compiled code.
-  \cr In this case, \code{dllname} must give the name of the shared library (without extension) which must be loaded before lsodar() is called. 
-  See the description of \code{\link{lsoda}} for details about the specification of \code{func} and \code{jacfunc}.
-  \cr   For \bold{code written in C}, the calling sequence for \code{rootfunc} must be:
-    
-    \code{void myroot(int *neq, double *t, double *y, int *ng, double *gout,)}\cr
-    \code{double *out, int *ip}\cr
-    where \code{*neq} and \code{*ng} are the number of state variables and root functions respectively,
-     \code{*t} is the value of the independent variable, \code{y} points to a double precision
-    array that contains the current value of the state variables, and \code{gout} points to an array that will contain
-    the values of the constraint function whose root is sought. \code{out} and \code{ip} are a double precision and 
-    integer vector respectively, as described in the help of \code{\link{lsoda}}
-  
-  
-    For \bold{code written in Fortran}, the calling sequence for \code{rootfunc} must be:
-  
-    \code{subroutine myroot(neq, t, y, ng, gout, out, ipar)}\cr
-    \code{integer            :: neq, ng, ipar(*)}\cr
-    \code{double precision :: t, y(neq), gout(ng), out(*)}
-  
+  \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function.  See package vignette for details.
   Examples in Fortran are in the \file{dynload} subdirectory of
   the \code{deSolve} package directory.
   
@@ -279,7 +257,7 @@
   
       \bold{iroot} is a vector, its length equal to the number of constraint functions; 
       it will have a value of 1 for the constraint function whose root that has been found and 0 otherwise.}
-\seealso{\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
-    \code{\link{vode}}, \code{\link{daspk}}.}
+\seealso{\code{\code{\link{ode}}, \link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
+    \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
 \keyword{math}
 

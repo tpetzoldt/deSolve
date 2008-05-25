@@ -106,7 +106,11 @@
   t(summary(out))}
 \references{Lancelot, C., Veth, C. and Mathot, S. (1991). 
   Modelling ice-edge phytoplankton bloom in the Scotia-Weddel sea sector of the Southern Ocean during spring 1988. 
-  Journal of Marine Systems 2, 333..346.}
+  Journal of Marine Systems 2, 333..346.
+  
+  Soetaert, K. and Herman, P. (2008). A practical guide to ecological modelling. 
+  Using R as a simulation platform. Springer.
+}
 \details{The model is implemented primarily to demonstrate the linking of FORTRAN with R-code.
   \cr The source can be found in the \file{dynload} subdirectory of the package.}
 \seealso{\code{\link{ccl4model}}, the CCl4 inhalation model}

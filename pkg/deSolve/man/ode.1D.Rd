@@ -1,16 +1,28 @@
 \name{ode.1D}
 \alias{ode.1D}
-\title{Steady-state solver for multicomponent 1-D ordinary differential equations}
-\description{Solves the steady-state of a system of ordinary differential equations. 
-    \cr Assumes a banded or sparse jacobian matrix. To create the banded matrix, 
-    state variables are rearranged. 
-    \cr Suitable for 1-D models that include transport only between adjacent layers and that model many species (e.g. multi-component reactive-transport models).}
+\title{Solver for multicomponent 1-D ordinary differential equations}
+\description{Solves a system of ordinary differential equations resulting from 
+1-Dimensional  multi-component transport-reaction models that include transport only between adjacent layers.}
 \usage{ode.1D(y, times, func, parms, nspec=NULL, dimens=NULL, 
        method="lsode", ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
-  \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, or a character string giving the name of a compiled function in a dynamically loaded shared library. 
+  \item{func }{either an \R-function that computes the values of the derivatives in the ODE system (the model definition) at time t, 
+  or a character string giving the name of a compiled function in a dynamically loaded shared library.
+  
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
+      in the integration, \code{y} is the current estimate of the variables
+      in the ODE system.  If the initial values \code{y} has a names
+      attribute, the names will be available inside \code{func}.  \code{parms} is
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
+  
+      The return value of \code{func} should be a list, whose first element is a
+      vector containing the derivatives of \code{y} with respect to
+      \code{time}, and whose next elements are global values that are required at
+      each point in \code{times}.
+   
        		If \code{func} is a character string then integrator \code{lsodes} will be used. See details}
   \item{parms }{parameters passed to \code{func}}
   \item{nspec }{the number of *species* (components) in the model. If NULL, then \code{dimens} should be specified}
@@ -30,7 +42,7 @@
   
 }
 \note{It is advisable though not mandatory to specify BOTH \code{nspec} and \code{dimens}. In this case, the solver can check whether the input makes sense 
-(as nspec*dimens = length(y))}
+(i.e. if nspec*dimens = length(y))}
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{# example 1
 
@@ -98,8 +110,18 @@
   # RUNNING the model:   #
   times  <-seq(0,200,by=1)   # output wanted at these time intervals           
 
+  # the model is solved by the two implemented methods:
+  # 1. Default: banded reformulation
+  print(system.time(
   out    <- ode.1D(y=state,times=times,func=lvmod,parms=parms,nspec=2,
                     N=N,rr=r,ri=ri,dr=dr,dri=dri)  
+                    ))
+
+  # 2. Using sparse method
+  print(system.time(
+  out2   <- ode.1D(y=state,times=times,func=lvmod,parms=parms,nspec=2,
+                    N=N,rr=r,ri=ri,dr=dr,dri=dri,method="lsodes")  
+                    ))
 
   #==================#
   # Plotting output  #
@@ -175,22 +197,28 @@
   filled.contour(x=times,y=x,O2,color= color,nlevels=50,
                  xlab="time, days", ylab= "Distance from river, m",
                  main="Oxygen")}
-\details{This is the method of choice for multi-species 1-dimensional models, that are only subjected to transport between adjacent layers 
+\details{This is the method of choice for multi-species 1-dimensional models, that are only subjected to transport between adjacent layers.
     \cr More specifically, this method is to be used if the state variables are arranged per species: 
     \cr A[1],A[2],A[3],....B[1],B[2],B[3],.... (for species A, B)) 
-  
-  
-    For single-species 1-D models, use \code{\link{ode.band}}. 
-  
-  If state variables are arranged as (e.g. A[1],B[1],A[2],B[2],A[3],B[3],.... . 
-  it is generally more efficient to use \code{\link{ode.band}} 
-  
-  If the integrator chosen is not \code{lsodes} then a banded Jacobian is created by rearranging state variables.
-  \cr If the integrator chosen is \code{lsodes} then state variables are not rearranged, and the sparse Jacobian is selected.
-  \cr If the model is specified in a DLL, then \code{lsodes} is used.
 
+Two methods are implemented.
+\item The default method rearranges the state variables as A[1],B[1],...A[2],B[2],...A[3],B[3],.... This reformulation leads to a banded Jacobian with (upper and lower) half bandwith = number of species. 
+Then the selected integrator solves the banded problem.
+\item The second method uses \code{lsodes}. Based on the dimension of the problem, the method first calculates the sparsity pattern of the Jacobian, under the assumption 
+  that transport is onely occurring between adjacent layers. Then \code{lsodes} is called to solve the problem.
+  \cr As \code{lsodes} is used to integrate, it may be necessary to specify the length of the real work array, \code{lrw}.
+  \cr Although a reasonable guess of \code{lrw} is made, it is possible that this will be too low. 
+  In this case, \code{ode.1D} will return with an error message telling
+  the size of the work array actually needed. In the second try then, set \code{lrw} equal to this number.
+
+If the model is specified in compiled code (in a DLL), then option 2, based on \code{lsodes} is the only solution method.
+ 
+For single-species 1-D models, use \code{\link{ode.band}}. 
+  
   See the selected integrator for the additional options}
-\seealso{\item \code{\link{ode.band}}, for integrating, when the jacobian matrix is banded, and where the state variables need NOT be rearranged 
-  	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}
+\seealso{\code{\link{ode}},
+\item \code{\link{ode.band}} for solving models with a banded Jacobian
+\item \code{\link{ode.2D}} for integrating 2-D models 
+\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}
 \keyword{math}
 

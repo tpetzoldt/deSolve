@@ -23,53 +23,41 @@
   This means that the user does not have to determine whether the
   problem is stiff or not, and the solver will automatically choose the
   appropriate method.  It always starts with the nonstiff method.}
-\usage{lsoda(y, times, func, parms, rtol=1e-6, atol=1e-6, tcrit=NULL, 
-  jacfunc=NULL, jactype="fullint", verbose=FALSE,   
+\usage{lsoda(y, times, func, parms, rtol=1e-6, atol=1e-6, 
+  jacfunc=NULL, jactype="fullint", verbose=FALSE, tcrit=NULL,   
+  hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxordn=12, maxords = 5, 
+  bandup=NULL, banddown=NULL, maxsteps=5000,
   dllname=NULL, initfunc=dllname, initpar=parms, 
-  rpar=NULL, ipar=NULL, ynames=TRUE, nout=0, outnames=NULL, 
-  hmin=0, hmax=NULL, hini=0, maxordn=12, maxords = 5, 
-  bandup=NULL, banddown=NULL, maxsteps=5000, ...)}
+  rpar=NULL, ipar=NULL, nout=0, outnames=NULL,  ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{times at which explicit estimates for \code{y} are desired.  The first value in \code{times} must be the initial time.}
-  \item{func }{either a user-supplied function that computes the values of the
+  \item{func }{either an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time
       t, or a character string
       giving the name of a compiled function in a dynamically loaded
       shared library.
   
-      If \code{func}  is a user-supplied function, it must be called as:
-      \code{yprime = func(t, y, parms)}.  \code{t} is the current time point
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
       in the ODE system.  If the initial values \code{y} has a names
       attribute, the names will be available inside \code{func}.  \code{parms} is
-      a vector of parameters (which
-      may have a names attribute, desirable in a large system).
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
   
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements (possibly with a
-      \code{\link{names}} attribute) are global values that are required at
+      \code{time}, and whose next elements are global values that are required at
       each point in \code{times}.
   
       If \code{func} is a string, then \code{dllname} must give the name
       of the shared library (without extension) which must be loaded
-      before \code{lsoda()} is called.  see Details for more information.}
-  \item{parms }{any parameters used in \code{func} that should be
-      modifiable without rewriting the function.}
+      before \code{lsoda()} is called.  . See package vignette for more details}
+  \item{parms }{vector or list of parameters used in \code{func} or \code{jacfunc}.}
   \item{rtol }{relative error tolerance, either a scalar or an array as
       long as \code{y}.  See details. }
   \item{atol }{absolute error tolerance, either a scalar or an array as
       long as \code{y}.  See details.}
-  \item{tcrit }{if not \code{NULL}, then \code{lsoda} cannot integrate past \code{tcrit}. The Fortran routine \code{lsoda} overshoots its targets
-      (times points in the vector \code{times}), and interpolates values
-      for the desired time points.  If there is a time beyond which
-      integration should not proceed (perhaps because of a singularity),
-      that should be provided in \code{tcrit}.  Note that it does not
-      make sense (though it is not an error) to include times in
-      \code{times} past \code{tcrit}, since the solver will stop and
-      return at the last point in \code{times} that is earlier than
-      \code{tcrit}.}
   \item{jacfunc }{if not \code{NULL}, an \R function that computes
       the jacobian of the system of differential equations
       dydot(i)/dy(j), or a string giving the name of a function or
@@ -86,27 +74,32 @@
   \item{jactype }{the structure of the jacobian, one of "fullint", "fullusr", "bandusr" or "bandint" - either full or banded and estimated internally or by user}
   \item{verbose }{a logical value that, when TRUE, triggers more
       verbose output from the ODE solver.  Will output the settings of vectors *istate* and *rstate* - see details}
-  \item{dllname }{a string giving the name of the shared library (without
-      extension) that contains all the compiled function or subroutine
-      definitions refered to in \code{func} and \code{jacfunc}.}
-  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See details.}
-  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
-  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
-  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for large models}
-  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
-      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - see details}
-  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
+  \item{tcrit }{if not \code{NULL}, then \code{lsoda} cannot integrate past \code{tcrit}. The Fortran routine \code{lsoda} overshoots its targets
+      (times points in the vector \code{times}), and interpolates values
+      for the desired time points.  If there is a time beyond which
+      integration should not proceed (perhaps because of a singularity),
+      that should be provided in \code{tcrit}.}
   \item{hmin }{an optional minimum value of the integration
       stepsize. In special situations this parameter may speed up computations with
       the cost of precision. Don't use \code{hmin} if you don't know why!}
   \item{hmax }{an optional maximum value of the integration stepsize. If not specified, \code{hmax} is set to the largest difference in \code{times}, to avoid that the simulation possibly ignores short-term events. If 0, no maximal size is specified}
   \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
+  \item{ynames }{if FALSE: names of state variables are not passed to function \code{func} ; this may speed up the simulation especially for large models}
   \item{maxordn }{the maximum order to be allowed in case the method is non-stiff. Should be <=12. Reduce maxord to save storage space}
   \item{maxords }{the maximum order to be allowed in case the method is stiff. Should be <=5. Reduce maxord to save storage space}
   \item{bandup }{number of non-zero bands above the diagonal, in case the Jacobian is banded}
   \item{banddown }{number of non-zero bands below the diagonal, in case the Jacobian is banded}
   \item{maxsteps }{maximal number of steps during one call to the solver}
+  \item{dllname }{a string giving the name of the shared library (without
+      extension) that contains all the compiled function or subroutine
+      definitions refered to in \code{func} and \code{jacfunc}. See package vignette}
+  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette}
+  \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
+  \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
+  \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
+      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - See package vignette}
+  \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{... }{additional arguments passed to \code{func} and \code{jacfunc} allowing this to be a generic function}
 }
 \value{
@@ -125,12 +118,73 @@
 
 }
 \author{R. Woodrow Setzer <setzer.woodrow@epa.gov>}
-\examples{### lsexamp -- example from lsoda source code
+\examples{
+#########################################
+## Example 1: Lotka-volterra model
+#########################################
+  
+  ## A simple resource limited Lotka-Volterra-Model
+  ## Note: 
+  ## 1. parameter and state variable names made
+  ## accessible via "with" statement
+  ## 2. function sigimp accessible through lexical scoping
+  ## (see also ode and rk examples)
+  
+  lvmodel <-function(t, x, parms) {
+
+      with(as.list(c(parms,x)), {      
+
+        import <- sigimp(t)
+        dS <- import - b*S*P + g*K     #substrate
+        dP <- c*S*P  - d*K*P           #producer
+        dK <- e*P*K  - f*K             #consumer
+        res<-c(dS, dP, dK)
+        list(res)
+                           })
+      }
+  
+  ## Parameters 
+  parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
+
+  ## vector of timesteps
+  times  <- seq(0, 100, length=101)
+  
+  ## external signal with rectangle impulse
+  signal <- as.data.frame(list(times = times,
+                              import = rep(0,length(times))))
+  
+  signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
+  
+  sigimp <- approxfun(signal$times, signal$import, rule=2)
+  
+  
+  ## Start values for steady state
+  y<-xstart <- c(S=1, P=1, K=1)
+  
+  ## Solving
+  out2 <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
+  
+  mf <- par(mfrow=c(2,2))
+
+  plot (out2$time, out2$S,  type="l",   ylab="substrate")
+  
+  plot (out2$time, out2$P, type="l",    ylab="producer")
+  
+  plot (out2$time, out2$K, type="l",    ylab="consumer")
+  
+  plot (out2$P, out2$K, type="l", xlab="producer", ylab="consumer")
+
+  par(mfrow=mf)
+
+#########################################
+### Example 2. - from lsoda source code
+#########################################
   
   ## names makes this easier to read, but may slow down execution.
-  parms <- c(k1=0.04, k2=1e4, k3=3e7)
+  parms   <- c(k1=0.04, k2=1e4, k3=3e7)
   my.atol <- c(1e-6,  1e-10,  1e-6)
-  times <- c(0,4 * 10^(-1:10))
+  times   <- c(0,4 * 10^(-1:10))
+
   lsexamp <- function(t, y, p)
     {
       yd1 <- -p["k1"] * y[1] + p["k2"] * y[2]*y[3]
@@ -149,7 +203,7 @@
         )
     }
     
-  require(odesolve)
+
   ## measure speed (here and below)
   system.time( 
   out <- lsoda(c(1,0,0),times,lsexamp, parms, rtol=1e-4, atol= my.atol)
@@ -183,55 +237,7 @@
     
   all.equal(out, outJ) # TRUE
   
-  ## Example for using hmax
-  
-  ## Parameters for steady state conditions
-  parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
-  
-  ## A simple resource limited Lotka-Volterra-Model
-  ## Note passing parameters through using a closure
-  lvmodel <- with(as.list(parms), function(t, x, parms) {
-      import <- sigimp(t)
-      ds <- import - b*x["s"]*x["p"] + g*x["k"]
-      dp <- c*x["s"]*x["p"]  - d*x["k"]*x["p"]
-      dk <- e*x["p"]*x["k"]  - f*x["k"]
-      res<-c(ds, dp, dk)
-      list(res)
-    })
-  
-  ## vector of timesteps
-  times  <- seq(0, 100, length=101)
-  
-  ## external signal with rectangle impulse
-  signal <- as.data.frame(list(times = times,
-                              import = rep(0,length(times))))
-  
-  signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
-  
-  sigimp <- approxfun(signal$times, signal$import, rule=2)
-  
-  
-  ## Start values for steady state
-  y<-xstart <- c(s=1, p=1, k=1)
-  
-  ## LSODA (default step size)
-  out2 <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
-  
-  ## LSODA: with fixed maximum time step
-  out3 <- as.data.frame(lsoda(xstart, times, lvmodel, parms, hmax=1))
-  
-  par(mfrow=c(2,2))
-  plot (out2$time, out2$s,  type="l",   ylim=c(0,3))
-  lines(out3$time, out3$s, col="green", lty="dotted")
-  
-  plot (out2$time, out2$p, type="l",    ylim=c(0,3))
-  lines(out3$time, out3$p, col="green", lty="dotted")
-  
-  plot (out2$time, out2$k, type="l",    ylim=c(0,3))
-  lines(out3$time, out3$k, col="green", lty="dotted")
-  
-  plot (out2$p, out2$k, type="l", ylim=range(out2$k,out3$k))
-  lines(out3$p, out3$k, col="green", lty="dotted")}
+  }
 \references{Hindmarsh, Alan C. (1983) ODEPACK, A Systematized Collection of ODE
     Solvers; in p.55--64 of  Stepleman, R.W. et al.[ed.] (1983)
     \emph{Scientific Computing}, North-Holland, Amsterdam.
@@ -283,192 +289,7 @@
     reduction of precision in order to get an answer.  It will write a
     warning if it does so.
   
-  \bold{Models} may be defined in compiled C or Fortran code, as well as in R. 
-  
-  \item If \code{func} is a user-supplied \bold{R-function}, it must be called as: yprime = func(t, y, parms). 
-  t is the current time point in the integration, y is the current estimate of the variables in the ODE system. 
-  The return value of \code{func} should be a list, whose first element is a vector containing the derivatives of y with respect to time, 
-  and whose second element contains output variables that are required at each point in time. 
-  \cr An example is given below:
-  
-    \code{model<-function(t,Y,parameters)}\cr
-    \code{\{}\cr
-    \code{with (as.list(parameters),\{}\cr 
-       \code{dy1 = -k1*Y[1] + k2*Y[2]*Y[3]}\cr
-       \code{dy3 = k3*Y[2]*Y[2]}\cr
-       \code{dy2 = -dy1 - dy3}\cr
-      \code{list(c(dy1,dy2,dy3))}\cr         
-      \code{\})}\cr
-  \code{\}}\cr
-  
-  The jacobian associated to the above example is:
-  
-  \code{jac  <- function (t,Y,parameters)}\cr
-  \code{\{}\cr
-   \code{with (as.list(parameters),\{}\cr 
-   \code{PD[1,1] = -k1}\cr
-   \code{PD[1,2] = k2*Y[3]}\cr
-   \code{PD[1,3] = k2*Y[2]}\cr
-   \code{PD[2,1] = k1}\cr
-   \code{PD[2,3] = -PD[1,3]}\cr
-   \code{PD[3,2] = k3*Y[2]}\cr
-   \code{PD[2,2] = -PD[1,2] - PD[3,2]}\cr
-    \code{return(PD)}\cr
-   \code{\})}\cr 
-  \code{\}}\cr 
-  
-  This model can then be run as follows:
-  
-  \code{parms <- c(k1 = 0.04, k2 = 1e4, k3=3e7)}\cr       
-  \code{Y     <- c(1.0,0.0,0.0)}\cr                       
-  \code{times <- c(0,0.4*10^(0:11) )}\cr                  
-  \code{PD  <- matrix(nrow=3,ncol=3,data=0)}\cr 
-  \code{out <- lsoda(Y,times,model,parms=parms,}\cr   
-  \code{jacfunc=jac,rtol=1e-4)}\cr 
-     
-  
-    For \bold{code written in C}, the calling sequence for \code{func} must be as in the following
-    example:
-    
-    \code{void myderivs(int *neq, double *t, double *y, double *ydot,}\cr
-    \code{double *yout, int *ip)}\cr
-    \code{\{}\cr
-      \code{if (ip[0] <1) error("nout should be at least 1");}\cr
-      \code{ydot[0] = -k1*y[0] + k2*y[1]*y[2];}\cr
-      \code{ydot[2] = k3 * y[1]*y[1];}\cr
-      \code{ydot[1] = -ydot[0]-ydot[2];}\cr
-      
-      \code{yout[0] = y[0]+y[1]+y[2];}\cr
-      
-    \code{\}}\cr
-  
-    where \code{*neq} is the number of equations, \code{*t} is the value
-    of the independent variable, \code{y} points to a double precision
-    array of length \code{*neq} that contains the current value of the
-    state variables, and \code{ydot} points to an array that will contain
-    the calculated derivatives.
-    \cr \code{yout} points to a double precision vector whose first \code{nout} values are other output variables (different from the state variables y), 
-    and the next values are double precision values as passed by parameter \code{rpar} when calling the integrator. The key to the elements of yout is set in \code{*ip}
-    \cr \code{*ip} points to an integer vector whose length is at least 3; the first element (IP[0]) contains the number of output values (which should be equal or larger than \code{nout}), 
-    its second element contains the length of \code{*yout}, and the third element contains the length of \code{*ip}; 
-    next are integer values, as passed by parameter \code{ipar} when calling the integrator. 
-    \cr Note that the we start by checking wheter enough room is allocated for the output variables, else an error is passed to R and the integration is stopped.
-    
-     
-    Note that the presence of \code{*yout} and \code{*ip} differs from previous version of lsoda (package odesolve). 
-    Here there was no provision for exchanging quantities that are not directly solutions of the odes. 
-    
-    In the example above, parameters are kept in a global variable in the C
-    code declared as
-  
-    \code{static double parms[3];}
-  
-    \code{#define} statements are used to make the code more readable, as
-    in \code{#define k1 parms[0]}
-    
-    This is the only way to pass parameters to a compiled C function
-    from the calling R code.  Functions that use this mechanism must be
-    accompanied by a function that intialises the parameter values and protects the
-    memory. This function is defined by \code{initfunc} and has as its sole argument a pointer to a function (see
-    declaration below) that fills a double array with double precision
-    values, to copy the parameter
-    values into the global variable.  In the example here, a function such as:
-    
-    \code{void myinit(void (* odeparms)(int *, double *))}\cr
-    \code{\{}\cr
-      \code{int N=3;}\cr
-      \code{odeparms(&N, parms);}\cr
-    \code{\}}\cr
-  
-  will be required to initialize the parameter vector.  Here
-    \code{myinit} just calls \code{odeparms} with a pointer to a int
-    that contains the dimension of the parameter vector, and a pointer to
-    the array that will contain the parameter values.
-    
-    Models may also be defined in \bold{Fortran}.  For example:
-    
-    \code{subroutine myderivs (neq, t, y, ydot, yout, ip)}\cr
-    \code{double precision t, y, ydot, k1, k2, k3}\cr
-    \code{integer neq, ip(*)}\cr
-    \code{dimension y(3), ydot(3), yout(*)}\cr
-    \code{common /myparms/k1,k2,k3}\cr
-      
-    \code{if(ip(1) < 1) call rexit("nout should be at least 1")}\cr
-  
-    \code{ydot(1) = -k1*y(1) + k2*y(2)*y(3)}\cr
-    \code{ydot(3) = k3*y(2)*y(2)}\cr
-    \code{ydot(2) = -ydot(1) - ydot(3)}\cr
-      
-    \code{yout(1) = y(1) + y(2) + y(3)}\cr    
-    \code{return}\cr
-    \code{end}\cr
-   
-    In Fortran, parameters may be stored in a common block, in which
-    case the file that contains the model function definition must also
-    contain an initialisation subroutine, again set by \code{initfunc}
-    
-    \code{subroutine myinit(odeparms)}\cr
-    \code{external odeparms}\cr
-    \code{integer N}\cr
-    \code{double precision parms(3)}\cr
-    \code{common /myparms/parms}\cr
-      
-    \code{N = 3}\cr
-    \code{call odeparms(N, parms)}\cr
-    \code{return}\cr
-    \code{end}\cr
-  
-    If it is desired to supply a jacobian to the solver, then the jacobian
-    must be defined in compiled code if the ODE system is.  The C function
-    call for such a function must be as in the following example:
-    
-    \code{void myjac(int *neq, double *t, double *y, int *ml,}\cr
-    \code{           int *mu, double *pd, int *nrowpd, double *yout, int *ip)}\cr
-    \code{\{}\cr
-      \code{pd[0] = -k1;}\cr
-      \code{pd[1] = k1;}\cr
-      \code{pd[2] = 0.0;}\cr
-      \code{pd[(*nrowpd)] = k2*y[2];}\cr
-      \code{pd[(*nrowpd) + 1] = -k2*y[2] - 2*k3*y[1];}\cr
-      \code{pd[(*nrowpd) + 2] = 2*k3*y[1];}\cr
-      \code{pd[(*nrowpd)*2] = k2*y[1];}\cr
-      \code{pd[2*(*nrowpd) + 1] = -k2 * y[1];}\cr
-      \code{pd[2*(*nrowpd) + 2] = 0.0;}\cr
-    \code{\}}\cr
-  
-  The corresponding subroutine in Fortran is:
-        
-  \code{subroutine myjac (neq, t, y, ml, mu, pd, nrowpd, yout, ip)}\cr
-  \code{integer neq, ml, mu, nrowpd, ip}\cr
-  \code{double precision y(*), pd(nrowpd,*), yout(*), t, k1, k2, k3}\cr
-  \code{common /myparms/k1, k2, k3}\cr
-  
-  \code{pd(1,1) = -k1}\cr
-  \code{pd(2,1) =  k1}\cr
-  \code{pd(3,1) = 0.0}\cr
-  \code{pd(1,2) = k2*y(3)}\cr
-  \code{pd(2,2) = -k2*y(3) - 2*k3*y(2)}\cr
-  \code{pd(3,2) = 2*k3*y(2)}\cr
-  \code{pd(1,3) = k2*y(2)}\cr
-  \code{pd(2,3) = -k2*y(2)}\cr
-  \code{pd(3,3) = 0.0}\cr
-  
-  \code{return}\cr
-  \code{end}\cr
-  
-  To run the model using e.g. the Fortran code, the code in mymod.f must first be compiled.
-  \cr This can be done in R itself:  
-  
-  \code{system("R CMD SHLIB mymod.f")}
-  
-  which will create file mymod.dll
-  
-  After loading the DLL, the model can be run:
-  
-  \code{dyn.load("mymod.dll")}\cr 
-  \code{out <- lsoda(Y,times,"myderivs",parms=parms,rtol=RTOL,}\cr
-  \code{atol=ATOL,mf=MF,jacfunc="myjac",dllname="mymod",}\cr
-  \code{initfunc="myinit",verbose=FALSE,ynames=FALSE,nout=3 )}
+  \bold{Models} may be defined in compiled C or Fortran code, as well as in R. See package vignette for details.
   
   Examples in both C and Fortran are in the \file{dynload} subdirectory of
   the \code{deSolve} package directory.
@@ -497,8 +318,8 @@
       \item 2: The step size to be attempted on the next step.
       \item 3: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
       \item 4: the value of t at the time of the last method switch, if any.}
-\seealso{\code{\link{lsode}}, \code{\link{lsodes}}, 
-    \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}
+\seealso{\code{\link{ode}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
+    \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
 \note{The \file{demo} directory contains some examples of using
     \code{\link[nlme]{gnls}} to estimate parameters in a
     dynamic model.}

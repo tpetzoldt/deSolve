@@ -6,7 +6,8 @@
 \description{Solving initial value problems for 
     systems of first-order ordinary differential equations
     (ODEs) using the classical Runge-Kutta 4th order integration.
-    This function is convenience function which calls itself \code{\link{rk}} .}
+    %% WHAT DOES THAT MEAN??This function is convenience function which calls itself \code{\link{rk}} .
+    }
 \usage{
 rk4(y, times, func, parms, hini=min(diff(times)), ...)
 euler(y, times, func, parms, hini=min(diff(times)), ...)
@@ -16,22 +17,21 @@ euler(y, times, func, parms, hini=min(diff(times)), ...)
       name attribute, the names will be used to label the output matrix.}
   \item{times }{times at which explicit estimates for \code{y} are
       desired.  The first value in \code{times} must be the initial time.}
-  \item{func }{a user-supplied function that computes the values of the
+  \item{func }{an \R-function that computes the values of the
       derivatives in the ode system (the \emph{model defininition}) at time
       t.
-      The user-supplied function  \code{func} must be called as:
-      \code{yprime = func(t, y, parms)}.  \code{t} is the current time point
+      
+      The \R-function  \code{func} must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
-      in the ode system, and \code{parms} is a vector of parameters (which
-      may have a names attribute, desirable in a large system).
-  
+      in the ode system, and \code{parms} is a vector or list of parameters.
+      ... (optional) are any other arguments passed to the function.
+        
       The return value of func should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose second element is a vector (possibly with a
-      \code{\link{names}} attribute) of global values that are required at
+      \code{time}, and whose second element is a vector of global values that are required at
       each point in \code{times}.}
-  \item{parms }{vector or list holding the parameters used in \code{func} 
-     that should be modifiable without rewriting the function.}
+  \item{parms }{vector or list holding the parameters used in \code{func}.}
   \item{hini}{length of the (fixed) internal time step.}
   \item{... }{additional arguments, allowing this to be a generic function}
 }
@@ -87,6 +87,7 @@ points(out$time, out$N, pch=1, col="green")
   \code{\link{rk}}, 
   \code{\link{ode}}, 
   \code{\link{rkMethod}}, 
-  \code{\link{lsoda}}}
+  \code{\link{lsoda}},\code{\link{lsode}}, \code{\link{lsodes}}, 
+    \code{\link{lsodar}}, \code{\link{daspk}}}
 \keyword{math}
 

@@ -31,24 +31,20 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{times at which explicit estimates for \code{y} are desired.  The first value in \code{times} must be the initial time.}
-  \item{func }{a user-supplied function that computes the values of the
+  \item{func }{an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time t.
   
-      The function must be called as:
-      \code{yprime = func(t, y, parms)}.  \code{t} is the current time point
+      The \R-function  \code{func} must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
       in the integration, \code{y} is the current estimate of the variables
-      in the ODE system.  If the initial values \code{y} has a names
-      attribute, the names will be available inside \code{func}.  \code{parms} is
-      a vector of parameters (which
-      may have a names attribute, desirable in a large system).
+      in the ode system, and \code{parms} is a vector or list of parameters.
+      ... (optional) are any other arguments passed to the function.
   
       The return value of \code{func} should be a list, whose first element is a
       vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements (possibly with a
-      \code{\link{names}} attribute) are global values that are required at
+      \code{time}, and whose next elements are global values that are required at
       each point in \code{times}.}
-  \item{parms }{any parameters used in \code{func} that should be
-      modifiable without rewriting the function.}
+  \item{parms }{any parameters used in \code{func}}
   \item{rtol }{relative error tolerance, either a scalar or an array as
       long as \code{y}. Only applicable to methods with variable time step, see details.}
   \item{atol }{absolute error tolerance, either a scalar or an array as
@@ -58,11 +54,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
       (times points in the vector \code{times}), and interpolates values
       for the desired time points.  If there is a time beyond which
       integration should not proceed (perhaps because of a singularity),
-      that should be provided in \code{tcrit}.  Note that it does not
-      make sense (though it is not an error) to include times in
-      \code{times} past \code{tcrit}, since the solver will stop and
-      return at the last point in \code{times} that is earlier than
-      \code{tcrit}.}
+      that should be provided in \code{tcrit}. }
   \item{verbose }{a logical value that, when TRUE, triggers more
       verbose output from the ODE solver.  
       %% Will output the settings of vectors *istate* and *rstate* - see details
@@ -96,8 +88,8 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   (PDEs).
 
   Function \code{rk} is a generalized implementation that can be used to evaluate
-  different solvers of the Runge-Kutta family. A pre-definded set of common
-  method parameters is pre-defined in function \code{\link{rkMethod}} which also 
+  different solvers of the Runge-Kutta family. A pre-defined set of common
+  method parameters is in function \code{\link{rkMethod}} which also 
   allows to supply user-defined Butcher tables. 
     
   The input parameters \code{rtol}, and \code{atol} determine the error
@@ -157,7 +149,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     \item{el 12:}{The number of steps taken for the problem so far.}
     \item{el 13:}{The number of function evaluations for the problem so far.}
     \item{el 15:}{The order of the method.}
-  }   
+   }
 }
 \references{
   Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and
@@ -173,7 +165,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
 
-\seealso{\code{\link{rkMethod}}
+\seealso{\code{\link{rkMethod}}, \code{\link{ode}}, 
          \code{\link{lsoda}}, 
          \code{\link{lsode}}, 
          \code{\link{lsodes}}, 
@@ -181,16 +173,25 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
          \code{\link{vode}}, 
          \code{\link{daspk}}}
 \examples{
+  #########################################
+  ## Example: Lotka-volterra model
+  #########################################
+  
+  ## Note: 
+  ## parameters are a list, names accessible via "with" statement
+  ## (see also ode and lsoda examples)
+
   lvmodel <- function(t, x, parms) {
-    s <- x[1] # substrate
-    p <- x[2] # producer
-    k <- x[3] # consumer
-    with(as.list(parms),{
+    S <- x[1] # substrate
+    P <- x[2] # producer
+    K <- x[3] # consumer
+    
+    with(parms,{
       import <- approx(signal$times, signal$import, t)$y
-      ds <- import - b * s * p + g * k
-      dp <- c * s * p  - d * k * p
-      dk <- e * p * k  - f * k
-      res<-c(ds, dp, dk)
+      dS <- import - b * S * P + g * K
+      dP <- c * S * P  - d * K * P
+      dK <- e * P * K  - f * K
+      res<-c(dS, dP, dK)
       list(res)
     })
   }
@@ -205,36 +206,43 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
   
   ## Parameters for steady state conditions
-  parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
+  parms  <- list(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
   
   ## Start values for steady state
-  y<-xstart <- c(s=1, p=1, k=1)
+  y<-xstart <- c(S=1, P=1, K=1)
   
   ## Euler method
-  out1  <- as.data.frame(rk(xstart, times, lvmodel, parms, hini = 0.1, method="euler"))
+  out1  <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+                            hini = 0.1, method="euler"))
   
   ## classical Runge-Kutta 4th order
-  out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini = 1, method="rk4"))
+  out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+                           hini = 1, method="rk4"))
   
   ## Dormand-Prince method of order 5(4)
-  out3 <- as.data.frame(rk(xstart, times, lvmodel, parms, hmax=1, method = "rk45dp7"))
+  out3 <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+                           hmax=1, method = "rk45dp7"))
   
-  par(mfrow=c(2,2))
-  plot (out1$time, out1$s,  type="l",   ylim=c(0,3))
-  lines(out2$time, out2$s, col="red",   lty="dotted", lwd=2)
-  lines(out3$time, out3$s, col="green", lty="dotted")
+  mf <- par(mfrow=c(2,2))
+  plot (out1$time, out1$S, type="l",    ylab="Substrate")
+  lines(out2$time, out2$S, col="red",   lty="dotted", lwd=2)
+  lines(out3$time, out3$S, col="green", lty="dotted")
   
-  plot (out1$time, out1$p, type="l",    ylim=c(0,3))
-  lines(out2$time, out2$p, col="red",   lty="dotted")
-  lines(out3$time, out3$p, col="green", lty="dotted")
+  plot (out1$time, out1$P, type="l",    ylab="Producer")
+  lines(out2$time, out2$P, col="red",   lty="dotted")
+  lines(out3$time, out3$P, col="green", lty="dotted")
   
-  plot (out1$time, out1$k, type="l",    ylim=c(0,3))
-  lines(out2$time, out2$k, col="red",   lty="dotted", lwd=2)
-  lines(out3$time, out3$k, col="green", lty="dotted")
+  plot (out1$time, out1$K, type="l",    ylab="Consumer")
+  lines(out2$time, out2$K, col="red",   lty="dotted", lwd=2)
+  lines(out3$time, out3$K, col="green", lty="dotted")
   
-  plot (out1$p, out1$k, type="l")
-  lines(out2$p, out2$k, col="red",   lty="dotted", lwd=2)
-  lines(out3$p, out3$k, col="green", lty="dotted")
+  plot (out1$P, out1$K, type="l", xlab="Producer",ylab="Consumer")
+  lines(out2$P, out2$K, col="red",   lty="dotted", lwd=2)
+  lines(out3$P, out3$K, col="green", lty="dotted")
+  legend("center",legend=c("euler","rk4","rk45dp7"),lty=c(1,3,3),
+         lwd=c(1,2,1),col=c("black","red","green"))
+  par(mfrow=mf)
+           
 }
 
 \keyword{ math }

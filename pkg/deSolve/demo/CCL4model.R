@@ -1,5 +1,4 @@
 ### Functions to facilitate fitting the CCl4 inhalation model
-### for the demo in odesolve
 
 initparms <- function(...) {
   arglist <- list(...)
@@ -233,7 +232,9 @@ if (require(nlme, quietly=TRUE)) {
 ### Toxicology and Applied Pharmacology 128: 36--44.
 
   data(ccl4data)
-  data(ccl4data.avg)
+  ccl4data.avg<-aggregate(ccl4data$ChamberConc,
+                        by=ccl4data[c("time","initconc")],mean)
+  names(ccl4data.avg)[3]<-"ChamberConc"
 
 ### Estimate log(Vmax), log(Km), and the logs of the initial
 ### concentrations with gnls

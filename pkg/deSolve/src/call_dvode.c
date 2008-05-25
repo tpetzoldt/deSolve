@@ -101,11 +101,11 @@ SEXP call_dvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   nout  = INTEGER(nOut)[0];
   
 /* The output:
-    Rpar and Ipar: used to pass output variables (number set by nout)
+    out and ipar are used to pass output variables (number set by nout)
     followed by other input (e.g. forcing functions) provided 
     by R-arguments rpar, ipar
     ipar[0]: number of output variables, ipar[1]: length of rpar, 
-    ipar[2]: length of ipar!*/
+    ipar[2]: length of ipar */
 
   isOut = 0;
   if (inherits(func, "NativeSymbol"))  /* function is a dll */

@@ -1,15 +1,27 @@
 \name{ode.2D}
 \alias{ode.2D}
-\title{Steady-state solver for multicomponent 2-D ordinary differential equations}
-\description{Solves the steady-state of a system of ordinary differential equations. 
-    \cr Assumes a sparse jacobian matrix. 
-    \cr Suitable for 2-D models that include transport only between adjacent layers.}
+\title{Solver for 2-Dimensional ordinary differential equations}
+\description{Solves a system of ordinary differential equations resulting from 
+2-Dimensional transport-recation models that include transport only between adjacent layers.}
 \usage{ode.2D(y, times, func, parms, nspec=NULL, dimens, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
-  \item{func }{either a user-supplied function that computes the values of the derivatives in the ODE system (the model definition) at time t, 
-  or a character string giving the name of a compiled function in a dynamically loaded shared library.}
+  \item{func }{either an \R-function that computes the values of the derivatives in the ODE system (the model definition) at time t, 
+  or a character string giving the name of a compiled function in a dynamically loaded shared library.
+  
+      If \code{func}  is an \R-function, it must be defined as:
+      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
+      in the integration, \code{y} is the current estimate of the variables
+      in the ODE system.  If the initial values \code{y} has a names
+      attribute, the names will be available inside \code{func}.  \code{parms} is
+      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
+  
+      The return value of \code{func} should be a list, whose first element is a
+      vector containing the derivatives of \code{y} with respect to
+      \code{time}, and whose next elements are global values that are required at
+      each point in \code{times}.
+  }
   \item{parms }{parameters passed to \code{func}}
   \item{nspec }{the number of *species* (components) in the model. }
   \item{dimens}{2-valued vector with the number of *boxes* in two dimensions in the model. }
@@ -116,12 +128,21 @@ lvmod2D <- function (time, state, pars, N, Da, dx)
 
 }
 \details{This is the method of choice for 2-dimensional models, that are only subjected to transport between adjacent layers. 
-  \cr As \code{lsodes} is used to integrate, it will probably be necessary to specify the length of the real work array.
-  \cr This can be done by specifying \code{lrw}. If unspecified, \code{ode.2D} will return with an error message telling
-  the size of the work array actually needed. In the second try then, set \code{lrw} equal to this number
+
+  Based on the dimension of the problem, the method first calculates the sparsity pattern of the Jacobian, under the assumption 
+  that transport is onely occurring between adjacent layers. Then \code{lsodes} is called to solve the problem.
+  
+  As \code{lsodes} is used to integrate, it will probably be necessary to specify the length of the real work array, \code{lrw}.
+
+Although a reasonable guess of \code{lrw} is made, it is likely that this will be too low. 
+  In this case, \code{ode.2D} will return with an error message telling
+  the size of the work array actually needed. In the second try then, set \code{lrw} equal to this number.
 
   See \code{lsodes} for the additional options}
-\seealso{\item \code{\link{ode.band}}, \code{\link{ode.1D}} for integrating 1-D models
-  	\item  \code{\link{lsodes}}.}
+\seealso{
+\item \code{\link{ode}} 
+\item \code{\link{ode.band}} for integrating models with a banded Jacobian
+\item  \code{\link{ode.1D}} for integrating 1-D models 
+\item  \code{\link{lsodes}} for the integration options.}
 \keyword{math}
 

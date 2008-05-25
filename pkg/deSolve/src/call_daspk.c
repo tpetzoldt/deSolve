@@ -147,11 +147,11 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   maxit = INTEGER(maxIt)[0];
 
 /* The output:
-    Rpar and Ipar: used to pass output variables (number set by nout)
+    out and ipar are used to pass output variables (number set by nout)
     followed by other input (e.g. forcing functions) provided 
     by R-arguments rpar, ipar
     ipar[0]: number of output variables, ipar[1]: length of rpar, 
-    ipar[2]: length of ipar!*/
+    ipar[2]: length of ipar */
 
 
 

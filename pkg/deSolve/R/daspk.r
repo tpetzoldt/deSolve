@@ -31,26 +31,26 @@ daspk          <- function(y,               # state variables
                           nalg=0,           # number of algebraic equations
                           rtol=1e-6,        # relative tolerance  
                           atol=1e-8,        # absolute tolerance  
-                          tcrit = NULL,
                           jacfunc=NULL,     # jacobian, if ode specified by func
                           jacres=NULL,      # jacobian, if dae or ode specified by res
                           jactype = "fullint",  # jacobian
                           estini = NULL,    # etsimate iniital conditions
                           verbose=FALSE,    # 
-                          dllname=NULL,     # in case initialiser func 
-                          initfunc=dllname,                          
-                          initpar=parms,    # to initialise common block/global vairaibles
-                          rpar=NULL, ipar=NULL,
-                          ynames=TRUE,      # if false: names of state variables are not passed to function func
-                          nout=0,           # only if dllname is present: the number of output variables
-                          outnames=NULL,    # only if dllnmae is present: the names of output variables...                          
+                          tcrit = NULL,
                           hmin=0,           # minimum step size
                           hmax=NULL,        # maximum step size                                           
                           hini=0,           # initial step size
+                          ynames=TRUE,      # if false: names of state variables are not passed to function func
                           maxord =5,        # maximal method order; reduce to save storage (<=5)
                           bandup=NULL,         # upper band
                           banddown=NULL,       # lower band
                           maxsteps=5000,    # maximal number of steps in one call to the solver - multipe of 500!
+                          dllname=NULL,     # in case initialiser func 
+                          initfunc=dllname,                          
+                          initpar=parms,    # to initialise common block/global vairaibles
+                          rpar=NULL, ipar=NULL,
+                          nout=0,           # only if dllname is present: the number of output variables
+                          outnames=NULL,    # only if dllnmae is present: the names of output variables...                          
                           ...)              # accessory parameters passed to ??
 {
 ### check input 
@@ -71,8 +71,10 @@ daspk          <- function(y,               # state variables
         stop("`res' must be NULL, a function or character vector")
     if (is.character(res) && (is.null(dllname) || !is.character(dllname)))
         stop("You need to specify the name of the dll or shared library where res can be found (without extension)")
-    if (!is.numeric(rtol))           stop("`rtol' must be numeric")
-    if (!is.numeric(atol))           stop("`atol' must be numeric")
+    if (!is.numeric(rtol))           
+        stop("`rtol' must be numeric")
+    if (!is.numeric(atol))           
+        stop("`atol' must be numeric")
     if (!is.null(tcrit) & !is.numeric(tcrit))
         stop("`tcrit' must be numeric")
     if (!is.null(jacfunc) && !(is.function(jacfunc) ))
@@ -83,37 +85,55 @@ daspk          <- function(y,               # state variables
         stop("`atol' must either be a scaler, or as long as `y'")
     if (length(rtol) > 1 && length(rtol) != n)
         stop("`rtol' must either be a scaler, or as long as `y'")
-    if (!is.numeric(hmin))        stop("`hmin' must be numeric")
-    if (hmin < 0)                 stop("`hmin' must be a non-negative value")
+    if (!is.numeric(hmin))        
+        stop("`hmin' must be numeric")
+    if (hmin < 0)                 
+        stop("`hmin' must be a non-negative value")
     if (is.null(hmax))
        hmax <- ifelse (is.null(times), 0, max(abs(diff(times))))
-    if (!is.numeric(hmax))        stop("`hmax' must be numeric")
-    if (hmax < 0)                 stop("`hmax' must be a non-negative value")
-    if (hini < 0)                 stop("`hini' must be a non-negative value")
-    if (!is.numeric(maxord))      stop("`maxord' must be numeric") 
+    if (!is.numeric(hmax))      
+        stop("`hmax' must be numeric")
+    if (hmax < 0)             
+        stop("`hmax' must be a non-negative value")
+    if (hini < 0)             
+        stop("`hini' must be a non-negative value")
+    if (!is.numeric(maxord))  
+        stop("`maxord' must be numeric") 
     if(maxord < 1 || maxord > 5) 
         stop("`maxord' must be >1 and <=5")
     #max number of iterations ~ maxstep; a multiple of 500
     maxIt <- max(1,(maxsteps+499)%/%500)
 
 ### Jacobian, method flag
-       if (jactype == "fullint" ) imp <- 22 # full jacobian, calculated internally
-  else if (jactype == "fullusr" ) imp <- 21 # full jacobian, specified by user function
-  else if (jactype == "bandusr" ) imp <- 24 # banded jacobian, specified by user function
-  else if (jactype == "bandint" ) imp <- 25 # banded jacobian, specified internally
-  else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
+    if (jactype == "fullint" ) 
+        imp <- 22 # full jacobian, calculated internally
+    else if (jactype == "fullusr" )
+        imp <- 21 # full jacobian, specified by user function
+    else if (jactype == "bandusr" ) 
+        imp <- 24 # banded jacobian, specified by user function
+    else if (jactype == "bandint" ) 
+        imp <- 25 # banded jacobian, specified internally
+    else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
 
-    if (imp %in% c(24,25) && is.null(bandup))   stop("daspk: bandup must be specified if banded jacobian")            
-    if (imp %in% c(24,25) && is.null(banddown)) stop("daspk: banddown must be specified if banded jacobian")            
+    if (imp %in% c(24,25) && is.null(bandup))   
+        stop("daspk: bandup must be specified if banded jacobian")            
+    if (imp %in% c(24,25) && is.null(banddown)) 
+        stop("daspk: banddown must be specified if banded jacobian")            
 
 #  if (miter == 4) jacobian should have empty banddown empty rows-vode+daspk only! 
-    if (imp == 24) erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
+    if (imp == 24) 
+        erow<-matrix(nc=n,nr=banddown,0) 
+    else erow<-NULL
     
-    if (is.null(banddown)) banddown <-1
-    if (is.null(bandup  )) bandup   <-1  
+    if (is.null(banddown)) 
+       banddown <-1
+    if (is.null(bandup  )) 
+       bandup   <-1  
 
-    if (is.null(dy))      dy <- rep(0,n)
-    if (!is.numeric(dy))  stop("`dy' must be numeric")
+    if (is.null(dy))      
+       dy <- rep(0,n)
+    if (!is.numeric(dy))  
+       stop("`dy' must be numeric")
 
 ### model and jacobian function
     Ynames  <- attr(y,"names")
@@ -125,9 +145,8 @@ daspk          <- function(y,               # state variables
     ModelInit <- NULL
     if(!is.null(dllname))
     {
-        if (is.loaded(initfunc, PACKAGE = dllname,
-           type = "") || is.loaded(initfunc, PACKAGE = dllname,
-            type = "Fortran")) 
+        if (is.loaded(initfunc, PACKAGE = dllname, type = "") || 
+           is.loaded(initfunc, PACKAGE = dllname, type = "Fortran"))
         { ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
         } else if (initfunc != dllname && ! is.null(initfunc))
             stop(paste("cannot integrate: initfunc not loaded ",initfunc))        
@@ -176,8 +195,8 @@ daspk          <- function(y,               # state variables
       ## If we go this route, the number of "global" results is in nout
       ## and output variable names are in outnames
 
-        Nglobal <- nout
-        rho     <- NULL
+      Nglobal <- nout
+      rho     <- NULL
       if (is.null(outnames))
          { Nmtot   <- NULL} else
       if (length(outnames) == nout) 
@@ -185,12 +204,15 @@ daspk          <- function(y,               # state variables
       if (length(outnames) > nout) 
          Nmtot <- outnames[1:nout] else
          Nmtot <- c(outnames,(length(outnames)+1):nout)
-      if (is.null(ipar)) ipar<-0
-      if (is.null(rpar)) rpar<-0
+      if (is.null(ipar)) 
+         ipar<-0
+      if (is.null(rpar)) 
+         rpar<-0
   
 
     }    else {
-      if(is.null(initfunc))  initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+      if(is.null(initfunc))  
+         initpar <- NULL # parameter initialisation not needed if function is not a DLL    
     
         rho <- environment(func)
       # func or res and jac are overruled, either including ynames, or not
@@ -199,25 +221,25 @@ daspk          <- function(y,               # state variables
         if (is.null(res))              # res is NOT specified, func is
         {                              
          Res    <- function(time,y,dy) 
-         {if(ynames)attr(y,"names")  <- Ynames 
-         FF <-func   (time,y,parms,...) 
-          c(dy-unlist(FF[1]), unlist(FF[-1]))
-          }    
+           {if(ynames)attr(y,"names")  <- Ynames 
+           FF <-func   (time,y,parms,...) 
+            c(dy-unlist(FF[1]), unlist(FF[-1]))
+            }    
 
          Res2   <- function(time,y,dy) 
-         {if(ynames)attr(y,"names") <- Ynames
-         func   (time,y,parms,...)}    
-        } else {                       # res is specified
+            {if(ynames)attr(y,"names") <- Ynames
+            func   (time,y,parms,...)}    
+          } else {                       # res is specified
          Res    <- function(time,y,dy) 
-         {if(ynames){attr(y,"names")  <- Ynames 
-                     attr(dy,"names") <- dYnames  }
-          unlist(res   (time,y,dy,parms,...))}    
+            {if(ynames){attr(y,"names")  <- Ynames 
+                        attr(dy,"names") <- dYnames  }
+             unlist(res   (time,y,dy,parms,...))}    
 
          Res2   <- function(time,y,dy) 
-         {if(ynames){attr(y,"names") <- Ynames
-                     attr(dy,"names") <- dYnames  }
-          res (time,y,dy,parms,...)}    
-        }
+            {if(ynames){attr(y,"names") <- Ynames
+                        attr(dy,"names") <- dYnames  }
+             res (time,y,dy,parms,...)}    
+         }
         # the jacobian
         if (! is.null(jacfunc))        # jacobian associated with func
         {
@@ -225,24 +247,24 @@ daspk          <- function(y,               # state variables
            if (! is.matrix(tmp))stop("jacfunc must return a matrix\n")
 
           JacRes <- function(Rin,y,dy) 
-           {if(ynames) {attr(y,"names")  <- Ynames
-                        attr(dy,"names") <- dYnames  }        
-           JF <- -1* rbind(jacfunc(Rin[1],y,dy,parms,...),erow)
-           if (imp %in% c(24,25)) JF[bandup+1,]<-JF[bandup+1,]+Rin[2] else 
-                                  JF           <-JF + diag(nc=n,x=Rin[2])        
-           return(JF) }    
+              {if(ynames) {attr(y,"names")  <- Ynames
+                           attr(dy,"names") <- dYnames  }        
+              JF <- -1* rbind(jacfunc(Rin[1],y,dy,parms,...),erow)
+              if (imp %in% c(24,25)) JF[bandup+1,]<-JF[bandup+1,]+Rin[2] else 
+                                     JF           <-JF + diag(nc=n,x=Rin[2])        
+              return(JF) }    
          } else if (! is.null(jacres)) { # jacobian associated with res
-           tmp <- eval(jacres(times[1], y, dy, parms, 1, ...), rho) 
-           if (! is.matrix(tmp))stop("jacres must return a matrix\n")
-           dd <- dim(tmp)
-          if((imp ==24 && dd != c(bandup+banddown+1,n)) ||
-          (imp ==21 && dd != c(n,n))) stop("Jacobian dimension not ok") 
+            tmp <- eval(jacres(times[1], y, dy, parms, 1, ...), rho) 
+            if (! is.matrix(tmp))stop("jacres must return a matrix\n")
+            dd <- dim(tmp)
+            if((imp ==24 && dd != c(bandup+banddown+1,n)) ||
+            (imp ==21 && dd != c(n,n))) stop("Jacobian dimension not ok") 
 
           JacRes <- function(Rin,y,dy) 
-          {if(ynames) {attr(y,"names")  <- Ynames
-                       attr(dy,"names") <- dYnames  }        
-           rbind(jacres(Rin[1],y,dy,parms,Rin[2],...),erow)}     
-         } else JacRes <- NULL
+             {if(ynames) {attr(y,"names")  <- Ynames
+                          attr(dy,"names") <- dYnames  }        
+              rbind(jacres(Rin[1],y,dy,parms,Rin[2],...),erow)}     
+           } else JacRes <- NULL
          
       ## Call res once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
