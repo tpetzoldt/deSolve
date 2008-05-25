@@ -76,7 +76,6 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 
 }
 \details{
-  %% introductory sentence
   The Runge-Kutta solvers are primarily provided for didactic reasons. 
   For most practical cases, solvers of the Livermore family 
   (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
@@ -206,7 +205,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
   
   ## Parameters for steady state conditions
-  parms  <- list(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
+  parms  <- list(b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
   
   ## Start values for steady state
   y<-xstart <- c(S=1, P=1, K=1)
