@@ -6,7 +6,6 @@
 \description{Solving initial value problems for 
     systems of first-order ordinary differential equations
     (ODEs) using the classical Runge-Kutta 4th order integration.
-    %% WHAT DOES THAT MEAN??This function is convenience function which calls itself \code{\link{rk}} .
     }
 \usage{
 rk4(y, times, func, parms, hini=min(diff(times)), ...)

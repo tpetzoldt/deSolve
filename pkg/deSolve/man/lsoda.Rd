@@ -144,7 +144,7 @@
       }
   
   ## Parameters 
-  parms  <- c(a=0.0, b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
+  parms  <- c(b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
 
   ## vector of timesteps
   times  <- seq(0, 100, length=101)
