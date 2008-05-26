@@ -52,7 +52,7 @@
   
       If \code{func} is a string, then \code{dllname} must give the name
       of the shared library (without extension) which must be loaded
-      before \code{lsoda()} is called.  . See package vignette for more details}
+      before \code{lsoda()} is called. See package vignette for more details.}
   \item{parms }{vector or list of parameters used in \code{func} or \code{jacfunc}.}
   \item{rtol }{relative error tolerance, either a scalar or an array as
       long as \code{y}.  See details. }
@@ -92,13 +92,13 @@
   \item{maxsteps }{maximal number of steps during one call to the solver}
   \item{dllname }{a string giving the name of the shared library (without
       extension) that contains all the compiled function or subroutine
-      definitions refered to in \code{func} and \code{jacfunc}. See package vignette}
-  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette}
+      definitions refered to in \code{func} and \code{jacfunc}. See package vignette.}
+  \item{initfunc }{if not NULL, the name of the initialisation function (which initialises values of parameters), as provided in \file{dllname}. See package vignette.}
   \item{initpar }{only when \file{dllname} is specified and an initialisation function \code{initfunc} is in the dll: the parameters passed to the initialiser, to initialise the common blocks (fortran) or global variables (C, C++)}
   \item{rpar }{only when \file{dllname} is specified: a vector with double precision values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
   \item{ipar }{only when \file{dllname} is specified: a vector with integer values passed to the dll-functions whose names are specified by \code{func} and \code{jacfunc}}
   \item{nout }{only used if \code{dllname} is specified and the model is defined in compiled code: the number of output variables calculated in the compiled function \code{func}, present in the shared library. Note:
-      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - See package vignette}
+      it is not automatically checked whether this is indeed the number of output variables calculed in the dll - you have to perform this check in the code - See package vignette.}
   \item{outnames }{only used if \file{dllname} is specified and \code{nout} > 0: the names of output variables calculated in the compiled function \code{func}, present in the shared library}
   \item{... }{additional arguments passed to \code{func} and \code{jacfunc} allowing this to be a generic function}
 }

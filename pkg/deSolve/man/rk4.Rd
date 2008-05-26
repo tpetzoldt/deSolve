@@ -42,7 +42,7 @@ euler(y, times, func, parms, hini=min(diff(times)), ...)
 
 \note{\code{rk4} and \code{euler} are primarily provided for didactic reasons. 
      For most practical cases, solvers with flexible timestep (e.g. "rk45dp7")
-     and especially solvers of the Livermore family  (e.g. \code{\link{lsoda}} are superior. 
+     and especially solvers of the Livermore family  (e.g. \code{\link{lsoda}}) are superior.
 }
 
 \examples{
