@@ -37,7 +37,7 @@ rkMethod(method = NULL, ...)
     "rk34f"         \tab | \tab Runge-Kutta-Fehlberg, order 3(4)\cr
     "rk45f"         \tab | \tab Runge-Kutta-Fehlberg, order 4(5), Octave: \bold{ode45, pair=1} \cr
     "rk45e"         \tab | \tab Runke-Kutta-England, order 4(5)\cr
-    "rk45dp6"       \tab | \tab Dormand-Price, order 4(5), local order 6\cr
+    "rk45dp6"       \tab | \tab Dormand-Prince, order 4(5), local order 6\cr
     "rk45dp7", "ode45"  \tab | \tab Dormand-Prince 4(5) coefficients 
         (also known as \bold{dopri5}, Matlab: \bold{ode45}, Octave: \bold{ode45, pair=0})\cr
   }

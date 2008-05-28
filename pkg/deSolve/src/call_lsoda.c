@@ -384,6 +384,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   for (j = 0; j < neq; j++) REAL(yout)[j+1] = REAL(y)[j];
 
   if (isOut == 1) {  /* function in DLL and output */
+    tin = REAL(times)[0];
     derivs (&neq, &tin, xytmp, dy, out, ipar) ;
     for (j = 0; j < nout; j++) REAL(yout)[j + neq + 1] = out[j]; 
                   }

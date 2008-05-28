@@ -279,6 +279,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
     }
   if (nout>0)
     {
+     tin = REAL(times)[0];
+
 	   if (isDll == 1) Resfun (&tin, xytmp, xdytmp, &cj, delta, &ires, out, ipar) ;
 	   else daspk_out(&nout,&tin,xytmp,xdytmp,out);
 	      for (j = 0; j < nout; j++)
