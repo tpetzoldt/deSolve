@@ -60,9 +60,10 @@ parms <- c(r = r, K = K)
 x<- c(N = N0)
 
 ## analytical solution
-plot(time, K/(1+(K/N0-1)*exp(-r*time)), ylim=c(0, 120), type="l", col="red", lwd=2)
+plot(time, K/(1+(K/N0-1)*exp(-r*time)), ylim=c(0, 120), 
+  type="l", col="red", lwd=2)
 
-## good solution
+## reasonable numerical solution
 out <- as.data.frame(rk4(x, time, logist, parms, hini=2))
 points(out$time, out$N, pch=16, col="blue", cex=0.5)
 

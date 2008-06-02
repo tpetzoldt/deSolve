@@ -150,6 +150,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     \item{el 15:}{The order of the method.}
    }
 }
+
 \references{
   Press, W. H.,  Teukolsky, S. A., Vetterling, W. T. and
   Flannery, B. P. (2007) Numerical Recipes in C. Cambridge
@@ -205,10 +206,10 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   signal$import[signal$times >= 10 & signal$times <=11] <- 0.2
   
   ## Parameters for steady state conditions
-  parms  <- list(b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
+  parms <- list(b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
   
   ## Start values for steady state
-  y<-xstart <- c(S=1, P=1, K=1)
+  y <-xstart <- c(S=1, P=1, K=1)
   
   ## Euler method
   out1  <- as.data.frame(rk(xstart, times, lvmodel, parms, 
