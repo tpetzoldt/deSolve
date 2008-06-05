@@ -27,10 +27,12 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax, 
   method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
-  \item{y }{the initial (state) values for the ODE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
-  \item{times }{times at which explicit estimates for \code{y} are desired.  The first value in \code{times} must be the initial time.}
+  \item{y }{the initial (state) values for the ODE system. If \code{y} has a 
+      name attribute, the names will be used to label the output matrix.}
+  \item{times }{times at which explicit estimates for \code{y} are desired.  
+      The first value in \code{times} must be the initial time.}
   \item{func }{an \R-function that computes the values of the
       derivatives in the ODE system (the \emph{model definition}) at time t.
   
@@ -64,9 +66,10 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
       the cost of precision. Don't use \code{hmin} if you don't know why!}
   \item{hmax }{an optional maximum value of the integration stepsize. If not specified, 
        \code{hmax} is set to the largest difference in \code{times}, to 
-       avoid that the simulation possibly ignores short-term events. If 0, no maximal size is specified}
-  \item{hini }{initial step size to be attempted; if 0, the initial step size is determined by the solver}
-
+       avoid that the simulation possibly ignores short-term events. If 0, no 
+       maximal size is specified}
+  \item{hini }{initial step size to be attempted; if 0, the initial step size is 
+       determined by the solver}
   \item{method}{the integrator to use. This can either be a string constant naming one of the
     pre-defined methods or a call to function \code{\link{rkMethod}} specifying a user-defined method.
     The most common methods are the fixed-step methods "euler", "rk2", "rk4" 
