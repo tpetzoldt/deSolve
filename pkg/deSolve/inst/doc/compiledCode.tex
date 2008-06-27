@@ -56,25 +56,29 @@ US Environmental Protection Agency}
 \section{Introduction}
 
 \deSolve, the successor of \R package \odesolve is a package to solve
-ordinary differential equations (ODE), differential algebraic equations (DAE)
-and partial differential equations (PDE).
+ordinary differential equations (ODE), differential algebraic
+equations (DAE) and partial differential equations (PDE).
 
-One of the prominent features of \deSolve is that it allows specifying the differential equations either as:
+One of the prominent features of \deSolve is that it allows specifying
+the differential equations either as:
 \begin{itemize}
 \item pure \R code.
 \item functions defined in lower-level languages such as \FOR, \C, or \Cp, which are
 compiled into a dynamically linked library (DLL) and loaded into \R.
 \end{itemize}
 
-In what follows, these implementations will be referred to as Rmodels and DLLmodels
-respectively.
+In what follows, these implementations will be referred to as Rmodels
+and DLLmodels respectively.
 
-Whereas \Rmodels are easy to implement, they allow simple interactive development, produce highly readible code and
-access to \R s high-level procedures, \DLLmodels have the benefit of
-increased simulation speed. Depending on the problem, there may be a gain of up to several
-orders of magnitude computing time when using compiled code.
+Whereas \Rmodels are easy to implement, they allow simple interactive
+development, produce highly readible code and access to \R s
+high-level procedures, \DLLmodels have the benefit of increased
+simulation speed. Depending on the problem, there may be a gain of up
+to several orders of magnitude computing time when using compiled
+code.
 
-Here are some rules of thumb when  it is worthwhile or not to switch to \DLLmodels.
+Here are some rules of thumb when it is worthwhile or not to switch to
+\DLLmodels.
 \begin{itemize}
 \item As long as one makes use only of \R s high-level commands,
 the time gain will be modest. This was demonstrated in Soetaert et
@@ -107,18 +111,21 @@ $\begin{array}{l}
 
  where y1, y2 and y3 are state variables, and k1, k2 and k3 are parameters.
 
-We first implement and run this model in pure \R, then show how to do this in \C and in \FOR
+ We first implement and run this model in pure \R, then show how to do
+ this in \C and in \FOR
 \subsection{ODE model implementation in \R}
 An ODE model implemented in \textbf{pure \R} should be defined as:
 
 \begin{verbatim}
  yprime = func(t, y, parms,...)
 \end{verbatim}
-where t is the current time point in the integration,
-y is the current estimate of the variables in the ODE system, and parms is a vector
-or list containing the parameter values. ... (optional) are any other arguments passed to the function.
-The return value of \emph{func} should be a list, whose first element is a vector containing the derivatives of y with respect to time,
- and whose second element contains output variables that are required at each point in time.
+where t is the current time point in the integration, y is the current
+estimate of the variables in the ODE system, and parms is a vector or
+list containing the parameter values. ... (optional) are any other
+arguments passed to the function.  The return value of \emph{func}
+should be a list, whose first element is a vector containing the
+derivatives of y with respect to time, and whose second element
+contains output variables that are required at each point in time.
 
 The \R implementation of the simple ODE is given below:
 \begin{verbatim}
@@ -166,9 +173,9 @@ out   <- ode(Y,times,model,parms=parms,
 
 \subsection{ODE model implementation in \C}
 
-The call to the derivative and jacobian function is more complex for compiled code compared to
-\R-code, because it has to comply with the interface needed by the integrator source
-codes.
+The call to the derivative and jacobian function is more complex for
+compiled code compared to \R-code, because it has to comply with the
+interface needed by the integrator source codes.
 
 Below is an implementation of this model in \C:
 
@@ -464,9 +471,9 @@ which is initialised by an initialiser subroutine:
 
 See the ODE example for how to initialise parameter values in \C.
 
-Similarly, the function that specifies the Jacobian in a DAE differs from the
-Jacobian when the model is an ODE. The DAE jacobian is set with argument \emph{jacres} rather
-than \emph{jacfunc} when an ODE.
+Similarly, the function that specifies the Jacobian in a DAE differs
+from the Jacobian when the model is an ODE. The DAE jacobian is set
+with argument \emph{jacres} rather than \emph{jacfunc} when an ODE.
 
 For code written in \FOR, the \emph{jacres} must be as:
 \begin{verbatim}
@@ -495,8 +502,9 @@ For code written in \FOR, the \emph{jacres} must be as:
 \end{verbatim}
 
 \subsection{the root function from integrator \emph{lsodar}}
-\emph{lsodar} is an extended version of integrator \emph{lsoda} that includes
-a root finding function. This function is spedified via argument \emph{rootfunc}.
+\emph{lsodar} is an extended version of integrator \emph{lsoda} that
+includes a root finding function. This function is spedified via
+argument \emph{rootfunc}.
 
 Here is how to program such a function in a lower-level language.
 For code written in \C, the calling sequence for \emph{rootfunc} must be:
@@ -504,16 +512,16 @@ For code written in \C, the calling sequence for \emph{rootfunc} must be:
 void myroot(int *neq, double *t, double *y, int *ng, double *gout,
             double *out, int *ip )
 \end{verbatim}
-where \emph{*neq} and \emph{*ng} are the number of state variables and root
-functions respectively, \emph{*t} is the value of the independent variable,
-\emph{y} points to a double precision array that contains the current value
-of the state variables, and \emph{gout} points to an array that will contain
-the values of the constraint function whose root is sought.
-\emph{*out} and \emph{*ip} are a double precision and integer vector respectively,
-as described in the ODE example above.
+where \emph{*neq} and \emph{*ng} are the number of state variables and
+root functions respectively, \emph{*t} is the value of the independent
+variable, \emph{y} points to a double precision array that contains
+the current value of the state variables, and \emph{gout} points to an
+array that will contain the values of the constraint function whose
+root is sought.  \emph{*out} and \emph{*ip} are a double precision and
+integer vector respectively, as described in the ODE example above.
 
-For code written in \FOR, the calling sequence for \emph{rootfunc} must be as in
-following example:
+For code written in \FOR, the calling sequence for \emph{rootfunc}
+must be as in following example:
 \begin{verbatim}
       subroutine myroot(neq, t, y, ng, gout)
       integer :: neq, ng
@@ -540,13 +548,14 @@ INTEGER NEQ, J, IP(*)
 
 
 \section{final remark}
-Notwithstanding the speed gain when using compiled code, one should not carelessly
-decide to always resort to this type of modelling.
+Notwithstanding the speed gain when using compiled code, one should
+not carelessly decide to always resort to this type of modelling.
 
-Because the code needs to be formally compiled and linked to \R much of the elegance
-when using pure \R models is lost. Moreover, mistakes are easily made and paid harder
-in compiled code: often a programming error will terminate \R. In addition, these errors
-may not be simple to trace.
+Because the code needs to be formally compiled and linked to \R much
+of the elegance when using pure \R models is lost. Moreover, mistakes
+are easily made and paid harder in compiled code: often a programming
+error will terminate \R. In addition, these errors may not be simple
+to trace.
 
 \section{reference}
 Soetaert, K., Petzoldt, T. and Setzer, R.W., subm. Solving
