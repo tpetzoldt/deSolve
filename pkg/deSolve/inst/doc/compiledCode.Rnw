@@ -173,6 +173,7 @@ out   <- ode(Y,times,model,parms=parms,
 \end{verbatim}
 
 \subsection{ODE model implementation in \C}
+\label{sec:Cexamp}
 
 The call to the derivative and jacobian function is more complex for
 compiled code compared to \R-code, because it has to comply with the
@@ -268,22 +269,27 @@ else an error is passed to R and the integration is stopped.
 void jac(int *neq, double *t, double *y, int *ml,
            int *mu, double *pd, int *nrowpd, double *yout, int *ip)
 \end{verbatim}
-where \emph{*ml} and \emph{*mu} are the number of non-zero bands below and above
-the diagonal of the Jacobian respectively. These integers are only relevant if the option of a
-banded Jacobian is selected. \emph{*nrow} contains the number of rows of the Jacobian.
-Only for full Jacobian matrices, this is equal to \emph{*neq}. In case the
-jacobian is banded, \emph{*nrowpd} will be equal to \emph{*mu+*ml+1}.
-\footnote{readers familiar with the implementation of the FORTRAN code DVODE may notice that
-this is not the format in which DVODE requires the specification of the Jacobian;
-this code needs an extra \emph{mu} empty rows. As we have taken the philosophy to make
-the model specification independent of the integrator that will be used, the facility
-to use \emph{vode} with a Jacobian specified in compiled code has been toggled off.
-Use the related code \emph{lsode} instead.}
+where \emph{*ml} and \emph{*mu} are the number of non-zero bands below
+and above the diagonal of the Jacobian respectively. These integers
+are only relevant if the option of a banded Jacobian is
+selected. \emph{*nrow} contains the number of rows of the Jacobian.
+Only for full Jacobian matrices, this is equal to \emph{*neq}. In case
+the jacobian is banded, \emph{*nrowpd} will be equal to
+\emph{*mu+*ml+1}.
+\footnote{readers familiar with the implementation of the FORTRAN code
+  DVODE may notice that this is not the format in which DVODE requires
+  the specification of the Jacobian; this code needs an extra
+  \emph{mu} empty rows. As we have taken the philosophy to make the
+  model specification independent of the integrator that will be used,
+  the facility to use \emph{vode} with a Jacobian specified in
+  compiled code has been toggled off.  Use the related code
+  \emph{lsode} instead.}
 \end{itemize}
 
 
 
 \subsection{ODE model implementation in \FOR}
+\label{sec:forexamp}
 
 Models may also be defined in \FOR.
 \begin{verbatim}
@@ -391,6 +397,82 @@ Note that it is not an error (just a waste of memory) to set \emph{nout} to a to
 
 Finally, in order to label the output matrix, the name of the ordinary output variable has to be passed explicitly (\emph{outnames}).
 The names of the state variables are known through their initial condition (\emph{y})
+
+\section{Passing Parameters and Data in Compiled Code}
+\label{sec:parms}
+All of the solvers in \deSolve take an argument \emph{parms} which may
+be an arbitrary R object.  In models defined in \R code, this argument
+is passed unprocessed to the various functions that make up the model.
+It is possible, as well, to pass such objects to models defined in
+native code.  
+
+The problem is that data passed to, say, \emph{ode} in
+the argument \emph{parms} is not visible by default to the routines
+that define the model.  This is handled by a user-written
+initialization function, for example \emph{initmod} in the \C and \FOR
+examples from sections \ref{sec:Cexamp} and \ref{sec:forexamp}.  In
+\C, the initialization routine is declared:
+\begin{verbatim}
+void initmod(void (* odeparms)(int *, double *));
+\end{verbatim}
+That is, \emph{initmod} has a single argument, a pointer to a function
+that has as arguments a pointer to an \texttt{int} and a pointer to a
+\texttt{double}. In \FOR, the initialization routine has a single
+argument, a subroutine declared to be external.  The name of the
+initialization function is passed as an argument to the \deSolve
+solver functions.
+
+In \C, two approaches are available for making the values passed in
+\emph{parms} visible to the model routines, while only the simpler
+approach is available in \FOR.  The simpler requires that \emph{parms}
+be a numeric vector.  In \C, the function passed from \deSolve to the
+initialization function (called \emph{odeparms} in the example) copies
+the values from the parameter vector to a static array declared
+globally in the file where the model is defined.  In \FOR, the values
+are copied into a COMMON block.
+
+It is possible to pass more complicated structures to \C functions.
+Here is an example, an initializer called \emph{deltamethrin} from a
+model describing the pharmacokinetics of that pesticide:
+\begin{verbatim}
+#include <R.h>
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+#include "deltamethrin.h"
+
+/* initializer */
+void deltamethrin(void(* odeparms)(int *, double *))
+{
+  int Nparms;
+  DL_FUNC get_deSolve_gparms;
+  SEXP gparms;
+  get_deSolve_gparms = R_GetCCallable("deSolve","get_deSolve_gparms");
+  gparms = get_deSolve_gparms();
+  Nparms = LENGTH(gparms);
+  if (Nparms != N_PARMS) {
+    PROBLEM "Confusion over the length of parms"
+      ERROR;
+  } else {
+    _RDy_deltamethrin_parms = REAL(gparms);
+  }
+}
+\end{verbatim}
+
+In \texttt{deltamethrin.h}, the variable
+\emph{\_RDy\_deltamethrin\_parms} and macro N\_PARMS are declared:
+\begin{verbatim}
+#define N_PARMS 63
+static double *_RDy_deltamethrin_parms;
+\end{verbatim}
+
+The critical element of this method is the function
+\emph{R\_GetCCallable} which returns a function (called
+\emph{get\_deSolve\_gparms} in this implementation) that returns the
+parms argument as a SEXP data type.  In this example, \emph{parms} was
+just a real vector, but in principle, this method can handle
+arbitrarily complex objects.  For more detail on handling R objects in
+native code, see R Development Core Team (2008).
+
 \section{\deSolve integrators that support DLL models}
 Not all integration routines included in \deSolve can solve \DLLmodels. To date those that can are:
 \begin{itemize}
@@ -559,7 +641,10 @@ error will terminate \R. In addition, these errors may not be simple
 to trace.
 
 \section{reference}
+R Development Core Team (2008) Writing R Extensions, Version 2.7.1.
+
 Soetaert, K., Petzoldt, T. and Setzer, R.W., subm. Solving
 Differential Equations in R: Package deSolve. Subm. to Journal of
 Statistical Software.
 \end{document}
+
