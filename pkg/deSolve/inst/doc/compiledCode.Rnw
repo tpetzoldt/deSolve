@@ -1,10 +1,6 @@
 \documentclass[article,nojss]{jss}
 \DeclareGraphicsExtensions{.pdf,.eps}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
-%% need no \usepackage{Sweave}
-%\VignetteIndexEntry{compiledCode}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add-on packages and fonts
 \usepackage{amsmath}
 \usepackage{xspace}
@@ -61,8 +57,18 @@ to solve models that are written in \proglang{FORTRAN} or
   URL: \url{http://www.epa.gov/comptox}
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
+%% need no \usepackage{Sweave}
+%\VignetteIndexEntry{compiledCode}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document
 \begin{document}
+\SweaveOpts{engine=R,eps=FALSE}
+
+<<preliminaries,echo=FALSE,results=hide>>=
+library("deSolve")
+options(prompt = "R> ")
+@ 
 
 \maketitle
 
@@ -152,7 +158,7 @@ required at each point in time.
 
 The \proglang{R} implementation of the simple ODE is given below:
 
-\begin{verbatim}
+<<>>=
 model <- function(t, Y, parameters)
 {
 
@@ -164,12 +170,13 @@ model <- function(t, Y, parameters)
 
    list(c(dy1, dy2, dy3))
                             })
-}
-\end{verbatim}
+}                            
+@
+
 
 The jacobian associated to the above example is:
 
-\begin{verbatim}
+<<>>=
 jac <- function (t, Y, parameters)
 {
 
@@ -185,19 +192,19 @@ jac <- function (t, Y, parameters)
 
    return(PD)
                             })
-}
-\end{verbatim}
+}                            
+@
 
 This model can then be run as follows:
 
-\begin{verbatim}
+<<>>=
 parms <- c(k1 = 0.04, k2 = 1e4, k3=3e7)
 Y     <- c(1.0,0.0,0.0)
 times <- c(0,0.4*10^(0:11) )
 PD    <- matrix(nrow=3,ncol=3,data=0)
 out   <- ode(Y,times,model,parms=parms,
              jacfunc=jac)
-\end{verbatim}
+@
 
 \subsection{ODE model implementation in C}
 \label{sec:Cexamp}
@@ -208,7 +215,7 @@ with the interface needed by the integrator source codes.
 
 Below is an implementation of this model in \proglang{C}:
 
-\begin{verbatim}
+\begin{Code}
 /* file mymod.c */
 #include <R.h>
 static double parms[3];
@@ -250,9 +257,9 @@ void jac(int *neq, double *t, double *y, int *ml, int *mu,
   pd[2*(*nrowpd) + 2] = 0.0;
 }
 /* END file mymod.c */
-\end{verbatim}
+\end{Code}
 
-The implementation in \proglang{C} consists of three parts.
+The implementation in \proglang{C} consists of three parts:
 
 \begin{itemize}
 \item After defining the parameters in global \proglang{C}-variables,
