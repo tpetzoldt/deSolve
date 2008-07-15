@@ -88,8 +88,8 @@ specifying the differential equations either as:
 library (DLL) and loaded into \proglang{R}.
 \end{itemize}
 
-In what follows, these implementations will be referred to as Rmodels
-and DLLmodels respectively.
+In what follows, these implementations will be referred to as \Rmodels
+and \DLLmodels respectively.
 
 Whereas \Rmodels are easy to implement, they allow simple interactive
 development, produce highly readible code and access to \proglang{R} s
@@ -174,7 +174,7 @@ model <- function(t, Y, parameters)
 @
 
 
-The jacobian associated to the above example is:
+The Jacobian associated to the above example is:
 
 <<>>=
 jac <- function (t, Y, parameters)
@@ -209,7 +209,7 @@ out   <- ode(Y,times,model,parms=parms,
 \subsection{ODE model implementation in C}
 \label{sec:Cexamp}
 
-The call to the derivative and jacobian function is more complex for
+The call to the derivative and Jacobian function is more complex for
 compiled code compared to \proglang{R}-code, because it has to comply
 with the interface needed by the integrator source codes.
 
@@ -242,7 +242,7 @@ void derivs (int *neq, double *t, double *y, double *ydot,
     yout[0] = y[0]+y[1]+y[2];
 }
 
-/* The jacobian matrix */
+/* The Jacobian matrix */
 void jac(int *neq, double *t, double *y, int *ml, int *mu,
            double *pd, int *nrowpd, double *yout, int *ip)
 {
@@ -263,12 +263,12 @@ The implementation in \proglang{C} consists of three parts:
 
 \begin{itemize}
 \item After defining the parameters in global \proglang{C}-variables,
-through the use of "\#define" statements, a function called
+through the use of \code{\#define} statements, a function called
 \code{initmod} initialises the parameter values, passed from the
 \proglang{R}-code.
 
 This function has as its sole argument a pointer to
-\proglang{C}-function "odeparms" that fills a double array with double
+\proglang{C}-function \code{odeparms} that fills a double array with double
 precision values, to copy the parameter values into the global
 variable.
 
@@ -290,7 +290,7 @@ the calculated derivatives.
 \code{nout} values are other output variables (different from the
 state variables y), and the next values are double precision values as
 passed by parameter \code{rpar} when calling the integrator.  The key
-to the elements of yout is set in \code{*ip}
+to the elements of \code{yout} is set in \code{*ip}
 
 \code{*ip} points to an integer vector whose length is at least 3; the
 first element (\code{IP[0]}) contains the number of output values
@@ -308,11 +308,11 @@ in the \pkg{ODEPACK} solvers is a design flaw), we have altered the
 vectors. }
 
 Note that, in function \code{derivs}, we start by checking whether
-enough room is allocated for the output variables ("if (ip[0] < 1)"),
+enough room is allocated for the output variables (\code{if (ip[0] < 1)}),
 else an error is passed to R and the integration is stopped.
 
 \item In \proglang{C}, the call to the function that generates the
-jacobian is as:
+Jacobian is as:
 
 \begin{verbatim}
 void jac(int *neq, double *t, double *y, int *ml,
@@ -324,7 +324,7 @@ and above the diagonal of the Jacobian respectively. These integers
 are only relevant if the option of a banded Jacobian is
 selected. \code{*nrow} contains the number of rows of the Jacobian.
 Only for full Jacobian matrices, this is equal to \code{*neq}. In case
-the jacobian is banded, \code{*nrowpd} will be equal to
+the Jacobian is banded, \code{*nrowpd} will be equal to
 \code{*mu+*ml+1}.\footnote{Readers familiar with the implementation of
 the \proglang{FORTRAN} code \code{DVODE} may notice that this is not
 the format in which \code{DVODE} requires the specification of the
@@ -388,10 +388,10 @@ c end of file mymod.f
 \end{verbatim}
 
 In \proglang{FORTRAN}, parameters may be stored in a common block
-(here called "myparms").  During the initialisation, this common block
+(here called \code{myparms}).  During the initialisation, this common block
 is defined to consist of a 3-valued vector (unnamed), but in the
 subroutines \code{derivs} and \code{jac}, the parameters are given a
-name ("k1",..).
+name (\code{k1},...).
 
 \subsection{Running ODE models implemented in compiled code}
 
@@ -566,7 +566,7 @@ compiled language is discussed next.
 \code{daspk} is the only integrator in the package that solves DAE
 models.  DAEs are specified in implicit form: \[0 = F(y',y,x,t)\]
 i.e. the DAE function (passed via argument \code{res}) specifies the
-"residuals" rather than the derivatives (as for ODEs).
+``residuals'' rather than the derivatives (as for ODEs).
 
 Consequently the DAE function specification in compiled language are
 also different.  For code written in \proglang{C}, the calling
@@ -637,7 +637,7 @@ See the ODE example for how to initialise parameter values in
 \proglang{C}.
 
 Similarly, the function that specifies the Jacobian in a DAE differs
-from the Jacobian when the model is an ODE. The DAE jacobian is set
+from the Jacobian when the model is an ODE. The DAE Jacobian is set
 with argument \code{jacres} rather than \code{jacfunc} when an ODE.
 
 For code written in \proglang{FORTRAN}, the \code{jacres} must be as:
@@ -705,7 +705,7 @@ For code written in \proglang{FORTRAN}, the calling sequence for
       end
 \end{verbatim}
 
-\subsection{jacvec, the jacobian vector for integrator lsodes}
+\subsection{jacvec, the Jacobian vector for integrator lsodes}
 
 Finally, in integration function \code{lsodes}, not the Jacobian
 matrix is specified, but a vector, one for each column of the
