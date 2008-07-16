@@ -300,7 +300,7 @@ related code \code{lsode} instead.}
 
 Models may also be defined in \proglang{FORTRAN}.
 
-\verbatiminput{mymodf.f}
+\verbatiminput{mymod.f}
 
 In \proglang{FORTRAN}, parameters may be stored in a common block
 (here called \code{myparms}).  During the initialisation, this common block
@@ -317,7 +317,7 @@ This can simply be done in \proglang{R} itself, using the
 \code{system} command:
 
 <<eval=FALSE>>=
-  system("R CMD SHLIB mymodf.f")
+  system("R CMD SHLIB mymod.f")
 @
 
 for the \proglang{FORTRAN} code or
@@ -328,7 +328,7 @@ for the \proglang{FORTRAN} code or
 
 for the \proglang{C} code.
 
-This will create file \code{mymod.dll} resp. \code{mymodf.dll}. After loading the DLL, the
+This will create file \code{mymod.dll}. After loading the DLL, the
 model can be run:
 
 <<eval=FALSE>>=
