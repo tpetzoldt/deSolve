@@ -4,6 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add-on packages and fonts
 \usepackage{amsmath}
 \usepackage{xspace}
+\usepackage{verbatim}
 \usepackage[english]{babel}
 %\usepackage{mathptmx}
 %\usepackage{helvet}
@@ -215,53 +216,11 @@ with the interface needed by the integrator source codes.
 
 Below is an implementation of this model in \proglang{C}:
 
-\begin{Code}
-/* file mymod.c */
-#include <R.h>
-static double parms[3];
-#define k1 parms[0]
-#define k2 parms[1]
-#define k3 parms[2]
-
-/* initializer  */
-void initmod(void (* odeparms)(int *, double *))
-{
-    int N=3;
-    odeparms(&N, parms);
-}
-
-/* Derivatives and 1 output variable */
-void derivs (int *neq, double *t, double *y, double *ydot,
-             double *yout, int *ip)
-{
-    if (ip[0] <1) error("nout should be at least 1");
-    ydot[0] = -k1*y[0] + k2*y[1]*y[2];
-    ydot[2] = k3 * y[1]*y[1];
-    ydot[1] = -ydot[0]-ydot[2];
-
-    yout[0] = y[0]+y[1]+y[2];
-}
-
-/* The Jacobian matrix */
-void jac(int *neq, double *t, double *y, int *ml, int *mu,
-           double *pd, int *nrowpd, double *yout, int *ip)
-{
-  pd[0]               = -k1;
-  pd[1]               = k1;
-  pd[2]               = 0.0;
-  pd[(*nrowpd)]       = k2*y[2];
-  pd[(*nrowpd) + 1]   = -k2*y[2] - 2*k3*y[1];
-  pd[(*nrowpd) + 2]   = 2*k3*y[1];
-  pd[(*nrowpd)*2]     = k2*y[1];
-  pd[2*(*nrowpd) + 1] = -k2 * y[1];
-  pd[2*(*nrowpd) + 2] = 0.0;
-}
-/* END file mymod.c */
-\end{Code}
+\verbatiminput{mymod.c}
 
 The implementation in \proglang{C} consists of three parts:
 
-\begin{itemize}
+\begin{enumerate}
 \item After defining the parameters in global \proglang{C}-variables,
 through the use of \code{\#define} statements, a function called
 \code{initmod} initialises the parameter values, passed from the
@@ -309,7 +268,7 @@ vectors. }
 
 Note that, in function \code{derivs}, we start by checking whether
 enough room is allocated for the output variables (\code{if (ip[0] < 1)}),
-else an error is passed to R and the integration is stopped.
+else an error is passed to \proglang{R} and the integration is stopped.
 
 \item In \proglang{C}, the call to the function that generates the
 Jacobian is as:
@@ -333,7 +292,7 @@ taken the philosophy to make the model specification independent of
 the integrator that will be used, the facility to use \code{vode} with
 a Jacobian specified in compiled code has been toggled off.  Use the
 related code \code{lsode} instead.}
-\end{itemize}
+\end{enumerate}
 
 
 \subsection{ODE model implementation in FORTRAN}
@@ -341,51 +300,7 @@ related code \code{lsode} instead.}
 
 Models may also be defined in \proglang{FORTRAN}.
 
-\begin{verbatim}
-c file mymod.f
-       subroutine initmod(odeparms)
-        external odeparms
-        double precision parms(3)
-        common /myparms/parms
-
-         call odeparms(3, parms)
-        return
-       end
-
-       subroutine derivs (neq, t, y, ydot, yout, ip)
-        double precision t, y, ydot, k1, k2, k3
-        integer neq, ip(*)
-        dimension y(3), ydot(3), yout(*)
-        common /myparms/k1,k2,k3
-
-          if(ip(1) < 1) call rexit("nout should be at least 1")
-
-          ydot(1) = -k1*y(1) + k2*y(2)*y(3)
-          ydot(3) = k3*y(2)*y(2)
-          ydot(2) = -ydot(1) - ydot(3)
-
-          yout(1) = y(1) + y(2) + y(3)
-        return
-       end
-
-       subroutine jac (neq, t, y, ml, mu, pd, nrowpd, yout, ip)
-        integer neq, ml, mu, nrowpd, ip
-        double precision y(*), pd(nrowpd,*), yout(*), t, k1, k2, k3
-        common /myparms/k1, k2, k3
-
-          pd(1,1) = -k1
-          pd(2,1) = k1
-          pd(3,1) = 0.0
-          pd(1,2) = k2*y(3)
-          pd(2,2) = -k2*y(3) - 2*k3*y(2)
-          pd(3,2) = 2*k3*y(2)
-          pd(1,3) = k2*y(2)
-          pd(2,3) = -k2*y(2)
-          pd(3,3) = 0.0
-        return
-       end
-c end of file mymod.f
-\end{verbatim}
+\verbatiminput{mymodf.f}
 
 In \proglang{FORTRAN}, parameters may be stored in a common block
 (here called \code{myparms}).  During the initialisation, this common block
@@ -401,20 +316,22 @@ To run the models described aboove, the code in \code{mymod.f} and
 This can simply be done in \proglang{R} itself, using the
 \code{system} command:
 
-\begin{verbatim}
-  system("R CMD SHLIB mymod.f")
-\end{verbatim}
+<<eval=FALSE>>=
+  system("R CMD SHLIB mymodf.f")
+@
+
 for the \proglang{FORTRAN} code or
-\begin{verbatim}
+
+<<eval=FALSE>>=
   system("R CMD SHLIB mymod.c")
-\end{verbatim}
+@
 
 for the \proglang{C} code.
 
-This will create file \code{mymod.dll} After loading the DLL, the
+This will create file \code{mymod.dll} resp. \code{mymodf.dll}. After loading the DLL, the
 model can be run:
 
-\begin{verbatim}
+<<eval=FALSE>>=
 dyn.load("mymod.dll")
 
 parms <- c(k1 = 0.04, k2 = 1e4, k3=3e7)
@@ -424,8 +341,7 @@ times <- c(0,0.4*10^(0:11) )
 out <- ode(Y,times,func="derivs",parms=parms,
            jacfunc="jac",dllname="mymod",
            initfunc="initmod",nout=1,outnames="Sum" )
-
-\end{verbatim}
+@
 
 The integration routine (here \code{ode}) recognizes that the model is
 specified as a DLL due to the fact that arguments \code{func} and
