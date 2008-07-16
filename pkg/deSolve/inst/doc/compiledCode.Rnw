@@ -381,7 +381,7 @@ names of the state variables are known through their initial condition
 \label{sec:parms}
 
 All of the solvers in \pkg{deSolve} take an argument \code{parms}
-which may be an arbitrary R object.  In models defined in \proglang{R}
+which may be an arbitrary \proglang{R} object.  In models defined in \proglang{R}
 code, this argument is passed unprocessed to the various functions
 that make up the model.  It is possible, as well, to pass such objects
 to models defined in native code.
