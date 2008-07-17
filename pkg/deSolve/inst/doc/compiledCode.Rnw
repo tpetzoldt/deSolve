@@ -159,7 +159,7 @@ required at each point in time.
 
 The \proglang{R} implementation of the simple ODE is given below:
 
-<<>>=
+<<the_Rmodel>>=
 model <- function(t, Y, parameters)
 {
 
@@ -177,7 +177,7 @@ model <- function(t, Y, parameters)
 
 The Jacobian associated to the above example is:
 
-<<>>=
+<<Jacobian_in_R>>=
 jac <- function (t, Y, parameters)
 {
 
@@ -198,7 +198,7 @@ jac <- function (t, Y, parameters)
 
 This model can then be run as follows:
 
-<<>>=
+<<Run_Rmodel>>=
 parms <- c(k1 = 0.04, k2 = 1e4, k3=3e7)
 Y     <- c(1.0,0.0,0.0)
 times <- c(0,0.4*10^(0:11) )
@@ -316,13 +316,13 @@ To run the models described aboove, the code in \code{mymod.f} and
 This can simply be done in \proglang{R} itself, using the
 \code{system} command:
 
-<<eval=FALSE>>=
+<<compile_DLLmodel_F,eval=FALSE>>=
   system("R CMD SHLIB mymod.f")
 @
 
 for the \proglang{FORTRAN} code or
 
-<<eval=FALSE>>=
+<<compile_DLLmodel_C,eval=FALSE>>=
   system("R CMD SHLIB mymod.c")
 @
 
@@ -331,7 +331,7 @@ for the \proglang{C} code.
 This will create file \code{mymod.dll}. After loading the DLL, the
 model can be run:
 
-<<eval=FALSE>>=
+<<run_DLLmodel,eval=FALSE>>=
 dyn.load("mymod.dll")
 
 parms <- c(k1 = 0.04, k2 = 1e4, k3=3e7)
