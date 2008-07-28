@@ -1,6 +1,6 @@
 ## Generalized sover for Runge-Kutta methods with fixed time step
-rkFixed <- function( y, times, func, parms, tcrit = NULL,
-  verbose=FALSE, hini=0, method = rkMethod("rk4", ... ), ...) {
+rkFixed <- function(y, times, func, parms, tcrit = NULL,
+  verbose = FALSE, hini = 0, method = rkMethod("rk4", ... ), ...) {
 
   stage <- method$stage
   A     <- method$A
@@ -9,7 +9,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
   cc    <- method$c
   qerr  <- 1/method$Qerr
 
-  FF      <- matrix(0, nrow=length(y), ncol=stage)
+  FF    <- matrix(0, nrow=length(y), ncol=stage)
 
   y0   <- y
   out  <- c(times[1], y0)
@@ -25,6 +25,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
   if (!is.matrix(A)) {                       # "A" coefficients given as subdiagonal
     for (i in 1:(length(times) - 1)) {
       t  <- times[i]
+      dt <- times[i+1] - t
       for (j in 1:stage) {
         if (j == 1) Fj <- 0 else Fj <- A[j] * FF[ ,j - 1]
         FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms)
@@ -37,6 +38,7 @@ rkFixed <- function( y, times, func, parms, tcrit = NULL,
   } else {                                   # "A" coefficients as matrix
     for (i in 1:(length(times) - 1)) {
       t  <- times[i]
+      dt <- times[i+1] - t
       for (j in 1:stage) {
         k  <- 1
         Fj <- 0
