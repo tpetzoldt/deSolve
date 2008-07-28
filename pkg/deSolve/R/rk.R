@@ -1,6 +1,6 @@
 
 
-### rk4  Top level Function for solvers of the Runge-Kutta family
+### rk   Top level Function for solvers of the Runge-Kutta family
 ###      See help(rk) for a description of parameters
 ###
 ###

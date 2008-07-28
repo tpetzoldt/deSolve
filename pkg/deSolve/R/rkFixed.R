@@ -19,17 +19,21 @@ rkFixed <- function(y, times, func, parms, tcrit = NULL,
   y0   <- y
   out  <- c(times[1], y0)
   t    <- min(times)
-  tmax <- min(max(times), tcrit)         # NULL is handled automatically by max
+  tmax <- min(max(times), tcrit)     # NULL is handled automatically by min
+
+  # if hini==0: set internal time step size equal to external step size
+  if (hini == 0) h <- diff(times) else h <- hini
 
   if (verbose) {
-    cat("method=", method$ID, "\n")
-    cat("hini=", hini, "\n")
-    cat("tmax=", tmax, "\n")
+    cat("method   =", method$ID, "\n")
+    cat("stepsize =", h, "\n")
+    cat("tmax     =", tmax, "\n")
   }
-  #i <- 1
-  if (!is.matrix(A)) {                   # "A" coefficients given as subdiagonal
+  i <- 1; iinc <- (length(h) > 1)    # don't increment i if stepsize is constant
+  
+  if (!is.matrix(A)) {               # "A" coefficients given as subdiagonal
     while (t < tmax) {
-      dt  <- min(hini, tmax - t)
+      dt  <- min(h[i], tmax - t)
       for (j in 1:stage) {
         if (j == 1) Fj <- 0 else Fj <- A[j] * FF[ ,j - 1]
         FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms)
@@ -38,17 +42,18 @@ rkFixed <- function(y, times, func, parms, tcrit = NULL,
       y1  <- y0 + dy
       y0  <- y1
       t   <- t + dt
+      i   <- i + iinc
       out <- rbind(out, c(t, y1))
     }
-  } else {                               # "A" coefficients as matrix
+  } else {                           # "A" coefficients as matrix
     while (t < tmax) {
-      dt  <- min(hini, tmax - t)
+      dt  <- min(h[i], tmax - t)
       for (j in 1:stage) {
         k  <- 1
         Fj <- 0
         while (k < j) {
           Fj <- Fj + A[j, k] * FF[ , k]
-          k <- k + 1
+          k <- k + iinc
         }
         FF[, j] <- dt * func(t + dt * cc[j], y0 + Fj, parms)
       }
@@ -56,6 +61,7 @@ rkFixed <- function(y, times, func, parms, tcrit = NULL,
       y1  <- y0 + dy
       y0  <- y1
       t   <- t + dt
+      i   <- i + iinc
       out <- rbind(out, c(t, y1))      
     }
   } # end if
