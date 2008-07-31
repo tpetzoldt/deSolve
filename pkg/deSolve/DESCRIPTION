@@ -1,5 +1,5 @@
 Package: deSolve
-Version: 1.2-2
+Version: 1.2-3
 Title: General solvers for ordinary differential equations 
        (ODE) and for differential algebraic equations (DAE)
 Author: Karline Soetaert <k.soetaert@nioo.knaw.nl>, 
