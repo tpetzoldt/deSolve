@@ -1,20 +1,24 @@
 \name{daspk}
 \alias{daspk}
-\title{General solver for differential algebraic equations (DAE)}
+\title{General Solver for Differential Algebraic Equations (DAE)}
 \description{
   Solves either:
   \itemize{
-    \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...)}  or
-    \item a system of differential algebraic equations (DAE) of the form \deqn{F(t,y,y')=0}
+    \item a system of ordinary differential equations (ODE) of the form
+      \deqn{y'=f(t,y,...)} or
+    \item a system of differential algebraic equations (DAE) of the form
+      \deqn{F(t,y,y')=0}
   }
-  using a combination of backward differentiation formula (BDF) and a direct linear system solution method (dense or banded).
+  using a combination of backward differentiation formula (BDF) and a direct
+  linear system solution method (dense or banded).
   
   The \R function \code{daspk} provides an interface to the
-  Fortran DAE solver of the same name, written by Linda R. Petzold, Peter N. Brown, Alan C. Hindmarsh and Clement W. Ulrich.
+  Fortran DAE solver of the same name, written by Linda R. Petzold,
+  Peter N. Brown, Alan C. Hindmarsh and Clement W. Ulrich.
     
-  The system of DE's is written as an \R function (which may, of course, use \code{\link{.C}}, \code{.Fortran},
-  \code{\link{.Call}}, etc., to call foreign code) or be defined in
-  compiled code that has been dynamically loaded.
+  The system of DE's is written as an \R function (which may, of course, use
+  \code{\link{.C}}, \code{.Fortran}, \code{\link{.Call}}, etc., to call foreign
+  code) or be defined in compiled code that has been dynamically loaded.
 }
 \usage{daspk(y, times, func=NULL, parms, dy=NULL, res=NULL, nalg=0,
   rtol=1e-6, atol=1e-8, jacfunc=NULL, jacres=NULL,
@@ -25,71 +29,104 @@
   rpar=NULL, ipar=NULL, nout= 0, outnames=NULL, 
   ...)}
 \arguments{
-  \item{y }{the initial (state) values for the DE system. If \code{y} has a name attribute, the names will be used to label the output matrix.}
-  \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time; if only one step is to be taken; set times = NULL}
-  \item{func }{cannot be used if the model is a DAE system. If an ODE system, \code{func} should be an \R-function that computes the values of the
-      derivatives in the ODE system (the \emph{model definition}) at time t.
-      \cr  \code{func} must be defined as:
-      \code{yprime = func(t, y, parms,...)}.  
-      \cr \code{t} is the current time point
-      in the integration, \code{y} is the current estimate of the variables
-      in the ODE system.  If the initial values \code{y} has a names
-      attribute, the names will be available inside \code{func}, unless \code{ynames} is FALSE.  \code{parms} is
-      a vector or list of parameters. ... (optional) are any other arguments passed to the function.
-      
-      The return value of \code{func} should be a list, whose first element is a
-      vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements are global values that are required at
-      each point in \code{times}.
-      \cr Note that it is not possible to define \code{func} as a compiled function in a dynamically loaded
-      shared library. Use \code{res} instead.}
-  \item{parms }{vector or list of parameters used in \code{func}, \code{jacfunc}, or \code{res}}
-  \item{dy }{the initial derivatives of the state variables of the DE system. Ignored if an ODE.}
-  \item{res }{if a DAE system: either an \R-function that computes the residual function F(t,y,y') of the DAE system (the model defininition) at time t, 
-      or a character string giving the name of a compiled function in a dynamically loaded shared library. 
-  \cr If \code{res} is a user-supplied R-function, it must be called as: F = func(t, y, dy, parms, ...).
-  \cr   Here \code{t} is the current time point in the integration, \code{y} is the current estimate of the variables in the ODE system, \code{dy} are the corresponding rates of change.
-        If the initial \code{y} or \code{dy} have a names attribute, the names will be available inside \code{func}, unless \code{ynames} is FALSE.
-     \code{parms} is a vector of parameters.
-  \cr The return value of \code{res} should be a list, whose first element is a vector containing the residuals of the DAE system, i.e. delta=F(t,y,y'),
-  and whose next elements contain output variables that are required at each point in \code{times}.
-  \cr If \code{res} is a string, then \code{dllname} must give the name
-      of the shared library (without extension) which must be loaded
-      before \code{daspk()} is called.  see package vignette for more information.
+  \item{y }{the initial (state) values for the DE system. If \code{y} has a name
+    attribute, the names will be used to label the output matrix.}
+  \item{times }{time sequence for which output is wanted; the first value of
+    \code{times} must be the initial time; if only one step is to be taken;
+    set times = NULL.}
+  \item{func }{cannot be used if the model is a DAE system. If an ODE system,
+    \code{func} should be an \R-function that computes the values of the
+    derivatives in the ODE system (the \emph{model definition}) at time t.
+    \cr  \code{func} must be defined as:
+    \code{yprime = func(t, y, parms,...)}.  
+    \cr \code{t} is the current time point
+    in the integration, \code{y} is the current estimate of the variables
+    in the ODE system.  If the initial values \code{y} has a names
+    attribute, the names will be available inside \code{func}, unless
+    \code{ynames} is FALSE.  \code{parms} is a vector or list of parameters.
+    \code{...} (optional) are any other arguments passed to the function.
+    The return value of \code{func} should be a list, whose first element is a
+    vector containing the derivatives of \code{y} with respect to
+    \code{time}, and whose next elements are global values that are required at
+    each point in \code{times}.
+    \cr Note that it is not possible to define \code{func} as a compiled function
+    in a dynamically loaded shared library. Use \code{res} instead.}
+  \item{parms }{vector or list of parameters used in \code{func}, \code{jacfunc},
+    or \code{res}}
+  \item{dy }{the initial derivatives of the state variables of the DE system.
+    Ignored if an ODE.}
+  \item{res }{if a DAE system: either an \R-function that computes the residual
+    function F(t,y,y') of the DAE system (the model defininition) at time t,
+      or a character string giving the name of a compiled function in a
+      dynamically loaded shared library. \cr
+    If \code{res} is a user-supplied R-function, it must be called as:
+    \code{F = func(t, y, dy, parms, ...)}.\cr
+    Here \code{t} is the current time point in the integration, \code{y} is the
+    current estimate of the variables in the ODE system, \code{dy} are the
+    corresponding rates of change.
+    If the initial \code{y} or \code{dy} have a names attribute, the names will
+    be available inside \code{func}, unless \code{ynames} is \code{FALSE}.
+    \code{parms} is a vector of parameters.\cr
+    The return value of \code{res} should be a list, whose first element is a
+    vector containing the residuals of the DAE system, i.e. delta=F(t,y,y'),
+  and whose next elements contain output variables that are required at each
+  point in \code{times}.\cr
+  If \code{res} is a string, then \code{dllname} must give the name
+  of the shared library (without extension) which must be loaded
+  before \code{daspk()} is called.  see package vignette for more information.
   }
-  \item{nalg }{if a DAE system: the number of algebraic equations (equations not involving derivatives). 
-      Algebraic equations should always be the last, i.e. preceeded by the differential equations.
-      \cr Only used if \code{estini} = 1}
-  \item{rtol }{relative error tolerance, either a scalar or a vector, one value for each y }
-  \item{atol }{absolute error tolerance, either a scalar or a vector, one value for each y}
-  \item{jacfunc }{if not \code{NULL}, an \R function that computes the jacobian of the system of differential equations. Only used in case the system is an ODE (y'=f(t,y)), specified by \code{func}.   
-      The \R calling sequence for \code{jacfunc} is identical to that of \code{func}.     
-      \cr If the jacobian is a full matrix, \code{jacfunc} should return a matrix dydot/dy, where the ith
-      row contains the derivative of \eqn{dy_i/dt} with respect to \eqn{y_j},
-      or a vector containing the matrix elements by columns (the way \R and Fortran store matrices).
-      \cr If the jacobian is banded, \code{jacfunc} should return a matrix containing only the 
-      nonzero bands of the jacobian, rotated row-wise. See first example of lsode.}
-  \item{jacres }{ \code{jacres} and not \code{jacfunc} should be used if the system is specified by the residual function F(t,y,y'), i.e. \code{jacres} is used in 
-      conjunction with \code{res}. 
-     \cr If \code{jacres} is an R-function, the calling sequence for \code{jacres} is identical to that of \code{res}, but with extra parameter \code{cj}. 
-     thus it should be called as: jacres = func(t, y, dy, parms, cj, ...).
-     Here \code{t} is the current time point in the integration, \code{y} is the current estimate of the variables in the ODE system,
-     \eqn{y'} are the corresponding rates of change and
-     \code{cj} is a scalar, which is normally proportional to the inverse of the stepsize.
-        If the initial y or dy have a names attribute, the names will be available inside jacres, unless \code{ynames} is FALSE.
-     \code{parms} is a vector of parameters (which may have a names attribute). 
-     \cr If the jacobian is a full matrix, \code{jacres} should
-      return the matrix dG/dy + cj*dG/dyprime, where the ith
-      row is the sum of the derivatives of \eqn{G_i} with respect to \eqn{y_j} and the scaled derivatives of \eqn{G_i} with respect to \eqn{dy_j}.
-      \cr if the jacobian is banded, \code{jacres} should return only the nonzero bands of the jacobian, rotated rowwise.
-     See details for the calling sequence when \code{jacres} is a string.
-      }
-  \item{jactype }{the structure of the jacobian, one of "fullint", "fullusr", "bandusr" or "bandint" - either full or banded and estimated internally or by the user}
-  \item{estini }{only if a DAE system, and if initial values of \code{y} and \code{dy }are not consistent (i.e. F(t,y,dy) is not=0), 
-      setting \code{estini}=1 or 2, will solve for them.  
-      If \code{estini} = 1: dy and the algebraic variables are estimated from \code{y}; in this case, the number of algebraic equations must be given (\code{nalg}). 
-      If \code{estini} = 2: \code{y} will be estimated from \code{dy}. }
-  \item{verbose }{if TRUE: full output to the screen, e.g. will output the settings of vector *istate* and *rstate* - see details}
+  \item{nalg }{if a DAE system: the number of algebraic equations (equations not
+    involving derivatives). Algebraic equations should always be the last, i.e.
+    preceeded by the differential equations.\cr
+    Only used if \code{estini} = 1}
+  \item{rtol }{relative error tolerance, either a scalar or a vector,
+    one value for each y }
+  \item{atol }{absolute error tolerance, either a scalar or a vector,
+    one value for each y}
+  \item{jacfunc }{if not \code{NULL}, an \R function that computes the jacobian
+    of the system of differential equations. Only used in case the system is an
+    ODE (y'=f(t,y)), specified by \code{func}.
+    The \R calling sequence for \code{jacfunc} is identical to that of \code{func}.     
+    \cr If the jacobian is a full matrix, \code{jacfunc} should return a matrix
+    dydot/dy, where the ith row contains the derivative of \eqn{dy_i/dt} with
+    respect to \eqn{y_j}, or a vector containing the matrix elements by columns
+    (the way \R and Fortran store matrices).\cr
+    If the jacobian is banded, \code{jacfunc} should return a matrix containing
+    only the nonzero bands of the jacobian, rotated row-wise. See first example
+    of lsode.}
+  \item{jacres }{ \code{jacres} and not \code{jacfunc} should be used if the
+    system is specified by the residual function F(t,y,y'), i.e. \code{jacres} is
+    used in conjunction with \code{res}.\cr
+    If \code{jacres} is an R-function, the calling sequence for \code{jacres} is
+    identical to that of \code{res}, but with extra parameter \code{cj}.
+    Thus it should be called as: \code{jacres = func(t, y, dy, parms, cj, ...)}.
+    Here \code{t} is the current time point in the integration, \code{y} is the
+    current estimate of the variables in the ODE system, \eqn{y'} are the
+    corresponding rates of change and \code{cj} is a scalar, which is normally
+    proportional to the inverse of the stepsize. If the initial y or dy have
+    a names attribute, the names will be available inside jacres, unless
+    \code{ynames} is \code{FALSE}. \code{parms} is a vector of parameters
+    (which may have a names attribute).\cr
+    If the jacobian is a full matrix, \code{jacres} should return the matrix
+    dG/dy + cj*dG/dyprime, where the ith row is the sum of the derivatives of
+    \eqn{G_i} with respect to \eqn{y_j} and the scaled derivatives of \eqn{G_i}
+    with respect to \eqn{dy_j}.\cr
+    Ff the jacobian is banded, \code{jacres} should return only the nonzero
+    bands of the jacobian, rotated rowwise. See details for the calling sequence
+    when \code{jacres} is a string.
+}
+  \item{jactype }{the structure of the jacobian, one of \code{"fullint"},
+  \code{"fullusr"}, \code{"bandusr"} or \code{"bandint"} - either full or
+    banded and estimated internally or by the user}
+  \item{estini }{only if a DAE system, and if initial values of \code{y} and
+   \code{dy} are not consistent (i.e. F(t,y,dy) is not=0), setting
+   \code{estini}=1 or 2, will solve for them.
+   If \code{estini} = 1: dy and the algebraic variables are estimated from
+   \code{y}; in this case, the number of algebraic equations must be given
+   (\code{nalg}).
+   If \code{estini} = 2: \code{y} will be estimated from \code{dy}.}
+  \item{verbose }{if TRUE: full output to the screen, e.g. will output the
+     settings of vector \bf{istate} and \bf{rstate} - see details.}
   \item{tcrit }{the Fortran routine \code{daspk} overshoots its targets (times points in the vector \code{times}), and interpolates values
       for the desired time points.  If there is a time beyond which integration should not proceed (perhaps because of a singularity),
       that should be provided in \code{tcrit}.}
