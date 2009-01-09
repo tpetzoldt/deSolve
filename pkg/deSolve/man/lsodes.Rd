@@ -257,18 +257,21 @@
   out4<- lsodes(func= chemistry, y = y, parms=parms, times=times,lrw=351,  
                 sparsetype="sparseusr", inz=nonzero, jacvec=chemjac,
                 atol=atol, rtol=rtol, verbose=TRUE)}
-\references{\item  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
+\references{
+
+  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
   Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
   North-Holland, Amsterdam, 1983, pp. 55-64.
   
-  \item S. C. Eisenstat, M. C. Gursky, M. H. Schultz, and A. H. Sherman,
-   Yale Sparse Matrix Package: I. The Symmetric Codes,
-   Int. J. Num. Meth. Eng., 18 (1982), pp. 1145-1151.
+  S. C. Eisenstat, M. C. Gursky, M. H. Schultz, and A. H. Sherman,
+  Yale Sparse Matrix Package: I. The Symmetric Codes,
+  Int. J. Num. Meth. Eng., 18 (1982), pp. 1145-1151.
   
-  \item S. C. Eisenstat, M. C. Gursky, M. H. Schultz, and A. H. Sherman,
-   Yale Sparse Matrix Package: II. The Nonsymmetric Codes,
+  S. C. Eisenstat, M. C. Gursky, M. H. Schultz, and A. H. Sherman,
+  Yale Sparse Matrix Package: II. The Nonsymmetric Codes,
   Research Report No. 114, Dept. of Computer Sciences, Yale
-  University, 1977.}
+  University, 1977.
+}
 \details{The work is done by the Fortran subroutine \code{lsodes},
     whose documentation should be consulted for details (it is included as
     comments in the source file \file{src/opkdmain.f}).  The implementation is based on the
@@ -295,33 +298,37 @@
   \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   
   
-  The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements. 
-      \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
+  The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements.\cr
+  if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen.
       
-      the following elements of \bold{istate} are meaningful:    
-      \item el 1 : returns the conditions under which the last call to lsodes returned. 
-      2  if lsodes was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small), 
-  -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
-  -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-  -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-      \item el 12 : The number of steps taken for the problem so far.
-      \item el 13 : The number of function evaluations for the problem so far, excluding those for structure determination.",
-      \item el 14 : The number of Jacobian evaluations  and LU decompositions so far, excluding those for structure determination.",
-      \item el 15 : The method order last used (successfully).,
-      \item el 16 : The order to be attempted on the next step.,
-      \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
-      \item el 18 : The length of rwork actually required.,
-      \item el 19 : The length of iwork actually required.,
-      \item el 20 : The number of nonzero elements in the sparse jacobian,
-  
+  the following elements of \bold{istate} are meaningful:
+  \itemize{
+    \item el 1 : returns the conditions under which the last call to lsodes returned. 
+      2  if lsodes was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
+      -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
+      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
+      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
+    \item el 12 : The number of steps taken for the problem so far.
+    \item el 13 : The number of function evaluations for the problem so far, excluding those for structure determination.",
+    \item el 14 : The number of Jacobian evaluations  and LU decompositions so far, excluding those for structure determination.",
+    \item el 15 : The method order last used (successfully).,
+    \item el 16 : The order to be attempted on the next step.,
+    \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
+    \item el 18 : The length of rwork actually required.,
+    \item el 19 : The length of iwork actually required.,
+    \item el 20 : The number of nonzero elements in the sparse jacobian,
       \bold{rstate} contains the following:
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
-  current internal mesh point in t.  
-      \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-      
-      For more information, see the comments in the original code lsodes.f}
-\seealso{\item \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
+    \item 1: The step size in t last used (successfully).
+    \item 2: The step size to be attempted on the next step.
+    \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
+      current internal mesh point in t.
+    \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
+  }
+  For more information, see the comments in the original code lsodes.f
+}
+\seealso{
+  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
+  \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.
+}
 \keyword{math}
 

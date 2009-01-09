@@ -197,28 +197,34 @@
   filled.contour(x=times,y=x,O2,color= color,nlevels=50,
                  xlab="time, days", ylab= "Distance from river, m",
                  main="Oxygen")}
-\details{This is the method of choice for multi-species 1-dimensional models, that are only subjected to transport between adjacent layers.
-    \cr More specifically, this method is to be used if the state variables are arranged per species: 
-    \cr A[1],A[2],A[3],....B[1],B[2],B[3],.... (for species A, B)) 
+\details{This is the method of choice for multi-species 1-dimensional models, that are only subjected to transport between adjacent layers.\cr
+  More specifically, this method is to be used if the state variables are arranged per species:\cr
+  A[1],A[2],A[3],....B[1],B[2],B[3],.... (for species A, B))
 
-Two methods are implemented.
-\item The default method rearranges the state variables as A[1],B[1],...A[2],B[2],...A[3],B[3],.... This reformulation leads to a banded Jacobian with (upper and lower) half bandwidth = number of species. 
-Then the selected integrator solves the banded problem.
-\item The second method uses \code{lsodes}. Based on the dimension of the problem, the method first calculates the sparsity pattern of the Jacobian, under the assumption 
-  that transport is only occurring between adjacent layers. Then \code{lsodes} is called to solve the problem.
-  \cr As \code{lsodes} is used to integrate, it may be necessary to specify the length of the real work array, \code{lrw}.
-  \cr Although a reasonable guess of \code{lrw} is made, it is possible that this will be too low. 
-  In this case, \code{ode.1D} will return with an error message telling
-  the size of the work array actually needed. In the second try then, set \code{lrw} equal to this number.
+  Two methods are implemented.
+  \itemize{
+    \item The default method rearranges the state variables as A[1],B[1],...A[2],B[2],...A[3],B[3],.... This reformulation leads to a banded Jacobian with (upper and lower) half bandwidth = number of species.
+    Then the selected integrator solves the banded problem.
+    \item The second method uses \code{lsodes}. Based on the dimension of the problem, the method first calculates the sparsity pattern of the Jacobian, under the assumption
+      that transport is only occurring between adjacent layers. Then \code{lsodes} is called to solve the problem.
+      \cr As \code{lsodes} is used to integrate, it may be necessary to specify the length of the real work array, \code{lrw}.
+      \cr Although a reasonable guess of \code{lrw} is made, it is possible that this will be too low.
+      In this case, \code{ode.1D} will return with an error message telling
+      the size of the work array actually needed. In the second try then, set \code{lrw} equal to this number.
+  }
+  If the model is specified in compiled code (in a DLL), then option 2, based on \code{lsodes} is the only solution method.
 
-If the model is specified in compiled code (in a DLL), then option 2, based on \code{lsodes} is the only solution method.
- 
-For single-species 1-D models, use \code{\link{ode.band}}. 
+  For single-species 1-D models, use \code{\link{ode.band}}.
   
   See the selected integrator for the additional options}
-\seealso{\code{\link{ode}},
-\item \code{\link{ode.band}} for solving models with a banded Jacobian
-\item \code{\link{ode.2D}} for integrating 2-D models 
-\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.}
+\seealso{
+  \code{\link{ode}},
+  \itemize{
+    \item \code{\link{ode.band}} for solving models with a banded Jacobian
+    \item \code{\link{ode.2D}} for integrating 2-D models
+    \item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
+    \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.
+  }
+}
 \keyword{math}
 

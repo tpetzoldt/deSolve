@@ -2,19 +2,22 @@
 \alias{lsodar}
 \title{General solver for ordinary differential equations (ODE), switching automatically between stiff and non-stiff methods and with root finding}
 \description{Solving initial value problems for stiff or
-    non-stiff systems of first-order ordinary differential equations
-    (ODEs) and including root-finding. 
-    \cr The \R function \code{lsodar} provides an interface to the
-    Fortran ODE solver of the same name, written by Alan
-    C. Hindmarsh and Linda R. Petzold.  
-    
-    The system of ODE's is written as an \R function or be defined in
-    compiled code that has been dynamically loaded. - see description of \code{\link{lsoda}} for details. 
+  non-stiff systems of first-order ordinary differential equations
+  (ODEs) and including root-finding. 
+  \cr The \R function \code{lsodar} provides an interface to the
+  Fortran ODE solver of the same name, written by Alan
+  C. Hindmarsh and Linda R. Petzold.  
   
-    \code{lsodar} differs from \code{lsode} in two respects.
+  The system of ODE's is written as an \R function or be defined in
+  compiled code that has been dynamically loaded. - see description of \code{\link{lsoda}} for details. 
+
+  \code{lsodar} differs from \code{lsode} in two respects.
+  \itemize{
     \item It switches automatically between stiff and nonstiff methods (similar as lsoda).
     \item It finds the root of at least one of a set of constraint
-  functions g(i) of the independent and dependent variables.}
+      functions g(i) of the independent and dependent variables.
+  }
+}
 \usage{lsodar(y, times, func, parms, rtol=1e-6, atol=1e-6, 
   jacfunc=NULL, jactype="fullint", rootfunc=NULL, verbose=FALSE,   
   nroot=0, tcrit=NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
@@ -183,15 +186,19 @@
   state   <- c(Bact=pars$Bini,Sub =pars$Sini)
   out     <- lsodar(state,tout,model,pars,rootfun=rootfun)
   print(out)}
-\references{\item Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
+\references{
+
+    Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
     Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
     North-Holland, Amsterdam, 1983, pp. 55-64.
-  \item Linda R. Petzold, Automatic Selection of Methods for Solving
-      Stiff and Nonstiff Systems of Ordinary Differential Equations,
-      Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
-  \item Kathie L. Hiebert and Lawrence F. Shampine, Implicitly Defined
-      Output Points for Solutions of ODEs, Sandia Report SAND80-0180,
-      February 1980.
+    
+    Linda R. Petzold, Automatic Selection of Methods for Solving
+    Stiff and Nonstiff Systems of Ordinary Differential Equations,
+    Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
+
+   Kathie L. Hiebert and Lawrence F. Shampine, Implicitly Defined
+   Output Points for Solutions of ODEs, Sandia Report SAND80-0180,
+   February 1980.
     
     Netlib: \url{http://www.netlib.org}}
 \details{The work is done by the Fortran subroutine \code{lsodar},
@@ -210,15 +217,15 @@
   sooner than the specified stop condition, and otherwise returns
   the solution according the specified stop condition.
   
-  The form of the \bold{jacobian} can be specified by \code{jactype} which can take the following values.
-  
-      \item jactype = "fullint" : a full jacobian, calculated internally by lsodar, the default
-      \item jactype = "fullusr" : a full jacobian, specified by user function \code{jacfunc}
-      \item jactype = "bandusr" : a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}
-      \item jactype = "bandint" : a banded jacobian, calculated by lsodar; the size of the bands specified by \code{bandup} and \code{banddown}
-  
-  if \code{jactype}= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc}.
-  
+  The form of the \bold{jacobian} can be specified by \code{jactype} which can take the following values:
+  \describe{
+    \item{jactype = "fullint":}{a full jacobian, calculated internally by lsodar, the default,}
+    \item{jactype = "fullusr":}{a full jacobian, specified by user function \code{jacfunc},}
+    \item{jactype = "bandusr":}{a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown},}
+    \item{jactype = "bandint":}{banded jacobian, calculated by lsodar; the size of the bands specified by \code{bandup} and \code{banddown}.}
+  }
+  If \code{jactype}= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc}.
+
   The input parameters \code{rtol}, and \code{atol} determine the \bold{error
   control} performed by the solver. See \code{\link{lsoda}} for details.
   
@@ -231,13 +238,13 @@
    \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
   
       the following elements of \bold{istate} are meaningful:    
-  
+   \itemize{
       \item el 1 : returns the conditions under which the last call to lsodar returned.
       2  if lsodar was successful, 3 if lsodar was succesful and one or more roots were found - see \code{iroot}.
       -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
-  -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
-  -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-  -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
+      -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
+      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
+      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
       \item el 12 : The number of steps taken for the problem so far.
       \item el 13 : The number of function evaluations for the problem so far.,
       \item el 14 : The number of Jacobian evaluations and LU decompositions so far.,
@@ -256,7 +263,9 @@
       \item 4: the value of t at the time of the last method switch, if any.
   
       \bold{iroot} is a vector, its length equal to the number of constraint functions; 
-      it will have a value of 1 for the constraint function whose root that has been found and 0 otherwise.}
+      it will have a value of 1 for the constraint function whose root that has been found and 0 otherwise.
+  }
+}
 \seealso{\code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
     \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
 \keyword{math}

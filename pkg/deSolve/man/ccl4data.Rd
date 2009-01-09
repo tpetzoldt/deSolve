@@ -6,11 +6,14 @@
     parameters for CCl4 (carbon tetrachloride) in rats.}
 \usage{data(ccl4data)}
 \format{This data frame contains the following columns:
-    \item time. The time (in hours after starting the experiment)
-    \item initconc. initial chamber concentration (ppm)
-    \item animal. This is a repeated measures design; this variable
-        indicates which animal the observation pertains to
-    \item ChamberConc. chamber concentration at \code{time}, in ppm}
+  \describe{
+    \item{time}{The time (in hours after starting the experiment).}
+    \item{initconc}{Initial chamber concentration (ppm).}
+    \item{animal}{This is a repeated measures design; this variable
+        indicates which animal the observation pertains to.}
+    \item{ChamberConc}{chamber concentration at \code{time}, in ppm.}
+  }
+}
 \source{Evans, et al. 1994 Applications of sensitivity analysis to a
   physiologically based pharmacokinetic model for carbon tetrachloride in
   rats.  Toxicology and Applied Pharmacology 128: 36 -- 44.}

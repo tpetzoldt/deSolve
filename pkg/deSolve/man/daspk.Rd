@@ -1,17 +1,21 @@
 \name{daspk}
 \alias{daspk}
 \title{General solver for differential algebraic equations (DAE)}
-\description{Solves either: 
-    \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...)}
+\description{
+  Solves either:
+  \itemize{
+    \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...) or}
     \item a system of differential algebraic equations (DAE) of the form \deqn{F(t,y,y')=0}
-    \cr using a combination of backward differentiation formula (BDF) and a direct linear system solution method (dense or banded). 
+  }
+  using a combination of backward differentiation formula (BDF) and a direct linear system solution method (dense or banded).
   
-    The \R function \code{daspk} provides an interface to the
-    Fortran DAE solver of the same name, written by Linda R. Petzold, Peter N. Brown, Alan C. Hindmarsh and Clement W. Ulrich.   
+  The \R function \code{daspk} provides an interface to the
+  Fortran DAE solver of the same name, written by Linda R. Petzold, Peter N. Brown, Alan C. Hindmarsh and Clement W. Ulrich.
     
-    The system of DE's is written as an \R function (which may, of course, use \code{\link{.C}}, \code{.Fortran},
-    \code{\link{.Call}}, etc., to call foreign code) or be defined in
-    compiled code that has been dynamically loaded.}
+  The system of DE's is written as an \R function (which may, of course, use \code{\link{.C}}, \code{.Fortran},
+  \code{\link{.Call}}, etc., to call foreign code) or be defined in
+  compiled code that has been dynamically loaded.
+}
 \usage{daspk(y, times, func=NULL, parms, dy=NULL, res=NULL, nalg=0,
   rtol=1e-6, atol=1e-8, jacfunc=NULL, jacres=NULL,
   jactype="fullint", estini = NULL, verbose=FALSE, 
@@ -69,7 +73,8 @@
       conjunction with \code{res}. 
      \cr If \code{jacres} is an R-function, the calling sequence for \code{jacres} is identical to that of \code{res}, but with extra parameter \code{cj}. 
      thus it should be called as: jacres = func(t, y, dy, parms, cj, ...).
-     Here \code{t} is the current time point in the integration, \code{y} is the current estimate of the variables in the ODE system, \code{y'} are the corresponding rates of change and 
+     Here \code{t} is the current time point in the integration, \code{y} is the current estimate of the variables in the ODE system,
+     \eqn{y'} are the corresponding rates of change and
      \code{cj} is a scalar, which is normally proportional to the inverse of the stepsize.
         If the initial y or dy have a names attribute, the names will be available inside jacres, unless \code{ynames} is FALSE.
      \code{parms} is a vector of parameters (which may have a names attribute). 
@@ -248,28 +253,36 @@
   max(abs(DAE-DAE2))
 # See \dynload subdirectory for a FORTRAN implementation of this model 
   }
-\references{\item 1.  L. R. Petzold, A Description of DASSL: A Differential/Algebraic
-   System Solver, in Scientific Computing, R. S. Stepleman et al.
-   (Eds.), North-Holland, Amsterdam, 1983, pp. 65-68.
-  \item 2.  K. E. Brenan, S. L. Campbell, and L. R. Petzold, Numerical 
-   Solution of Initial-Value Problems in Differential-Algebraic
+\references{
+  L. R. Petzold, A Description of DASSL: A Differential/Algebraic
+  System Solver, in Scientific Computing, R. S. Stepleman et al.
+  (Eds.), North-Holland, Amsterdam, 1983, pp. 65-68.
+
+  K. E. Brenan, S. L. Campbell, and L. R. Petzold, Numerical
+  Solution of Initial-Value Problems in Differential-Algebraic
   Equations, Elsevier, New York, 1989.
-  \item 3.  P. N. Brown and A. C. Hindmarsh, Reduced Storage Matrix Methods
+
+  P. N. Brown and A. C. Hindmarsh, Reduced Storage Matrix Methods
   in Stiff ODE Systems, J. Applied Mathematics and Computation,
   31 (1989), pp. 40-91.
-  \item 4.  P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Using Krylov
-   Methods in the Solution of Large-Scale Differential-Algebraic
+
+  P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Using Krylov
+  Methods in the Solution of Large-Scale Differential-Algebraic
   Systems, SIAM J. Sci. Comp., 15 (1994), pp. 1467-1488.
-  \item 5.  P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Consistent
+
+  P. N. Brown, A. C. Hindmarsh, and L. R. Petzold, Consistent
   Initial Condition Calculation for Differential-Algebraic
   Systems, LLNL Report UCRL-JC-122175, August 1995; submitted to
   SIAM J. Sci. Comp.
   
-  Netlib: \url{http://www.netlib.org}}
+  Netlib: \url{http://www.netlib.org}
+}
 \details{The daspk solver uses the backward differentiation formulas of orders one through five (specified with \code{maxord})
   to solve either:
-  \item an ODE system of the form \deqn{y'=f(t,y,...)}  for y = Y, or
-  \item a DAE system of the form \deqn{F(t,y,y') = 0} for y = Y and y' = YPRIME.
+  \itemize{
+    \item an ODE system of the form \deqn{y'=f(t,y,...)}  for y = Y, or
+    \item a DAE system of the form \deqn{F(t,y,y') = 0} for y = Y and y' = YPRIME.
+  }
   
   ODEs are specified in \code{func}, DAEs are specified in \code{res}.   
   
@@ -279,13 +292,15 @@
   y' and algebraic variables (their number specified with \code{nalg}) will be estimated, when \code{estini} = 2, y will be estimated.
   
   The form of the \bold{jacobian} can be specified by \code{jactype}. This is one of:
-  
-      \item jactype = "fullint" : a full jacobian, calculated internally by daspk, the default
-      \item jactype = "fullusr" : a full jacobian, specified by user function \code{jacfunc} or \code{jacres}
-      \item jactype = "bandusr" : a banded jacobian, specified by user function \code{jacfunc} or \code{jacres}; the size of the bands have to be specified by \code{bandup} and \code{banddown}
-      \item jactype = "bandint" : a banded jacobian, calculated by \code{daspk}; the size of the bands have to be specified by \code{bandup} and \code{banddown}
-  
-  if jactype= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc} or \code{jacres}.
+  \describe{
+    \item{jactype = "fullint":}{a full jacobian, calculated internally by \code{daspk}, the default,}
+    \item{jactype = "fullusr":}{a full jacobian, specified by user function \code{jacfunc} or \code{jacres},}
+    \item{jactype = "bandusr":}{a banded jacobian, specified by user function \code{jacfunc} or \code{jacres}; the size of the bands specified by \code{bandup} and \code{banddown},}
+    \item{jactype = "bandint":}{a banded jacobian, calculated by \code{daspk}; the size of the bands specified by \code{bandup} and \code{banddown}.}
+  }
+  If \code{jactype}= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc}.
+
+  If jactype= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc} or \code{jacres}.
   
   The input parameters \code{rtol}, and \code{atol} determine the \bold{error control} performed by the solver. 
   If the request for precision exceeds the capabilities of the machine, 
@@ -294,38 +309,43 @@
   \bold{res and jacres} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   Examples in Fortran are in the \file{dynload} subdirectory of
   the \code{deSolve} package directory.
-  
-  
+
   The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements.
   \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen.
   
-      the following elements of \bold{istate} are meaningful:
-  
-      \item el 1 : returns the conditions under which the last call to daspk returned.
+  The following elements of \bold{istate} are meaningful:
+  \itemize{
+    \item el 1 : returns the conditions under which the last call to daspk returned.
       2  if daspk was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
-  -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
-  -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-  -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-      \item el 12 : The number of steps taken for the problem so far.
-      \item el 13 : The number of function evaluations for the problem so far.,
-      \item el 14 : The number of Jacobian evaluations so far.,
-      \item el 15 : The method order last used (successfully).,
-      \item el 16 : The order to be attempted on the next step.,
-      \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
-      \item el 20 : The number of matrix LU decompositions so far.,
-      \item el 21 : The number of nonlinear (Newton) iterations so far.,
-      \item el 22 : The number of convergence failures of the solver so far ,
-      \item el 23 : The number of error test failures of the integrator so far.
-  
-      \bold{rstate} contains the following:
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
-  current internal mesh point in t.
-      \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-  
-      For more information about possible options, see the comments in the original code daspk.f}
-\seealso{\item \code{\link{lsoda}}, \code{\link{lsodar}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{vode}}}
-\note{In this version, the krylov method is not (yet) supported.}
+      -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
+      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
+      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
+    \item el 12 : The number of steps taken for the problem so far.
+    \item el 13 : The number of function evaluations for the problem so far.,
+    \item el 14 : The number of Jacobian evaluations so far.,
+    \item el 15 : The method order last used (successfully).,
+    \item el 16 : The order to be attempted on the next step.,
+    \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
+    \item el 20 : The number of matrix LU decompositions so far.,
+    \item el 21 : The number of nonlinear (Newton) iterations so far.,
+    \item el 22 : The number of convergence failures of the solver so far ,
+    \item el 23 : The number of error test failures of the integrator so far.
+  }
+  \bold{rstate} contains the following:
+  \itemize{
+    \item 1: The step size in t last used (successfully).
+    \item 2: The step size to be attempted on the next step.
+    \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
+      current internal mesh point in t.
+    \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
+  }
+  For more information about possible options, see the comments in the original code daspk.f}
+\seealso{
+  \code{\link{lsoda}}, \code{\link{lsodar}}, \code{\link{lsode}},
+  \code{\link{lsodes}}, \code{\link{vode}}
+}
+\note{
+  In this version, the krylov method is not (yet) supported.
+}
 \keyword{math}
 

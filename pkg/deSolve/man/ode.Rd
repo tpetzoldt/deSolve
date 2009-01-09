@@ -41,13 +41,17 @@ method=c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
 \details{This is simply a wrapper around the various ode solvers.
 \cr See package vignette for information about specifying the model in compiled code.
 \cr See the selected integrator for the additional options}
-\seealso{\item \code{\link{ode.band}} for solving models with a banded Jacobian
-\item  \code{\link{ode.1D}} for integrating 1-D models 
-\item \code{\link{ode.2D}} for integrating 2-D models
- 	\item \code{\link{aquaphy}}, \code{\link{ccl4model}}, where \code{ode} is used
+\seealso{
+  \itemize{
+    \item \code{\link{ode.band}} for solving models with a banded Jacobian
+    \item  \code{\link{ode.1D}} for integrating 1-D models
+    \item \code{\link{ode.2D}} for integrating 2-D models
+   	\item \code{\link{aquaphy}}, \code{\link{ccl4model}}, where \code{ode} is used
 
-	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
-  \item  \code{\link{rk}}, \code{\link{rkMethod}}}
+  	\item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
+    \item  \code{\link{rk}}, \code{\link{rkMethod}}
+  }
+}
 \keyword{math}
 \examples{
 
@@ -82,7 +86,7 @@ pars    <- c(rIng   =0.2,    # /day, rate of ingestion
 
 yini    <- c(Prey=1,Predator=2)
 times   <- seq(0,200,by=1)
-out     <- as.data.frame(lsoda(func= LVmod, y=yini,
+out     <- as.data.frame(ode(func= LVmod, y=yini,
                          parms=pars, times=times))
 
 matplot(out$time,out[,2:3],type="l",xlab="time",ylab="Conc",

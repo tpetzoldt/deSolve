@@ -232,39 +232,44 @@ diffusion2D <- function(t,Y,par)
   ))
   par(ask=pa)
 }
-\references{\item Alan C. Hindmarsh, "ODEPACK, A Systematized Collection of ODE
-   Solvers," in Scientific Computing, R. S. Stepleman, et al., Eds.
-   (North-Holland, Amsterdam, 1983), pp. 55-64.}
-\details{The work is done by the Fortran subroutine \code{lsode},
-    whose documentation should be consulted for details (it is included as
-    comments in the source file \file{src/opkdmain.f}).  The implementation is based on the
-    November, 2003 version of lsode, from Netlib. 
+\references{
+  Alan C. Hindmarsh, "ODEPACK, A Systematized Collection of ODE
+  Solvers," in Scientific Computing, R. S. Stepleman, et al., Eds.
+  (North-Holland, Amsterdam, 1983), pp. 55-64.
+}
+\details{
+  The work is done by the Fortran subroutine \code{lsode},
+  whose documentation should be consulted for details (it is included as
+  comments in the source file \file{src/opkdmain.f}).  The implementation is based on the
+  November, 2003 version of lsode, from Netlib.
     
   Before using the integrator lsode, the user has to decide whether or not the problem is stiff. 
   
-  If the problem is nonstiff, use method flag \code{mf} = 10, which selects a nonstiff (Adams) method, no Jacobian used..  
-  \cr If the problem is stiff, there are four standard choices 
-     which can be specified with \code{jactype} or \code{mf}.
-  
+  If the problem is nonstiff, use method flag \code{mf} = 10, which selects a nonstiff (Adams) method, no Jacobian used.\cr
+  If the problem is stiff, there are four standard choices which can be specified with \code{jactype} or \code{mf}.
+
   The options for \bold{jactype} are
-      \item jactype = "fullint" : a full jacobian, calculated internally by lsode, corresponds to \code{mf}=22
-      \item jactype = "fullusr" : a full jacobian, specified by user function \code{jacfunc}, corresponds to \code{mf}=21 
-      \item jactype = "bandusr" : a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=24
-      \item jactype = "bandint" : a banded jacobian, calculated by lsode; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=25
-      
-  More options are available when specifying \bold{mf} directly. 
-     \cr The legal values of \code{mf} are 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25.
-     \cr \code{mf} is a positive two-digit integer, \code{mf} = (10*METH + MITER), where
-  \item METH indicates the basic linear multistep method: METH = 1 means the implicit Adams method. METH = 2 means the method based on backward
-  differentiation formulas (BDF-s).
-  \item MITER indicates the corrector iteration method: MITER = 0 means functional iteration (no Jacobian matrix is involved).
-   MITER = 1 means chord iteration with a user-supplied full (NEQ by NEQ) Jacobian.
-   MITER = 2 means chord iteration with an internally generated (difference quotient) full Jacobian
-   (using NEQ extra calls to \code{func} per df/dy value).
-  MITER = 3 means chord iteration with an internally generated diagonal Jacobian approximation
-   (using 1 extra call to \code{func} per df/dy evaluation).
-  MITER = 4 means chord iteration with a user-supplied banded Jacobian.
-  MITER = 5 means chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to \code{func} per df/dy evaluation).
+  \describe{
+    \item{jactype = "fullint"}{a full jacobian, calculated internally by lsode, corresponds to \code{mf}=22,}
+    \item{jactype = "fullusr"}{a full jacobian, specified by user function \code{jacfunc}, corresponds to \code{mf}=21,}
+    \item{jactype = "bandusr"}{a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=24,}
+    \item{jactype = "bandint"}{a banded jacobian, calculated by lsode; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=25.}
+  }
+  More options are available when specifying \bold{mf} directly. \cr
+  The legal values of \code{mf} are 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25.\cr
+  \code{mf} is a positive two-digit integer, \code{mf} = (10*METH + MITER), where
+  \describe{
+  \item{METH}{indicates the basic linear multistep method: METH = 1 means the implicit Adams method. METH = 2 means the method based on backward
+    differentiation formulas (BDF-s).}
+  \item{MITER}{indicates the corrector iteration method: MITER = 0 means functional iteration (no Jacobian matrix is involved).
+    MITER = 1 means chord iteration with a user-supplied full (NEQ by NEQ) Jacobian.
+    MITER = 2 means chord iteration with an internally generated (difference quotient) full Jacobian
+    (using NEQ extra calls to \code{func} per df/dy value).
+    MITER = 3 means chord iteration with an internally generated diagonal Jacobian approximation
+    (using 1 extra call to \code{func} per df/dy evaluation).
+    MITER = 4 means chord iteration with a user-supplied banded Jacobian.
+    MITER = 5 means chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to \code{func} per df/dy evaluation).}
+  }
   
   If MITER = 1 or 4, the user must supply a subroutine \code{jacfunc}.
   
@@ -276,31 +281,35 @@ diffusion2D <- function(t,Y,par)
    
   \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   
-  The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements. 
-      \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
+  The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements.\cr
+  If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen.
       
-      the following elements of \bold{istate} are meaningful:    
+  The following elements of \bold{istate} are meaningful:
+  \itemize{
       \item el 1 : returns the conditions under which the last call to lsode returned. 
       2  if lsode was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small), 
   -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
   -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
   -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
       \item el 12 : The number of steps taken for the problem so far.
-      \item el 13 : The number of evaluations for the problem so far.,
-      \item el 14 : The number of Jacobian evaluations  and LU decompositions so far.,
-      \item el 15 : The method order last used (successfully).,
-      \item el 16 : The order to be attempted on the next step.,
+      \item el 13 : The number of evaluations for the problem so far.
+      \item el 14 : The number of Jacobian evaluations  and LU decompositions so far.
+      \item el 15 : The method order last used (successfully).
+      \item el 16 : The order to be attempted on the next step.
       \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
-  
-      \bold{rstate} contains the following:
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
-  current internal mesh point in t.  
-      \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-      
-      For more information, see the comments in the original code lsode.f}
-\seealso{\code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsodes}}, 
-    \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
+   }
+   \bold{rstate} contains the following:
+   \itemize{
+     \item 1: The step size in t last used (successfully).
+     \item 2: The step size to be attempted on the next step.
+     \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
+       current internal mesh point in t.
+     \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
+   }
+   For more information, see the comments in the original code lsode.f}
+\seealso{
+  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsodes}},
+  \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.
+}
 \keyword{math}
 

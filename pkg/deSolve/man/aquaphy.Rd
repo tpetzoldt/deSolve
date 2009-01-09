@@ -3,9 +3,11 @@
 \title{a physiological model of unbalanced algal growth}
 \description{A phytoplankton model with uncoupled carbon and nitrogen assimilation as a function of light and Dissolved Inorganic Nitrogen (DIN) concentration.
   \cr Algal biomass is described via 3 different state variables:
-  \item low molecular weight carbohydrates (LMW), the product of photosynthesis,
-  \item storage molecules (RESERVE) and
-  \item the biosynthetic and photosynthetic apparatus (PROTEINS).
+  \itemize{
+    \item low molecular weight carbohydrates (LMW), the product of photosynthesis,
+    \item storage molecules (RESERVE) and
+    \item the biosynthetic and photosynthetic apparatus (PROTEINS).
+  }
   
   All algal state variables are expressed in mmol C m-3.
   \cr Only proteins contain nitrogen and chlorophyll, with a fixed stoichiometric ratio.

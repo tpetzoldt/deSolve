@@ -259,13 +259,13 @@
     
   
   The form of the \bold{jacobian} can be specified by \code{jactype} which can take the following values:
-  
-      \item jactype = "fullint" : a full jacobian, calculated internally by lsoda, the default
-      \item jactype = "fullusr" : a full jacobian, specified by user function \code{jacfunc}
-      \item jactype = "bandusr" : a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}
-      \item jactype = "bandint" : a banded jacobian, calculated by lsoda; the size of the bands specified by \code{bandup} and \code{banddown}
-  
-  if \code{jactype}= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc}.
+  \describe{
+    \item{jactype = "fullint":}{a full jacobian, calculated internally by lsoda, the default,}
+    \item{jactype = "fullusr":}{a full jacobian, specified by user function \code{jacfunc},}
+    \item{jactype = "bandusr":}{a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown},}
+    \item{jactype = "bandint":}{banded jacobian, calculated by lsoda; the size of the bands specified by \code{bandup} and \code{banddown}.}
+  }
+  If \code{jactype}= "fullusr" or "bandusr" then the user must supply a subroutine \code{jacfunc}.
     
   The following description of \bold{error control} is adapted from that documentation (input arguments
   \code{rtol} and \code{atol}, above):
@@ -298,26 +298,27 @@
       \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
   
       the following elements of \bold{istate} are meaningful:    
-  
-      \item el 1 : returns the conditions under which the last call to lsoda returned.
-      2  if LSODA was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
-  -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
-  -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-  -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-      \item el 12 : The number of steps taken for the problem so far.
-      \item el 13 : The number of function evaluations for the problem so far.,
-      \item el 14 : The number of Jacobian evaluations and LU decompositions so far.,
-      \item el 15 : The method order last used (successfully).,
-      \item el 16 : The order to be attempted on the next step.,
-      \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
-      \item el 20 : The method indicator for the last succesful step, 1=adams (nonstiff), 2= bdf (stiff),
-      \item el 21 : The current method indicator to be attempted on th next step, 1=adams (nonstiff), 2= bdf (stiff),
-  
-      \bold{rstate} contains the following:
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-      \item 4: the value of t at the time of the last method switch, if any.}
+      \itemize{
+        \item el 1 : returns the conditions under which the last call to lsoda returned.
+        2  if LSODA was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
+    -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
+    -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
+    -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
+        \item el 12 : The number of steps taken for the problem so far.
+        \item el 13 : The number of function evaluations for the problem so far.,
+        \item el 14 : The number of Jacobian evaluations and LU decompositions so far.,
+        \item el 15 : The method order last used (successfully).,
+        \item el 16 : The order to be attempted on the next step.,
+        \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
+        \item el 20 : The method indicator for the last succesful step, 1=adams (nonstiff), 2= bdf (stiff),
+        \item el 21 : The current method indicator to be attempted on th next step, 1=adams (nonstiff), 2= bdf (stiff),
+
+        \bold{rstate} contains the following:
+        \item 1: The step size in t last used (successfully).
+        \item 2: The step size to be attempted on the next step.
+        \item 3: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
+        \item 4: the value of t at the time of the last method switch, if any.}
+      }
 \seealso{\code{\link{ode}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
     \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}, \code{\link{rk}}.}
 \note{The \file{demo} directory contains some examples of using

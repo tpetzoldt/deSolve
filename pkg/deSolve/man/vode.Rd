@@ -122,21 +122,27 @@ out   <-as.data.frame(vode(state,times,chaos,0))
 
 plot(out$x,out$y,type="l",main="Lorenz butterfly")
 }
-\references{\item P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989. 
-    VODE: A Variable Coefficient ODE Solver," SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.  
-    \cr Also, LLNL Report UCRL-98412, June 1988.
-    \item G. D. Byrne and A. C. Hindmarsh, 1975. A Polyalgorithm for the Numerical Solution of Ordinary Differential Equations.
-      ACM Trans. Math. Software, 1, pp. 71-96.
-    \item A. C. Hindmarsh and G. D. Byrne, 1977. EPISODE: An Effective Package for the Integration of Systems of Ordinary Differential
-   Equations. LLNL Report UCID-30112, Rev. 1.
-    \item G. D. Byrne and A. C. Hindmarsh, 1976. EPISODEB: An Experimental Package for the Integration of Systems of Ordinary Differential
-   Equations with Banded Jacobians. LLNL Report UCID-30132, April 1976.
-    \item A. C. Hindmarsh, 1983. ODEPACK, a Systematized Collection of ODE Solvers. in Scientific Computing, R. S. Stepleman et al., eds.,
-    North-Holland, Amsterdam, pp. 55-64.
-   \item K. R. Jackson and R. Sacks-Davis, 1980. An Alternative Implementation of Variable Step-Size Multistep Formulas for Stiff ODEs.
-    ACM Trans. Math. Software, 6, pp. 295-318.
-    
-      Netlib: \url{http://www.netlib.org}}
+\references{
+  P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989.
+  VODE: A Variable Coefficient ODE Solver," SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.  
+  \cr Also, LLNL Report UCRL-98412, June 1988.
+
+  G. D. Byrne and A. C. Hindmarsh, 1975. A Polyalgorithm for the Numerical Solution of Ordinary Differential Equations.
+  ACM Trans. Math. Software, 1, pp. 71-96.
+
+  A. C. Hindmarsh and G. D. Byrne, 1977. EPISODE: An Effective Package for the Integration of Systems of Ordinary Differential
+  Equations. LLNL Report UCID-30112, Rev. 1.
+
+  G. D. Byrne and A. C. Hindmarsh, 1976. EPISODEB: An Experimental Package for the Integration of Systems of Ordinary Differential
+  Equations with Banded Jacobians. LLNL Report UCID-30132, April 1976.
+
+  A. C. Hindmarsh, 1983. ODEPACK, a Systematized Collection of ODE Solvers. in Scientific Computing, R. S. Stepleman et al., eds.,
+  North-Holland, Amsterdam, pp. 55-64.
+  K. R. Jackson and R. Sacks-Davis, 1980. An Alternative Implementation of Variable Step-Size Multistep Formulas for Stiff ODEs.
+  ACM Trans. Math. Software, 6, pp. 295-318.
+  
+  Netlib: \url{http://www.netlib.org}
+}
 \details{Before using the integrator \code{vode}, the user has to decide whether or not the problem is stiff. 
   
   If the problem is nonstiff, use method flag \code{mf} = 10, which selects a nonstiff (Adams) method, no Jacobian used.  
@@ -144,27 +150,30 @@ plot(out$x,out$y,type="l",main="Lorenz butterfly")
      which can be specified with \code{jactype} or \code{mf}.
   
   The options for \bold{jactype} are
-      \item jac = "fullint" : a full jacobian, calculated internally by vode, corresponds to \code{mf}=22
-      \item jac = "fullusr" : a full jacobian, specified by user function \code{jacfunc}, corresponds to \code{mf}=21 
-      \item jac = "bandusr" : a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=24
-      \item jac = "bandint" : a banded jacobian, calculated by vode; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=25
+  \describe{
+    \item{jac = "fullint":}{a full jacobian, calculated internally by vode, corresponds to \code{mf}=22,}
+    \item{jac = "fullusr":}{a full jacobian, specified by user function \code{jacfunc}, corresponds to \code{mf}=21,}
+    \item{jac = "bandusr":}{a banded jacobian, specified by user function \code{jacfunc}; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=24,}
+    \item{jac = "bandint":}{a banded jacobian, calculated by vode; the size of the bands specified by \code{bandup} and \code{banddown}, corresponds to \code{mf}=25.}
+  }
   
-  More options are available when specifying \bold{mf} directly. 
-     \cr The legal values of \code{mf} are 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, -11, -12, -14, -15, -21, -22, -24, -25.
-     \cr \code{mf} is a signed two-digit integer, \code{mf} = JSV*(10*METH + MITER),where
-  \item JSV = SIGN(mf) indicates the Jacobian-saving strategy: JSV =  1 means a copy of the Jacobian is saved for reuse
-  in the corrector iteration algorithm. JSV = -1 means a copy of the Jacobian is not saved.
-  \item METH indicates the basic linear multistep method: METH = 1 means the implicit Adams method. METH = 2 means the method based on backward
-  differentiation formulas (BDF-s).
-  \item MITER indicates the corrector iteration method: MITER = 0 means functional iteration (no Jacobian matrix is involved).
-   MITER = 1 means chord iteration with a user-supplied full (NEQ by NEQ) Jacobian.
-   MITER = 2 means chord iteration with an internally generated (difference quotient) full Jacobian
-   (using NEQ extra calls to \code{func} per df/dy value).
-  MITER = 3 means chord iteration with an internally generated diagonal Jacobian approximation
-   (using 1 extra call to \code{func} per df/dy evaluation).
-  MITER = 4 means chord iteration with a user-supplied banded Jacobian.
-  MITER = 5 means chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to \code{func} per df/dy evaluation).
-  
+  More options are available when specifying \bold{mf} directly. \cr
+  The legal values of \code{mf} are 10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, -11, -12, -14, -15, -21, -22, -24, -25.\cr
+  \code{mf} is a signed two-digit integer, \code{mf} = JSV*(10*METH + MITER), where
+  \describe{
+    \item{JSV = SIGN(mf)}{indicates the Jacobian-saving strategy: JSV =  1 means a copy of the Jacobian is saved for reuse
+    in the corrector iteration algorithm. JSV = -1 means a copy of the Jacobian is not saved.}
+    \item{METH}{indicates the basic linear multistep method: METH = 1 means the implicit Adams method. METH = 2 means the method based on backward
+    differentiation formulas (BDF-s).}
+    \item{MITER}{indicates the corrector iteration method: MITER = 0 means functional iteration (no Jacobian matrix is involved).
+     MITER = 1 means chord iteration with a user-supplied full (NEQ by NEQ) Jacobian.
+     MITER = 2 means chord iteration with an internally generated (difference quotient) full Jacobian
+     (using NEQ extra calls to \code{func} per df/dy value).
+    MITER = 3 means chord iteration with an internally generated diagonal Jacobian approximation
+     (using 1 extra call to \code{func} per df/dy evaluation).
+    MITER = 4 means chord iteration with a user-supplied banded Jacobian.
+    MITER = 5 means chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to \code{func} per df/dy evaluation).}
+  }
   If MITER = 1 or 4, the user must supply a subroutine \code{jacfunc}.
   
   The example for integrator \code{\link{lsode}} demonstrates how to specify both a banded and full jacobian.
@@ -177,35 +186,42 @@ plot(out$x,out$y,type="l",main="Lorenz butterfly")
   \bold{Models} may be defined in compiled C or Fortran code, as well as in an R-function. See package vignette for details.
   
   
-   The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements. 
-      \cr if \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen. 
+   The output will have the \bold{attributes *istate*, and *rstate*}, two vectors with several useful elements.\cr
+   If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen.
       
-      the following elements of \bold{istate} are meaningful:    
-      \item el 1 : returns the conditions under which the last call to vode returned. 
-      2  if DVODE was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small), 
-  -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
-  -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-  -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-      \item el 12 : The number of steps taken for the problem so far.
-      \item el 13 : The number of function evaluations for the problem so far.",
-      \item el 14 : The number of Jacobian evaluations so far.,
-      \item el 15 : The method order last used (successfully).,
-      \item el 16 : The order to be attempted on the next step.,
-      \item el 17 : if el 1 =-4,-5: the largest component in the error vector,
-      \item el 20 : The number of matrix LU decompositions so far.,
-      \item el 21 : The number of nonlinear (Newton) iterations so far.,
-      \item el 22 : The number of convergence failures of the solver so far ,
-      \item el 23 : The number of error test failures of the integrator so far.)
-  
-      \bold{rstate} contains the following:
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: The current value of the independent variable which the solver has actually reached, i.e. the
-  current internal mesh point in t.  
-      \item 4: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-      
-      For more information, see the comments in the original code dvode.f}
-\seealso{\code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}}, 
-    \code{\link{lsodar}}, \code{\link{daspk}}, \code{\link{rk}}.}
+   The following elements of \bold{istate} are meaningful:
+   \describe{
+      \item{el 1:}{returns the conditions under which the last call to vode returned.
+      \itemize{
+       \item 2 if DVODE was successful, -1 if excess work done, -2 means excess accuracy requested. (Tolerances too small),
+       \item -3 means illegal input detected. (See printed message.), -4 means repeated error test failures. (Check all input),
+       \item -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
+       \item -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0).}
+      }
+      \item{el 12:}{The number of steps taken for the problem so far.}
+      \item{el 13:}{The number of function evaluations for the problem so far.}
+      \item{el 14:}{The number of Jacobian evaluations so far.}
+      \item{el 15:}{The method order last used (successfully).}
+      \item{el 16:}{The order to be attempted on the next step.}
+      \item{el 17:}{if el 1 =-4,-5: the largest component in the error vector}
+      \item{el 20:}{The number of matrix LU decompositions so far.}
+      \item{el 21:}{The number of nonlinear (Newton) iterations so far.}
+      \item{el 22:}{The number of convergence failures of the solver so far.}
+      \item{el 23:}{The number of error test failures of the integrator so far.}
+     }
+     \bold{rstate} contains the following:
+     \describe{
+       \item{1:}{The step size in t last used (successfully).}
+       \item{2:}{The step size to be attempted on the next step.}
+       \item{3:}{The current value of the independent variable which the solver has actually reached, i.e. the
+         current internal mesh point in t.}
+       \item{4:}{A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.}
+      }
+      For more information, see the comments in the original code dvode.f
+}
+\seealso{
+  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
+  \code{\link{lsodar}}, \code{\link{daspk}}, \code{\link{rk}}.
+}
 \keyword{math}
 

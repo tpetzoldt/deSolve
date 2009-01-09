@@ -140,9 +140,12 @@ Although a reasonable guess of \code{lrw} is made, it is likely that this will b
 
   See \code{lsodes} for the additional options}
 \seealso{
-\item \code{\link{ode}} 
-\item \code{\link{ode.band}} for integrating models with a banded Jacobian
-\item  \code{\link{ode.1D}} for integrating 1-D models 
-\item  \code{\link{lsodes}} for the integration options.}
+  \itemize{
+    \item \code{\link{ode}}
+    \item \code{\link{ode.band}} for integrating models with a banded Jacobian
+    \item  \code{\link{ode.1D}} for integrating 1-D models
+    \item  \code{\link{lsodes}} for the integration options.
+  }
+}
 \keyword{math}
 

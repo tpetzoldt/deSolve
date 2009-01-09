@@ -10,20 +10,19 @@
   \item{y }{the initial (state) values for the ODE system, a vector. If \code{y} has a name attribute, the names will be used to label the output matrix.}
   \item{times }{time sequence for which output is wanted; the first value of \code{times} must be the initial time}
   \item{func }{either an \R-function that computes the values of the derivatives in the ODE system (the model definition) at time t, 
-  or a character string giving the name of a compiled function in a dynamically loaded shared library. 
+    or a character string giving the name of a compiled function in a dynamically loaded shared library.
 
-      If \code{func}  is an \R-function, it must be defined as:
-      \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
-      in the integration, \code{y} is the current estimate of the variables
-      in the ODE system.  If the initial values \code{y} has a names
-      attribute, the names will be available inside \code{func}.  \code{parms} is
-      a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
-  
-      The return value of \code{func} should be a list, whose first element is a
-      vector containing the derivatives of \code{y} with respect to
-      \code{time}, and whose next elements are global values that are required at
-      each point in \code{times}.
-}
+    If \code{func}  is an \R-function, it must be defined as:
+    \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time point
+    in the integration, \code{y} is the current estimate of the variables
+    in the ODE system.  If the initial values \code{y} has a names
+    attribute, the names will be available inside \code{func}.  \code{parms} is
+    a vector or list of parameters; ... (optional) are any other arguments passed to the function. 
+
+    The return value of \code{func} should be a list, whose first element is a
+    vector containing the derivatives of \code{y} with respect to
+    \code{time}, and whose next elements are global values that are required at
+    each point in \code{times}.}
   \item{parms }{parameters passed to \code{func}}
   \item{nspec }{the number of *species* (components) in the model. }
   \item{bandup }{the number of nonzero bands above the jacobian diagonal}
@@ -33,13 +32,13 @@
 }
 \value{
   A matrix with up to as many rows as elements in \code{times} and as many columns as elements in \code{y} plus the number of "global" values returned 
-      in the second element of the return from \code{func}, plus an additional column (the first) for the time value. 
-      There will be one row for each element in \code{times} unless the integrator returns with an unrecoverable error. 
-      If \code{y} has a names attribute, it will be used to label the columns of the output value. 
-      
-      The output will have the attributes \code{istate} and \code{rstate}, two vectors with several elements. See the help for the selected integrator for details.
-      the first element of istate returns the conditions under which the last call to vode returned. Normal is istate = 2.
-      If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen    
+  in the second element of the return from \code{func}, plus an additional column (the first) for the time value. 
+  There will be one row for each element in \code{times} unless the integrator returns with an unrecoverable error. 
+  If \code{y} has a names attribute, it will be used to label the columns of the output value. 
+  
+  The output will have the attributes \code{istate} and \code{rstate}, two vectors with several elements. See the help for the selected integrator for details.
+  the first element of istate returns the conditions under which the last call to vode returned. Normal is istate = 2.
+  If \code{verbose} = TRUE, the settings of istate and rstate will be written to the screen.
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
@@ -103,6 +102,9 @@
   in this case, use ode.1D 
   
   See the selected integrator for the additional options}
-\seealso{\item \code{\link{ode.1D}}, for integrating, when the jacobian matrix is banded, and where the state variables need to be rearranged}
+\seealso{
+  \code{\link{ode.1D}}, for integrating, when the jacobian matrix is banded,
+  and where the state variables need to be rearranged
+}
 \keyword{math}
 
