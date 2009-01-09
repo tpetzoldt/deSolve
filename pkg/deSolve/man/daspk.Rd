@@ -4,7 +4,7 @@
 \description{
   Solves either:
   \itemize{
-    \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...) or}
+    \item a system of ordinary differential equations (ODE) of the form \deqn{y'=f(t,y,...)}  or
     \item a system of differential algebraic equations (DAE) of the form \deqn{F(t,y,y')=0}
   }
   using a combination of backward differentiation formula (BDF) and a direct linear system solution method (dense or banded).

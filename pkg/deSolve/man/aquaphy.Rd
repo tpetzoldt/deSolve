@@ -1,32 +1,43 @@
 \name{aquaphy}
 \alias{aquaphy}
-\title{a physiological model of unbalanced algal growth}
-\description{A phytoplankton model with uncoupled carbon and nitrogen assimilation as a function of light and Dissolved Inorganic Nitrogen (DIN) concentration.
-  \cr Algal biomass is described via 3 different state variables:
+\title{A Physiological Model of Unbalanced Algal Growth}
+\description{A phytoplankton model with uncoupled carbon and nitrogen assimilation
+  as a function of light and Dissolved Inorganic Nitrogen (DIN) concentration.\cr
+  Algal biomass is described via 3 different state variables:
   \itemize{
     \item low molecular weight carbohydrates (LMW), the product of photosynthesis,
     \item storage molecules (RESERVE) and
     \item the biosynthetic and photosynthetic apparatus (PROTEINS).
   }
   
-  All algal state variables are expressed in mmol C m-3.
-  \cr Only proteins contain nitrogen and chlorophyll, with a fixed stoichiometric ratio.
-  \cr As the relative amount of proteins changes in the algae, so does the N:C and the Chl:C ratio.
+  All algal state variables are expressed in \eqn{\rm mmol\, C\, m^{-3}}{mmol C / m^3}.
+  Only proteins contain nitrogen and chlorophyll, with a fixed stoichiometric ratio.
+  As the relative amount of proteins changes in the algae, so does the N:C and
+  the Chl:C ratio.
   
-  An additional state variable, dissolved inorganic nitrogen (DIN) has units of mmol N m-3.
+  An additional state variable, dissolved inorganic nitrogen (DIN) has units
+  of \eqn{\rm mmol\, N\, m^{-3}}{mmol N / m^3}.
   
-  The algae grow in a dilution culture (chemostat): there is constant inflow of DIN and outflow of culture water, including DIN and algae, at the same rate. 
+  The algae grow in a dilution culture (chemostat): there is constant inflow of
+  DIN and outflow of culture water, including DIN and algae, at the same rate. 
   
-  There is a day-night illumination regime, i.e. the light is switched on and off at fixed times (where the sum of illuminated+dark period=24 hours).}
-\usage{aquaphy(times,y,parms,...)}
+  There is a day-night illumination regime, i.e. the light is switched on and
+  off at fixed times (where the sum of illuminated+dark period=24 hours).
+}
+\usage{aquaphy(times, y, parms, ...)}
 \arguments{
-  \item{times }{time sequence for which output is wanted; the first value of times must be the initial time}
-  \item{y }{the initial (state) values ("DIN","PROTEIN","RESERVE","LMW"), in that order.}
-  \item{parms }{vector or list with the aquaphy model parameters; see the example for the order in which these have to be defined}
-  \item{... }{ any other parameters passed to the integrator ode (which solves the model)}
+  \item{times}{time sequence for which output is wanted; the first value of
+    times must be the initial time,}
+  \item{y}{the initial (state) values ("DIN", "PROTEIN", "RESERVE", "LMW"),
+    in that order.}
+  \item{parms }{vector or list with the aquaphy model parameters; see the example
+    for the order in which these have to be defined.}
+  \item{...}{any other parameters passed to the integrator ode
+    (which solves the model).}
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
-\examples{#-----------------------#
+\examples{
+  #-----------------------#
   # the model parameters: #
   #-----------------------#
   
@@ -107,14 +118,19 @@
   #------------------------#
   t(summary(out))}
 \references{Lancelot, C., Veth, C. and Mathot, S. (1991). 
-  Modelling ice-edge phytoplankton bloom in the Scotia-Weddel sea sector of the Southern Ocean during spring 1988. 
-  Journal of Marine Systems 2, 333..346.
+  Modelling ice-edge phytoplankton bloom in the Scotia-Weddel sea sector of the
+  Southern Ocean during spring 1988. Journal of Marine Systems 2, 333--346.
   
   Soetaert, K. and Herman, P. (2008). A practical guide to ecological modelling. 
   Using R as a simulation platform. Springer.
 }
-\details{The model is implemented primarily to demonstrate the linking of FORTRAN with R-code.
-  \cr The source can be found in the \file{dynload} subdirectory of the package.}
-\seealso{\code{\link{ccl4model}}, the CCl4 inhalation model}
+\details{
+  The model is implemented primarily to demonstrate the linking of FORTRAN with
+  R-code.\cr
+  The source can be found in the \file{dynload} subdirectory of the package.
+}
+\seealso{
+  \code{\link{ccl4model}}, the CCl4 inhalation model
+}
 \keyword{models}
 
