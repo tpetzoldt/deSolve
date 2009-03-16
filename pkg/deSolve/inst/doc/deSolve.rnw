@@ -11,7 +11,7 @@
 
 %% Because html converters don't know tabularnewline
 \providecommand{\tabularnewline}{\\}
-\usepackage{array} % tabel commands
+\usepackage{array} % table commands
 \setlength{\extrarowheight}{0.1cm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -67,7 +67,7 @@ initial value problems, R}
   the euler method \citep{Press92}
 
   Here we outline how to implement differential equations as \R-functions.
-  
+
   Another vignette ("compiledCode") \citep{compiledCode}, deals with differential
   equations implemented in lower-level languages such as \proglang{FORTRAN},
   \proglang{C}, or \proglang{$C^{++}$}, which are compiled into a
@@ -124,7 +124,7 @@ options(width=70)
 
   We use this model to demonstrate how to implement and solve differential
   equations in \R.
-  
+
   The Lorenz model describes the dynamics of three state variables, X,
   Y and Z.
 
@@ -155,7 +155,7 @@ options(width=70)
     \item	Implementing the model equations that calculate the rate of
       change (e.g. dX/dt) of the state variables.
   \end{itemize}
-  
+
   The model application consists of
   \begin{itemize}
     \item	Specification of the time at which model output is wanted
@@ -165,7 +165,8 @@ options(width=70)
 
   Below, we discuss the \R-code for the Lorenz model.
 
-  \subsection{model specification}
+  \subsection{Model specification}
+
     1. Model parameters.
 
     There are three model parameters: a, b, and c that are defined first.
@@ -228,7 +229,7 @@ Lorenz<-function(t,state,parameters)
   }
 @
 
-  \subsection{model application}
+  \subsection{Model application}
   1. Time specification
 
   We run the model for 100 days, and give output at
@@ -242,7 +243,7 @@ times     <-seq(0,100,by=0.01)
 
   The model is solved using \ds function \code{ode}, which is the default
   integration routine.
-  
+
   Function \code{ode} takes as input, a.o. the state variable vector (\code{y}),
   the times at which output is required (\code{times}), the model function
   that returns the rate of change (\code{func}) and the parameter vector
@@ -262,7 +263,7 @@ head(out)
 @
 
   3. Plotting results
-  
+
   Finally, the model output is plotted.
 
   The figures are arranged in two rows and two columns (\code{mfrow}), and
@@ -279,7 +280,9 @@ plot (out$X,out$Z, pch=".")
 
 mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 @
-setkeys{Gin}{width=0.4\textwidth}
+
+\setkeys{Gin}{width=0.4\textwidth}
+
 \begin{figure}
 \begin{center}
 <<label=figode,fig=TRUE,echo=FALSE>>=
@@ -295,7 +298,7 @@ setkeys{Gin}{width=0.4\textwidth}
   Package \ds contains several IVP ordinary differential equation solvers.
   They can all be triggered from function \code{ode} (by setting the argument
   \code{method}), or can be run as stand-alone functions.
-  
+
   Moreover, for each integration routine, several options are available to
   optimise performance.
 
@@ -317,7 +320,7 @@ print(system.time(out <-daspk (state,times,Lorenz,parameters)))
 print(system.time(out <-vode  (state,times,Lorenz,parameters)))
 @
 
-\section{partial differential equations}
+\section{Partial differential equations}
   As package \ds includes integrators that deal efficiently with
   arbitrarily sparse and banded Jacobians, it is especially well suited to
   solve initial value problems resulting from 1-Dimensional and
@@ -438,7 +441,7 @@ columns)
   A multi-species IVP example can be found in \citep{Soetaert08b}.
 
   For 2-D problems, we refer to the help-files of function \code{ode.2D}.
-  \section{differential algebraic equations}
+  \section{Differential algebraic equations}
   Function \code{daspk} from package \ds solves (relatively simple)
   DAEs of index maximal 1 \footnote{note that many -apparently simple-
   DAEs are higher-index DAEs}.
