@@ -189,7 +189,7 @@
   The output will have the attributes \code{istate}, and \code{rstate},
   two vectors with several useful elements.  See details.  The first
   element of istate returns the conditions under which the last call to
-  lsoda returned. Normal is \code{istate[1] = 2}.  If \code{verbose =
+  vode returned. Normal is \code{istate[1] = 2}.  If \code{verbose =
   TRUE}, the settings of istate and rstate will be written to the
   screen.
 }
@@ -328,7 +328,7 @@ plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
   
    The output will have the attributes \bold{istate}, and \bold{rstate},
    two vectors with several useful elements.
-   
+
    If \code{verbose = TRUE}, the settings of istate and rstate will be
    written to the screen.
       
@@ -379,6 +379,8 @@ plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
   \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
   \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{daspk}},
   \code{\link{rk}}.
+  
+  \code{\link{printODE}} to print diagnostic messages.
 }
 \keyword{math}
 

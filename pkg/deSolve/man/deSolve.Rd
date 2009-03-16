@@ -68,6 +68,11 @@ browseURL(paste(system.file(package = "deSolve"), "/examples", sep = ""))
 ## open the directory with C and FORTRAN sourcecode examples
 browseURL(paste(system.file(package = "deSolve"), "/dynload", sep = ""))
 
+## show package vignette with how to use deSolve
+## + source code of the vignette
+vignette("deSolve")
+edit(vignette("deSolve"))
+
 ## show package vignette with tutorial about how to use compiled models
 ## + source code of the vignette
 ## + directory with C and FORTRAN sources

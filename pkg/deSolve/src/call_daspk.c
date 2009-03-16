@@ -4,7 +4,8 @@
 #include "deSolve.h"
 
 /* definition of the call to the fortran function ddaspk - in file ddaspk.f*/                              
-void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*, double *, int*, double *, int*),
+void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*,
+                               double *, int*, double *, int*),
 		     int *, double *, double *, double *, double *, 
 		     int *,double *, double *,  int *,  double *,  int *, 
 		     int *, int *, double *, int *,
@@ -93,11 +94,15 @@ static void daspk_jac (double *t, double *y, double *yprime,
 }
 
 /* give name to data types */
-typedef void res_func(double *, double *, double *, double*, double *, int*, double *, int*);
-typedef void jac_func(double *, double *, double *, double *, double *, double *, int *);
-typedef void psol_func(int *, double *, double *, double *, double *, double *, 
-           double *, double *, double *, int*, double *, double *, int*, double *, int*);
-typedef void kryljac_func(double *, int *, int *, double *, double *, double *, double *, double *,
+typedef void res_func(double *, double *, double *, double*, double *,
+                      int*, double *, int*);
+typedef void jac_func(double *, double *, double *, double *, double *,
+                      double *, int *);
+typedef void psol_func(int *, double *, double *, double *, double *,
+                      double *, double *, double *, double *, int*, double *,
+                      double *, int*, double *, int*);
+typedef void kryljac_func(double *, int *, int *, double *, double *,
+                          double *, double *, double *,
            double *, double *, double *, double *, int*, int*, double *, int*);
 typedef void init_func(void (*)(int *, double *));
 

@@ -200,7 +200,7 @@
   The output will have the attributes \code{istate}, and \code{rstate},
   two vectors with several useful elements.  See details.  The first
   element of istate returns the conditions under which the last call to
-  lsoda returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
+  lsodar returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
   TRUE, the settings of istate and rstate will be written to the screen.
   
   If a root has been found, the output will also have the attribute
@@ -387,6 +387,8 @@ print(out)
   \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
   \code{\link{lsodes}}, \code{\link{vode}}, \code{\link{daspk}},
   \code{\link{rk}}.
+
+  \code{\link{printODE}} to print diagnostic messages.
 }
 \keyword{math}
 

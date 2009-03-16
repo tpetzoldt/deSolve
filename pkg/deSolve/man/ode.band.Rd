@@ -66,7 +66,7 @@
   The output will have the attributes \code{istate} and \code{rstate},
   two vectors with several elements. See the help for the selected
   integrator for details.  the first element of istate returns the
-  conditions under which the last call to vode returned. Normal is
+  conditions under which the last call to the integrator returned. Normal is
   \code{istate = 2}.  If \code{verbose = TRUE}, the settings of
   \code{istate} and \code{rstate} will be written to the screen.
 }
@@ -143,6 +143,9 @@ filled.contour(x = times, y = Distance, DENSITY, color = topo.colors,
 \seealso{
   \code{\link{ode.1D}}, for integrating, when the jacobian matrix is
   banded, and where the state variables need to be rearranged.
+  
+  \code{\link{printODE}} to print diagnostic messages.
+
 }
 \keyword{math}
 

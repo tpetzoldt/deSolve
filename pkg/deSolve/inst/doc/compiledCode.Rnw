@@ -18,7 +18,7 @@
 \title{\proglang{R} Package \pkg{deSolve}, Writing Code in Compiled
 Language}
 
-\Plaintitle{R Package deSolve, Writing Code in Compiled Language}
+\Plaintitle{R Package deSolve, Writing Code in Compiled Languages}
 
 \Keywords{differential equation solvers, compiled code, performance,
 \proglang{FORTRAN}, \proglang{C}}

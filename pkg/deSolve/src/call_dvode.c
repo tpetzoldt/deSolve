@@ -4,7 +4,8 @@
 #include "deSolve.h"   
                            
 /* definition of the call to the fortran function dvode - in file dvode.f*/
-void F77_NAME(dvode)(void (*)(int *, double *, double *, double *, double *, int *),
+void F77_NAME(dvode)(void (*)(int *, double *, double *, double *,
+                              double *, int *),
 		     int *, double *, double *, double *,
 		     int *, double *, double *, int *, int *,
 		     int *, double *,int *,int *, int *,

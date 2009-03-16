@@ -414,8 +414,10 @@ all.equal(out, outJ) # TRUE
     }
 \seealso{
   \code{\link{ode}}, \code{\link{lsode}}, \code{\link{lsodes}},
-    \code{\link{lsodar}}, \code{\link{vode}},
-    \code{\link{daspk}}, \code{\link{rk}}.
+  \code{\link{lsodar}}, \code{\link{vode}},
+  \code{\link{daspk}}, \code{\link{rk}}.
+    
+  \code{\link{printODE}} to print diagnostic messages.
 }
 \note{
   The \file{demo} directory contains some examples of using

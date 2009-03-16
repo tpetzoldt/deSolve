@@ -185,7 +185,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   The output will have the attributes \code{istate}, and \code{rstate},
   two vectors with several useful elements.  See details.  The first
   element of istate returns the conditions under which the last call to
-  lsoda returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
+  lsodes returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
   TRUE, the settings of istate and rstate will be written to the screen.
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
@@ -451,6 +451,8 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times, lrw = 351,
   \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
   \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
   \code{\link{rk}}.
+
+  \code{\link{printODE}} to print diagnostic messages.
 }
 \keyword{math}
 
