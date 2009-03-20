@@ -1,17 +1,17 @@
 \name{rk}
 \alias{rk}
-
+\alias{rk_c} % compare rk and rk_r and finally remove the pure R version
 
 \title{Explicit One-Step Solvers for Ordinary Differential Equations
 (ODE)}
 
 \description{Solving initial value problems for non-stiff systems of
   first-order ordinary differential equations (ODEs).
-  
+
   The \R function \code{rk} is a top-level function that provides
   interfaces to a collection of common explicit one-step solvers of the
   Runge-Kutta family with fixed step or variable time steps.
-  
+
   The system of ODE's is written as an \R function (which may, of
   course, use \code{\link{.C}}, \code{\link{.Fortran}},
   \code{\link{.Call}}, etc., to call foreign code). A vector of
@@ -22,29 +22,34 @@
   \code{\link[nlme]{nlme}}
 }
 \usage{
-rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06, 
-  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax, 
+rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
+  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax,
   method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
+
+rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
+  tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames = TRUE,
+  method = rkMethod("rk45dp7", ... ), maxsteps = 5000, dllname = NULL,
+  initfunc = dllname, initpar = parms, nout = 0, outnames = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
     has a name attribute, the names will be used to label the output
     matrix.
   }
-  \item{times }{times at which explicit estimates for \code{y} are desired.  
+  \item{times }{times at which explicit estimates for \code{y} are desired.
     The first value in \code{times} must be the initial time.
   }
   \item{func }{an \R-function that computes the values of the
     derivatives in the ODE system (the \emph{model definition}) at time
     \code{t}.
-  
+
     The \R-function \code{func} must be defined as: \code{yprime =
     func(t, y, parms, ...)}.  \code{t} is the current time point in the
     integration, \code{y} is the current estimate of the variables in
     the ode system, and \code{parms} is a vector or list of parameters.
     \code{...} (optional) are any other arguments passed to the
     function.
-  
+
     The return value of \code{func} should be a list, whose first
     element is a vector containing the derivatives of \code{y} with
     respect to \code{time}, and whose next elements are global values
@@ -86,6 +91,10 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     internal time steps identically to external time steps provided by
     \code{times}.
   }
+  \item{ynames }{if \code{FALSE}: names of state variables are not passed
+    to function \code{func} ; this may speed up the simulation especially
+    for large models.
+  }
   \item{method}{the integrator to use. This can either be a string
     constant naming one of the pre-defined methods or a call to function
     \code{\link{rkMethod}} specifying a user-defined method.  The most
@@ -97,6 +106,32 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \item{maxsteps }{maximal number of steps during one call to the
     solver.
   }
+  \item{dllname }{a string giving the name of the shared library
+    (without extension) that contains all the compiled function or
+    subroutine definitions refered to in \code{func} and
+    \code{jacfunc}. See package vignette.
+  }
+  \item{initfunc }{if not NULL, the name of the initialisation function
+    (which initialises values of parameters), as provided in
+    \file{dllname}. See package vignette.
+  }
+  \item{initpar }{only when \file{dllname} is specified and an
+    initialisation function \code{initfunc} is in the dll: the
+    parameters passed to the initialiser, to initialise the common
+    blocks (fortran) or global variables (C, C++).
+  }
+  \item{nout }{only used if \code{dllname} is specified and the model is
+    defined in compiled code: the number of output variables calculated
+    in the compiled function \code{func}, present in the shared
+    library. Note: it is not automatically checked whether this is
+    indeed the number of output variables calculed in the dll - you have
+    to perform this check in the code. See package vignette.
+  }
+  \item{outnames }{only used if \file{dllname} is specified and
+    \code{nout} > 0: the names of output variables calculated in the
+    compiled function \code{func}, present in the shared library.
+  }
+
   \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.
   }
@@ -109,7 +144,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
   \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}) are
   superior because of higher efficiency and faster implementation
-  (FORTRAN and C).
+  (FORTRAN and C; but see Note below).
 
   In addition to this, some of the Livermore solvers are also suitable
   for stiff ODEs, differential algebraic equations (DAEs), or partial
@@ -119,7 +154,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   evaluate different solvers of the Runge-Kutta family. A pre-defined
   set of common method parameters is in function \code{\link{rkMethod}}
   which also allows to supply user-defined Butcher tables.
-    
+
   The input parameters \code{rtol}, and \code{atol} determine the error
   control performed by the solver.  The solver will control the vector
   of estimated local errors in \bold{y}, according to an inequality of
@@ -127,12 +162,12 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \bold{ewt} is a vector of positive error weights.  The values of
   \code{rtol} and \code{atol} should all be non-negative.  The form of
   \bold{ewt} is:
-  
+
   \deqn{\mathbf{rtol} \times \mathrm{abs}(\mathbf{y}) +
   \mathbf{atol}}{\bold{rtol} * abs(\bold{y}) + \bold{atol}}
-  
+
   where multiplication of two vectors is element-by-element.
-     
+
   \bold{Models} can be defined in \R as a user-supplied
   \bold{R-function}, that must be called as: \code{yprime = func(t, y,
   parms)}.  \code{t} is the current time point in the integration,
@@ -153,7 +188,7 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
       \code{list(c(dy1,dy2,dy3))}\cr
       \code{\})}\cr
   \code{\}}\cr
-}    
+}
 \value{
   A matrix with up to as many rows as elements in \code{times} and
   as many columns as elements in \code{y} plus the number of "global"
@@ -177,37 +212,44 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \item{el 15:}{the order of the method.}
 }
 
+\note{
+  The variant \code{rk4_c} is a new implementation in C that is faster
+  and has additional functionality.
+  It is still under development and \emph{highly experimental}, so please
+  be very careful!!! However, testers are welcome, please report errors
+  and improvements.
+}
+
 \references{
   Butcher, J. C. (1987) The numerical analysis of ordinary differential
   equations, Runge-Kutta and general linear methods, Wiley, Chichester
   and New York.
-  
+
   Engeln-Muellges, G. and Reutter, F. (1996) Numerik Algorithmen:
   Entscheidungshilfe zur Auswahl und Nutzung. VDI Verlag, Duesseldorf.
-  
+
   Press, W. H., Teukolsky, S. A., Vetterling, W. T. and Flannery,
   B. P. (2007) Numerical Recipes in C. Cambridge University Press.
 }
 
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
-\seealso{\code{\link{rkMethod}}, 
-         \code{\link{ode}}, 
-         \code{\link{lsoda}}, 
-         \code{\link{lsode}}, 
-         \code{\link{lsodes}}, 
-         \code{\link{lsodar}}, 
-         \code{\link{vode}}, 
+\seealso{\code{\link{rkMethod}},
+         \code{\link{ode}},
+         \code{\link{lsoda}},
+         \code{\link{lsode}},
+         \code{\link{lsodes}},
+         \code{\link{lsodar}},
+         \code{\link{vode}},
          \code{\link{daspk}}
 }
 
 \examples{
-
 ## ==============================
 ## Example: Lotka-volterra model
 ## ==============================
-  
-## Note: 
+
+## Note:
 ## parameters are a list, names accessible via "with" function
 ## (see also ode and lsoda examples)
 
@@ -215,7 +257,7 @@ lvmodel <- function(t, x, parms) {
   S <- x[1] # substrate
   P <- x[2] # producer
   K <- x[3] # consumer
-   
+
   with(parms, {
     import <- approx(signal$times, signal$import, t)$y
     dS <- import - b * S * P + g * K
@@ -224,40 +266,46 @@ lvmodel <- function(t, x, parms) {
     res <- c(dS, dP, dK)
     list(res)
   })
-}  
-  
+}
+
 ## vector of timesteps
 times  <- seq(0, 100, length = 101)
-  
+
 ## external signal with rectangle impulse
 signal <- as.data.frame(list(times = times,
                             import = rep(0,length(times))))
-  
+
 signal$import[signal$times >= 10 & signal$times <= 11] <- 0.2
-  
+
 ## Parameters for steady state conditions
 parms <- list(b = 0.0, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
-  
+
 ## Start values for steady state
 y <- xstart <- c(S = 1, P = 1, K = 1)
-  
+
+## ------------------------------------
+## R implementation of the integrators
+## ------------------------------------
+
+system.time({
 ## Euler method
-out1  <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+out1  <- as.data.frame(rk(xstart, times, lvmodel, parms,
                           hini = 0.1, method = "euler"))
-  
+
 ## classical Runge-Kutta 4th order
-out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+out2 <- as.data.frame(rk(xstart, times, lvmodel, parms,
                          hini = 1, method = "rk4"))
-  
+
 ## Dormand-Prince method of order 5(4)
-out3 <- as.data.frame(rk(xstart, times, lvmodel, parms, 
+out3 <- as.data.frame(rk(xstart, times, lvmodel, parms,
                          hmax = 1, method = "rk45dp7"))
-  
+})
+
 mf <- par(mfrow = c(2,2))
 plot (out1$time, out1$S, type = "l", ylab = "Substrate")
 lines(out2$time, out2$S, col = "red", lty = "dotted", lwd = 2)
 lines(out3$time, out3$S, col = "green", lty = "dotted")
-  
+
 plot (out1$time, out1$P, type = "l", ylab = "Producer")
 lines(out2$time, out2$P, col = "red", lty = "dotted")
 lines(out3$time, out3$P, col = "green", lty = "dotted")
@@ -274,6 +322,52 @@ legend("center", legend = c("euler", "rk4", "rk45dp7"),
   lty = c(1, 3, 3), lwd = c(1, 2, 1),
   col = c("black", "red", "green"))
 par(mfrow = mf)
+
+
+## ------------------------------------
+## C implementation of the integrators
+## ------------------------------------
+
+system.time({
+## Euler method
+out1  <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+                          hini = 0.1, method = "euler"))
+
+## classical Runge-Kutta 4th order
+out2 <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+                         hini = 1, method = "rk4"))
+
+## Dormand-Prince method of order 5(4)
+out3 <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+                         hmax = 1, method = "rk45dp7"))
+})
+
+## only 15% faster for *this* example; but rk_c allows also compiled
+## code and has better interpolation (for some of the methods)
+
+
+mf <- par(mfrow = c(2,2))
+plot (out1$time, out1$S, type = "l", ylab = "Substrate")
+lines(out2$time, out2$S, col = "red", lty = "dotted", lwd = 2)
+lines(out3$time, out3$S, col = "green", lty = "dotted")
+
+plot (out1$time, out1$P, type = "l", ylab = "Producer")
+lines(out2$time, out2$P, col = "red", lty = "dotted")
+lines(out3$time, out3$P, col = "green", lty = "dotted")
+
+plot (out1$time, out1$K, type = "l", ylab = "Consumer")
+lines(out2$time, out2$K, col = "red", lty = "dotted", lwd = 2)
+lines(out3$time, out3$K, col = "green", lty = "dotted")
+
+plot (out1$P, out1$K, type = "l", xlab = "Producer", ylab = "Consumer")
+lines(out2$P, out2$K, col = "red",   lty = "dotted", lwd = 2)
+lines(out3$P, out3$K, col = "green", lty = "dotted")
+
+legend("center", legend = c("euler", "rk4", "rk45dp7"),
+  lty = c(1, 3, 3), lwd = c(1, 2, 1),
+  col = c("black", "red", "green"))
+par(mfrow = mf)
+
 }
 
 \keyword{ math }

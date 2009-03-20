@@ -5,5 +5,7 @@ export(aquaphy, ccl4model, daspk, lsoda, lsodar, lsode, lsodes,
 
 export(rk, euler, rkMethod)
 
-export(rkAuto, rkFixed) ## exported but marked as "internal" in .Rd
+export(rk_c)            # test version; will be removed later
+
+export(rkAuto, rkFixed) # exported but marked as "internal" in .Rd
 

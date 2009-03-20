@@ -1,0 +1,24 @@
+
+
+
+- fix stack imbalance in case of aborted integration calls
+
+- check function maxerr (minimal error!)
+
+- ensure at least 4 internal steps for rk methods!! (neville-aitken)
+  hmax = tmax - tmin / 4 (or better 5?)
+  
+- pass istate back to calling function
+
+- modularize rk_auto
+
+- remove obsolete code
+
+- check polynomial interpolation, error order and stepsize control again
+
+- remove code that is doubled (deSolve_utils.c)
+
+- check hini, hmax, hmin
+  - especially for rk4 !!
+
+- special version for euler ?
