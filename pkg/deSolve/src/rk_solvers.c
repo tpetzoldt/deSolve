@@ -335,6 +335,9 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   SEXP rtol, SEXP atol, SEXP tcrit, SEXP verbose,
   SEXP hmin, SEXP hmax, SEXP hini, SEXP method, SEXP maxsteps) {
 
+  /**  Initialization **/
+  init_N_Protect();
+
   double *tt = NULL, *xs = NULL;
 
   double *y,  *f,  *Fj, *tmp, *FF, *rr;
@@ -651,7 +654,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   if (Verbose) Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", 
     it, it_ext, it_tot);
   //Rprintf("maxsteps %d\n", Maxsteps);
-  unprotect_all(); init_N_Protect();
+  unprotect_all(); 
+  //init_N_Protect();
   return(R_yout);
 }
 
@@ -660,6 +664,9 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     SEXP parms, SEXP nout, SEXP rho,
     SEXP tcrit, SEXP verbose,
     SEXP hini, SEXP method, SEXP maxsteps) {
+
+  /**  Initialization **/
+  init_N_Protect();
 
   double *tt = NULL, *xs = NULL;
 
@@ -861,7 +868,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", it, it_ext, it_tot);
     Rprintf("maxsteps %d\n", Maxsteps);
   }
-  unprotect_all();  init_N_Protect();
+  unprotect_all();  
+  //init_N_Protect();
   return(R_yout);
 }
 
@@ -871,6 +879,9 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
 /*==========================================================================*/
 SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   SEXP parms, SEXP nout, SEXP rho, SEXP verbose) {
+
+  /**  Initialization **/
+  init_N_Protect();
 
   double *tt = NULL, *xs = NULL;
   double *tmp, *FF, *out;
@@ -997,6 +1008,7 @@ SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     }
   }
   // release R resources
-  unprotect_all();  init_N_Protect();
+  unprotect_all();  
+  //init_N_Protect();
   return(R_yout);
 }

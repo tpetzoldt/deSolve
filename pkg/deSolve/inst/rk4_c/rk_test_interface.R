@@ -25,14 +25,9 @@ out <- as.data.frame(rk(xstart, times, lvmodel, parms,  method="ode23",
 
 ## rk, Solver C, Model R
 system.time(
-out.c <- rk_c(xstart, times, lvmodel, parms,  method="ode23",
-  hmax=1, atol=1e-6, rtol=1e-6)
+out.c <- as.data.frame(rk_c(xstart, times, lvmodel, parms,  method="ode23",
+  hmax=1, atol=1e-6, rtol=1e-6))
 )
-## here is still something wrong: stack imbalance!!!
-## but this occurs only if we have the call "lsoda, Solver R, Model R" before
-
-out.c <- as.data.frame(out.c)
-
 
 ## Solver C, Model R, fixed step method
 system.time(
