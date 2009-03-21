@@ -125,6 +125,8 @@ SEXP getListElement(SEXP list, const char *str) {
 }
 
 // the following snippet is copied from array.c
+
+/*
 static void blas_matprod(double *x, int nrx, int ncx,
 		    double *y, int nry, int ncy, double *z)
 {
@@ -136,9 +138,9 @@ static void blas_matprod(double *x, int nrx, int ncx,
     int have_na = FALSE;
 
     if (nrx > 0 && ncx > 0 && nry > 0 && ncy > 0) {
-	/* Don't trust the BLAS to handle NA/NaNs correctly: PR#4582
-	 * The test is only O(n) here
-	 */
+	// Don't trust the BLAS to handle NA/NaNs correctly: PR#4582
+	// The test is only O(n) here
+	// 
 	for (i = 0; i < nrx*ncx; i++)
 	    if (ISNAN(x[i])) {have_na = TRUE; break;}
 	if (!have_na)
@@ -155,9 +157,10 @@ static void blas_matprod(double *x, int nrx, int ncx,
 	} else
 	    F77_CALL(dgemm)(transa, transb, &nrx, &ncy, &ncx, &one,
 			    x, &nrx, y, &nry, &zero, z, &nrx);
-    } else /* zero-extent operations should return zeroes */
+    } else // zero-extent operations should return zeroes
 	for(i = 0; i < nrx*ncy; i++) z[i] = 0;
 } 
+*/
 
 // a reduced version without NA checking
 static void blas_matprod1(double *x, int nrx, int ncx,

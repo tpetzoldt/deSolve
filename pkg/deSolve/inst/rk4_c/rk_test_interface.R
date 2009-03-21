@@ -2,15 +2,16 @@ library("deSolve")
 source("helpfun.R")
 source("lvmodel.R")
 
-rho <- environment()
 
 ## compile and load DLL
-if (is.loaded("dlotka")) dyn.unload("lotka.dll")  # unload DLL if already loaded
+ext <- if (Sys.info()["sysname"] == "Windows") "dll" else "so"
 
+if (is.loaded("dlotka")) dyn.unload(paste("lotka", ext, sep="."))  # unload DLL if already loaded
 system("R CMD SHLIB lotka.c")
-lotkadll <- dyn.load("lotka.dll")
+lotkadll <- dyn.load(paste("lotka", ext, sep="."))
 
-## lsoda, Solver R, Model R
+
+## lsoda, Solver C, Model R
 system.time(
 out <- as.data.frame(lsoda(xstart, times, lvmodel, parms,
   hmax=1, atol=1e-6, rtol=1e-6))
