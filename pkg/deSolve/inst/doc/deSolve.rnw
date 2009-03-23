@@ -60,17 +60,14 @@ initial value problems, R}
     \item partial differential equations (PDE).
   \end{itemize}
 
-  The implementation includes stiff integration routines
-  based on the ODEPACK Fortan codes \citep{Hindmarsh83}.
-
-  It also include runge-kutta solvers and
-  the euler method \citep{Press92}
-
-  Here we outline how to implement differential equations as \R-functions.
+  The implementation includes stiff integration routines based on the
+  ODEPACK Fortan codes \citep{Hindmarsh83}.  It also include
+  runge-kutta solvers and the euler method \citep{Press92}.  Here we
+  outline how to implement differential equations as \R-functions.
 
   Another vignette ("compiledCode") \citep{compiledCode}, deals with differential
   equations implemented in lower-level languages such as \proglang{FORTRAN},
-  \proglang{C}, or \proglang{$C^{++}$}, which are compiled into a
+  \proglang{C}, or \proglang{C++}, which are compiled into a
   dynamically linked library (DLL) and loaded into \proglang{R}.
 }
 
@@ -111,7 +108,6 @@ initial value problems, R}
 library("deSolve")
 options(prompt = "> ")
 options(width=70)
-
 @
 
 \maketitle
@@ -125,8 +121,8 @@ options(width=70)
   We use this model to demonstrate how to implement and solve differential
   equations in \R.
 
-  The Lorenz model describes the dynamics of three state variables, X,
-  Y and Z.
+  The Lorenz model describes the dynamics of three state variables, $X$,
+  $Y$ and $Z$.
 
   The model equations are:
 
@@ -142,7 +138,7 @@ options(width=70)
     X(0) = Y(0) = Z(0) = 1
   \]
 
-  Where a, b and c are three parameters, with values of -8/3, -10 and 28
+  Where $a$, $b$ and $c$ are three parameters, with values of -8/3, -10 and 28
   respectively.
 
   Implementation of an IVP ODE in \R can be separated in two parts: the model
@@ -213,8 +209,7 @@ state     <-c(X   =1,
     the rates of changes are returned as dX,dY,dZ.
 
 <<>>=
-Lorenz<-function(t,state,parameters)
- {
+Lorenz<-function(t,state,parameters) {
  with(as.list(c(state,parameters)),{
 
     # rate of change
@@ -230,10 +225,11 @@ Lorenz<-function(t,state,parameters)
 @
 
   \subsection{Model application}
+
   1. Time specification
 
   We run the model for 100 days, and give output at
-  0.01 daily intervals. R's function seq() creates the time sequence.
+  0.01 daily intervals. R's function \code{seq()} creates the time sequence.
 
 <<>>=
 times     <-seq(0,100,by=0.01)
@@ -271,6 +267,7 @@ head(out)
   (\code{oma}), such as to allow writing a figure heading (\code{mtext}).
   First the X concentration versus time is plotted, then the Y concentration
   versus time, and finally Y versus X and Z versus X.
+
 <<label=ode,include=FALSE>>=
 par(mfrow=c(2,2), oma=c(0,0,3,0))
 plot (times,out$X ,type="l",main="X", xlab="time", ylab="-")
@@ -293,9 +290,11 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
   see text for R-code}
 \label{fig:dae}
 \end{figure}
-  \subsection{Solvers for initial value problems of ordinary differential
+
+\subsection{Solvers for initial value problems of ordinary differential
   equations}
-  Package \ds contains several IVP ordinary differential equation solvers.
+
+Package \ds contains several IVP ordinary differential equation solvers.
   They can all be triggered from function \code{ode} (by setting the argument
   \code{method}), or can be run as stand-alone functions.
 
@@ -311,6 +310,7 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 
   We solve the model with several integration routines, each time
   printing the time it took (in seconds) to find the solution.
+
 <<>>=
 print(system.time(out <-rk4   (state,times,Lorenz,parameters)))
 print(system.time(out <-lsode (state,times,Lorenz,parameters)))
@@ -321,6 +321,7 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
 @
 
 \section{Partial differential equations}
+
   As package \ds includes integrators that deal efficiently with
   arbitrarily sparse and banded Jacobians, it is especially well suited to
   solve initial value problems resulting from 1-Dimensional and
@@ -441,7 +442,9 @@ columns)
   A multi-species IVP example can be found in \citep{Soetaert08b}.
 
   For 2-D problems, we refer to the help-files of function \code{ode.2D}.
+
   \section{Differential algebraic equations}
+
   Function \code{daspk} from package \ds solves (relatively simple)
   DAEs of index maximal 1 \footnote{note that many -apparently simple-
   DAEs are higher-index DAEs}.

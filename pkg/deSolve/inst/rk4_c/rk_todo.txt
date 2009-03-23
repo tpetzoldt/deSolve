@@ -1,9 +1,12 @@
-
-
+## ThPe -> ThPe
 
 - fix stack imbalance in case of aborted integration calls
+  -> fixed for call_rk
+  - check if there is a leak in lsoda??
 
 - check function maxerr (minimal error!)
+
+- implement PID step control
 
 - ensure at least 4 internal steps for rk methods!! (neville-aitken)
   hmax = tmax - tmin / 4 (or better 5?)
@@ -17,8 +20,49 @@
 - check polynomial interpolation, error order and stepsize control again
 
 - remove code that is doubled (deSolve_utils.c)
+  -> done
 
 - check hini, hmax, hmin
   - especially for rk4 !!
 
-- special version for euler ?
+- write special version for euler (speedup)
+
+
+## KS --> ThPe
+
+One of the reasons the interface in lsoda is more complex is because it
+avoids the testing whether a function is a DLL ( inherits(func,
+"NativeSymbol")) at each time step. So we do this only once.
+
+I have the impression that output variables from C-code are not saved
+here.
+
+Also, in lsoda, the "output variables" from R-code are set in R itself
+(e.g. the function is called from R), not in C/fortran. 
+
+I remember that I tested whether that affected performance, and it did
+not - or was even slightly faster that way (and perhaps less memory is
+also required). So I left it the way it was in odesolve. It avoids the
+copying from/to C-variables. 
+
+In C-code Nout is supposed to be a vector with at least 3 variables; in
+your cderivs it appears to be one number?
+
+[...]
+
+Part from the vignette compiledcode:
+
+*ip points to an integer vector whose length is at least 3; the 1st
+element (ip[0]) contains the number of output values (which should be
+equal or larger than nout), its second element contains the length of
+*yout, and the third element contains the length of *ip; next are
+integer values, as passed by parameter ipar when calling the
+integrator.
+
+(yout can also contain double precision input parameters, i.e. its
+length can be > nout.  In the lsode family, when using C/fortran, it
+is allowed to pass double precision and integer values via R-arguments
+ipar and rpar;
+
+These of course have to be correctly passed to the C/fortran
+functions).
