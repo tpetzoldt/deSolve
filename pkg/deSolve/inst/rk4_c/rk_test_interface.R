@@ -26,7 +26,7 @@ out <- as.data.frame(rk(xstart, times, lvmodel, parms,  method="ode23",
 
 ## rk, Solver C, Model R
 system.time(
-out.c <- as.data.frame(rk_c(xstart, times, lvmodel, parms,  method="ode23",
+out.c1 <- as.data.frame(rk_c(xstart, times, lvmodel, parms,  method="ode23",
   hmax=1, atol=1e-6, rtol=1e-6))
 )
 
@@ -38,11 +38,11 @@ system.time(
 ## Solver C, Model C
 system.time(
 out.c2 <- as.data.frame(rk_c(xstart, times, func="dlotka", parms, initfunc="ilotka",
-  hmax=1, atol=1e-6, rtol=1e-6, nout=2, method="rk4", dllname="lotka"))
+  hmax=1, atol=1e-6, rtol=1e-6, nout=2, method="ode23", dllname="lotka"))
 )
 
 # two different models
 par(mfrow=c(2,1))
-matplot(out.c[,1], out.c[2:4], type="l")
+matplot(out.c1[,1], out.c[2:4], type="l")
 
 matplot(out.c2[,1], out.c2[2:4], type="l")

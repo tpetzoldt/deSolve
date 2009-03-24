@@ -29,7 +29,8 @@ rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
   tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames = TRUE,
   method = rkMethod("rk45dp7", ... ), maxsteps = 5000, dllname = NULL,
-  initfunc = dllname, initpar = parms, nout = 0, outnames = NULL, ...)
+  initfunc = dllname, initpar = parms, rpar = NULL, ipar = NULL,
+  nout = 0, outnames = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -119,6 +120,14 @@ rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
     blocks (fortran) or global variables (C, C++).
+  }
+   \item{rpar }{only when \file{dllname} is specified: a vector with
+    double precision values passed to the dll-functions whose names are
+    specified by \code{func} and \code{jacfunc}.
+  }
+   \item{ipar }{only when \file{dllname} is specified: a vector with
+    integer values passed to the dll-functions whose names are specified
+    by \code{func} and \code{jacfunc}.
   }
   \item{nout }{only used if \code{dllname} is specified and the model is
     defined in compiled code: the number of output variables calculated
@@ -215,9 +224,13 @@ rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
 \note{
   The variant \code{rk4_c} is a new implementation in C that is faster
   and has additional functionality.
+  
   It is still under development and \emph{highly experimental}, so please
   be very careful!!! However, testers are welcome, please report errors
   and improvements.
+
+  Arguments rpar and ipar are provided for future compatibility with
+  lsoda, but not yet functional.
 }
 
 \references{

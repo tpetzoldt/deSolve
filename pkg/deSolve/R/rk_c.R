@@ -1,7 +1,8 @@
-rk_c <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
-	verbose=FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE, 
-  method = rkMethod("rk45dp7", ... ), maxsteps = 5000, 
-  dllname=NULL, initfunc=dllname, initpar=parms, nout = 0, outnames=NULL,...) {
+rk_c <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
+	verbose=FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE,
+  method = rkMethod("rk45dp7", ... ), maxsteps = 5000,
+  dllname = NULL, initfunc=dllname, initpar = parms,
+  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL,...) {
 
 ### check input
     if (!is.numeric(y))       stop("`y' must be numeric")
@@ -28,28 +29,28 @@ rk_c <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (!is.numeric(y))     stop("`y' must be numeric")
     if (!is.numeric(times)) stop("`times' must be numeric")
     #if (!is.function(func)) stop("`func' must be a function")
-    
+
     if (is.character(method)) method <- rkMethod(method)
-    
+
     ### new checks, validate this
     if (is.null(tcrit)) tcrit <- max(times)
     if (is.null(initfunc)) Initfunc <- NULL  ## :-(
-    
+
     ### model and jacobian function
     Ynames <- attr(y,"names")
     Initfunc <- NULL
     if(!is.null(dllname)) {
-      if (is.loaded(initfunc, PACKAGE = dllname, type = "") || 
+      if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
          is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) {
         Initfunc <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
        } else if (initfunc != dllname && ! is.null(initfunc))
-         stop(paste("cannot integrate: initfunc not loaded ",initfunc))        
-    } 
+         stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+    }
 
     ## If func is a character vector, then
-    ## copy its value to funcname 
+    ## copy its value to funcname
     ## check to make sure it describes
-    ## a function in a loaded dll 
+    ## a function in a loaded dll
     if (is.character(func)) {
       funcname <- func
       ## get the pointer and put it in func
@@ -63,18 +64,18 @@ rk_c <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       Nglobal <- nout
       if (is.null(outnames))
          { Nmtot   <- NULL} else
-      if (length(outnames) == nout) 
+      if (length(outnames) == nout)
          { Nmtot   <- outnames} else
-      if (length(outnames) > nout) 
+      if (length(outnames) > nout)
          Nmtot <- outnames[1:nout] else
          Nmtot <- c(outnames,(length(outnames)+1):nout)
       ## ThPe:
       Nstates <- length(y) # assume length of states is correct
       rho <- NULL
-      #if (is.null(ipar)) ipar<-0
-      #if (is.null(rpar)) rpar<-0 
+      if (is.null(ipar)) ipar <- 0
+      if (is.null(rpar)) rpar <- 0
     } else {
-      initpar <- NULL # parameter initialisation not needed if function is not a DLL    
+      initpar <- NULL # parameter initialisation not needed if function is not a DLL
       rho <- environment(func)
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
@@ -83,21 +84,21 @@ rk_c <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          #Func    <- function(time,state,parms)
          #{ attr(state,"names") <- Ynames
          #  func   (time,state,parms,...)[1]}
-         
-         Func2   <- function(time,state,parms) 
+
+         Func2   <- function(time,state,parms)
          { attr(state,"names") <- Ynames
-           func   (time,state,parms,...)}    
+           func   (time,state,parms,...)}
         } else {                            # no ynames...
          #Func    <- function(time,state,parms)
          #  func   (time,state,parms,...)[1]
-        
-         Func2   <- function(time,state,parms) 
-           func   (time,state,parms,...)    
+
+         Func2   <- function(time,state,parms)
+           func   (time,state,parms,...)
         }
-        
+
       ## Call func once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
-      tmp <- eval(Func2(times[1], y, parms), rho) 
+      tmp <- eval(Func2(times[1], y, parms), rho)
 
       if (!is.list(tmp)) stop("Model function must return a list\n")
       Nstates <-length(y)
@@ -108,42 +109,46 @@ rk_c <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                    Nstates,")", sep=""))
 
       # use "unlist" here because some output variables are vectors/arrays
-      Nglobal <- if (length(tmp) > 1)   
-          length(unlist(tmp[-1]))  else 0   
+      Nglobal <- if (length(tmp) > 1)
+          length(unlist(tmp[-1]))  else 0
       Nmtot <- attr(unlist(tmp[-1]),"names")
     }
-    
+
     ## handle length of atol and rtol
-    if (Nstates %% length(atol)) 
+    if (Nstates %% length(atol))
       warning("length of atol does not match number of states")
-    if (Nstates %% length(rtol)) 
+    if (Nstates %% length(rtol))
       warning("length of rtol does not match number of states")
 
     atol <- rep(atol, length.out = Nstates)
-    rtol <- rep(rtol, length.out = Nstates) 
+    rtol <- rep(rtol, length.out = Nstates)
 
     ## ToDo: handle data types in C or change appropriate arguments to integer
     ##       - check data type of parms in C !
-    
+
+    # rpar = NULL,  ipar = NULL,
+
     varstep <- method$varstep
     if (varstep) {                        # methods with variable step size
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func2,  Initfunc, parms,
-        as.double(Nglobal), rho, as.double(atol),  
-        as.double(rtol),  as.double(tcrit), as.double(verbose), 
-        as.double(hmin), as.double(hmax), as.double(hini), method, 
+        as.double(Nglobal), rho, as.double(atol),
+        as.double(rtol), as.double(tcrit), as.double(verbose),
+        as.double(hmin), as.double(hmax), as.double(hini),
+        as.double(rpar), as.integer(ipar), method,
         as.double(maxsteps))
      } else if (method$ID == "rk4") {      # special version
      out <- .Call("call_rk4", as.double(y), as.double(times),
-        Func2,  Initfunc, parms, as.double(Nglobal), rho, as.double(verbose))
+        Func2, Initfunc, parms, as.double(Nglobal), rho, as.double(verbose),
+        as.double(rpar), as.integer(ipar))
      } else {                              # fixed step methods
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
-        Func2,  Initfunc, parms,
+        Func2, Initfunc, parms,
         as.double(Nglobal), rho,
-        as.double(tcrit), as.double(verbose), 
-        as.double(hini), method, 
+        as.double(tcrit), as.double(verbose),
+        as.double(hini), as.double(rpar), as.integer(ipar), method,
         as.double(maxsteps))
-     }  
+     }
 
     nm <- c("time",
       if (!is.null(attr(y, "names"))) names(y) else as.character(1:n)

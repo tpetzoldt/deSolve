@@ -27,12 +27,15 @@
 
 - write special version for euler (speedup)
 
+- process rpar, ipar in all versions of call_rkxxxx
+
 
 ## KS --> ThPe
 
 One of the reasons the interface in lsoda is more complex is because it
 avoids the testing whether a function is a DLL ( inherits(func,
 "NativeSymbol")) at each time step. So we do this only once.
+--> done
 
 I have the impression that output variables from C-code are not saved
 here.
@@ -47,6 +50,9 @@ copying from/to C-variables.
 
 In C-code Nout is supposed to be a vector with at least 3 variables; in
 your cderivs it appears to be one number?
+
+- ThPe: yes, only the first element was passed
+--> ** work in progress; to be continued **
 
 [...]
 
