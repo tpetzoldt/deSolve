@@ -96,19 +96,19 @@ void R_unload_test_call(DllInfo *info) {
 
 
 // -------- test getvar from environment ------------------------------------
-SEXP getvar(SEXP name, SEXP rho) {
+SEXP getvar(SEXP name, SEXP Rho) {
   SEXP ans;
   if(!isString(name) || length(name) != 1)
     error("name is not a single string");
-  if(!isEnvironment(rho))
-    error("rho should be an environment");
-  ans = findVar(install(CHAR(STRING_ELT(name, 0))), rho);
+  if(!isEnvironment(Rho))
+    error("Rho should be an environment");
+  ans = findVar(install(CHAR(STRING_ELT(name, 0))), Rho);
   return(ans);
 }
 
-SEXP getInputs(SEXP symbol, SEXP rho) {
-  if(!isEnvironment(rho)) error("rho should be an environment");
-  return(getvar(symbol, rho));
+SEXP getInputs(SEXP symbol, SEXP Rho) {
+  if(!isEnvironment(Rho)) error("Rho should be an environment");
+  return(getvar(symbol, Rho));
 }
 
 //--- test getvar from list -------------------------------------------------
@@ -196,10 +196,10 @@ double maxdiff(double *x, double *y, int n) {
   return(d);
 }
 
-double maxerr(double *y1, double *y2, double* atol, double* rtol, int n) {
+double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
   double err = 0, serr = 0, scal, delta;
   for (int i = 0; i < n; i++) {
-    scal  = atol[i] +  fmax(fabs(y1[i]), fabs(y2[i])) * rtol[i]; // min??
+    scal  = Atol[i] +  fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; // min??
     delta = fabs(y2[i] - y1[i]);
     err   = fmax(err, delta / scal); // one of these two lines
     serr  = err + pow(delta/scal, 2.0);    // one of these two
@@ -211,9 +211,9 @@ double maxerr(double *y1, double *y2, double* atol, double* rtol, int n) {
 /*==========================================================================*/
 /*   CALL TO THE MODEL FUNCTION                                             */
 /*==========================================================================*/
-void derivs(SEXP func, double t, double* y, SEXP parms, SEXP rho,
-	    double *ydot, double *out, int j, int neq, int nout, int isDll) {
-  SEXP val, R_fcall;
+void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
+	    double *ydot, double *yout, int j, int neq, int nout, int isDll) {
+  SEXP Val, R_fcall;
   SEXP R_t;
   SEXP R_y;
   int i = 0;
@@ -225,10 +225,10 @@ void derivs(SEXP func, double t, double* y, SEXP parms, SEXP rho,
     /*   Function is a DLL function                                         */
     /************************************************************************/
     deriv_func *cderivs;
-    cderivs = (deriv_func *) R_ExternalPtrAddr(func);
+    cderivs = (deriv_func *) R_ExternalPtrAddr(Func);
     //  ToDo: int nout --> int* iout
     //  for comparison: lsoda_derivs(N, t, y, ydot, yout, iout)
-    cderivs (&neq, &t, y, ytmp, out, &nout);
+    cderivs (&neq, &t, y, ytmp, yout, &nout);
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = ytmp[i];
   } else {
@@ -240,14 +240,14 @@ void derivs(SEXP func, double t, double* y, SEXP parms, SEXP rho,
     yy = REAL(R_y);
     for (i=0; i< neq; i++) yy[i] = y[i];
 
-    PROTECT(R_fcall = lang4(func, R_t, R_y, parms)); incr_N_Protect();
-    PROTECT(val = eval(R_fcall, rho)); incr_N_Protect();
+    PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms)); incr_N_Protect();
+    PROTECT(Val = eval(R_fcall, Rho)); incr_N_Protect();
     // extract the states of list "val"
     if (j >= 0)
-      for (i = 0; i < neq; i++)  ydot[i + neq * j] = REAL(VECTOR_ELT(val, 0))[i];
+      for (i = 0; i < neq; i++)  ydot[i + neq * j] = REAL(VECTOR_ELT(Val, 0))[i];
     // extract outputs from second list element
     if (j < 0)
-      for (i = 0; i < nout; i++)  out[i] = REAL(VECTOR_ELT(val, 1))[i];
+      for (i = 0; i < nout; i++)  yout[i] = REAL(VECTOR_ELT(Val, 1))[i];
     my_unprotect(4);
   }
 }
@@ -316,30 +316,30 @@ void shiftBuffer (double *x, int n, int k) {
 }
 
 
-void initParms(SEXP initfunc, SEXP parms) {
- if (inherits(initfunc, "NativeSymbol"))  {
-    PROTECT(de_gparms = parms); incr_N_Protect();
+void initParms(SEXP Initfunc, SEXP Parms) {
+ if (inherits(Initfunc, "NativeSymbol"))  {
+    PROTECT(de_gparms = Parms); incr_N_Protect();
     init_func *initializer;
-    initializer = (init_func *) R_ExternalPtrAddr(initfunc);
+    initializer = (init_func *) R_ExternalPtrAddr(Initfunc);
     initializer(Initdeparms);
    }
    }
 
  void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
-   int it_tot, int stage, int FSAL, int qerr) {
+   int it_tot, int stage, int fsal, int qerr) {
 
    istate[12] = it_tot;                  // number of steps
-   istate[13] = it_tot * (stage - FSAL); // number of function evaluations
+   istate[13] = it_tot * (stage - fsal); // number of function evaluations
    istate[15] = qerr;                    // order of the method
    setAttrib(R_yout, install("istate"), R_istate);
  }
 
 
-SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
-  SEXP parms, SEXP nout, SEXP rho,
-  SEXP rtol, SEXP atol, SEXP tcrit, SEXP verbose,
-  SEXP hmin, SEXP hmax, SEXP hini, SEXP Rpar, SEXP Ipar,
-  SEXP method, SEXP maxsteps) {
+SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
+  SEXP Parms, SEXP Nout, SEXP Rho,
+  SEXP Rtol, SEXP Atol, SEXP Tcrit, SEXP Verbose,
+  SEXP Hmin, SEXP hmax, SEXP Hini, SEXP Rpar, SEXP Ipar,
+  SEXP Method, SEXP Maxsteps) {
 
   /**  Initialization **/
   init_N_Protect();
@@ -353,7 +353,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   double err=0, dtnew=0, t, dt, t_ext, tmax;
 
   SEXP R_FSAL;
-  int FSAL=0; // assume no FSAL
+  int fsal=0; // assume no FSAL
 
   int i = 0, j=0, j1=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int accept = 0;
@@ -362,54 +362,54 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   /**************************************************************************/
   /****** Processing of Arguments                                      ******/
   /**************************************************************************/
-  int latol = LENGTH(atol);
-  double *Atol = (double *) R_alloc((int) latol, sizeof(double));
+  int lAtol = LENGTH(Atol);
+  double *atol = (double *) R_alloc((int) lAtol, sizeof(double));
 
-  int lrtol = LENGTH(rtol);
-  double *Rtol = (double *) R_alloc((int) lrtol, sizeof(double));
+  int lRtol = LENGTH(Rtol);
+  double *rtol = (double *) R_alloc((int) lRtol, sizeof(double));
 
-  for (j = 0; j < lrtol; j++) Rtol[j] = REAL(rtol)[j];
-  for (j = 0; j < latol; j++) Atol[j] = REAL(atol)[j];
+  for (j = 0; j < lRtol; j++) rtol[j] = REAL(Rtol)[j];
+  for (j = 0; j < lAtol; j++) atol[j] = REAL(Atol)[j];
 
-  double  Tcrit = REAL(tcrit)[0];
-  double  Hmin  = REAL(hmin)[0];
+  double  tcrit = REAL(Tcrit)[0];
+  double  hmin  = REAL(Hmin)[0];
   double  Hmax  = REAL(hmax)[0];
-  double  Hini  = REAL(hini)[0];
-  int  Maxsteps = (int)REAL(maxsteps)[0];
-  int  Nout  = (int)REAL(nout)[0]; // number of external outputs is func is in a DLL
-  int Verbose = (int)REAL(verbose)[0];
+  double  hini  = REAL(Hini)[0];
+  int  maxsteps = (int)REAL(Maxsteps)[0];
+  int  nout     = (int)REAL(Nout)[0]; // number of external outputs is func is in a DLL
+  int  verbose  = (int)REAL(Verbose)[0];
 
-  int stage = (int)REAL(getListElement(method, "stage"))[0];
+  int stage     = (int)REAL(getListElement(Method, "stage"))[0];
 
   SEXP R_A, R_B1, R_B2, R_C, R_D;
   double  *A, *bb1, *bb2=NULL, *cc=NULL, *dd=NULL;
 
-  PROTECT(R_A = getListElement(method, "A")); incr_N_Protect();
+  PROTECT(R_A = getListElement(Method, "A")); incr_N_Protect();
   A = REAL(R_A);
 
-  PROTECT(R_B1 = getListElement(method, "b1")); incr_N_Protect();
+  PROTECT(R_B1 = getListElement(Method, "b1")); incr_N_Protect();
   bb1 = REAL(R_B1);
 
-  PROTECT(R_B2 = getListElement(method, "b2")); incr_N_Protect();
+  PROTECT(R_B2 = getListElement(Method, "b2")); incr_N_Protect();
   if (length(R_B2)) bb2 = REAL(R_B2);
 
-  PROTECT(R_C = getListElement(method, "c")); incr_N_Protect();
+  PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
 
-  PROTECT(R_D = getListElement(method, "d")); incr_N_Protect();
+  PROTECT(R_D = getListElement(Method, "d")); incr_N_Protect();
   if (length(R_D)) dd = REAL(R_D);
 
-  double  qerr  = REAL(getListElement(method, "Qerr"))[0];
-  PROTECT(R_FSAL = getListElement(method, "FSAL")); incr_N_Protect();
-  if (length(R_FSAL)) FSAL = INTEGER(R_FSAL)[0];
+  double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+  PROTECT(R_FSAL = getListElement(Method, "FSAL")); incr_N_Protect();
+  if (length(R_FSAL)) fsal = INTEGER(R_FSAL)[0];
 
-  PROTECT(times = AS_NUMERIC(times)); incr_N_Protect();
-  tt = NUMERIC_POINTER(times);
-  nt = length(times);
+  PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
+  tt = NUMERIC_POINTER(Times);
+  nt = length(Times);
 
-  PROTECT(xstart = AS_NUMERIC(xstart)); incr_N_Protect();
-  xs  = NUMERIC_POINTER(xstart);
-  neq = length(xstart);
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); incr_N_Protect();
+  xs  = NUMERIC_POINTER(Xstart);
+  neq = length(Xstart);
 
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
@@ -421,12 +421,11 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   int *ipar;
 
   // testing code from lsoda
-  if (inherits(func, "NativeSymbol")) { /* function is a dll */
-    // fix still inconsistent naming of arguments; lsoda nout; rk4 Nout
+  if (inherits(Func, "NativeSymbol")) { /* function is a dll */
     isDll = 1;
-    if (Nout > 0) isOut = 1;
-    ntot  = neq + Nout;          /* length of yout */
-    lrpar = Nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
+    if (nout > 0) isOut = 1;
+    ntot  = neq + nout;          /* length of yout */
+    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
     lipar = 3 + LENGTH(Ipar);    /* length of ipar */
 
   } else {                              /* function is not a dll */
@@ -436,18 +435,18 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     lipar = 1;
     lrpar = 1;
   }
-  ipar  = (int *)    R_alloc(lipar, sizeof(int));
+  ipar  = (int *) R_alloc(lipar, sizeof(int));
 
   if (isDll ==1) {
-    ipar[0] = Nout;              /* first 3 elements of ipar are special */
+    ipar[0] = nout;              /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* first nout elements of rpar reserved for output variables
+    /* first Nout elements of rpar reserved for output variables
        other elements are set in R-function lsodx via argument *rpar* */
-    for (j = 0; j < Nout; j++)        out[j] = 0.;
-    for (j = 0; j < LENGTH(Rpar); j++) out[Nout+j] = REAL(Rpar)[j];
+    // for (j = 0; j < nout; j++)         out[j] = 0.;                  //???
+    // for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];  //???
   }
   // end new testing code
 
@@ -466,7 +465,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   FF  =  (double *) R_alloc(neq * stage, sizeof(double));
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
-  out  =  (double *) R_alloc(Nout, sizeof(double));
+  out  =  (double *) R_alloc(nout, sizeof(double));
 
   // matrix for polynomial interpolation
   int nknots = 4;  // 3rd order polynomials
@@ -475,10 +474,10 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   yknots = (double *) R_alloc(neq * (nknots + 1), sizeof(double));
 
   // matrix for holding states and external outputs
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + Nout + 1)); incr_N_Protect();
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
   // initialize outputs with NA first
-  for (i = 0; i < nt * (neq + Nout + 1); i++) yout[i] = NA_REAL;
+  for (i = 0; i < nt * (neq + nout + 1); i++) yout[i] = NA_REAL;
 
   // attribute that stores state information, similar to lsoda
   SEXP R_istate;
@@ -496,7 +495,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
 
-  initParms(initfunc, parms);
+  initParms(Initfunc, Parms);
 
   /**************************************************************************/
   /****** Initialization of Integration Loop                           ******/
@@ -512,8 +511,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   iknots++;
 
   t = tt[0];
-  tmax = fmax(tt[nt], Tcrit);
-  dt = fmin(Hmax, Hini);
+  tmax = fmax(tt[nt], tcrit);
+  dt = fmin(Hmax, hini);
   Hmax = fmin(Hmax, tmax - t);
 
  // Initialization of work arrays (to be on the safe side, remove this later)
@@ -536,7 +535,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     //Rprintf("it, t, dt, %d  %e  %e\n", it, t, dt);
     /******  save former results of last step if the method allows this
             (first same as last)                                       ******/
-    if (FSAL && accept){
+    if (fsal && accept){
       j1 = 1;
       for (i = 0; i < neq; i++) FF[i] = FF[i + neq * (stage - 1)];
     } else {
@@ -556,7 +555,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
         }
         /******  Compute Derivatives ******/
         // pass option to avoid unnecessary copying in derivs
-        derivs(func, t + dt * cc[j], tmp, parms, rho, FF, out, j, neq, Nout, isDll);
+        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, nout, isDll);
     }
 
     /************************************************************************/
@@ -584,7 +583,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     /************************************************************************/
     /****** stepsize adjustment                                        ******/
     /************************************************************************/
-    err = maxerr(y1, y2, Atol, Rtol, neq);
+    err = maxerr(y1, y2, atol, rtol, neq);
 
     dtnew = dt;
     accept =TRUE;
@@ -602,11 +601,11 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
       //Rprintf("2  dtnew %e  (--)   \n", dtnew);
     }
 
-    if (dtnew < Hmin) {     // R: dt !!
+    if (dtnew < hmin) {     // R: dt !!
       accept=TRUE;
-      if (Verbose) Rprintf("warning, h < hmin\n"); // remove this later ...
+      if (verbose) Rprintf("warning, h < Hmin\n"); // remove this later ...
       istate[0] = -2;
-      dtnew = Hmin;
+      dtnew = hmin;
     }
     /************************************************************************/
     /****** Interpolation and Data Storage                             ******/
@@ -664,11 +663,11 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     } // else rejected time step
     dt = fmin(dtnew, tmax - t);
     if (it_ext > nt) {
-      Rprintf("error in rk4.cpp - rk4_auto: output buffer overflow\n");
+      Rprintf("error in rk_solvers.c - call_rkauto: output buffer overflow\n");
       break;
     }
-    if (it_tot > Maxsteps) {
-      if (Verbose) Rprintf("Max. number of steps exceeded\n");
+    if (it_tot > maxsteps) {
+      if (verbose) Rprintf("Max. number of steps exceeded\n");
       istate[0] = -1;
       break;
     }
@@ -681,35 +680,35 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(func, t, tmp, parms, rho, FF, out, -1, neq, Nout, isDll);
-    for (i = 0; i < Nout; i++) {
+    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
+    for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
   // attach essential internal information (codes are compatible to lsoda)
   // ToDo: respect function evaluations due to external outputs
-  setIstate(R_yout, R_istate, istate, it_tot, stage, FSAL, qerr);
+  setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 /*
   istate[12] = it_tot;                  // number of steps
-  istate[13] = it_tot * (stage - FSAL); // number of function evaluations
+  istate[13] = it_tot * (stage - fsal); // number of function evaluations
   istate[15] = qerr;                    // order of the method
 
   setAttrib(R_yout, install("istate"), R_istate);
 */
   // release R resources
-  if (Verbose) Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n",
+  if (verbose) Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n",
     it, it_ext, it_tot);
-  //Rprintf("maxsteps %d\n", Maxsteps);
+  //Rprintf("Maxsteps %d\n", maxsteps);
   unprotect_all();
   //init_N_Protect();
   return(R_yout);
 }
 
 //----------------------------------------------------------------------------
-  SEXP call_rkFixed(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
-    SEXP parms, SEXP nout, SEXP rho,
-    SEXP tcrit, SEXP verbose, SEXP hini, SEXP Rpar, SEXP Ipar,
-    SEXP method, SEXP maxsteps) {
+  SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
+    SEXP Parms, SEXP Nout, SEXP Rho,
+    SEXP Tcrit, SEXP Verbose, SEXP Hini, SEXP Rpar, SEXP Ipar,
+    SEXP Method, SEXP Maxsteps) {
 
   /**  Initialization **/
   init_N_Protect();
@@ -728,40 +727,40 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   /**************************************************************************/
   /****** Processing of Arguments                                      ******/
   /**************************************************************************/
-  double  Tcrit = REAL(tcrit)[0];
-  double  Hini  = REAL(hini)[0];
-  int  Maxsteps = (int)REAL(maxsteps)[0];
-  int  Nout  = (int)REAL(nout)[0]; // number of external outputs is func is in a DLL
-  int Verbose = (int)REAL(verbose)[0];
+  double  tcrit = REAL(Tcrit)[0];
+  double  hini  = REAL(Hini)[0];
+  int  maxsteps = (int)REAL(Maxsteps)[0];
+  int  nout  = (int)REAL(Nout)[0]; // number of external outputs is Func is in a DLL
+  int verbose = (int)REAL(Verbose)[0];
 
-  int stage = (int)REAL(getListElement(method, "stage"))[0];
+  int stage = (int)REAL(getListElement(Method, "stage"))[0];
 
   SEXP R_A, R_B1, R_C;
   double  *A, *bb1, *cc=NULL;
 
-  PROTECT(R_A = getListElement(method, "A")); incr_N_Protect();
+  PROTECT(R_A = getListElement(Method, "A")); incr_N_Protect();
   A = REAL(R_A);
 
-  PROTECT(R_B1 = getListElement(method, "b1")); incr_N_Protect();
+  PROTECT(R_B1 = getListElement(Method, "b1")); incr_N_Protect();
   bb1 = REAL(R_B1);
 
-  PROTECT(R_C = getListElement(method, "c")); incr_N_Protect();
+  PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
 
-  PROTECT(times = AS_NUMERIC(times)); incr_N_Protect();
-  tt = NUMERIC_POINTER(times);
-  nt = length(times);
+  PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
+  tt = NUMERIC_POINTER(Times);
+  nt = length(Times);
 
-  PROTECT(xstart = AS_NUMERIC(xstart)); incr_N_Protect();
-  xs  = NUMERIC_POINTER(xstart);
-  neq = length(xstart);
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); incr_N_Protect();
+  xs  = NUMERIC_POINTER(Xstart);
+  neq = length(Xstart);
 
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
   // provisional code; copy from call_rkauto
   int isDll = 0;
-  if (inherits(func, "NativeSymbol")) isDll = 1;
+  if (inherits(Func, "NativeSymbol")) isDll = 1;
 
   /**************************************************************************/
   /****** Allocation of Workspace                                      ******/
@@ -776,7 +775,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   FF  =  (double *) R_alloc(neq * stage, sizeof(double));
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
-  out  =  (double *) R_alloc(Nout, sizeof(double));
+  out  =  (double *) R_alloc(nout, sizeof(double));
 
   // matrix for polynomial interpolation
   int nknots = 4;  // 3rd order polynomials
@@ -786,7 +785,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
 
 
   // matrix for holding the outputs
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + Nout + 1)); incr_N_Protect();
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
   // initialize outputs with NA first
   for (i=0; i< nt*(neq+1); i++) yout[i] = NA_REAL;
@@ -795,7 +794,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
 
-  initParms(initfunc, parms);
+  initParms(Initfunc, Parms);
 
   /**************************************************************************/
   /****** Initialization of Integration Loop                           ******/
@@ -810,8 +809,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   }
   iknots++;
 
-  t = tt[0];                   // t    <- min(times)
-  tmax = fmax(tt[nt], Tcrit);   // tmax <- max(times, tcrit)
+  t = tt[0];                   // t    <- min(Times)
+  tmax = fmax(tt[nt], tcrit);   // tmax <- max(Times, Tcrit)
 
   // Initialization of work arrays (to be on the safe side, remove this later)
   for (i = 0; i < neq; i++)  {
@@ -831,8 +830,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
 
   do {
     /* select time step (possibly irregular) */
-    if (Hini > 0.0)
-      dt = Hini;
+    if (hini > 0.0)
+      dt = hini;
     else
       dt = tt[it] - tt[it-1];
 
@@ -849,7 +848,7 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
           tmp[i] = Fj[i] + y0[i];
         }
         /******  Compute Derivatives ******/
-        derivs(func, t + dt * cc[j], tmp, parms, rho, FF, out, j, neq, Nout, isDll);
+        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, nout, isDll);
     }
 
     /************************************************************************/
@@ -893,11 +892,11 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
     it++;
     for (i=0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in rk4.cpp - rk4_auto: output buffer overflow\n");
+      Rprintf("error in rk_solvers.c - call_rk4auto: output buffer overflow\n");
       break;
     }
-    if (it_tot > Maxsteps) {
-      if (Verbose) Rprintf("Max. number of steps exceeded\n");
+    if (it_tot > maxsteps) {
+      if (verbose) Rprintf("Max. number of steps exceeded\n");
       break;
     }
   } while (t < tmax); // end of rk main loop
@@ -909,17 +908,17 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(func, t, tmp, parms, rho, FF, out, -1, neq, Nout, isDll);
+    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
     //Rprintf("%d %e %e \n", j, out[0], out[1]);
-    for (i = 0; i < Nout; i++) {
+    for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
 
   // release R resources
-  if (Verbose) {
+  if (verbose) {
     Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", it, it_ext, it_tot);
-    Rprintf("maxsteps %d\n", Maxsteps);
+    Rprintf("Maxsteps %d\n", maxsteps);
   }
   unprotect_all();
   //init_N_Protect();
@@ -930,8 +929,8 @@ SEXP call_rkAuto(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
 /*  rk4 Fixed Step Integrator                                               */
 /*    (special version for speed comparison with the general solution)      */
 /*==========================================================================*/
-SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
-	      SEXP parms, SEXP nout, SEXP rho, SEXP verbose,
+SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
+	      SEXP Parms, SEXP Nout, SEXP Rho, SEXP Verbose,
 	      SEXP Rpar, SEXP Ipar) {
 
   /**  Initialization **/
@@ -954,28 +953,28 @@ SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   /****** Check Arguments and Convert to C types                       ******/
   /**************************************************************************/
 
-  PROTECT(times = AS_NUMERIC(times)); incr_N_Protect();
-  tt = NUMERIC_POINTER(times);
-  nt = length(times);
+  PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
+  tt = NUMERIC_POINTER(Times);
+  nt = length(Times);
 
-  PROTECT(xstart = AS_NUMERIC(xstart)); incr_N_Protect();
-  xs  = NUMERIC_POINTER(xstart);
-  neq = length(xstart);
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); incr_N_Protect();
+  xs  = NUMERIC_POINTER(Xstart);
+  neq = length(Xstart);
 
   tmp =  (double *) R_alloc(neq, sizeof(double));
   FF  =  (double *) R_alloc(neq, sizeof(double));
 
-  int  Nout  = (int)REAL(nout)[0]; // n of external outputs if func is in a DLL
-  out  =  (double *) R_alloc(Nout, sizeof(double));
+  int  nout  = (int)REAL(Nout)[0]; // n of external outputs if func is in a DLL
+  out  =  (double *) R_alloc(nout, sizeof(double));
 
-  int Verbose = (int)REAL(verbose)[0];
+  int verbose = (int)REAL(Verbose)[0];
 
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
   // provisional code; copy from call_rkauto
   int isDll = 0;
-  if (inherits(func, "NativeSymbol")) isDll = 1;
+  if (inherits(Func, "NativeSymbol")) isDll = 1;
 
   /**************************************************************************/
   /****** Allocation of Workspace                                      ******/
@@ -997,14 +996,14 @@ SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   f4 = REAL(R_f4);
 
   // matrix for holding the outputs
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + Nout + 1)); incr_N_Protect();
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
 
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
 
-  initParms(initfunc, parms);
+  initParms(Initfunc, Parms);
 
   /**************************************************************************/
   /****** Initialization of Integration Loop                           ******/
@@ -1022,24 +1021,24 @@ SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   for (it = 0; it < nt - 1; it++) {
     t = tt[it];
     dt = tt[it + 1] - t;
-    if (Verbose)
+    if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
-    derivs(func, t, y0, parms, rho, f1, out, 0, neq, Nout, isDll);
+    derivs(Func, t, y0, Parms, Rho, f1, out, 0, neq, nout, isDll);
     for (i = 0; i < neq; i++) {
       f1[i] = dt * f1[i];
       f[i]  = y0[i] + 0.5 * f1[i];
     }
-    derivs(func, t + 0.5*dt, f, parms, rho, f2, out, 0, neq, Nout, isDll);
+    derivs(Func, t + 0.5*dt, f, Parms, Rho, f2, out, 0, neq, nout, isDll);
     for (i = 0; i < neq; i++) {
       f2[i] = dt * f2[i];
       f[i]  = y0[i] + 0.5 * f2[i];
     }
-    derivs(func, t + 0.5*dt, f, parms, rho, f3, out, 0, neq, Nout, isDll);
+    derivs(Func, t + 0.5*dt, f, Parms, Rho, f3, out, 0, neq, nout, isDll);
     for (i = 0; i < neq; i++) {
       f3[i] = dt * f3[i];
       f[i] = y0[i] + f3[i];
     }
-    derivs(func, t + dt, f, parms, rho, f4, out, 0, neq, Nout, isDll);
+    derivs(Func, t + dt, f, Parms, Rho, f4, out, 0, neq, nout, isDll);
     for (i = 0; i < neq; i++) {
       f4[i] = dt * f4[i];
     }
@@ -1063,8 +1062,8 @@ SEXP call_rk4(SEXP xstart, SEXP times, SEXP func, SEXP initfunc,
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(func, t, tmp, parms, rho, FF, out, -1, neq, Nout, isDll);
-    for (i = 0; i < Nout; i++) {
+    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
+    for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }

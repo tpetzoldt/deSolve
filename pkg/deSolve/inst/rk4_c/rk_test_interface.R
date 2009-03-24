@@ -17,6 +17,12 @@ out <- as.data.frame(lsoda(xstart, times, lvmodel, parms,
   hmax=1, atol=1e-6, rtol=1e-6))
 )
 
+## lsoda, Solver C, Model C
+system.time(
+out <- as.data.frame(lsoda(xstart, times, func="dlotka", parms, initfunc="ilotka",
+  hmax=1, atol=1e-6, rtol=1e-6, nout=2,dllname="lotka"))
+)
+
 
 ## rk, Solver R, Model R
 system.time(
@@ -43,6 +49,6 @@ out.c2 <- as.data.frame(rk_c(xstart, times, func="dlotka", parms, initfunc="ilot
 
 # two different models
 par(mfrow=c(2,1))
-matplot(out.c1[,1], out.c[2:4], type="l")
+matplot(out.c1[,1], out.c1[2:4], type="l")
 
 matplot(out.c2[,1], out.c2[2:4], type="l")
