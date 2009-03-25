@@ -1,3 +1,17 @@
+
+
+## ks -> Thpe
+ - who is going to change printODE into "diagnostics" ?
+
+
+
+ - provide some "diagnostics" for runge-kutta functions, although they are quite trivial:
+
+    - number of steps
+    - size of time step
+    - number of function evaluations
+
+
 ## ThPe -> ThPe
 
 - fix stack imbalance in case of aborted integration calls

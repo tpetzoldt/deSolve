@@ -347,8 +347,9 @@ all.equal(out, outJ) # TRUE
   If \code{jactype} = "fullusr" or "bandusr" then the user must supply a
   subroutine \code{jacfunc}.
     
-  The following description of \bold{error control} is adapted from that
-  documentation (input arguments \code{rtol} and \code{atol}, above):
+  The following description of \bold{error control} is adapted from the
+  documentation of the lsoda source code
+  (input arguments \code{rtol} and \code{atol}, above):
     
   The input parameters \code{rtol}, and \code{atol} determine the error
   control performed by the solver.  The solver will control the vector
