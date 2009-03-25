@@ -327,10 +327,10 @@ void initParms(SEXP Initfunc, SEXP Parms) {
 
  void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
    int it_tot, int stage, int fsal, int qerr) {
-
-   istate[12] = it_tot;                  // number of steps
-   istate[13] = it_tot * (stage - fsal); // number of function evaluations
-   istate[15] = qerr;                    // order of the method
+   // note that indices are "C = R - 1"
+   istate[11] = it_tot;                  // number of steps
+   istate[12] = it_tot * (stage - fsal); // number of function evaluations
+   istate[14] = qerr;                    // order of the method
    setAttrib(R_yout, install("istate"), R_istate);
  }
 
@@ -485,7 +485,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
   istate = INTEGER(R_istate);
   istate[0] = 2; // assume succesful return
-  for (i = 1; i < 22; i++) istate[i] = 0;
+  for (i = 0; i < 22; i++) istate[i] = 0;
 
   //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
   //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];

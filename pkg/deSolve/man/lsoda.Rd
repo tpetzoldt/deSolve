@@ -418,7 +418,7 @@ all.equal(out, outJ) # TRUE
   \code{\link{lsodar}}, \code{\link{vode}},
   \code{\link{daspk}}, \code{\link{rk}}.
     
-  \code{\link{printODE}} to print diagnostic messages.
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \note{
   The \file{demo} directory contains some examples of using

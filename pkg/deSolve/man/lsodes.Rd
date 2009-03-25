@@ -452,7 +452,7 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times, lrw = 351,
   \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
   \code{\link{rk}}.
 
-  \code{\link{printODE}} to print diagnostic messages.
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \keyword{math}
 

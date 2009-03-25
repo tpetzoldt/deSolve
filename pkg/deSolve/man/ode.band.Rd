@@ -144,7 +144,7 @@ filled.contour(x = times, y = Distance, DENSITY, color = topo.colors,
   \code{\link{ode.1D}}, for integrating, when the jacobian matrix is
   banded, and where the state variables need to be rearranged.
   
-  \code{\link{printODE}} to print diagnostic messages.
+  \code{\link{diagnostics}} to print diagnostic messages.
 
 }
 \keyword{math}

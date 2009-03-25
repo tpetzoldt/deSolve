@@ -380,7 +380,7 @@ plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
   \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{daspk}},
   \code{\link{rk}}.
   
-  \code{\link{printODE}} to print diagnostic messages.
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \keyword{math}
 

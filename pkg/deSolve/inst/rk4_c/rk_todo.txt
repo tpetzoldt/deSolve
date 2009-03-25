@@ -2,14 +2,27 @@
 
 ## ks -> Thpe
  - who is going to change printODE into "diagnostics" ?
+ -> ThPe, done. 
+    - chanced also prits to cat where appropriate
+    - added rudimentary diagnostics for rk
 
+ - BUT, diagnostics is still an ugly function.
+   We should go to S3 later on, e.g type -> class
+   Note that one out can have several simultanaeous S3 classes,
+   something like:
+
+ class(out) <- c("matrix", "deSolve", "deSolvelsoda")
 
 
  - provide some "diagnostics" for runge-kutta functions, although they are quite trivial:
-
     - number of steps
+    done
+
     - size of time step
+    ** todo **
+
     - number of function evaluations
+    done
 
 
 ## ThPe -> ThPe

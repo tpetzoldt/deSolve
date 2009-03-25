@@ -512,7 +512,7 @@ max(abs(DAE-DAE2))
   \code{\link{lsoda}}, \code{\link{lsodar}},
   \code{\link{lsode}}, \code{\link{lsodes}}, \code{\link{vode}}
 
-  \code{\link{printODE}} to print diagnostic messages.
+  \code{\link{diagnostics}} to print diagnostic messages.
 
 }
 \note{

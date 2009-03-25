@@ -170,5 +170,6 @@ rk_c <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         increase maxsteps, increase atol/rtol, check your equations
         or select an alternative algorithm.
         ")
+    attr(out, "type")   <- "rk"
     out
 }

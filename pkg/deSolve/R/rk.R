@@ -104,5 +104,6 @@ rk <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     }
     dimnames(out) <- list(NULL, nm)
     attr(out, "istate") <- istate
+    attr(out, "type")   <- "rk"
     out
 }
