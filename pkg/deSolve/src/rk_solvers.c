@@ -484,7 +484,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int *istate;
   PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
   istate = INTEGER(R_istate);
-  istate[0] = 2; // assume succesful return
+  istate[0] = 0; // assume succesful return
   for (i = 0; i < 22; i++) istate[i] = 0;
 
   //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
@@ -688,13 +688,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   // attach essential internal information (codes are compatible to lsoda)
   // ToDo: respect function evaluations due to external outputs
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
-/*
-  istate[12] = it_tot;                  // number of steps
-  istate[13] = it_tot * (stage - fsal); // number of function evaluations
-  istate[15] = qerr;                    // order of the method
 
-  setAttrib(R_yout, install("istate"), R_istate);
-*/
   // release R resources
   if (verbose) Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n",
     it, it_ext, it_tot);
@@ -705,10 +699,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 }
 
 //----------------------------------------------------------------------------
-  SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
-    SEXP Parms, SEXP Nout, SEXP Rho,
-    SEXP Tcrit, SEXP Verbose, SEXP Hini, SEXP Rpar, SEXP Ipar,
-    SEXP Method, SEXP Maxsteps) {
+SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
+  SEXP Parms, SEXP Nout, SEXP Rho,
+  SEXP Tcrit, SEXP Verbose, SEXP Hini, SEXP Rpar, SEXP Ipar,
+  SEXP Method, SEXP Maxsteps) {
 
   /**  Initialization **/
   init_N_Protect();
@@ -789,6 +783,17 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   yout = REAL(R_yout);
   // initialize outputs with NA first
   for (i=0; i< nt*(neq+1); i++) yout[i] = NA_REAL;
+
+  // attribute that stores state information, similar to lsoda
+  SEXP R_istate;
+  int *istate;
+  PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
+  istate = INTEGER(R_istate);
+  istate[0] = 0; // assume succesful return
+  for (i = 0; i < 22; i++) istate[i] = 0;
+
+  //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
+  //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];
 
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
@@ -914,6 +919,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
+  // attach essential internal information (codes are compatible to lsoda)
+  // ToDo: respect function evaluations due to external outputs
+  // ToDo: fsal; it_tot; qerr
+  //setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
+
 
   // release R resources
   if (verbose) {
@@ -999,6 +1009,17 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
 
+  // attribute that stores state information, similar to lsoda
+  SEXP R_istate;
+  int *istate;
+  PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
+  istate = INTEGER(R_istate);
+  istate[0] = 0; // assume succesful return
+  for (i = 0; i < 22; i++) istate[i] = 0;
+
+  //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
+  //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];
+
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
@@ -1067,6 +1088,11 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
+  // attach essential internal information (codes are compatible to lsoda)
+  // ToDo: respect function evaluations due to external outputs
+  // ToDo: it_tot; stage; fsal; qerr
+  //setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
+
   // release R resources
   unprotect_all();
   //init_N_Protect();
