@@ -34,6 +34,9 @@ SEXP getInputs(SEXP symbol, SEXP Rho);
 
 SEXP getListElement(SEXP list, const char *str);
 
+void blas_matprod1(double *x, int nrx, int ncx,
+		    double *y, int nry, int ncy, double *z);
+
 void matprod(int m, int n, int o, double* a, double* b, double* c);
 
 double maxdiff(double *x, double *y, int n);
@@ -57,17 +60,3 @@ void initParms(SEXP Initfunc, SEXP Parms);
 void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
   int it_tot, int stage, int fsal, int qerr);
   
-
-/* a reduced version of blas_matprod without NA checking */
-static void blas_matprod1(double *x, int nrx, int ncx,
-		    double *y, int nry, int ncy, double *z) {
-    const char *transa = "N", *transb = "N";
-    int i;
-    double one = 1.0, zero = 0.0;
-
-    if (nrx > 0 && ncx > 0 && nry > 0 && ncy > 0) {
-	    F77_CALL(dgemm)(transa, transb, &nrx, &ncy, &ncx, &one,
-			    x, &nrx, y, &nry, &zero, z, &nrx);
-    } else /* zero-extent operations should return zeroes */
-    	for(i = 0; i < nrx*ncy; i++) z[i] = 0;
-}

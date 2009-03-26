@@ -8,7 +8,7 @@
 SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP Parms, SEXP Nout, SEXP Rho,
   SEXP Rtol, SEXP Atol, SEXP Tcrit, SEXP Verbose,
-  SEXP Hmin, SEXP hmax, SEXP Hini, SEXP Rpar, SEXP Ipar,
+  SEXP Hmin, SEXP Hmax, SEXP Hini, SEXP Rpar, SEXP Ipar,
   SEXP Method, SEXP Maxsteps) {
 
   /**  Initialization **/
@@ -43,7 +43,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   double  tcrit = REAL(Tcrit)[0];
   double  hmin  = REAL(Hmin)[0];
-  double  Hmax  = REAL(hmax)[0];
+  double  hmax  = REAL(Hmax)[0];
   double  hini  = REAL(Hini)[0];
   int  maxsteps = (int)REAL(Maxsteps)[0];
   int  nout     = (int)REAL(Nout)[0]; // number of external outputs is func is in a DLL
@@ -160,7 +160,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
   //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];
 
-
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
@@ -182,8 +181,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   t = tt[0];
   tmax = fmax(tt[nt], tcrit);
-  dt = fmin(Hmax, hini);
-  Hmax = fmin(Hmax, tmax - t);
+  dt = fmin(hmax, hini);
+  hmax = fmin(hmax, tmax - t);
 
  // Initialization of work arrays (to be on the safe side, remove this later)
   for (i = 0; i < neq; i++)  {
@@ -259,11 +258,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     accept =TRUE;
     if (err < 1.0e-20) {  // this will probably never occur
       accept = TRUE;
-      dtnew = Hmax;
+      dtnew = hmax;
       //Rprintf("dtnew %e -- =0=   ", dtnew);
     } else if (err < 1.0) {
       accept = TRUE;
-      dtnew = fmin(Hmax, dt * 0.9 * pow(err, -1.0/qerr)); // 1/qerr
+      dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr)); // 1/qerr
       //Rprintf("dtnew %e  (++)   \n", dtnew);
     } else if (err > 1.0) {
       accept = FALSE;
@@ -346,7 +345,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   /* call derivs again to get external outputs                              */
   /**************************************************************************/
-  // j = -1 suppresses internal copying
+  // j = -1 suppresses unnecessary internal copying
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];

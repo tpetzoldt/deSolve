@@ -80,6 +80,22 @@ SEXP getListElement(SEXP list, const char *str) {
 /*   Arithmetic utilities                                                     */
 /*============================================================================*/
 
+/* a reduced version without NA checking */
+void blas_matprod1(double *x, int nrx, int ncx,
+		    double *y, int nry, int ncy, double *z)
+{
+    const char *transa = "N", *transb = "N";
+    int i;
+    double one = 1.0, zero = 0.0;
+
+    if (nrx > 0 && ncx > 0 && nry > 0 && ncy > 0) {
+	    F77_CALL(dgemm)(transa, transb, &nrx, &ncy, &ncx, &one,
+			    x, &nrx, y, &nry, &zero, z, &nrx);
+    } else /* zero-extent operations should return zeroes */
+    	for(i = 0; i < nrx*ncy; i++) z[i] = 0;
+}
+
+
 /* -- Simple Matrix Multiplikation ------------------------------------------ */
 void matprod(int m, int n, int o, double* a, double* b, double* c) {
   int i, j, k;
@@ -157,7 +173,7 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
 }
 
 /*============================================================================*/
-/*   Interpolation functions
+/*   Interpolation functions                                                  */
 /*============================================================================*/
 
 /*----------------------------------------------------------------------------*/
@@ -199,7 +215,6 @@ void densout(double *r, double t0, double t, double dt, double* res, int neq) {
 /*                                                                            */
 /*    ToDo: check if ringbuffer is faster; rewrite eventually                 */
 /*----------------------------------------------------------------------------*/
-
 void neville(double *xx, double *y, double tnew, double *ynew, int n, int ksig) {
   int i, j, k;
   double x[n];
@@ -221,7 +236,7 @@ void neville(double *xx, double *y, double tnew, double *ynew, int n, int ksig) 
 }
 
 /*============================================================================*/
-/*   Specific utility functions
+/*   Specific utility functions                                               */
 /*============================================================================*/
 
 void shiftBuffer (double *x, int n, int k) {
@@ -242,10 +257,10 @@ void initParms(SEXP Initfunc, SEXP Parms) {
 
 void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
   int it_tot, int stage, int fsal, int qerr) {
-  // note that indices are "C = R - 1"
-  istate[11] = it_tot;                  // number of steps
-  istate[12] = it_tot * (stage - fsal); // number of function evaluations
-  istate[14] = qerr;                    // order of the method
+  /* note that indices are 1 smaller in C than in R  */
+  istate[11] = it_tot;                  /* number of steps */
+  istate[12] = it_tot * (stage - fsal); /* number of function evaluations */
+  istate[14] = qerr;                    /* order of the method */
   setAttrib(R_yout, install("istate"), R_istate);
 }
 

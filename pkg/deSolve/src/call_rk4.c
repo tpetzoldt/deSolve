@@ -27,7 +27,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int i = 0, it=0, nt = 0, neq=0;
 
   /**************************************************************************/
-  /****** Check Arguments and Convert to C types                       ******/
+  /****** Processing of Arguments                                      ******/
   /**************************************************************************/
 
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
@@ -157,11 +157,9 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   }
   // attach essential internal information (codes are compatible to lsoda)
   // ToDo: respect function evaluations due to external outputs
-  // ToDo: it_tot; stage; fsal; qerr
-  //setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
+  setIstate(R_yout, R_istate, istate, it, 4, 0, 4);
 
   // release R resources
   unprotect_all();
-  //init_N_Protect();
   return(R_yout);
 }

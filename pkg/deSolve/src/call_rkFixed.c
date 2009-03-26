@@ -20,6 +20,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double *y0,  *y1, *dy1, *out, *yout;
 
   double t, dt, t_ext, tmax;
+  int fsal=0; // fixed step methods have no FSAL
 
   int i = 0, j=0, j1=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int one=1;
@@ -47,6 +48,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
 
+  double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
@@ -88,7 +90,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
   // initialize outputs with NA first
-  for (i=0; i< nt*(neq+1); i++) yout[i] = NA_REAL;
+  for (i = 0; i < nt * (neq + 1); i++) yout[i] = NA_REAL;
 
   // attribute that stores state information, similar to lsoda
   SEXP R_istate;
@@ -220,15 +222,13 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
     derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
-    //Rprintf("%d %e %e \n", j, out[0], out[1]);
     for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
   // attach essential internal information (codes are compatible to lsoda)
   // ToDo: respect function evaluations due to external outputs
-  // ToDo: fsal; it_tot; qerr
-  //setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
+  setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
 
   // release R resources
@@ -237,6 +237,5 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     Rprintf("Maxsteps %d\n", maxsteps);
   }
   unprotect_all();
-  //init_N_Protect();
   return(R_yout);
 }
