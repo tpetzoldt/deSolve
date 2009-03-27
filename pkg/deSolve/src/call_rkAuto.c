@@ -88,7 +88,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int ntot = 0;
   int isOut = 0; //?? do I need this?
   int lrpar= 0, lipar = 0;
-  int *ipar;
+  int *ipar = NULL;
 
   // testing code from lsoda
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
@@ -102,12 +102,13 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     isDll = 0;
     isOut = 0;
     ntot = neq;
-    lipar = 1;
+    lipar = 3; // in lsoda: 1;
     lrpar = 1;
   }
+  //out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
-  if (isDll ==1) {
+//  if (isDll ==1) {
     ipar[0] = nout;              /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
@@ -117,7 +118,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
        other elements are set in R-function lsodx via argument *rpar* */
     // for (j = 0; j < nout; j++)         out[j] = 0.;                  //???
     // for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];  //???
-  }
+//  }
   // end new testing code
 
   /**************************************************************************/
@@ -224,7 +225,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
         }
         /******  Compute Derivatives ******/
         // pass option to avoid unnecessary copying in derivs
-        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, nout, isDll);
+        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
     }
 
     /************************************************************************/
@@ -349,7 +350,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
+    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll);
     for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }

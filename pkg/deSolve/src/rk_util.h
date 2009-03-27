@@ -44,7 +44,7 @@ double maxdiff(double *x, double *y, int n);
 double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n);
 
 void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
-	    double *ydot, double *yout, int j, int neq, int nout, int isDll);
+	    double *ydot, double *yout, int j, int neq, int *ipar, int isDll);
 	    
 void denspar(double *FF, double *y0, double *y1, double dt, double *d,
   int neq, int stage, double *r);

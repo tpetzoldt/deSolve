@@ -60,9 +60,41 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
-  // provisional code; copy from call_rkauto
   int isDll = 0;
-  if (inherits(Func, "NativeSymbol")) isDll = 1;
+  int ntot = 0;
+  int isOut = 0; //?? do I need this?
+  int lrpar= 0, lipar = 0;
+  int *ipar = NULL;
+
+  // testing code from lsoda
+  if (inherits(Func, "NativeSymbol")) { /* function is a dll */
+    isDll = 1;
+    if (nout > 0) isOut = 1;
+    ntot  = neq + nout;          /* length of yout */
+    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
+    lipar = 3 + LENGTH(Ipar);    /* length of ipar */
+
+  } else {                              /* function is not a dll */
+    isDll = 0;
+    isOut = 0;
+    ntot = neq;
+    lipar = 3; // in lsoda: 1;
+    lrpar = 1;
+  }
+  ipar  = (int *) R_alloc(lipar, sizeof(int));
+
+//  if (isDll ==1) {
+    ipar[0] = nout;              /* first 3 elements of ipar are special */
+    ipar[1] = lrpar;
+    ipar[2] = lipar;
+    /* other elements of ipar are set in R-function lsodx via argument *ipar* */
+    for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
+    /* first Nout elements of rpar reserved for output variables
+       other elements are set in R-function lsodx via argument *rpar* */
+    // for (j = 0; j < nout; j++)         out[j] = 0.;                  //???
+    // for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];  //???
+//  }
+  // end new testing code
 
   /**************************************************************************/
   /****** Allocation of Workspace                                      ******/
@@ -161,7 +193,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
           tmp[i] = Fj[i] + y0[i];
         }
         /******  Compute Derivatives ******/
-        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, nout, isDll);
+        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
     }
 
     /************************************************************************/
@@ -221,7 +253,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, nout, isDll);
+    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll);
     for (i = 0; i < nout; i++) {
       yout[j + nt * (1 + neq + i)] = out[i];
     }

@@ -132,23 +132,24 @@ double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
 /*   CALL TO THE MODEL FUNCTION                                             */
 /*==========================================================================*/
 void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
-	    double *ydot, double *yout, int j, int neq, int nout, int isDll) {
+	    double *ydot, double *yout, int j, int neq, int *ipar, int isDll) {
   SEXP Val, R_fcall;
   SEXP R_t;
   SEXP R_y;
   int i = 0;
+  int nout = ipar[0];
   double *yy;
   double ytmp[neq];
 
-  if (isDll)  {
+  // Rprintf("i0, i1, i2, %d  %d  %d\n", ipar[0], ipar[1], ipar[2]);
+
+  if (isDll) {
     /*------------------------------------------------------------------------*/
     /*   Function is a DLL function                                           */
     /*------------------------------------------------------------------------*/
     deriv_func *cderivs;
     cderivs = (deriv_func *) R_ExternalPtrAddr(Func);
-    //  ToDo: int nout --> int* iout
-    //  for comparison: lsoda_derivs(N, t, y, ydot, yout, iout)
-    cderivs (&neq, &t, y, ytmp, yout, &nout);
+    cderivs(&neq, &t, y, ytmp, yout, ipar);
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = ytmp[i];
   } else {

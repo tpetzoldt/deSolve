@@ -323,7 +323,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
   dimnames(out) <- list(nm,NULL)
     
-  if (verbose)  printODE(attributes(out))
+  if (verbose) diagnostics(out)
 
   t(out)
 }

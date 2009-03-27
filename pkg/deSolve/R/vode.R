@@ -336,7 +336,7 @@ vode          <- function(y, times, func, parms,
   attr(out, "type") <- "vode"
 
   dimnames(out) <- list(nm, NULL)
-  if (verbose) printODE(attributes(out))
+  if (verbose) diagnostics(out)
 
   return(t(out))
 

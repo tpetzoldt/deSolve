@@ -411,7 +411,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
   attr(out, "type") <- "daspk"
   dimnames(out) <- list(nm, NULL)
 
-  if (verbose)  printODE(attributes(out))
+  if (verbose) diagnostics(out)
 
   return(t(out))
 }

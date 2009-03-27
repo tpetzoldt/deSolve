@@ -3,11 +3,11 @@
 ## ks -> Thpe
  - who is going to change printODE into "diagnostics" ?
  -> ThPe, done. 
-    - chanced also prits to cat where appropriate
+    - changed also print to cat where appropriate
     - added rudimentary diagnostics for rk
 
  - BUT, diagnostics is still an ugly function.
-   We should go to S3 later on, e.g type -> class
+   We may ?? go to S3 later on, e.g type -> class
    Note that one out can have several simultanaeous S3 classes,
    something like:
 
@@ -39,6 +39,7 @@
   hmax = tmax - tmin / 4 (or better 5?)
   
 - pass istate back to calling function
+  -> done
 
 - modularize rk_auto
 
@@ -66,6 +67,7 @@ avoids the testing whether a function is a DLL ( inherits(func,
 
 I have the impression that output variables from C-code are not saved
 here.
+--> ThPe: I don't understand what you mean
 
 Also, in lsoda, the "output variables" from R-code are set in R itself
 (e.g. the function is called from R), not in C/fortran. 
@@ -74,14 +76,13 @@ I remember that I tested whether that affected performance, and it did
 not - or was even slightly faster that way (and perhaps less memory is
 also required). So I left it the way it was in odesolve. It avoids the
 copying from/to C-variables. 
+--> I see, but I leave it in C for now.
 
 In C-code Nout is supposed to be a vector with at least 3 variables; in
 your cderivs it appears to be one number?
 
 - ThPe: yes, only the first element was passed
---> ** work in progress; to be continued **
-
-[...]
+--> should work now; still needs some cleanup
 
 Part from the vignette compiledcode:
 
@@ -99,3 +100,5 @@ ipar and rpar;
 
 These of course have to be correctly passed to the C/fortran
 functions).
+
+## ThPe --> ThPe: pass also rpar (via out)
