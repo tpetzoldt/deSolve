@@ -121,8 +121,10 @@ double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
     scal  = Atol[i] +  fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; /* min?? */
     delta = fabs(y2[i] - y1[i]);
     /* check the following !!! */
-    err   = fmax(err, delta / scal);
-    serr  = err + pow(delta/scal, 2.0);
+    if (scal > 0) {
+      err   = fmax(err, delta / scal);
+      serr  = err + pow(delta/scal, 2.0);
+    }
   }
   err = sqrt(serr); /* euclidean norm */
   return(err);

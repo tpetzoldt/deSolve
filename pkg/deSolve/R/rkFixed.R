@@ -2,6 +2,9 @@
 ### rkFixed
 ### Generalized solver for Runge-Kutta methods with fixed time step
 ### This function is internal and not intended to be called directly.
+###
+### NOTE: this is a deprecated implementation in pure R;
+###       it will be removed in the near future
 
 
 

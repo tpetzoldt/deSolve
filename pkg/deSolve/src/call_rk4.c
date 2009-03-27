@@ -42,48 +42,56 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   FF  =  (double *) R_alloc(neq, sizeof(double));
 
   int  nout  = (int)REAL(Nout)[0]; // n of external outputs if func is in a DLL
-  out  =  (double *) R_alloc(nout, sizeof(double));
+  //out  =  (double *) R_alloc(nout, sizeof(double));
 
   int verbose = (int)REAL(Verbose)[0];
 
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
-
-  int isDll = 0;
-  int ntot = 0;
-  int isOut = 0; //?? do I need this?
+  int isDll = FALSE;
+  int ntot  =  0;
+  int isOut = FALSE; //?? do I need this?
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
-  // testing code from lsoda
+  // code adapted from lsoda to improve compatibility
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
-    isDll = 1;
-    if (nout > 0) isOut = 1;
-    ntot  = neq + nout;          /* length of yout */
-    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
-    lipar = 3 + LENGTH(Ipar);    /* length of ipar */
+    isDll = TRUE;
+    if (nout > 0) isOut = TRUE;
+    ntot  = neq + nout;           /* length of yout */
+    lrpar = nout + LENGTH(Rpar);  /* length of rpar; LENGTH(Rpar) is always >0 */
+    lipar = 3    + LENGTH(Ipar);  /* length of ipar */
 
   } else {                              /* function is not a dll */
-    isDll = 0;
-    isOut = 0;
+    isDll = FALSE;
+    isOut = FALSE;
     ntot = neq;
-    lipar = 3; // in lsoda: 1;
-    lrpar = 1;
+    lipar = 3;    // in lsoda = 1;
+    lrpar = nout; // in lsoda = 1;
   }
+  out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
 //  if (isDll ==1) {
-    ipar[0] = nout;              /* first 3 elements of ipar are special */
-    ipar[1] = lrpar;
-    ipar[2] = lipar;
+  ipar[0] = nout;              /* first 3 elements of ipar are special */
+  ipar[1] = lrpar;
+  ipar[2] = lipar;
+  if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* first Nout elements of rpar reserved for output variables
-       other elements are set in R-function lsodx via argument *rpar* */
-    // for (j = 0; j < nout; j++)         out[j] = 0.;                  //???
-    // for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];  //???
-//  }
+    /* rpar is passed via "out" which is IMHO a crude hack.
+       There are, of course more elegant methods *here*, because
+       we have full control over the rk codes.
+       However, for this code was required for the other codes,
+       because it would be unwise to re-implement these highly efficient
+       codes from scratch again.
+       
+       out: first nout elements of out are reserved for output variables
+       other elements are set via argument *rpar* */
+    for (j = 0; j < nout; j++)         out[j] = 0.0;                
+    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
+  }
   // end new testing code
 
   /**************************************************************************/

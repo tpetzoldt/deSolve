@@ -61,39 +61,48 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
   int isDll = 0;
-  int ntot = 0;
+  int ntot  = 0;
   int isOut = 0; //?? do I need this?
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
   // testing code from lsoda
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
-    isDll = 1;
-    if (nout > 0) isOut = 1;
-    ntot  = neq + nout;          /* length of yout */
-    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
-    lipar = 3 + LENGTH(Ipar);    /* length of ipar */
+    isDll = TRUE;
+    if (nout > 0) isOut = TRUE;
+    ntot  = neq + nout;           /* length of yout */
+    lrpar = nout + LENGTH(Rpar);  /* length of rpar; LENGTH(Rpar) is always >0 */
+    lipar = 3    + LENGTH(Ipar);  /* length of ipar */
 
   } else {                              /* function is not a dll */
-    isDll = 0;
-    isOut = 0;
+    isDll = FALSE;
+    isOut = FALSE;
     ntot = neq;
-    lipar = 3; // in lsoda: 1;
-    lrpar = 1;
+    lipar = 3;    // in lsoda = 1;
+    lrpar = nout; // in lsoda = 1;
   }
+  out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
 //  if (isDll ==1) {
-    ipar[0] = nout;              /* first 3 elements of ipar are special */
-    ipar[1] = lrpar;
-    ipar[2] = lipar;
+  ipar[0] = nout;              /* first 3 elements of ipar are special */
+  ipar[1] = lrpar;
+  ipar[2] = lipar;
+  if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* first Nout elements of rpar reserved for output variables
-       other elements are set in R-function lsodx via argument *rpar* */
-    // for (j = 0; j < nout; j++)         out[j] = 0.;                  //???
-    // for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];  //???
-//  }
+    /* rpar is passed via "out" which is IMHO a crude hack.
+       There are, of course more elegant methods *here*, because
+       we have full control over the rk codes.
+       However, for this code was required for the other codes,
+       because it would be unwise to re-implement these highly efficient
+       codes from scratch again.
+       
+       out: first nout elements of out are reserved for output variables
+       other elements are set via argument *rpar* */
+    for (j = 0; j < nout; j++)         out[j] = 0.0;                
+    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
+  }
   // end new testing code
 
   /**************************************************************************/
@@ -109,7 +118,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   FF  =  (double *) R_alloc(neq * stage, sizeof(double));
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
-  out  =  (double *) R_alloc(nout, sizeof(double));
+  // ThPe: not more necessary, see above
+  //out  =  (double *) R_alloc(nout, sizeof(double));
 
   // matrix for polynomial interpolation
   int nknots = 4;  // 3rd order polynomials
@@ -196,10 +206,19 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
         derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
     }
 
-    /************************************************************************/
-    /* Estimation of new values                                             */
-    /************************************************************************/
-    // use BLAS with reduced error checking
+    /*====================================================================*/
+    /* Estimation of new values                                           */
+    /*====================================================================*/
+
+    // -- alternative 1: hand-made
+    //matprod(neq, stage, one, FF, bb1, dy1);
+    //matprod(neq, stage, one, FF, bb2, dy2);
+
+    // -- alternative 2: use BLAS
+    //blas_matprod(FF, neq, stage, bb1, stage, one, dy1);
+    //blas_matprod(FF, neq, stage, bb2, stage, one, dy2);
+
+    // -- alternative 3: use BLAS with reduced error checking
     blas_matprod1(FF, neq, stage, bb1, stage, one, dy1);
 
     it_tot++; // count total number of time steps
@@ -207,9 +226,14 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       y1[i] = y0[i] +  dt * dy1[i];
     }
 
-    /************************************************************************/
-    /****** Interpolation and Data Storage                             ******/
-    /************************************************************************/
+    /*====================================================================*/
+    /*      Interpolation and Data Storage                                */
+    /*====================================================================*/
+
+      /*--------------------------------------------------------------------*/
+      /* only "Neville-Aitken-Interpolation"; all fixed step integrators    */
+      /* without dense output                                               */
+      /*--------------------------------------------------------------------*/
     // (1) collect number "nknots" of knots in advanve
     yknots[iknots] = t + dt;   // time in first column
     for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y1[i];
@@ -230,9 +254,9 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
      }
      shiftBuffer(yknots, nknots, neq + 1);
     }
-    /**********************************************************************/
+    /*--------------------------------------------------------------------*/
     /* next time step                                                     */
-    /**********************************************************************/
+    /*--------------------------------------------------------------------*/
     t = t + dt;
     it++;
     for (i=0; i < neq; i++) y0[i] = y1[i];
@@ -246,9 +270,9 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   } while (t < tmax); // end of rk main loop
 
-  /**************************************************************************/
-  /* call derivs again to get external outputs                              */
-  /**************************************************************************/
+  /*====================================================================*/
+  /* call derivs again to get external outputs                          */
+  /*====================================================================*/
   // j = -1 suppresses unnecessary internal copying
   for (int j = 0; j < nt; j++) {
     t = yout[j];

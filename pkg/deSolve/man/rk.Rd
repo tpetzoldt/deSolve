@@ -1,6 +1,6 @@
 \name{rk}
 \alias{rk}
-\alias{rk_c} % compare rk and rk_r and finally remove the pure R version
+\alias{rk_r} % compare rk and rk_r and finally remove the pure R version
 
 \title{Explicit One-Step Solvers for Ordinary Differential Equations
 (ODE)}
@@ -22,15 +22,16 @@
   \code{\link[nlme]{nlme}}
 }
 \usage{
-rk(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
-  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax,
-  method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
-
-rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
+rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
   tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames = TRUE,
   method = rkMethod("rk45dp7", ... ), maxsteps = 5000, dllname = NULL,
   initfunc = dllname, initpar = parms, rpar = NULL, ipar = NULL,
   nout = 0, outnames = NULL, ...)
+
+rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
+  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax,
+  method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
+
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -152,8 +153,7 @@ rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
   reasons.  For most practical cases, solvers of the Livermore family
   (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
   \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}) are
-  superior because of higher efficiency and faster implementation
-  (FORTRAN and C; but see Note below).
+  superior and more thoroughly tested; in most cases they are also faster).
 
   In addition to this, some of the Livermore solvers are also suitable
   for stiff ODEs, differential algebraic equations (DAEs), or partial
@@ -222,15 +222,17 @@ rk_c(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
 }
 
 \note{
-  The variant \code{rk4_c} is a new implementation in C that is faster
-  and has additional functionality.
   
-  It is still under development and \emph{highly experimental}, so please
-  be very careful!!! However, testers are welcome, please report errors
-  and improvements.
+  The variant \code{rk4_r} is a previous implementation in pure R that
+  is slower and has less functionality, but can be used to understand
+  how the algorithms work in general.
+  
+  The recent C implementation is still under development and
+  \emph{highly experimental}, so please be very careful! Testers are
+  welcome, please report errors and improvements.
 
-  Arguments rpar and ipar are provided for future compatibility with
-  lsoda, but not yet functional.
+  Arguments rpar and ipar are provided for compatibility with lsoda, but
+  not yet thoroughly tested.
 }
 
 \references{
@@ -338,26 +340,22 @@ par(mfrow = mf)
 
 
 ## ------------------------------------
-## C implementation of the integrators
+## R implementation of the integrators
 ## ------------------------------------
 
 system.time({
 ## Euler method
-out1  <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+out1  <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
                           hini = 0.1, method = "euler"))
 
 ## classical Runge-Kutta 4th order
-out2 <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+out2 <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
                          hini = 1, method = "rk4"))
 
 ## Dormand-Prince method of order 5(4)
-out3 <- as.data.frame(rk_c(xstart, times, lvmodel, parms,
+out3 <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
                          hmax = 1, method = "rk45dp7"))
 })
-
-## only 15% faster for *this* example; but rk_c allows also compiled
-## code and has better interpolation (for some of the methods)
-
 
 mf <- par(mfrow = c(2,2))
 plot (out1$time, out1$S, type = "l", ylab = "Substrate")
