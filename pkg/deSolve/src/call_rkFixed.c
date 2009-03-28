@@ -198,19 +198,18 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       dt = tt[it] - tt[it-1];
 
     /******  Prepare Coefficients from Butcher table ******/
+    /* NOTE must be given as subdiagonal, not matrix !!!  */
     for (j = 0; j < stage; j++) {
-      for(i = 0; i < neq; i++) Fj[i] = 0;
-        k = 0;
-        while(k < j) {
-          for(i = 0; i < neq; i++)
-            Fj[i] = Fj[i] + A[j + stage * k] * FF[i + neq * k] * dt;
-          k++;
-        }
-        for (int i = 0; i < neq; i++) {
-          tmp[i] = Fj[i] + y0[i];
-        }
-        /******  Compute Derivatives ******/
-        derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
+      if (j == 0) 
+        for(i = 0; i < neq; i++) Fj[i] = 0;
+      else
+        for(i = 0; i < neq; i++)
+          Fj[i] = A[j] * FF[i + neq * (j - 1)] * dt;
+      for (int i = 0; i < neq; i++) {
+        tmp[i] = Fj[i] + y0[i];
+      }
+      /******  Compute Derivatives ******/
+      derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
     }
 
     /*====================================================================*/
