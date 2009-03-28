@@ -32,30 +32,43 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     if (is.character(method)) method <- rkMethod(method)
 
-    ### new checks, validate this
+    ## new checks, validate this
     if (is.null(tcrit)) tcrit <- max(times)
-    if (is.null(initfunc)) Initfunc <- NULL  ## :-(
 
-    ### model and jacobian function
+    ## ThPe: improve this !
+    if (!is.null(method$interpolation) && !method$interpolation) { # interpolation not disabled?
+      cat("\nMethod without or with disabled interpolation\n")
+    } else {
+      trange <- diff(range(times))
+      if ((is.null(method$d) &                                     # has no "dense output"?
+        (hmax > 0.2 * trange))) {                                  # time steps too large?
+        hini <- hmax <- 0.2 * trange
+        if (hmin < hini) hmin <- hini
+        cat("\nNote: Method ", method$ID,
+            " needs intermediate steps for interpolation\n")
+        cat("hmax decreased to", hmax, "\n")
+      }
+    }
+
+    ## Model as shared object (DLL)?
     Ynames <- attr(y,"names")
     Initfunc <- NULL
     if(!is.null(dllname)) {
       if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
-         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) {
+          is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) {
         Initfunc <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
        } else if (initfunc != dllname && ! is.null(initfunc))
-         stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+         stop(paste("cannot integrate: initfunc not loaded ", initfunc))
     }
 
-    ## If func is a character vector, then
-    ## copy its value to funcname
-    ## check to make sure it describes
-    ## a function in a loaded dll
+    ## If func is a character vector, then copy its value to funcname
+    ## check to make sure it describes a function in a loaded dll
     if (is.character(func)) {
       funcname <- func
       ## get the pointer and put it in func
       if(is.loaded(funcname, PACKAGE = dllname)) {
-        ## thpe: Func2 ??? remove redundant copy
+        ## ThPe: Func *and* Func2 not needed both as we do it differently here
+        ##  --> remove redundant copy
         Func2 <- Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
         } else stop(paste("cannot integrate: dyn function not loaded",funcname))
 
@@ -164,7 +177,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     dimnames(out) <- list(NULL, nm)
     istate <- attr(out, "istate")
     if (!is.null(istate) && istate[1] == -1)
-      stop("
+      warning("
         An excessive amount of work (> maxsteps ) was done,
         but integration was not successful -
         increase maxsteps, increase atol/rtol, check your equations
