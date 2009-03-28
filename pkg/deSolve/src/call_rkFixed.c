@@ -20,9 +20,12 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double *y0,  *y1, *dy1, *out, *yout;
 
   double t, dt, t_ext, tmax;
-  int fsal=0; // fixed step methods have no FSAL
 
-  int i = 0, j=0, j1=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
+  SEXP Interpolate;
+  int fsal = FALSE;       // fixed step methods have no FSAL
+  int interpolate = TRUE; // polynomial interpolation is done by default
+
+  int i = 0, j=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int one=1;
 
   /**************************************************************************/
@@ -47,8 +50,12 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
+  
+  PROTECT(Interpolate = getListElement(Method, "interpolate")); incr_N_Protect();
+  if (length(Interpolate)) interpolate = INTEGER(Interpolate)[0];
 
   double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
@@ -191,7 +198,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       dt = tt[it] - tt[it-1];
 
     /******  Prepare Coefficients from Butcher table ******/
-    for (j = j1; j < stage; j++) {
+    for (j = 0; j < stage; j++) {
       for(i = 0; i < neq; i++) Fj[i] = 0;
         k = 0;
         while(k < j) {
@@ -210,15 +217,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /* Estimation of new values                                           */
     /*====================================================================*/
 
-    // -- alternative 1: hand-made
-    //matprod(neq, stage, one, FF, bb1, dy1);
-    //matprod(neq, stage, one, FF, bb2, dy2);
-
-    // -- alternative 2: use BLAS
-    //blas_matprod(FF, neq, stage, bb1, stage, one, dy1);
-    //blas_matprod(FF, neq, stage, bb2, stage, one, dy2);
-
-    // -- alternative 3: use BLAS with reduced error checking
+    // use BLAS with reduced error checking
     blas_matprod1(FF, neq, stage, bb1, stage, one, dy1);
 
     it_tot++; // count total number of time steps
@@ -229,37 +228,59 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /*====================================================================*/
     /*      Interpolation and Data Storage                                */
     /*====================================================================*/
-
-      /*--------------------------------------------------------------------*/
-      /* only "Neville-Aitken-Interpolation"; all fixed step integrators    */
-      /* without dense output                                               */
-      /*--------------------------------------------------------------------*/
-    // (1) collect number "nknots" of knots in advanve
-    yknots[iknots] = t + dt;   // time in first column
-    for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y1[i];
-    if (iknots < (nknots - 1)) {
-      iknots++;
-    } else {
-     // (2) do polynomial interpolation
-     t_ext = tt[it_ext];
-     while (t_ext <= t + dt) { // <= ??
-      neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
-      // (3) store outputs
-      if (it_ext < nt) {
-        yout[it_ext] = t_ext;
-        for (i = 0; i < neq; i++)
-          yout[it_ext + nt * (1 + i)] = tmp[i];
+    if (interpolate) {
+      /*------------------------------------------------------------------*/
+      /* "Neville-Aitken-Interpolation";                                  */
+      /* the fixed step integrators have no dense output                  */
+      /*------------------------------------------------------------------*/
+      // (1) collect number "nknots" of knots in advanve
+      yknots[iknots] = t + dt;   // time in first column
+      for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y1[i];
+      if (iknots < (nknots - 1)) {
+        iknots++;
+      } else {
+       // (2) do polynomial interpolation
+       t_ext = tt[it_ext];
+       while (t_ext <= t + dt) { // <= ??
+        neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
+        // (3) store outputs
+        if (it_ext < nt) {
+          yout[it_ext] = t_ext;
+          for (i = 0; i < neq; i++)
+            yout[it_ext + nt * (1 + i)] = tmp[i];
+        }
+        if(it_ext < nt) t_ext = tt[++it_ext]; else break;
+       }
+       shiftBuffer(yknots, nknots, neq + 1);
       }
-      if(it_ext < nt) t_ext = tt[++it_ext]; else break;
-     }
-     shiftBuffer(yknots, nknots, neq + 1);
+    } else {
+      /*--------------------------------------------------------------------*/
+      /* Alternative: store outputs *without* interpolation                 */
+      /* Note that this works only if time steps match exactly              */
+      /* i.e. not in all cases because of floating point rounding errors    */
+      /* but that's the price for "no interpolation"                        */
+      /*--------------------------------------------------------------------*/
+      t_ext = tt[it_ext];
+      while (t_ext <= t + dt) {
+        if (it_ext < nt) {
+          yout[it_ext] = t_ext;
+          if (it < nt) {
+            /* all time steps */
+            yout[it_ext] = t_ext;
+            /* only matching time steps */
+            if (t_ext == t + dt)
+              for (i = 0; i < neq; i++) yout[it_ext + nt * (1 + i)] = y1[i];
+          }
+        }
+        if(it_ext < nt) t_ext = tt[++it_ext]; else break;
+      }
     }
     /*--------------------------------------------------------------------*/
     /* next time step                                                     */
     /*--------------------------------------------------------------------*/
     t = t + dt;
     it++;
-    for (i=0; i < neq; i++) y0[i] = y1[i];
+    for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
       Rprintf("error in rk_solvers.c - call_rk4auto: output buffer overflow\n");
       break;

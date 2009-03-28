@@ -137,7 +137,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
         as.double(maxsteps))
-     } else if (method$ID == "rk4") {      # special version
+     } else if (method$ID == "rk4simple") { # special version with less overhead
      out <- .Call("call_rk4", as.double(y), as.double(times),
         Func2, Initfunc, parms, as.double(Nglobal), rho, as.double(verbose),
         as.double(rpar), as.integer(ipar))

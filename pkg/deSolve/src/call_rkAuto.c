@@ -22,8 +22,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   double err=0, dtnew=0, t, dt, t_ext, tmax;
 
-  SEXP R_FSAL;
-  int fsal=0; // assume no FSAL
+  SEXP R_FSAL, Interpolate;
+  int fsal = FALSE;       // assume no FSAL
+  int interpolate = TRUE; // polynomial interpolation is done by default
 
   int i = 0, j=0, j1=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int accept = 0;
@@ -69,7 +70,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_D = getListElement(Method, "d")); incr_N_Protect();
   if (length(R_D)) dd = REAL(R_D);
 
+  PROTECT(Interpolate = getListElement(Method, "interpolate")); incr_N_Protect();
+  if (length(Interpolate)) interpolate = INTEGER(Interpolate)[0];
+
   double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+
   PROTECT(R_FSAL = getListElement(Method, "FSAL")); incr_N_Protect();
   if (length(R_FSAL)) fsal = INTEGER(R_FSAL)[0];
 
@@ -289,6 +294,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /*      Interpolation and Data Storage                                */
     /*====================================================================*/
     if (accept) {
+      if (interpolate) {
       /*--------------------------------------------------------------------*/
       /* case A) "Dense Output": built-in polynomial interpolation          */
       /* available for certain rk formulae, e.g. for rk45dp7                */
@@ -306,30 +312,52 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
           }
           if(it_ext < nt) t_ext = tt[++it_ext]; else break;
         }
-      /*--------------------------------------------------------------------*/
-      /* case B) "Neville-Aitken-Interpolation" for integrators             */
-      /* without dense output                                               */
-      /*--------------------------------------------------------------------*/
-      } else {
-        // (1) collect number "nknots" of knots in advanve
-        yknots[iknots] = t + dt;   // time in first column
-        for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y2[i];
-        if (iknots < (nknots - 1)) {
-          iknots++;
+        /*--------------------------------------------------------------------*/
+        /* case B) "Neville-Aitken-Interpolation" for integrators             */
+        /* without dense output                                               */
+        /*--------------------------------------------------------------------*/
         } else {
-         // (2) do polynomial interpolation
-         t_ext = tt[it_ext];
-         while (t_ext <= t + dt) { // <= ??
-          neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
-          // (3) store outputs
+          // (1) collect number "nknots" of knots in advanve
+          yknots[iknots] = t + dt;   // time in first column
+          for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y2[i];
+          if (iknots < (nknots - 1)) {
+            iknots++;
+          } else {
+           // (2) do polynomial interpolation
+           t_ext = tt[it_ext];
+           while (t_ext <= t + dt) { // <= ??
+            neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
+            // (3) store outputs
+            if (it_ext < nt) {
+              yout[it_ext] = t_ext;
+              for (i = 0; i < neq; i++)
+                yout[it_ext + nt * (1 + i)] = tmp[i];
+            }
+            if(it_ext < nt) t_ext = tt[++it_ext]; else break;
+           }
+           shiftBuffer(yknots, nknots, neq + 1);
+          }
+        }
+      } else {
+        /*--------------------------------------------------------------------*/
+        /* store outputs without interpolation                                */
+        /* Note that this works only if time steps match exactly              */
+        /* i.e. not in all cases because of floating point rounding errors    */
+        /* but that's the price for "no interpolation"                        */
+        /*--------------------------------------------------------------------*/
+        t_ext = tt[it_ext];
+        while (t_ext <= t + dt) {
           if (it_ext < nt) {
             yout[it_ext] = t_ext;
-            for (i = 0; i < neq; i++)
-              yout[it_ext + nt * (1 + i)] = tmp[i];
+            if (it < nt) {
+              /* all time steps */
+              yout[it_ext] = t_ext;
+              /* only matching time steps */
+              if (t_ext == t + dt)
+                for (i = 0; i < neq; i++) yout[it_ext + nt * (1 + i)] = y2[i];
+            }
           }
           if(it_ext < nt) t_ext = tt[++it_ext]; else break;
-         }
-         shiftBuffer(yknots, nknots, neq + 1);
         }
       }
       /*--------------------------------------------------------------------*/

@@ -26,6 +26,17 @@ rkMethod <- function(method = NULL, ...) {
           stage  = 4,
           Qerr   = 4
     ),
+    ## classical Runge-Kutta 4th order method
+    ## special version with less functionality (and overhead)
+    rk4simple = list(ID = "rk4simple",
+        varstep = FALSE,
+        interpolation = FALSE,
+          A      = c(0, .5, .5, 1),
+          b1     = c(1/6, 1/3, 1/3, 1/6),
+          c      = c(0, .5, .5, 1),
+          stage  = 4,
+          Qerr   = 4
+    ),
     ## One of the numerous RK23 formulae
     rk23 = list(ID = "rk23",
       varstep = TRUE,
@@ -45,7 +56,7 @@ rkMethod <- function(method = NULL, ...) {
       FSAL    = TRUE,
       A  = matrix(c(0, 0, 0, 0,
                   1/2, 0, 0, 0,
-                  0, 3/4, 0, 0, 
+                  0, 3/4, 0, 0,
                   2/9, 1/3, 4/9, 0), 4, 4, byrow = TRUE),
       b1 = c(2/9, 1/3, 4/9, 0),
       b2 = c(7/24, 1/4, 1/3, 1/8),
@@ -143,23 +154,23 @@ rkMethod <- function(method = NULL, ...) {
 
   if (!is.null(method)) {
     method <- unlist(match.arg(method, knownMethods))
-    if (method == "ode23") 
+    if (method == "ode23")
       method <- "rk23bs"
-    else if (method == "ode45") 
+    else if (method == "ode45")
       method <- "rk45dp7"
-      
+
     out <- methods[[method]]
   } else {
     out <- vector("list", 0)
   }
 
   ## modify a known or add a completely new method)
-  ldots <- list(...)  
+  ldots <- list(...)
   out[names(ldots)] <- ldots
   class(out) <- c("list", "rkMethod")
 
-  ## return the IDs of the methods if called with an empty argument list 
-  if (is.null(method) & length(ldots) == 0) 
+  ## return the IDs of the methods if called with an empty argument list
+  if (is.null(method) & length(ldots) == 0)
     out <- as.vector(unlist(knownMethods))
 
   out
