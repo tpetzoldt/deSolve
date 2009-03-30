@@ -1,8 +1,8 @@
 rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
-	verbose=FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE,
+	verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE,
   method = rkMethod("rk45dp7", ... ), maxsteps = 5000,
   dllname = NULL, initfunc=dllname, initpar = parms,
-  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL,...) {
+  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, ...) {
 
 ### check input
     if (!is.numeric(y))       stop("`y' must be numeric")
@@ -177,12 +177,16 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     dimnames(out) <- list(NULL, nm)
     istate <- attr(out, "istate")
     if (!is.null(istate) && istate[1] == -1)
-      warning("
-        An excessive amount of work (> maxsteps ) was done,
-        but integration was not successful -
-        increase maxsteps, increase atol/rtol, check your equations
-        or select an alternative algorithm.
-        ")
+
+    if (verbose) diagnostics(out)
+
+    #  warning("
+    #    An excessive amount of work (> maxsteps ) was done,
+    #    but integration was not successful -
+    #    increase maxsteps, increase atol/rtol, check your equations
+    #    or select an alternative algorithm.
+    #    ")
+
     attr(out, "type")   <- "rk"
     out
 }
