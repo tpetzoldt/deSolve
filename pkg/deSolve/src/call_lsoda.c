@@ -148,7 +148,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   int  i, j, k, l, m, ij, nt, repcount, latol, lrtol, lrw, liw, isOut, maxit, solver;
   double *xytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *dy, ss;
   int neq, itol, itask, istate, iopt, *iwork, jt, mflag, nout, ntot, is;
-  int nroot, *jroot, isroot, *ipar, lrpar, lipar, isDll, type, nspec, nx, ny, Nt;
+  int nroot, *jroot, isroot, *ipar, lrpar, lipar, isDll;
+  int type, nspec, nx, ny, Nt, bndx, bndy, isp;
   
   deriv_func *derivs;
   jac_func   *jac;
@@ -269,22 +270,33 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
      else if (type == 3) { /* 2-D problem */
        nspec = INTEGER(Type)[1]; /* number components*/ 
        nx    = INTEGER(Type)[2]; /* dimension x*/ 
-       ny    = INTEGER(Type)[3]; /* dimension y*/     
+       ny    = INTEGER(Type)[3]; /* dimension y*/
+       bndx  = INTEGER(Type)[4]; /* cyclic boundary x*/
+       bndy  = INTEGER(Type)[5]; /* cyclic boundary y*/
        Nt    = nx*ny;
        ij     = 31+neq;
        iwork[30] = 1;
        m = 1; 
        for( i = 0; i<nspec; i++) {
+         isp = i*Nt;
          for( j = 0; j<nx; j++) {       
            for( k = 0; k<ny; k++) {       
            if (ij > liw-4)  error ("not enough memory allocated in iwork - increase liw ",liw);                  
                                 iwork[ij++] = m;
              if (k<ny-1)        iwork[ij++] = m+1;
+
              if (j<nx-1)        iwork[ij++] = m+ny;
              if (j >0)          iwork[ij++] = m-ny;
              if (k >0)          iwork[ij++] = m-1;
-
-            for(l = 0; l<nspec;l++) 
+             if (bndx == 1) {
+               if (j == 0)      iwork[ij++] = isp+(nx-1)*ny+k+1;
+               if (j == nx-1)   iwork[ij++] = isp+k+1;
+             }
+             if (bndy == 1) {
+               if (k == 0)      iwork[ij++] = isp+(j+1)*ny;
+               if (k == ny-1)   iwork[ij++] = isp + j*ny +1;
+             }
+            for(l = 0; l<nspec;l++)
               if (l != i)       iwork[ij++] = l*Nt+j*ny+k+1;
        
             iwork[30+m] = ij-30-neq;

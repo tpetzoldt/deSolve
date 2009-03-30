@@ -9,7 +9,8 @@
   between adjacent layers.
 }
 
-\usage{ode.2D(y, times, func, parms, nspec = NULL, dimens, ...)}
+\usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
+  cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -40,6 +41,10 @@
   \item{nspec }{the number of \bold{species} (components) in the model.}
   \item{dimens}{2-valued vector with the number of \bold{boxes} in two
     dimensions in the model. 
+  }
+  \item{cyclicBnd }{if not \code{NULL} then a number or a 2-valued vector
+    with the dimensions where a cyclic boundary is used - \code{1}: x-dimension,
+    \code{2}: y-dimension; see details.
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }
@@ -151,6 +156,61 @@ for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = "x", ylab = "y", zlim = range(out[,2:(NN+1)]))
 
+## ============================================================
+## An example with a cyclic boundary condition...
+## Diffusion in 2-D; extra flux on 2 boundaries,
+## cyclic boundary in y
+## ============================================================
+
+
+diffusion2D <- function(t,Y,par)
+  {
+   y    <- matrix(nr=nx,nc=ny,data=Y)  # vector to 2-D matrix
+   dY   <- -r*y        # consumption
+   BNDx   <- rep(1,nx)   # boundary concentration
+   BNDy   <- rep(1,ny)   # boundary concentration
+
+   #diffusion in X-direction; boundaries=imposed concentration
+   Flux <- -Dx * rbind(y[1,]-BNDy,(y[2:nx,]-y[1:(nx-1),]),BNDy-y[nx,])/dx
+   dY   <- dY - (Flux[2:(nx+1),]-Flux[1:nx,])/dx
+
+   #diffusion in Y-direction
+   Flux <- -Dy * cbind(y[,1]-BNDx,(y[,2:ny]-y[,1:(ny-1)]),BNDx-y[,ny])/dy
+   dY    <- dY - (Flux[,2:(ny+1)]-Flux[,1:ny])/dy
+
+   # extra flux on two sides
+   dY[,1] <- dY[,1]+  10
+   dY[1,] <- dY[1,]+  10
+
+   # and exchange between sides on y-direction
+   dY[,ny] <- dY[,ny]+ (y[,1]-y[,ny])*10
+   return(list(as.vector(dY)))
+
+  }
+
+  # parameters
+  dy    <- dx <- 1   # grid size
+  Dy    <- Dx <- 1   # diffusion coeff, X- and Y-direction
+  r     <- 0.05     # consumption rate
+
+  nx  <- 50
+  ny  <- 100
+  y  <- matrix(nr=nx,nc=ny,1.)
+  print(system.time(
+  ST3 <- ode.2D(y, times=1:100, func=diffusion2D, parms=NULL,
+                dimens=c(nx,ny), verbose=TRUE,
+                lrw=400000, atol=1e-10, rtol=1e-10, cyclicBnd=2)
+ ))
+
+\dontrun{
+  zlim <- range(ST3[,-1])
+  for (i in 2:nrow(ST3)) {
+
+  y <- matrix(nr=nx,nc=ny,data=ST3[i,-1])
+  filled.contour(y,zlim=zlim,main=i)
+  }
+}
+
 }
 \details{
   This is the method of choice for 2-dimensional models, that are only
@@ -158,7 +218,7 @@ for (i in seq(1, length(times), by = 1))
 
   Based on the dimension of the problem, the method first calculates the
   sparsity pattern of the Jacobian, under the assumption that transport
-  is onely occurring between adjacent layers. Then \code{lsodes} is
+  is only occurring between adjacent layers. Then \code{lsodes} is
   called to solve the problem.
   
   As \code{lsodes} is used to integrate, it will probably be necessary
@@ -168,6 +228,15 @@ for (i in seq(1, length(times), by = 1))
   this will be too low.  In this case, \code{ode.2D} will return with an
   error message telling the size of the work array actually needed. In
   the second try then, set \code{lrw} equal to this number.
+
+  In some cases, a cyclic boundary condition exists. This is when the first
+  boxes in x-or y-direction interact with the last boxes. In this case, there
+  will be extra non-zero fringes in the Jacobian which need to be taken
+  into account. The occurrence of cyclic boundaries can be
+  toggled on by specifying argument \code{cyclicBnd}. For innstance,
+  \code{cyclicBnd = 1} indicates that a cyclic boundary is required only for
+  the x-direction, whereas \code{cyclicBnd = c(1,2)} imposes a cyclic boundary
+  for both x- and y-direction. The default is no cyclic boundaries.
 
   See \code{lsodes} for the additional options.
 }

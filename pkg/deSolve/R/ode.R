@@ -107,7 +107,8 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
 
 ### ============================================================================
 
-ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens, ...)  {
+ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
+   cyclicBnd = NULL, ...)  {
 
  # check input
   if (any(!is.na(pmatch(names(list(...)), "jacfunc")))) 
@@ -126,9 +127,16 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens, ...)  {
   if (nspec*prod(dimens) != N)
     stop ("cannot run ode.2D: dimens[1]*dimens[2]*nspec is not equal to number of state variables")
 
+  Bnd <- c(0,0)
+  if (! is.null(cyclicBnd)) {
+    if (max(cyclicBnd) > 2 )
+      stop ("cannot run steady.2D: cyclicBnd should be a vector or number not exceeding 2")
+    Bnd[cyclicBnd[cyclicBnd>0]]<-1
+  }
+
   # use lsodes - note:expects rev(dimens)...
    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="2D",
-          nnz=c(nspec,rev(dimens)),...)
+          nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
 
   return(out)
 }

@@ -83,7 +83,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 ## the number of components *Nspec* and the number of boxes.
 ## This information is passed by ode.1D and ode.2D in parameter nnz (which is a vector)
 ## nnz is altered to include the number of nonzero elements (element 1).
-## Type contains the type of sparsity + nspec + num boxes
+## Type contains the type of sparsity + nspec + num boxes + cyclicBnd
 
   if (sparsetype=="1D") {
     nspec  <- nnz[1]
@@ -94,6 +94,13 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     dimens <- nnz[2:3]
     Type   <- c(3,nnz)
     nnz    <- n*(4+nspec)-2*nspec*(sum(dimens))
+
+    if (Type[5]==1) { # cyclic boundary in x-direction
+      nnz <- nnz + 2*dimens[1]*nspec
+    }
+    if (Type[6] ==1) {# cyclic boundary in x-direction
+      nnz <- nnz + 2*dimens[2]*nspec
+    }
   } else if (sparsetype == "sparseusr") {
     Type <- 0
     nnz  <- nrow(inz)
@@ -103,7 +110,6 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   }
   if (nnz<1)
     stop ("Jacobian should at least contain one non-zero value")
-
 
 
 ### model and jacobian function 
@@ -310,12 +316,17 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     print("--------------------")
     if (imp == 21)  txt <-" the user has supplied indices to nonzero elements of jacobian, and a jacobian function"
     if (imp == 22)  {
-      if (sparsetype=="sparseusr") txt <-" the user has supplied indices to nonzero elements of jacobian, the jacobian will be estimated internally, by differences"
-      if (sparsetype=="1D")        txt <-" the nonzero elements are according to a 1-D model, the jacobian will be estimated internally, by differences"
-      if (sparsetype=="2D")        txt <-" the nonzero elements are according to a 2-D model, the jacobian will be estimated internally, by differences"
+      if (sparsetype=="sparseusr")
+        txt <-" the user has supplied indices to nonzero elements of jacobian, the jacobian will be estimated internally, by differences"
+      if (sparsetype=="1D")
+        txt <-" the nonzero elements are according to a 1-D model, the jacobian will be estimated internally, by differences"
+      if (sparsetype=="2D")
+        txt <-" the nonzero elements are according to a 2-D model, the jacobian will be estimated internally, by differences"
                    }
-    if (imp == 122) txt <-" the user has supplied the jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"
-    if (imp == 222) txt <-" the jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
+    if (imp == 122)
+      txt <-" the user has supplied the jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"
+    if (imp == 222)
+      txt <-" the jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
    
     print(txt)
   } 
