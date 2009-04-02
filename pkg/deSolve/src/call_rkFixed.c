@@ -132,7 +132,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int nknots = 4;  // 3rd order polynomials
   int iknots = 0;  // counter for knotes buffer
   double *yknots;
-  yknots = (double *) R_alloc(neq * (nknots + 1), sizeof(double));
+  // ??? neq + 1
+  yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
 
   // matrix for holding the outputs
