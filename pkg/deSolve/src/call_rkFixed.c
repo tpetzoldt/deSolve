@@ -25,7 +25,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int fsal = FALSE;       // fixed step methods have no FSAL
   int interpolate = TRUE; // polynomial interpolation is done by default
 
-  int i = 0, j=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
+  int i = 0, j=0, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int one=1;
 
   /**************************************************************************/

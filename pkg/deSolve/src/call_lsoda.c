@@ -143,18 +143,18 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 /******************************************************************************/
 
 /* These R-structures will be allocated and returned to R*/
-  SEXP yout, yout2, ISTATE, RWORK, IROOT;    
+  SEXP yout, yout2=NULL, ISTATE, RWORK, IROOT=NULL;    
 
   int  i, j, k, l, m, ij, nt, repcount, latol, lrtol, lrw, liw, isOut, maxit, solver;
-  double *xytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *dy, ss;
+  double *xytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *dy=NULL, ss;
   int neq, itol, itask, istate, iopt, *iwork, jt, mflag, nout, ntot, is;
-  int nroot, *jroot, isroot, *ipar, lrpar, lipar, isDll;
+  int nroot, *jroot=NULL, isroot, *ipar, lrpar, lipar, isDll;
   int type, nspec, nx, ny, Nt, bndx, bndy, isp;
   
   deriv_func *derivs;
-  jac_func   *jac;
+  jac_func   *jac=NULL;
   jac_vec    *jacvec;
-  root_func  *root;
+  root_func  *root=NULL;
   init_func  *initializer;
     
 /******************************************************************************/
