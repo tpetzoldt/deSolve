@@ -1,3 +1,4 @@
+inst/.*[.]dll
 inst/doc/.*[.]dll
 inst/doc/.*[.]d
 inst/doc/.*[.]o

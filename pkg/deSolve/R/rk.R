@@ -28,7 +28,14 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     if (!is.numeric(y))     stop("`y' must be numeric")
     if (!is.numeric(times)) stop("`times' must be numeric")
-    #if (!is.function(func)) stop("`func' must be a function")
+
+    if (!is.function(func) && !is.character(func))
+      stop("`func' must be a function or character vector")
+    if (is.character(func) && (is.null(dllname) || !is.character(dllname)))
+      stop("You need to specify the name of the dll or shared library where func can be found (without extension)")
+
+    if (maxsteps < 0)         stop("maxsteps must be positive")
+    if (!is.finite(maxsteps)) maxsteps <- .Machine$integer.max
 
     if (is.character(method)) method <- rkMethod(method)
 
@@ -145,22 +152,22 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (varstep) {                        # methods with variable step size
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func2,  Initfunc, parms,
-        as.double(Nglobal), rho, as.double(atol),
-        as.double(rtol), as.double(tcrit), as.double(verbose),
+        as.integer(Nglobal), rho, as.double(atol),
+        as.double(rtol), as.double(tcrit), as.integer(verbose),
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
-        as.double(maxsteps))
+        as.integer(maxsteps))
      } else if (method$ID == "rk4simple") { # special version with less overhead
      out <- .Call("call_rk4", as.double(y), as.double(times),
-        Func2, Initfunc, parms, as.double(Nglobal), rho, as.double(verbose),
+        Func2, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
         as.double(rpar), as.integer(ipar))
      } else {                              # fixed step methods
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func2, Initfunc, parms,
-        as.double(Nglobal), rho,
-        as.double(tcrit), as.double(verbose),
+        as.integer(Nglobal), rho,
+        as.double(tcrit), as.integer(verbose),
         as.double(hini), as.double(rpar), as.integer(ipar), method,
-        as.double(maxsteps))
+        as.integer(maxsteps))
      }
 
     nm <- c("time",

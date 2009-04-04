@@ -33,9 +33,9 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   double  tcrit = REAL(Tcrit)[0];
   double  hini  = REAL(Hini)[0];
-  int  maxsteps = (int)REAL(Maxsteps)[0];
-  int  nout  = (int)REAL(Nout)[0]; // number of external outputs is Func is in a DLL
-  int verbose = (int)REAL(Verbose)[0];
+  int  maxsteps = INTEGER(Maxsteps)[0];
+  int  nout     = INTEGER(Nout)[0]; // number of global outputs is func is in a DLL
+  int  verbose  = INTEGER(Verbose)[0];
 
   int stage = (int)REAL(getListElement(Method, "stage"))[0];
 
@@ -292,7 +292,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   } while (t < tmax); // end of rk main loop
 
   /*====================================================================*/
-  /* call derivs again to get external outputs                          */
+  /* call derivs again to get global outputs                          */
   /*====================================================================*/
   // j = -1 suppresses unnecessary internal copying
   for (int j = 0; j < nt; j++) {
@@ -304,7 +304,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
   // attach essential internal information (codes are compatible to lsoda)
-  // ToDo: respect function evaluations due to external outputs
+  // ToDo: respect function evaluations due to global outputs
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
 

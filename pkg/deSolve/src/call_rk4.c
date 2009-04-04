@@ -41,10 +41,10 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   tmp =  (double *) R_alloc(neq, sizeof(double));
   FF  =  (double *) R_alloc(neq, sizeof(double));
 
-  int  nout  = (int)REAL(Nout)[0]; // n of external outputs if func is in a DLL
+  int  nout  = INTEGER(Nout)[0]; // n of global outputs if func is in a DLL
   //out  =  (double *) R_alloc(nout, sizeof(double));
 
-  int verbose = (int)REAL(Verbose)[0];
+  int verbose = INTEGER(Verbose)[0];
 
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
@@ -185,7 +185,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   } // end of rk main loop
 
   /**************************************************************************/
-  /* call derivs again to get external outputs                              */
+  /* call derivs again to get global outputs                                */
   /**************************************************************************/
   // j= -1 suppresses internal copying
   for (int j = 0; j < nt; j++) {
@@ -197,7 +197,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
   // attach essential internal information (codes are compatible to lsoda)
-  // ToDo: respect function evaluations due to external outputs
+  // ToDo: respect function evaluations due to global outputs
   setIstate(R_yout, R_istate, istate, it, 4, 0, 4);
 
   // release R resources

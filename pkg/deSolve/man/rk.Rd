@@ -14,7 +14,8 @@
 
   The system of ODE's is written as an \R function (which may, of
   course, use \code{\link{.C}}, \code{\link{.Fortran}},
-  \code{\link{.Call}}, etc., to call foreign code). A vector of
+  \code{\link{.Call}}, etc., to call foreign code) or be defined in
+  compiled code that has been dynamically loaded.  A vector of
   parameters is passed to the ODEs, so the solver may be used as part of
   a modeling package for ODEs, or for parameter estimation using any
   appropriate modeling tool for non-linear models in \R such as
@@ -38,24 +39,31 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     has a name attribute, the names will be used to label the output
     matrix.
   }
-  \item{times }{times at which explicit estimates for \code{y} are desired.
-    The first value in \code{times} must be the initial time.
+  \item{times }{times at which explicit estimates for \code{y} are
+    desired.  The first value in \code{times} must be the initial time.
   }
-  \item{func }{an \R-function that computes the values of the
+  \item{func }{either an \R-function that computes the values of the
     derivatives in the ODE system (the \emph{model definition}) at time
-    \code{t}.
+    t, or a character string giving the name of a compiled function in a
+    dynamically loaded shared library.
 
-    The \R-function \code{func} must be defined as: \code{yprime =
-    func(t, y, parms, ...)}.  \code{t} is the current time point in the
-    integration, \code{y} is the current estimate of the variables in
-    the ode system, and \code{parms} is a vector or list of parameters.
-    \code{...} (optional) are any other arguments passed to the
-    function.
+    If \code{func} is an \R-function, it must be defined as:
+    \code{yprime = func(t, y, parms, ...)}.  \code{t} is the current
+    time point in the integration, \code{y} is the current estimate of
+    the variables in the ODE system.  If the initial values \code{y} has
+    a names attribute, the names will be available inside \code{func}.
+    \code{parms} is a vector or list of parameters; ... (optional) are
+    any other arguments passed to the function.
 
     The return value of \code{func} should be a list, whose first
     element is a vector containing the derivatives of \code{y} with
     respect to \code{time}, and whose next elements are global values
     that are required at each point in \code{times}.
+
+	If \code{func} is a string, then \code{dllname} must give the name
+    of the shared library (without extension) which must be loaded
+    before \code{lsoda()} is called. See package vignette for more
+    details.
   }
   \item{parms }{vector or list of parameters used in \code{func}}
   \item{rtol }{relative error tolerance, either a scalar or an array as
@@ -122,11 +130,11 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     parameters passed to the initialiser, to initialise the common
     blocks (fortran) or global variables (C, C++).
   }
-   \item{rpar }{only when \file{dllname} is specified: a vector with
+  \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
     specified by \code{func} and \code{jacfunc}.
   }
-   \item{ipar }{only when \file{dllname} is specified: a vector with
+  \item{ipar }{only when \file{dllname} is specified: a vector with
     integer values passed to the dll-functions whose names are specified
     by \code{func} and \code{jacfunc}.
   }
@@ -231,7 +239,7 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
   \emph{highly experimental}, so please be very careful! Testers are
   welcome, please report errors and improvements.
 
-  Arguments rpar and ipar are provided for compatibility with lsoda, but
+  Arguments \code{rpar} and \code{ipar} are provided for compatibility with lsoda, but
   not yet thoroughly tested.
 }
 
@@ -250,6 +258,7 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
 \seealso{\code{\link{rkMethod}},
+         \code{\link{rk4}},
          \code{\link{ode}},
          \code{\link{lsoda}},
          \code{\link{lsode}},

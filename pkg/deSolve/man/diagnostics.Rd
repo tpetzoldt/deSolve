@@ -1,6 +1,6 @@
 \name{diagnostics}
 \alias{diagnostics}
-\title{Print diagnostic characteristics of ODE Solvers.}
+\title{Print Diagnostic Characteristics of ODE Solvers}
 \description{
   Prints several diagnostics of the simulation to the screen, e.g.
   number of steps taken, the last step size,...
@@ -10,7 +10,7 @@ diagnostics(obj)
 }
 \arguments{
   \item{obj }{is the output matrix as produced by one of the
-    integration routines (except for runge-kutta methods).
+    integration routines.
   }
 }
 \value{
@@ -46,9 +46,9 @@ out.rk   <- rk(state, times, chaos, 0, method="ode45", maxsteps=1e5,atol=1e-4, r
 pairs(out.rk, pch=".")
 diagnostics(out.rk)
 
-out.rkc   <- rk_c(state, times, chaos, 0, method="ode45", hmax=0.1, maxsteps=1e5)
-pairs(out.rkc, pch=".")
-diagnostics(out.rkc)
+out.rkr   <- rk_r(state, times, chaos, 0, method="ode45", hmax=0.1, maxsteps=1e5)
+pairs(out.rkr, pch=".")
+diagnostics(out.rkr)
 }
 }
 \keyword{ utilities }

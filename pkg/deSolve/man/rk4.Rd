@@ -13,30 +13,38 @@ euler(y, times, func, parms, hini = min(diff(times)), verbose = FALSE, ...)
 rk4(y, times, func, parms, hini = min(diff(times)), verbose = FALSE, ...)
 }
 \arguments{
-  \item{y}{the initial values for the ODE system.  If \code{y} has a
-    name attribute, the names will be used to label the output matrix.
+  \item{y }{the initial (state) values for the ODE system. If \code{y}
+    has a name attribute, the names will be used to label the output
+    matrix.
   }
-  \item{times}{times at which explicit estimates for \code{y} are
+  \item{times }{times at which explicit estimates for \code{y} are
     desired.  The first value in \code{times} must be the initial time.
   }
-  \item{func}{an \R-function that computes the values of the derivatives
-    in the ode system (the \emph{model defininition}) at time t.
-      
-    The \R-function \code{func} must be defined as: \code{yprime =
-    func(t, y, parms, ...)}.  \code{t} is the current time point in the
-    integration, \code{y} is the current estimate of the variables in
-    the ode system, and \code{parms} is a vector or list of parameters.
-    \code{...} (optional) are any other arguments passed to the
-    function.
-        
-    The return value of func should be a list, whose first element is a
-    vector containing the derivatives of \code{y} with respect to
-    \code{time}, and whose second element is a vector of global values
+  \item{func }{either an \R-function that computes the values of the
+    derivatives in the ODE system (the \emph{model definition}) at time
+    t, or a character string giving the name of a compiled function in a
+    dynamically loaded shared library.
+
+    If \code{func} is an \R-function, it must be defined as:
+    \code{yprime = func(t, y, parms, ...)}.  \code{t} is the current
+    time point in the integration, \code{y} is the current estimate of
+    the variables in the ODE system.  If the initial values \code{y} has
+    a names attribute, the names will be available inside \code{func}.
+    \code{parms} is a vector or list of parameters; ... (optional) are
+    any other arguments passed to the function.
+
+    The return value of \code{func} should be a list, whose first
+    element is a vector containing the derivatives of \code{y} with
+    respect to \code{time}, and whose next elements are global values
     that are required at each point in \code{times}.
+
+	If \code{func} is a string, then \code{dllname} must give the name
+    of the shared library (without extension) which must be loaded
+    before \code{lsoda()} is called. See package vignette for more
+    details.
   }
-  \item{parms}{vector or list holding the parameters used in
-    \code{func}.
-  }
+  \item{parms }{vector or list of parameters used in \code{func}}
+
   \item{hini}{length of the (fixed) internal time step. Setting
     \code{hini = 0}, forces setting of internal time steps identically
     to external time steps provided by \code{times}.
