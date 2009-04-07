@@ -521,7 +521,6 @@ matplot(out[,1],out[,2:3],type="l",lwd=2,
 \end{tabular}
 \end{table*}
 
-\section{References}
 \bibliography{integration}
 
 \end{document}

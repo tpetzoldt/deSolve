@@ -58,6 +58,7 @@ example(ode.2D)
 
 ## run demos
 demo("rk_solvers") # comparison of lsoda with Runge-Kutta-Type Solvers
+demo("odedim")     # partial differential equations
 demo("CCL4model")  # a model fitting example (this will take some time)
 
 ## open the directory with source code of demos

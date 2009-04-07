@@ -12,7 +12,7 @@ void F77_NAME(dvode)(void (*)(int *, double *, double *, double *,
 		     void (*)(int *, double *, double *, int *,
 			            int *, double *, int *, double*, int*),
 		     int *, double *, int *);
-		     
+
 /* interface between fortran function call and R function 
    Fortran code calls vode_derivs(N, t, y, ydot, yout, iout) 
    R code called as vode_deriv_func(time, y) and returns ydot 
@@ -73,15 +73,15 @@ SEXP call_dvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 /******************************************************************************/
 
 /* These R-structures will be allocated and returned to R*/
-  SEXP   yout, yout2, ISTATE, RWORK;
+  SEXP   yout, yout2=NULL, ISTATE, RWORK;
 
   int    i, j, k, nt, latol, lrtol, lrw, liw, isOut, maxit;
-  double *xytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *dy, ss;
+  double *xytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *dy=NULL, ss;
   int    neq, itol, itask, istate, iopt, *iwork, jt, mflag, nout, 
          lrpar, lipar, ntot, is, *ipar, isDll;
 
   deriv_func *derivs;
-  jac_func   *jac;
+  jac_func   *jac=NULL;
   init_func  *initializer;
 
 /******************************************************************************/

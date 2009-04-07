@@ -118,17 +118,18 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 /******************************************************************************/
 
 /* These R-structures will be allocated and returned to R*/
-  SEXP   yout, yout2, ISTATE, RWORK;
+  SEXP   yout, yout2=NULL, ISTATE, RWORK;
   int    i, j, k, nt, ny, repcount, latol, lrtol, lrw, liw, isDll, maxit;
-  double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol, *out, *delta, cj;
+  double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol, *out;
+  double *delta=NULL, cj;
   int    *Info,  ninfo, idid, *iwork, mflag, nout, ntot, ires;
   int    lrpar, lipar, *ipar;
 
   res_func  *Resfun;
-  jac_func  *jac;
-  psol_func *psol;  
+  jac_func  *jac=NULL;
+  psol_func *psol=NULL;
   init_func *initializer;
-  kryljac_func *kryljac;
+  kryljac_func *kryljac=NULL;
 
 /******************************************************************************/
 /******                         STATEMENTS                               ******/

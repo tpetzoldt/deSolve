@@ -9,7 +9,7 @@
 ### ============================================================================
 
 lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6, 
-  jacvec=NULL, sparsetype="sparseint",nnz = NULL, inz = NULL, verbose=FALSE,   
+  jacvec=NULL, sparsetype="sparseint", nnz = NULL, inz = NULL, verbose=FALSE,
   tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
   maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL, 
   dllname=NULL, initfunc=dllname,
@@ -98,7 +98,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (Type[5]==1) { # cyclic boundary in x-direction
       nnz <- nnz + 2*dimens[1]*nspec
     }
-    if (Type[6] ==1) {# cyclic boundary in x-direction
+    if (Type[6] ==1) {# cyclic boundary in y-direction
       nnz <- nnz + 2*dimens[2]*nspec
     }
   } else if (sparsetype == "sparseusr") {
