@@ -1,4 +1,5 @@
-
+## KS -->ThPe: check interpolation in runge-kuttas.
+##             rk_r and rk not the same (for zooplankton example)
 
 ## ThPe --> ??
  - "diagnostics" has not very clear structure
@@ -8,6 +9,15 @@
 
    class(out) <- c("matrix", "deSolve", "deSolvelsoda")
 
+## KS --> Thpe:
+   AGREED
+
+   => diagnostics.lsoda and diagnostics.vode etc...
+   but what if we have transformed to data.frame. Do we need to define diagnostics.data.frame?
+
+##
+
+   
  - provide additional "diagnostics" for runge-kutta functions:
     - size of time step
     - number of rejected steps
@@ -33,3 +43,5 @@
 ## ThPe --> KS 
 
 - adapt vignette that rk now supports DLL models
+## KS:
+- DONE

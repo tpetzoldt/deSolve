@@ -27,16 +27,24 @@ Language}
 performance, FORTRAN, C}
 
 
-\author{K. Soetaert\\
-Centre for Estuarine and Marine Ecology\\
-Netherlands Institute of Ecology\\
-The Netherlands
-\And
-R. Woodrow Setzer\\
-National Center for\\ Computational Toxicology\\
-US Environmental Protection Agency}
+\author{
+  Karline Soetaert\\
+  Centre for \\
+  Estuarine and Marine Ecology\\
+  Netherlands Institute of Ecology\\
+  The Netherlands
+  \And
+  Thomas Petzoldt\\
+  Technische Universit\"at \\
+  Dresden\\
+  Germany
+  \And
+  R. Woodrow Setzer\\
+  National Center for\\ Computational Toxicology\\
+  US Environmental Protection Agency
+}
 
-\Plainauthor{K. Soetaert, R. W. Setzer}
+\Plainauthor{Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer}
 
 \Abstract{This document describes how to use the \pkg{deSolve} package
 to solve models that are written in \proglang{FORTRAN} or
@@ -48,9 +56,16 @@ to solve models that are written in \proglang{FORTRAN} or
   Karline Soetaert\\
   Centre for Estuarine and Marine Ecology (CEME)\\
   Netherlands Institute of Ecology (NIOO)\\
-  4401 NT Yerseke, Netherlands
+  4401 NT Yerseke, Netherlands \\
   E-mail: \email{k.soetaert@nioo.knaw.nl}\\
   URL: \url{http://www.nioo.knaw.nl/ppages/ksoetaert}\\
+  \\
+  Thomas Petzoldt\\
+  Institut f\"ur Hydrobiologie\\
+  Technische Universit\"at Dresden\\
+  01062 Dresden, Germany\\
+  E-mail: \email{thomas.petzoldt@tu-dresden.de}\\
+  URL: \url{http://tu-dresden.de/Members/thomas.petzoldt/}\\
    \\
   R. Woodrow Setzer\\
   National Center for Computational Toxicology\\
@@ -176,7 +191,8 @@ model <- function(t, Y, parameters)
 @
 
 
-The Jacobian ($\frac{{\partial y'}}{{\partial y}}$) associated to the above example is:
+The Jacobian ($\frac{{\partial y'}}{{\partial y}}$) associated to the
+above example is:
 
 <<Jacobian_in_R>>=
 jac <- function (t, Y, parameters)
@@ -464,14 +480,16 @@ Team (2008).
 
 \section{deSolve integrators that support DLL models}
 
-Not all integration routines included in \pkg{deSolve} can solve
-\DLLmodels. To date those that can are:
+In the most recent version of \pkg{deSolve} all integration routines
+except \code{rk_r} can solve \DLLmodels. They are:
 
 \begin{itemize}
 \item all solvers of the \code{lsode} familiy: \code{lsoda},
   \code{lsode}, \code{lsodar}, \code {lsodes}
 \item \code{vode}
 \item \code{daspk}
+\item the C-implemented runge-kutta integration routines (including the
+  Euler method)
 \end{itemize}
 
 For some of these solvers the interface is slightly different

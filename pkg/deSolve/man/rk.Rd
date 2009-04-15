@@ -308,7 +308,7 @@ parms <- list(b = 0.0, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
 y <- xstart <- c(S = 1, P = 1, K = 1)
 
 ## ------------------------------------
-## R implementation of the integrators
+## C implementation of the integrators
 ## ------------------------------------
 
 system.time({
