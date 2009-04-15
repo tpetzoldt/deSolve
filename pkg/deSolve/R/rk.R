@@ -161,6 +161,10 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
      out <- .Call("call_rk4", as.double(y), as.double(times),
         Func2, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
         as.double(rpar), as.integer(ipar))
+     } else if (method$ID == "eulersimple") { # special version with less overhead
+     out <- .Call("call_euler", as.double(y), as.double(times),
+        Func2, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
+        as.double(rpar), as.integer(ipar))
      } else {                              # fixed step methods
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func2, Initfunc, parms,

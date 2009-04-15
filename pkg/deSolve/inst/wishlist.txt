@@ -1,5 +1,16 @@
 ## KS -->ThPe: check interpolation in runge-kuttas.
 ##             rk_r and rk not the same (for zooplankton example)
+ThPe: 
+- rk_r and rk tested and o.k. (both, interpolation and integration)
+- maxsteps had to be increased
+
+ThPe --> KS: Question: 
+
+- under which circumstances should rk throw errors or
+  warnings, i.e. call diagnostics() ?
+- Note that double calls should be avoided
+
+
 
 ## ThPe --> ??
  - "diagnostics" has not very clear structure
@@ -15,8 +26,9 @@
    => diagnostics.lsoda and diagnostics.vode etc...
    but what if we have transformed to data.frame. Do we need to define diagnostics.data.frame?
 
-##
+ThPe: probably next release
 
+##
    
  - provide additional "diagnostics" for runge-kutta functions:
     - size of time step
@@ -39,6 +51,10 @@
   - especially for rk4 !!
 
 - write special version for euler (speedup)
+
+## ThPe
+- DONE
+
 
 ## ThPe --> KS 
 

@@ -8,6 +8,16 @@ rkMethod <- function(method = NULL, ...) {
           stage  = 1,
           Qerr   = 1
     ),
+    ## special version with less functionality (and overhead)
+    eulersimple = list(ID = "eulersimple",
+        varstep = FALSE,
+        interpolation = FALSE,
+          A      = c(0),
+          b1     = c(1),
+          c      = c(0),
+          stage  = 1,
+          Qerr   = 1
+    ),
     ## Heun's method
     rk2 = list(ID = "rk2",
         varstep = FALSE,
