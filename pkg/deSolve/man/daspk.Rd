@@ -193,7 +193,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL, nalg = 0,
     the jacobian is banded (and \code{jactype} one of
     "bandint","bandusr")
   }
-  \item{maxsteps }{maximal number of steps during one call to the
+  \item{maxsteps }{maximal number of steps per output interval taken by the
     solver; will be recalculated to be at least 500 and a multiple of
     500; the solver will give a warning if more than 500 steps are
     taken, but it will continue till \code{maxsteps} steps.

@@ -134,7 +134,7 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{banddown }{number of non-zero bands below the diagonal, in case
     the jacobian is banded.
   }
-  \item{maxsteps }{maximal number of steps during one call to the
+  \item{maxsteps }{maximal number of steps per output interval taken by the
     solver.
   }
   \item{dllname }{a string giving the name of the shared library

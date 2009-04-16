@@ -51,7 +51,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
   if (is.null(nspec) && is.null(dimens)) 
     stop ("cannot run ode.1D: nspec OR dimens should be specified")
 
-  if (nspec == 1) {
+  if (nspec == 1 & method != "lsodes") {
     out <- ode.band(y, times, func, parms, nspec=nspec, method = method, ...)
     return(out)
   }

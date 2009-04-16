@@ -118,7 +118,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     default, i.e. order 12 if implicit Adams method (meth = 1), order 5
     if BDF method (meth = 2). Reduce maxord to save storage space.
   }
-  \item{maxsteps }{maximal number of steps during one call to the
+  \item{maxsteps }{maximal number of steps per output interval taken by the
     solver.
   }
   \item{lrw }{the length of the real work array rwork; due to the
