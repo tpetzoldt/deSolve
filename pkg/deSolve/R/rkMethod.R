@@ -8,16 +8,6 @@ rkMethod <- function(method = NULL, ...) {
           stage  = 1,
           Qerr   = 1
     ),
-    ## special version with less functionality (and overhead)
-    eulersimple = list(ID = "eulersimple",
-        varstep = FALSE,
-        interpolation = FALSE,
-          A      = c(0),
-          b1     = c(1),
-          c      = c(0),
-          stage  = 1,
-          Qerr   = 1
-    ),
     ## Heun's method
     rk2 = list(ID = "rk2",
         varstep = FALSE,
@@ -30,17 +20,6 @@ rkMethod <- function(method = NULL, ...) {
     ## classical Runge-Kutta 4th order method
     rk4 = list(ID = "rk4",
         varstep = FALSE,
-          A      = c(0, .5, .5, 1),
-          b1     = c(1/6, 1/3, 1/3, 1/6),
-          c      = c(0, .5, .5, 1),
-          stage  = 4,
-          Qerr   = 4
-    ),
-    ## classical Runge-Kutta 4th order method
-    ## special version with less functionality (and overhead)
-    rk4simple = list(ID = "rk4simple",
-        varstep = FALSE,
-        interpolation = FALSE,
           A      = c(0, .5, .5, 1),
           b1     = c(1/6, 1/3, 1/3, 1/6),
           c      = c(0, .5, .5, 1),

@@ -9,8 +9,12 @@
   classical Runge-Kutta 4th order integration.
 }
 \usage{
-euler(y, times, func, parms, hini = min(diff(times)), verbose = FALSE, ...)
-rk4(y, times, func, parms, hini = min(diff(times)), verbose = FALSE, ...)
+euler(y, times, func, parms, verbose = FALSE, ynames = TRUE,
+  dllname = NULL, initfunc = dllname, initpar = parms,
+  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
+rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
+  dllname = NULL, initfunc = dllname, initpar = parms,
+  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -38,31 +42,74 @@ rk4(y, times, func, parms, hini = min(diff(times)), verbose = FALSE, ...)
     respect to \code{time}, and whose next elements are global values
     that are required at each point in \code{times}.
 
-	If \code{func} is a string, then \code{dllname} must give the name
+	  If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
     before \code{lsoda()} is called. See package vignette for more
     details.
   }
   \item{parms }{vector or list of parameters used in \code{func}}
+  \item{verbose }{a logical value that, when TRUE, triggers more
+    verbose output from the ODE solver.
+  }
+  \item{ynames }{if \code{FALSE}: names of state variables are not passed
+    to function \code{func} ; this may speed up the simulation especially
+    for large models.
+  }
+  \item{dllname }{a string giving the name of the shared library
+    (without extension) that contains all the compiled function or
+    subroutine definitions refered to in \code{func} and
+    \code{jacfunc}. See package vignette.
+  }
+  \item{initfunc }{if not NULL, the name of the initialisation function
+    (which initialises values of parameters), as provided in
+    \file{dllname}. See package vignette.
+  }
+  \item{initpar }{only when \file{dllname} is specified and an
+    initialisation function \code{initfunc} is in the dll: the
+    parameters passed to the initialiser, to initialise the common
+    blocks (fortran) or global variables (C, C++).
+  }
+  \item{rpar }{only when \file{dllname} is specified: a vector with
+    double precision values passed to the dll-functions whose names are
+    specified by \code{func} and \code{jacfunc}.
+  }
+  \item{ipar }{only when \file{dllname} is specified: a vector with
+    integer values passed to the dll-functions whose names are specified
+    by \code{func} and \code{jacfunc}.
+  }
+  \item{nout }{only used if \code{dllname} is specified and the model is
+    defined in compiled code: the number of output variables calculated
+    in the compiled function \code{func}, present in the shared
+    library. Note: it is not automatically checked whether this is
+    indeed the number of output variables calculed in the dll - you have
+    to perform this check in the code. See package vignette.
+  }
+  \item{outnames }{only used if \file{dllname} is specified and
+    \code{nout} > 0: the names of output variables calculated in the
+    compiled function \code{func}, present in the shared library.
+  }
 
-  \item{hini}{length of the (fixed) internal time step. Setting
-    \code{hini = 0}, forces setting of internal time steps identically
-    to external time steps provided by \code{times}.
+   \item{... }{additional arguments passed to \code{func} allowing this
+    to be a generic function.
   }
-  \item{verbose}{a logical value that, when TRUE, triggers more verbose
-    output from the ODE solver.
-  }
-  \item{...}{additional arguments, passed to \code{\link{rk}}}
+
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 \details{
+  \code{rk4} and \code{euler} are special versions of the two fixed steps
+  solvers with less overhead and less functionality (e.g. no interpolation)
+  compared to the generic Runge-Kutta codes called by \code{\link{rk}}.
+   
+  If you need different internal and external time steps, you may use
+  \code{rk(y, times, func, parms, method="rk4")} or
+  \code{rk(y, times, func, parms, method="euler")}.
+
   See help pages of \code{\link{rk}} and \code{\link{rkMethod}}
   for details.
 }
 \note{
-  \code{rk4} and \code{euler} are primarily provided for didactic
-  reasons.  For most practical cases, solvers with flexible timestep
-  (e.g. "rk45dp7") and especially solvers of the Livermore family
+  For most practical cases, solvers with flexible timestep
+  (e.g. rk(method="ode45") and especially solvers of the Livermore family
   (e.g. \code{\link{lsoda}}) are superior.
 }
 
@@ -81,27 +128,31 @@ parms <- c(r = r, K = K)
 x <- c(N = N0)
 
 ## analytical solution
-plot(time, K/(1+(K/N0-1) * exp(-r*time)), ylim = c(0, 120), 
+plot(time, K/(1+(K/N0-1) * exp(-r*time)), ylim = c(0, 120),
   type = "l", col = "red", lwd = 2)
 
 ## reasonable numerical solution
-out <- as.data.frame(rk4(x, time, logist, parms, hini = 2))
+time <- seq(0, 100, 2)
+out <- as.data.frame(rk4(x, time, logist, parms))
 points(out$time, out$N, pch = 16, col = "blue", cex = 0.5)
 
 ## same time step, systematic under-estimation
-out <- as.data.frame(euler(x, time, logist, parms, hini = 2))
+time <- seq(0, 100, 2)
+out <- as.data.frame(euler(x, time, logist, parms))
 points(out$time, out$N, pch = 1)
 
 ## unstable result
-out <- as.data.frame(euler(x, time, logist, parms, hini = 4))
+time <- seq(0, 100, 4)
+out <- as.data.frame(euler(x, time, logist, parms))
 points(out$time, out$N, pch = 8, cex = 0.5)
 
 ## method with automatic time step
 out <- as.data.frame(lsoda(x, time, logist, parms))
 points(out$time, out$N, pch = 1, col = "green")
+
 legend("bottomright",
-  c("analytical","rk4, hini=2", "euler, hini=2",
-    "euler, hini=4", "lsoda"),
+  c("analytical","rk4, h=2", "euler, h=2",
+    "euler, h=4", "lsoda"),
   lty = c(1, NA, NA, NA, NA), lwd = c(2, 1, 1, 1, 1),
   pch = c(NA, 16, 1, 8, 1),
   col = c("red", "blue", "black", "black", "green"))

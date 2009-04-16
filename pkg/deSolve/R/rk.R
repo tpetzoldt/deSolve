@@ -145,8 +145,10 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     ## ToDo: handle data types in C or change appropriate arguments to integer
     ##       - check data type of parms in C !
-
     # rpar = NULL,  ipar = NULL,
+
+    ## Number of steps until the solver gives up
+    nsteps <- min(.Machine$integer.max, maxsteps * length(times))
 
     varstep <- method$varstep
     if (varstep) {                        # methods with variable step size
@@ -156,22 +158,14 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         as.double(rtol), as.double(tcrit), as.integer(verbose),
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
-        as.integer(maxsteps))
-     } else if (method$ID == "rk4simple") { # special version with less overhead
-     out <- .Call("call_rk4", as.double(y), as.double(times),
-        Func2, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
-        as.double(rpar), as.integer(ipar))
-     } else if (method$ID == "eulersimple") { # special version with less overhead
-     out <- .Call("call_euler", as.double(y), as.double(times),
-        Func2, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
-        as.double(rpar), as.integer(ipar))
+        as.integer(nsteps))
      } else {                              # fixed step methods
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func2, Initfunc, parms,
         as.integer(Nglobal), rho,
         as.double(tcrit), as.integer(verbose),
         as.double(hini), as.double(rpar), as.integer(ipar), method,
-        as.integer(maxsteps))
+        as.integer(nsteps))
      }
 
     nm <- c("time",

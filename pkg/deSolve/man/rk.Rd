@@ -105,7 +105,7 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     to function \code{func} ; this may speed up the simulation especially
     for large models.
   }
-  \item{method}{the integrator to use. This can either be a string
+  \item{method }{the integrator to use. This can either be a string
     constant naming one of the pre-defined methods or a call to function
     \code{\link{rkMethod}} specifying a user-defined method.  The most
     common methods are the fixed-step methods \code{"euler"},
@@ -113,9 +113,11 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     \code{"rk23bs"}, \code{"rk34f"}, \code{"rk45f"} or
     \code{"rk45dp7"}.
   }
-  \item{maxsteps }{maximal number of steps during one call to the
-    solver.
-  }
+  \item{maxsteps }{average maximum number of integration steps per time
+    interval. The definition of this argument is intended to ensure
+    compatibility with the Livermore-solvers, but the maximum number of
+    steps in total is calculated as \code{length(times) * maxsteps}.
+  } 
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and

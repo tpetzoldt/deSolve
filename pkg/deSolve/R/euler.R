@@ -1,4 +1,4 @@
-rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
+euler <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
   dllname = NULL, initfunc=dllname, initpar = parms,
   rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, ...) {
 
@@ -88,7 +88,7 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
     }
 
     ## the CALL to the integrator
-    out <- .Call("call_rk4", as.double(y), as.double(times),
+    out <- .Call("call_euler", as.double(y), as.double(times),
         Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
         as.double(rpar), as.integer(ipar))
 

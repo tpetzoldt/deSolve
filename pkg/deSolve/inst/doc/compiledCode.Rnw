@@ -85,7 +85,7 @@ to solve models that are written in \proglang{FORTRAN} or
 library("deSolve")
 options(prompt = "R> ")
 options(width=50)
-@ 
+@
 
 \maketitle
 
@@ -100,8 +100,8 @@ specifying the differential equations either as:
 
 \begin{itemize}
 \item pure \proglang{R} code.
-\item functions defined in lower-level languages such as \proglang{FORTRAN}, 
-\proglang{C}, or \proglang{C++}, which are compiled into a dynamically linked 
+\item functions defined in lower-level languages such as \proglang{FORTRAN},
+\proglang{C}, or \proglang{C++}, which are compiled into a dynamically linked
 library (DLL) and loaded into \proglang{R}.
 \end{itemize}
 
@@ -118,7 +118,7 @@ code.
 Here are some rules of thumb when it is worthwhile or not to switch to
 \DLLmodels.
 
-\begin{itemize} 
+\begin{itemize}
 \item As long as one makes use only of \proglang{R} s high-level
 commands, the time gain will be modest. This was demonstrated in
 Soetaert et al. (subm.), where a formulation of two interacting
@@ -129,7 +129,7 @@ to a time gain of a factor two only when using \DLLmodels.
 the gain of using compiled code. Thus, in the same paper (Soetaert et
 al. subm.), a very simple, 0-D, Lotka-Volterrra type of model
 describing only 2 state variables was solved 50 times faster when
-using compiled code.  
+using compiled code.
 
 \item As even \Rmodels are quite performant, the time gain induced by
 compiled code will often not be discernible when the model is only
@@ -137,7 +137,7 @@ solved once (who can grasp the difference between a run taking 0.001
 or 0.05 seconds to finish).  However, if the model is to be applied
 multiple times, e.g.  because the model is to be fitted to data, or
 its sensitivity is to be tested, then it may be worthwhile to
-implement the model in a compiled language.  
+implement the model in a compiled language.
 \end{itemize}
 
 \section{A simple ODE example}
@@ -187,7 +187,7 @@ model <- function(t, Y, parameters)
 
    list(c(dy1, dy2, dy3))
                             })
-}                            
+}
 @
 
 
@@ -210,7 +210,7 @@ jac <- function (t, Y, parameters)
 
    return(PD)
                             })
-}                            
+}
 @
 
 This model can then be run as follows:
@@ -481,14 +481,14 @@ Team (2008).
 \section{deSolve integrators that support DLL models}
 
 In the most recent version of \pkg{deSolve} all integration routines
-except \code{rk_r} can solve \DLLmodels. They are:
+can solve \DLLmodels. They are:
 
 \begin{itemize}
 \item all solvers of the \code{lsode} familiy: \code{lsoda},
   \code{lsode}, \code{lsodar}, \code {lsodes}
 \item \code{vode}
 \item \code{daspk}
-\item the C-implemented runge-kutta integration routines (including the
+\item the C-implemented Runge-Kutta integration routines (including the
   Euler method)
 \end{itemize}
 
