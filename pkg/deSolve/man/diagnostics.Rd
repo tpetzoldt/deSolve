@@ -42,13 +42,9 @@ pairs(out,pch=".")
 diagnostics(out)
 ## the following is for testing only; remove it in the release version
 \dontrun{
-out.rk   <- rk(state, times, chaos, 0, method="ode45", maxsteps=1e5,atol=1e-4, rtol=1e-4)
+out.rk   <- rk(state, times, chaos, 0, method="ode45", atol=1e-4, rtol=1e-4)
 pairs(out.rk, pch=".")
 diagnostics(out.rk)
-
-out.rkr   <- rk_r(state, times, chaos, 0, method="ode45", hmax=0.1, maxsteps=1e5)
-pairs(out.rkr, pch=".")
-diagnostics(out.rkr)
 }
 }
 \keyword{ utilities }

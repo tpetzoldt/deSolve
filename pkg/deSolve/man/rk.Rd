@@ -1,6 +1,5 @@
 \name{rk}
 \alias{rk}
-\alias{rk_r} % compare rk and rk_r and finally remove the pure R version
 
 \title{Explicit One-Step Solvers for Ordinary Differential Equations
 (ODE)}
@@ -28,11 +27,6 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
   method = rkMethod("rk45dp7", ... ), maxsteps = 5000, dllname = NULL,
   initfunc = dllname, initpar = parms, rpar = NULL, ipar = NULL,
   nout = 0, outnames = NULL, ...)
-
-rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
-  tcrit = NULL, verbose = FALSE, hmin = 0, hmax = NULL, hini = hmax,
-  method = rkMethod("rk45dp7", ...), maxsteps = 5000, ...)
-
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -113,11 +107,11 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
     \code{"rk23bs"}, \code{"rk34f"}, \code{"rk45f"} or
     \code{"rk45dp7"}.
   }
-  \item{maxsteps }{average maximum number of integration steps per time
-    interval. The definition of this argument is intended to ensure
+  \item{maxsteps }{average maximal number of steps per output interval
+    taken by the solver. This argument is defined such to ensure
     compatibility with the Livermore-solvers, but the maximum number of
     steps in total is calculated as \code{length(times) * maxsteps}.
-  } 
+  }
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
@@ -232,15 +226,6 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 }
 
 \note{
-  
-  The variant \code{rk4_r} is a previous implementation in pure R that
-  is slower and has less functionality, but can be used to understand
-  how the algorithms work in general.
-  
-  The recent C implementation is still under development and
-  \emph{highly experimental}, so please be very careful! Testers are
-  welcome, please report errors and improvements.
-
   Arguments \code{rpar} and \code{ipar} are provided for compatibility with lsoda, but
   not yet thoroughly tested.
 }
@@ -259,16 +244,23 @@ rk_r(y, times, func, parms, rtol = 1e-06, atol = 1e-06,
 
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
-\seealso{\code{\link{rkMethod}},
-         \code{\link{rk4}},
-         \code{\link{ode}},
-         \code{\link{lsoda}},
-         \code{\link{lsode}},
-         \code{\link{lsodes}},
-         \code{\link{lsodar}},
-         \code{\link{vode}},
-         \code{\link{daspk}}
+\seealso{
+  \itemize{
+    \item \code{\link{rkMethod}} for a list of available Runge-Kutta
+      parameter sets,
+    \item \code{\link{rk4}} and \code{\link{euler}} for special
+      versions without interpolation (and less overhead),
+    \item \code{\link{lsoda}}, \code{\link{lsode}},
+      \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
+      \code{\link{daspk}} for solvers of the Livermore family,
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
+    \item \code{\link{ode.band}} for solving models with a banded
+      Jacobian,
+    \item \code{\link{ode.1D}} for integrating 1-D models,
+    \item \code{\link{ode.2D}} for integrating 2-D models,
+  }
 }
+
 
 \examples{
 ## ==============================
@@ -309,10 +301,6 @@ parms <- list(b = 0.0, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
 ## Start values for steady state
 y <- xstart <- c(S = 1, P = 1, K = 1)
 
-## ------------------------------------
-## C implementation of the integrators
-## ------------------------------------
-
 system.time({
 ## Euler method
 out1  <- as.data.frame(rk(xstart, times, lvmodel, parms,
@@ -348,48 +336,6 @@ legend("center", legend = c("euler", "rk4", "rk45dp7"),
   lty = c(1, 3, 3), lwd = c(1, 2, 1),
   col = c("black", "red", "green"))
 par(mfrow = mf)
-
-
-## ------------------------------------
-## R implementation of the integrators
-## ------------------------------------
-
-system.time({
-## Euler method
-out1  <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
-                          hini = 0.1, method = "euler"))
-
-## classical Runge-Kutta 4th order
-out2 <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
-                         hini = 1, method = "rk4"))
-
-## Dormand-Prince method of order 5(4)
-out3 <- as.data.frame(rk_r(xstart, times, lvmodel, parms,
-                         hmax = 1, method = "rk45dp7"))
-})
-
-mf <- par(mfrow = c(2,2))
-plot (out1$time, out1$S, type = "l", ylab = "Substrate")
-lines(out2$time, out2$S, col = "red", lty = "dotted", lwd = 2)
-lines(out3$time, out3$S, col = "green", lty = "dotted")
-
-plot (out1$time, out1$P, type = "l", ylab = "Producer")
-lines(out2$time, out2$P, col = "red", lty = "dotted")
-lines(out3$time, out3$P, col = "green", lty = "dotted")
-
-plot (out1$time, out1$K, type = "l", ylab = "Consumer")
-lines(out2$time, out2$K, col = "red", lty = "dotted", lwd = 2)
-lines(out3$time, out3$K, col = "green", lty = "dotted")
-
-plot (out1$P, out1$K, type = "l", xlab = "Producer", ylab = "Consumer")
-lines(out2$P, out2$K, col = "red",   lty = "dotted", lwd = 2)
-lines(out3$P, out3$K, col = "green", lty = "dotted")
-
-legend("center", legend = c("euler", "rk4", "rk45dp7"),
-  lty = c(1, 3, 3), lwd = c(1, 2, 1),
-  col = c("black", "red", "green"))
-par(mfrow = mf)
-
 }
 
 \keyword{ math }
