@@ -62,7 +62,7 @@ initial value problems, R}
 
   The implementation includes stiff integration routines based on the
   ODEPACK Fortan codes \citep{Hindmarsh83}.  It also include
-  runge-kutta solvers and the euler method \citep{Press92}.  Here we
+  Runge-Kutta solvers and the Euler method \citep{Press92}.  Here we
   outline how to implement differential equations as \R-functions.
 
   Another vignette ("compiledCode") \citep{compiledCode}, deals with differential
@@ -117,12 +117,12 @@ options(width=70)
   The Lorenz equations (Lorenz, 1963) were the first chaotic dynamic system
   to be described. They consist of three differential equations that were
   assumed to represent idealized behavior of the earth's atmosphere.
-
   We use this model to demonstrate how to implement and solve differential
-  equations in \R.
-
+  equations in \proglang{R}.
   The Lorenz model describes the dynamics of three state variables, $X$,
   $Y$ and $Z$.
+
+  %ThPe: It would be nice to have one sentence about what these states are
 
   The model equations are:
 
@@ -144,12 +144,12 @@ options(width=70)
   Implementation of an IVP ODE in \R can be separated in two parts: the model
   specification and the model application.
 
-  Model specification consists of
+  Model specification consists of:
   \begin{itemize}
-    \item	Defining model parameters and their values
-    \item	Defining model state variables and their initial conditions
+    \item	Defining model parameters and their values,
+    \item	Defining model state variables and their initial conditions,
     \item	Implementing the model equations that calculate the rate of
-      change (e.g. dX/dt) of the state variables.
+      change (e.g. $dX/dt$) of the state variables.
   \end{itemize}
 
   The model application consists of
@@ -159,19 +159,19 @@ options(width=70)
     \item	Plotting of model results.
   \end{itemize}
 
-  Below, we discuss the \R-code for the Lorenz model.
+  Below, we discuss the \proglang{R}-code for the Lorenz model.
 
   \subsection{Model specification}
 
     1. Model parameters.
 
-    There are three model parameters: a, b, and c that are defined first.
-    Parameters are stored as a vector and assigned names and values.
+    There are three model parameters: $a$, $b$, and $c$ that are defined first.
+    Parameters are stored as a vector with assigned names and values.
 
 <<>>=
-parameters<-c(a         =-8/3,
-              b         =-10,
-              c         = 28)
+parameters <- c(a = -8/3,
+                b = -10,
+                c =  28)
 @
     2. State variables.
 
@@ -179,9 +179,9 @@ parameters<-c(a         =-8/3,
     initial values given.
 <<>>=
 
-state     <-c(X   =1,
-              Y   =1,
-              Z   =1)
+state     <- c(X = 1,
+               Y = 1,
+               Z = 1)
 @
     3. Model equations
 
@@ -197,7 +197,7 @@ state     <-c(X   =1,
     The code is most readable if we can address the parameters and state
     variables by their names.
     As both parameters and state variables are 'vectors', they are converted
-    as a list. The statement \code{with(as.list(c(state,parameters)),{... })}
+    as a list. The statement \code{with(as.list(c(state,parameters)), {...})}
     then makes available the names of this list.
 
     The main part of the model calculates the rate of change of the state
@@ -205,12 +205,12 @@ state     <-c(X   =1,
     packed as a list. Note that is necessary to return the rate of change in
     the same ordering as the specification of the state variables
     (this is very important).
-    In this case, as state variables are specified X first, then Y and Z,
-    the rates of changes are returned as dX,dY,dZ.
+    In this case, as state variables are specified $X$ first, then $Y$ and $Z$,
+    the rates of changes are returned as $dX, dY, dZ$.
 
 <<>>=
-Lorenz<-function(t,state,parameters) {
- with(as.list(c(state,parameters)),{
+Lorenz<-function(t, state, parameters) {
+ with(as.list(c(state, parameters)),{
 
     # rate of change
     dX <- a*X + Y*Z
@@ -218,9 +218,9 @@ Lorenz<-function(t,state,parameters) {
     dZ <- -X*Y + c*Y - Z
 
     # return the rate of change
-    list(c(  dX, dY, dZ  ))
+    list(c(dX, dY, dZ))
 
-    })   # end with (as.list...
+    })   # end with(as.list...
   }
 @
 
@@ -248,9 +248,11 @@ times     <-seq(0,100,by=0.01)
   Function \code{ode} returns a matrix that contains the values of the state
   variables (columns) at the requested output times. The output is converted
   to a data frame and stored in '\code{out}'.
-  Data.frames have the advantage, that their columns can be accessed by
+  Data frames have the advantage, that their columns can be accessed by
   name, rather than by number. For instance, \code{out$X} will take the
   outputted concentrations of state variable \code{X}, and so on.
+
+  %ThPe: these are not concentrations; simply call them states
 
 <<>>=
 require(deSolve)
@@ -267,6 +269,8 @@ head(out)
   (\code{oma}), such as to allow writing a figure heading (\code{mtext}).
   First the X concentration versus time is plotted, then the Y concentration
   versus time, and finally Y versus X and Z versus X.
+
+  %ThPe: concentrations? states!
 
 <<label=ode,include=FALSE>>=
 par(mfrow=c(2,2), oma=c(0,0,3,0))
@@ -294,7 +298,7 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 \subsection{Solvers for initial value problems of ordinary differential
   equations}
 
-Package \ds contains several IVP ordinary differential equation solvers.
+  Package \ds contains several IVP ordinary differential equation solvers.
   They can all be triggered from function \code{ode} (by setting the argument
   \code{method}), or can be run as stand-alone functions.
 
@@ -304,9 +308,9 @@ Package \ds contains several IVP ordinary differential equation solvers.
   Thus it should be possible to find, for one particular problem, the most
   efficient solver.
   See \citep{deSolve} for more information about when to use which solver
-  in \ds. For most cases, the default solver, \code{ode} and using the
+  in \pkg{deSolve}. For most cases, the default solver, \code{ode} and using the
   default settings will do.
-  Table 1 gives a short overview of these methods.
+  Table 1 gives a short overview of the available methods.
 
   We solve the model with several integration routines, each time
   printing the time it took (in seconds) to find the solution.
@@ -335,7 +339,7 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
     \item \code{ode.2D} integrates 2-dimensional problems
   \end{itemize}
 
-    As an example, consider the Aphid model described in \citep{Soetaert08}.
+    As an example, consider the Aphid model described in \citet{Soetaert08}.
 
   It is a model where aphids slowly diffuse and grow on a row of plants.
   The model equations are:
@@ -369,14 +373,14 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
   Note that the values of state variables (here densities) are defined in the
   centre of boxes (i), whereas the fluxes are defined on the box interfaces.
 
-  We refer to \citep{Soetaert08} for more information about this model and
+  We refer to \citet{Soetaert08} for more information about this model and
   its numerical approximation.
 
-  Here is its implementation in \R:
+  Here is its implementation in \proglang{R}:
 
   First the model equations are defined:
 <<>>=
-  Aphid <-function(t,APHIDS,parameters)
+  Aphid <- function(t,APHIDS,parameters)
    {
       deltax     <- c (0.5, rep(1,numboxes-1), 0.5)
       Flux       <- -D * diff(c(0, APHIDS, 0)) /deltax
@@ -418,7 +422,7 @@ columns)
   head (out[,1:5])
   DENSITY   <- out[,2:(numboxes  +1)]
 @
-  Finally, the outplut is plotted
+  Finally, the output is plotted
 <<label=aphid, include=FALSE>>=
   filled.contour(x=times, y=Distance, DENSITY, color= topo.colors,
                  xlab="time, days", ylab= "Distance on plant, m",
@@ -439,19 +443,20 @@ columns)
   As the 1-D model describes only one species, it is best solved with
   \ds function \code{ode.band}.
 
-  A multi-species IVP example can be found in \citep{Soetaert08b}.
+  A multi-species IVP example can be found in \citet{Soetaert08b}.
 
   For 2-D problems, we refer to the help-files of function \code{ode.2D}.
 
   \section{Differential algebraic equations}
 
   Function \code{daspk} from package \ds solves (relatively simple)
-  DAEs of index maximal 1 \footnote{note that many -apparently simple-
-  DAEs are higher-index DAEs}.
+  DAEs of index\footnote{note that many -apparently simple-
+  DAEs are higher-index DAEs} maximal 1.
 
   The DAE has to be specified by the \emph{residual function} instead of
   the rates of change (as in ODE).
 
+  %ThPe: please say something about the background of this example
   Consider the following DAE:
 \begin{eqnarray*}
 \frac{dy_1}{dt}&=&-y_1+y_2\\
