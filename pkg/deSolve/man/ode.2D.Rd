@@ -5,8 +5,8 @@
 
 \description{
   Solves a system of ordinary differential equations resulting from
-  2-Dimensional reaction-transport models that include transport only
-  between adjacent layers.
+  2-Dimensional partial differential equations
+  that have been converted to ODEs by numerical differencing.
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
@@ -152,9 +152,12 @@ out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                           "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 
+\dontrun{
+
 for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = "x", ylab = "y", zlim = range(out[,2:(NN+1)]))
+}
 
 ## ============================================================
 ## An example with a cyclic boundary condition...

@@ -4,8 +4,8 @@
 ### sparse jacobian matrix. The structure of the jacobian is either specified
 ### by the user or estimated internally.
 ### The sparsity is either estimated internally (default), provided by the user
-### or of a special type. To date, "1D" and "2D" are supported.
-### i.e. sparsity associated with 1- and 2-Dimensional reaction-transport models
+### or of a special type. To date, "1D", "2D", "3D" are supported.
+### i.e. sparsity associated with 1- 2- and 3-Dimensional PDE models
 ### ============================================================================
 
 lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6, 
@@ -66,33 +66,35 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     stop("cannot combine sparsetype=1D and jacvec")
   if (sparsetype=="2D" && ! is.null(jacvec))
     stop("cannot combine sparsetype=2D and jacvec")
+  if (sparsetype=="3D" && ! is.null(jacvec))
+    stop("cannot combine sparsetype=3D and jacvec")
 
   # imp = method flag as used in lsodes
   if (! is.null(jacvec) &&  sparsetype=="sparseusr")
     imp <- 21   # inz supplied,jac supplied
   else if (! is.null(jacvec) && !sparsetype=="sparseusr")
     imp <- 121     # inz internally generated,jac supplied
-  else if (is.null(jacvec) &&  sparsetype%in%c("sparseusr","1D","2D"))
+  else if (is.null(jacvec) &&  sparsetype%in%c("sparseusr","1D","2D","3D"))
     imp <- 22      # inz supplied,jac not supplied
   else
     imp <- 222      # sparse jacobian, calculated internally
 
 ## Special-purpose sparsity structures: 1-D and 2-D reaction-transport problems
-## Typically these applications are called via ode.1D and ode.2D
+## Typically these applications are called via ode.1D, ode.2D and ode.3D
 ## Here the sparsity is determined in the c-code; this needs extra input:
 ## the number of components *Nspec* and the number of boxes.
-## This information is passed by ode.1D and ode.2D in parameter nnz (which is a vector)
+## This information is passed by ode.1D, ode.2D and ode.3D in parameter nnz (a vector)
 ## nnz is altered to include the number of nonzero elements (element 1).
 ## Type contains the type of sparsity + nspec + num boxes + cyclicBnd
 
   if (sparsetype=="1D") {
     nspec  <- nnz[1]
-    Type   <- c(2,nnz)
+    Type   <- c(2,nnz)    #type=2
     nnz    <- n*(2+nspec)-2*nspec
   } else if (sparsetype=="2D")  {
     nspec  <- nnz[1]
     dimens <- nnz[2:3]
-    Type   <- c(3,nnz)
+    Type   <- c(3,nnz)   #type=3
     nnz    <- n*(4+nspec)-2*nspec*(sum(dimens))
 
     if (Type[5]==1) { # cyclic boundary in x-direction
@@ -100,6 +102,21 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     }
     if (Type[6] ==1) {# cyclic boundary in y-direction
       nnz <- nnz + 2*dimens[2]*nspec
+    }
+  } else if (sparsetype=="3D")  {
+    nspec  <- nnz[1]
+    dimens <- nnz[2:4]    #type=4
+    Type   <- c(4,nnz)
+    nnz    <- n*(6+nspec)-2*nspec*(sum(dimens))
+
+    if (Type[6]==1) { # cyclic boundary in x-direction
+      nnz <- nnz + 2*dimens[1]*nspec
+    }
+    if (Type[7] ==1) {# cyclic boundary in y-direction
+      nnz <- nnz + 2*dimens[2]*nspec
+    }
+    if (Type[8] ==1) {# cyclic boundary in y-direction
+      nnz <- nnz + 2*dimens[3]*nspec
     }
   } else if (sparsetype == "sparseusr") {
     Type <- 0
@@ -322,6 +339,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
         txt <-" the nonzero elements are according to a 1-D model, the jacobian will be estimated internally, by differences"
       if (sparsetype=="2D")
         txt <-" the nonzero elements are according to a 2-D model, the jacobian will be estimated internally, by differences"
+      if (sparsetype=="3D")
+        txt <-" the nonzero elements are according to a 3-D model, the jacobian will be estimated internally, by differences"
                    }
     if (imp == 122)
       txt <-" the user has supplied the jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"

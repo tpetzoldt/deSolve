@@ -3,8 +3,8 @@
 \title{Solver For Multicomponent 1-D Ordinary Differential Equations}
 \description{
   Solves a system of ordinary differential equations
-  resulting from 1-Dimensional multi-component transport-reaction models
-  that include transport only between adjacent layers.
+  resulting from 1-Dimensional partial differential equations
+  that have been converted to ODEs by numerical differencing.
 }
 \usage{ode.1D(y, times, func, parms, nspec = NULL, dimens = NULL, 
        method = "lsode", ...)

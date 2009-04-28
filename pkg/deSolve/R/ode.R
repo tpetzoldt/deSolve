@@ -143,6 +143,35 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
 
 ### ============================================================================
 
+ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, ...){
+ # check input
+  if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
+    stop ("cannot run ode.3D with jacfunc specified - remove jacfunc from call list")
+  if (is.null(dimens))
+     stop ("cannot run ode.3D: dimens should be specified")
+  if (length(dimens)!=3)
+     stop ("cannot run ode.3D: dimens should contain 3 values")
+
+  N     <- length(y)
+  if (N%%prod(dimens) !=0    )
+    stop ("cannot run ode.3D: dimensions are not an integer fraction of number of state variables")
+
+  if (is.null (nspec))
+    nspec = N/prod(dimens) else
+  if (nspec*prod(dimens) != N)
+    stop ("cannot run ode.3D: dimens[1]*dimens[2]*dimens[3]*nspec is not equal to number of state variables")
+
+  Bnd <- c(0,0,0)    #  cyclicBnd not included
+
+  # use lsodes - note:expects rev(dimens)...
+   out <- lsodes(y=y, times=times, func=func, parms, sparsetype="3D",
+          nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
+
+  return(out)
+}
+
+### ============================================================================
+
 ode.band  <- function (y, times, func, parms, nspec=NULL, bandup=nspec,
                        banddown=nspec, method = "lsode", ...)  {
 
@@ -168,3 +197,4 @@ ode.band  <- function (y, times, func, parms, nspec=NULL, bandup=nspec,
    stop ("cannot run ode.band: method should be one of vode, lsoda, lsodar or lsode")   
   
 }
+
