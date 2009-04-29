@@ -93,22 +93,20 @@ rkMethod(method = NULL, ...)
   \item{varstep}{boolean value specifying if the method allows for
     variable time step (\code{TRUE}) or not (\code{FALSE}).
   }
-  
   \item{interpolation}{boolean value to switch internal interpolation
     off.  Note that this works only if time steps match exactly. This
     may not work as expected for all cases because of floating point
     rounding errors (see R FAQ about ``Why doesn't R think these numbers
     are equal?'').
   }
-    
   \item{FSAL}{(first same as last) boolean value specifying if the
     method allows re-use of the last function evaluation (\code{TRUE})
     or not (\code{FALSE} or \code{NULL}).
   }
-  \item{A}{coefficient matrix of the method. As \code{link{rk}}
-    supports only explicit methods, this matrix must be lower
-    triangular.  \code{A} can also be a vector if only the subdiagonal
-    values are different from zero.
+  \item{A}{coefficient matrix of the method. As \code{link{rk}} supports
+    only explicit methods, this matrix must be lower triangular.
+    \code{A} must be a vector for fixed step methods where only the
+    subdiagonal values are different from zero.
   }
   \item{b1}{weighting coefficients for averaging the function
     evaluations of method 1.
@@ -121,8 +119,8 @@ rkMethod(method = NULL, ...)
   
   \item{d}{coefficients for built-in polynomial interpolation of the
     outputs from internal steps (dense output), currently only available
-    for method \code{rk45dp7} (Dormand-Prince).  }
-
+    for method \code{rk45dp7} (Dormand-Prince).
+  }
   \item{stage}{number of function evaluations needed (corresponds to
     number of rows in A).
   }
@@ -197,8 +195,6 @@ ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL))
 ode(x, times, func, parms, 
   method = rkMethod(ID = "midpoint",
     varstep = FALSE,
-    #A       = matrix(c(0, 0, 1/2, 0), nrow = 2, byrow = TRUE), 
-    # or simply, because this A is nonzero only in the subdiagonal
     A      = c(0, 1/2),
     b1      = c(0, 1),
     c       = c(0, 1/2),

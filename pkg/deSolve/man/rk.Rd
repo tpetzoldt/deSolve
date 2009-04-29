@@ -9,7 +9,7 @@
 
   The \R function \code{rk} is a top-level function that provides
   interfaces to a collection of common explicit one-step solvers of the
-  Runge-Kutta family with fixed step or variable time steps.
+  Runge-Kutta family with fixed or variable time steps.
 
   The system of ODE's is written as an \R function (which may, of
   course, use \code{\link{.C}}, \code{\link{.Fortran}},
@@ -228,8 +228,8 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 }
 
 \note{
-  Arguments \code{rpar} and \code{ipar} are provided for compatibility with lsoda, but
-  not yet thoroughly tested.
+  Arguments \code{rpar} and \code{ipar} are provided for compatibility
+  with \code{lsoda}, but not yet thoroughly tested.
 }
 
 \references{

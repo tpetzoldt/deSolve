@@ -3,7 +3,7 @@
 /* Definitions and Utilities needed by Runge-Kutta Solvers                  */
 /*==========================================================================*/
 
-/* Load headers needed by the R interfac */
+/* Load headers needed by the R interface */
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
@@ -80,7 +80,11 @@ SEXP getListElement(SEXP list, const char *str) {
 /*   Arithmetic utilities                                                     */
 /*============================================================================*/
 
-/* a reduced version without NA checking */
+/*----------------------------------------------------------------------------*/
+/* Matrix Multiplikation                                                      */
+/* a reduced version without NA checking, this is ensured otherwise           */
+/*----------------------------------------------------------------------------*/
+
 void blas_matprod1(double *x, int nrx, int ncx,
 		    double *y, int nry, int ncy, double *z)
 {

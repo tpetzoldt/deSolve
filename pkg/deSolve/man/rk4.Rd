@@ -111,8 +111,8 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
 }
 \note{
   For most practical cases, solvers with flexible timestep
-  (e.g. rk(method="ode45") and especially solvers of the Livermore family
-  (e.g. \code{\link{lsoda}}) are superior.
+  (e.g. \code{rk(method="ode45")} and especially solvers of the
+  Livermore family (e.g. \code{\link{lsoda}}) are superior.
 }
 
 \examples{
