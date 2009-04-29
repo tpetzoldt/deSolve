@@ -6,8 +6,8 @@
 \description{Solves a system of ordinary differential equations.}
 
 \usage{ode(y, times, func, parms, 
-method = c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4", 
-         "ode23", "ode45"), ...)
+method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
+           "euler", "rk4", "ode23", "ode45"), ...)
 }
 
 \arguments{
@@ -80,6 +80,7 @@ method = c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
       Jacobian,
     \item \code{\link{ode.1D}} for integrating 1-D models,
     \item \code{\link{ode.2D}} for integrating 2-D models,
+    \item \code{\link{ode.3D}} for integrating 3-D models,
     \item \code{\link{aquaphy}}, \code{\link{ccl4model}}, where
       \code{ode} is used,
     \item \code{\link{lsoda}}, \code{\link{lsode}},
@@ -87,6 +88,7 @@ method = c("lsoda","lsode","lsodes","lsodar","vode","daspk", "euler", "rk4",
       \code{\link{daspk}},
     \item  \code{\link{rk}}, \code{\link{rkMethod}}
   }
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \keyword{math}
 \examples{

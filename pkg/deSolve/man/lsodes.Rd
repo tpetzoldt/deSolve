@@ -18,11 +18,12 @@
 
 \usage{
 lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6, 
-  jacvec = NULL, sparsetype = "sparseint", nnz = NULL, inz = NULL,     
-  verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = 0, ynames = TRUE, 
-  maxord = NULL, maxsteps = 5000, lrw = NULL, liw = NULL,  
-  dllname = NULL, initfunc = dllname, initpar = parms,  
-  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
+  jacvec = NULL, sparsetype = "sparseint", nnz = NULL,
+  inz = NULL, verbose = FALSE, tcrit = NULL, hmin = 0,
+  hmax = NULL, hini = 0, ynames = TRUE, maxord = NULL,
+  maxsteps = 5000, lrw = NULL, liw = NULL, dllname = NULL,
+  initfunc = dllname, initpar = parms, rpar = NULL,
+  ipar = NULL, nout = 0, outnames = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -31,7 +32,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
   \item{times }{time sequence for which output is wanted; the first
     value of \code{times} must be the initial time; if only one step is
-    to be taken; set \code{times} = NULL.
+    to be taken; set \code{times} = \code{NULL}.
   }
   \item{func }{either an \R-function that computes the values of the
     derivatives in the ODE system (the \emph{model definition}) at time
@@ -52,7 +53,8 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     that are required at each point in \code{times}.  If \code{func} is
     a string, then \code{dllname} must give the name of the shared
     library (without extension) which must be loaded before
-    \code{lsodes()} is called. See package vignette for more details.
+    \code{lsodes()} is called. See package vignette \code{"compiledCode"}
+    for more details.
   }
   \item{parms }{vector or list of parameters used in \code{func} or
     \code{jacfunc}.
@@ -129,7 +131,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     value of \code{lrw}.
   }
   \item{liw }{the length of the integer work array iwork; due to the
-    sparsicity, this cannot be readily predicted. If NULL, a guess will
+    sparsicity, this cannot be readily predicted. If \code{NULL}, a guess will
     be made, and if not sufficient, \code{lsodes} will return with a
     message indicating the size of iwork actually required.  Therefore,
     some experimentation may be necessary to estimate the value of
@@ -138,11 +140,11 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
-    \code{jacfunc}. See package vignette.
+    \code{jacfunc}. See package vignette \code{"compiledCode"}.
   }
-  \item{initfunc }{if not NULL, the name of the initialisation function
+  \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
-    \file{dllname}. See package vignette.
+    \file{dllname}. See package vignette \code{"compiledCode"}.
   }
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
@@ -162,7 +164,8 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
     indeed the number of output variables calculed in the dll - you have
-    to perform this check in the code. See package vignette.
+    to perform this check in the code. See package vignette
+    \code{"compiledCode"}.
   }
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
@@ -347,9 +350,10 @@ out3 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
 ##                the jacobian (vector) function is input
 ##                not very efficient...
 ## --------------------------------------------------------------------
-out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times, lrw = 351,
-              sparsetype = "sparseusr", inz = nonzero, jacvec = chemjac,
-              atol = atol, rtol = rtol, verbose = TRUE)
+out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
+               lrw = 351, sparsetype = "sparseusr", inz = nonzero,
+               jacvec = chemjac, atol = atol, rtol = rtol,
+               verbose = TRUE)
 }
 \references{
   Alan C. Hindmarsh, ODEPACK, A Systematized Collection of ODE Solvers,
@@ -405,7 +409,7 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times, lrw = 351,
   for details.
    
   \bold{Models} may be defined in compiled C or Fortran code, as well as
-  in an \R-function. See package vignette for details.
+  in an \R-function. See package vignette \code{"compiledCode"} for details.
   
   
   The output will have the attributes  \bold{istate}, and
@@ -448,9 +452,19 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times, lrw = 351,
   For more information, see the comments in the original code lsodes.f
 }
 \seealso{
-  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
-  \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}},
-  \code{\link{rk}}.
+  \itemize{
+    \item \code{\link{rk}}, \item \code{\link{rk4}} and \code{\link{euler}} for
+      Runge-Kutta integrators.
+    \item \code{\link{lsoda}}, \code{\link{lsode}},
+      \code{\link{lsodar}}, \code{\link{vode}},
+      \code{\link{daspk}} for other solvers of the Livermore family,
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
+    \item \code{\link{ode.band}} for solving models with a banded
+      Jacobian,
+    \item \code{\link{ode.1D}} for integrating 1-D models,
+    \item \code{\link{ode.2D}} for integrating 2-D models,
+    \item \code{\link{ode.3D}} for integrating 3-D models,
+  }
 
   \code{\link{diagnostics}} to print diagnostic messages.
 }

@@ -274,13 +274,15 @@ filled.contour(x = times, y = x, O2, color = color, nlevels = 50,
   See the selected integrator for the additional options.
 }
 \seealso{
-  \code{\link{ode}},
   \itemize{
-    \item \code{\link{ode.band}} for solving models with a banded Jacobian
-    \item \code{\link{ode.2D}} for integrating 2-D models
-    \item \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
-    \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}.
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
+    \item \code{\link{ode.band}} for integrating models with a banded Jacobian
+    \item  \code{\link{ode.2D}} for integrating 2-D models
+    \item  \code{\link{ode.3D}} for integrating 3-D models
+    \item  \code{\link{lsodes}},\code{\link{lsode}}, \code{\link{lsoda}},
+    \code{\link{lsodar}},\code{\link{vode}} for the integration options.
   }
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \keyword{math}
 

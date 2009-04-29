@@ -22,10 +22,11 @@
   \code{\link[nlme]{nlme}}
 }
 \usage{
-rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
-  tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames = TRUE,
-  method = rkMethod("rk45dp7", ... ), maxsteps = 5000, dllname = NULL,
-  initfunc = dllname, initpar = parms, rpar = NULL, ipar = NULL,
+rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
+  verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL,
+  hini = hmax, ynames = TRUE, method = rkMethod("rk45dp7", ... ),
+  maxsteps = 5000, dllname = NULL, initfunc = dllname,
+  initpar = parms, rpar = NULL, ipar = NULL,
   nout = 0, outnames = NULL, ...)
 }
 \arguments{
@@ -56,8 +57,8 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
 
 	If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
-    before \code{lsoda()} is called. See package vignette for more
-    details.
+    before \code{lsoda()} is called. See package vignette
+    \code{"compiledCode"} for more details.
   }
   \item{parms }{vector or list of parameters used in \code{func}}
   \item{rtol }{relative error tolerance, either a scalar or an array as
@@ -115,11 +116,11 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
-    \code{jacfunc}. See package vignette.
+    \code{jacfunc}. See package vignette \code{"compiledCode"}.
   }
-  \item{initfunc }{if not NULL, the name of the initialisation function
+  \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
-    \file{dllname}. See package vignette.
+    \file{dllname}. See package vignette \code{"compiledCode"}.
   }
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
@@ -139,7 +140,8 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
     indeed the number of output variables calculed in the dll - you have
-    to perform this check in the code. See package vignette.
+    to perform this check in the code. See package vignette
+    \code{"compiledCode"}.
   }
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
@@ -258,7 +260,9 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6, verbose = FALSE,
       Jacobian,
     \item \code{\link{ode.1D}} for integrating 1-D models,
     \item \code{\link{ode.2D}} for integrating 2-D models,
+    \item \code{\link{ode.3D}} for integrating 3-D models,
   }
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 
 

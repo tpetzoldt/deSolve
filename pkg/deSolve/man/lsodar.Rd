@@ -25,11 +25,12 @@
   }
 }
 \usage{lsodar(y, times, func, parms, rtol = 1e-6, atol = 1e-6, 
-  jacfunc = NULL, jactype = "fullint", rootfunc = NULL, verbose = FALSE,   
-  nroot = 0, tcrit = NULL, hmin = 0, hmax = NULL, hini = 0, ynames = TRUE, 
-  maxordn = 12, maxords = 5, bandup = NULL, banddown = NULL, maxsteps = 5000, 
-  dllname = NULL, initfunc = dllname, initpar = parms, rpar = NULL, 
-  ipar = NULL, nout = 0, outnames = NULL, ...)
+  jacfunc = NULL, jactype = "fullint", rootfunc = NULL,
+  verbose = FALSE, nroot = 0, tcrit = NULL, hmin = 0,
+  hmax = NULL, hini = 0, ynames = TRUE, maxordn = 12,
+  maxords = 5, bandup = NULL, banddown = NULL, maxsteps = 5000,
+  dllname = NULL, initfunc = dllname, initpar = parms,
+  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -59,7 +60,8 @@
 
     If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
-    before \code{lsodar()} is called. See package vignette for more
+    before \code{lsodar()} is called. See package vignette
+    \code{"compiledCode"} for more
     details.
   }
   \item{parms }{vector or list of parameters used in \code{func} or
@@ -152,11 +154,11 @@
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
-    \code{jacfunc}. See package vignette.
+    \code{jacfunc}. See package vignette \code{"compiledCode"}.
   }
-  \item{initfunc }{if not NULL, the name of the initialisation function
+  \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
-    \file{dllname}. See package vignette.
+    \file{dllname}. See package vignette \code{"compiledCode"}.
   }
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
@@ -176,7 +178,8 @@
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
     indeed the number of output variables calculed in the dll - you have
-    to perform this check in the code - See package vignette.
+    to perform this check in the code - See package vignette
+    \code{"compiledCode"}.
   }
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
@@ -336,7 +339,8 @@ print(out)
   for details.
   
   \bold{Models} may be defined in compiled C or Fortran code, as well as
-  in an R-function.  See package vignette for details.  Examples in
+  in an R-function.  See package vignette \code{"compiledCode"}
+  for details.  Examples in
   Fortran are in the \file{dynload} subdirectory of the \code{deSolve}
   package directory.
   
@@ -384,9 +388,19 @@ print(out)
   root that has been found and 0 otherwise.
 }
 \seealso{
-  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
-  \code{\link{lsodes}}, \code{\link{vode}}, \code{\link{daspk}},
-  \code{\link{rk}}.
+  \itemize{
+    \item \code{\link{rk}}, \item \code{\link{rk4}} and \code{\link{euler}} for
+      Runge-Kutta integrators.
+    \item \code{\link{lsoda}}, \code{\link{lsode}},
+      \code{\link{lsodes}}, \code{\link{vode}},
+      \code{\link{daspk}} for other solvers of the Livermore family,
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
+    \item \code{\link{ode.band}} for solving models with a banded
+      Jacobian,
+    \item \code{\link{ode.1D}} for integrating 1-D models,
+    \item \code{\link{ode.2D}} for integrating 2-D models,
+    \item \code{\link{ode.3D}} for integrating 3-D models,
+  }
 
   \code{\link{diagnostics}} to print diagnostic messages.
 }

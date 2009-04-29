@@ -11,9 +11,15 @@
   equations (ODE) and of differential algebraic equations (DAE).
 
   The functions provide an interface to the FORTRAN functions lsoda,
-  lsodar, lsode, lsodes, dvode and daspk. The package also contains
-  routines designed for solving uni-and multicomponent 1-D and 2-D
-  reactive transport models.
+  lsodar, lsode, lsodes of the ODEPACK collection,
+  to the FORTRAN functions dvode and daspk and a C-implementation of
+  solvers of the Runge-Kutta family with fixed or variable time steps.
+
+  The package also contains routines designed for solving ODEs
+  resulting from 1-D, 2-D and 3-D
+  partial differential equations (PDE) that have been converted to ODEs by
+  numerical differencing.
+
 }
 \details{
   \tabular{ll}{
@@ -38,13 +44,36 @@
   Thomas Petzoldt,
   R. Woodrow Setzer (Maintainer)
 }
-%\references{
+\references{
 %% to be filled out when our paper is published
-%}
+Alan C. Hindmarsh, 1983. ODEPACK, A Systematized Collection of ODE Solvers, in
+Scientific Computing, R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam,
+pp. 55-64.
+
+L. R. Petzold, 1983.
+A Description of DASSL: A Differential/Algebraic System Solver,
+in Scientific Computing,
+R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam, pp. 65-68.
+
+P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989.
+VODE: A Variable Coefficient ODE Solver,
+SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
+}
 \seealso{
-  \code{\link{ode}}, \code{\link{lsoda}}, \code{\link{lsode}},
+  \code{\link{ode}} for a general interface to most of the ODE solvers
+  
+  \code{\link{ode.band}} for solving models with a banded Jacobian
+
+  \code{\link{ode.1D}}, \code{\link{ode.2D}}, \code{\link{ode.3D}},
+  for integrating 1-D, 2-D and 3-D models
+  
+
+  \code{\link{lsoda}}, \code{\link{lsode}},
   \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
-  \code{\link{daspk}}, \code{\link{rk}}.
+  \code{\link{daspk}}, for solvers of the Livermore family
+
+  \code{\link{rk}}, \code{\link{rk4}}, \code{\link{euler}} for Runge-Kutta
+  solvers.
 }
 
 \examples{

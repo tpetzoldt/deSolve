@@ -160,11 +160,13 @@ diffusion3D <- function(t,Y,par)
 }
 \seealso{
   \itemize{
-    \item \code{\link{ode}}
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
     \item \code{\link{ode.band}} for integrating models with a banded Jacobian
     \item  \code{\link{ode.1D}} for integrating 1-D models
+    \item  \code{\link{ode.2D}} for integrating 2-D models
     \item  \code{\link{lsodes}} for the integration options.
   }
+  \code{\link{diagnostics}} to print diagnostic messages.
 }
 \keyword{math}
 

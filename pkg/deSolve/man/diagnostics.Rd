@@ -40,11 +40,5 @@ times <- seq(0, 50, 0.01)
 out   <- vode(state, times, chaos, 0)
 pairs(out,pch=".")
 diagnostics(out)
-## the following is for testing only; remove it in the release version
-\dontrun{
-out.rk   <- rk(state, times, chaos, 0, method="ode45", atol=1e-4, rtol=1e-4)
-pairs(out.rk, pch=".")
-diagnostics(out.rk)
-}
 }
 \keyword{ utilities }

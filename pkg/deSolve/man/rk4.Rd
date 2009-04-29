@@ -44,7 +44,8 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
 
 	  If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
-    before \code{lsoda()} is called. See package vignette for more
+    before \code{lsoda()} is called. See package vignette
+    \code{"compiledCode"} for more
     details.
   }
   \item{parms }{vector or list of parameters used in \code{func}}
@@ -58,11 +59,11 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
-    \code{jacfunc}. See package vignette.
+    \code{jacfunc}. See package vignette \code{"compiledCode"}.
   }
-  \item{initfunc }{if not NULL, the name of the initialisation function
+  \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
-    \file{dllname}. See package vignette.
+    \file{dllname}. See package vignette \code{"compiledCode"}.
   }
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
@@ -82,7 +83,8 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
     indeed the number of output variables calculed in the dll - you have
-    to perform this check in the code. See package vignette.
+    to perform this check in the code. See package vignette
+    \code{"compiledCode"}.
   }
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
@@ -158,10 +160,21 @@ legend("bottomright",
   col = c("red", "blue", "black", "black", "green"))
 }
 \seealso{
-  \code{\link{rk}}, 
-  \code{\link{ode}}, 
-  \code{\link{rkMethod}}, 
-  \code{\link{lsoda}},\code{\link{lsode}}, \code{\link{lsodes}}, 
-    \code{\link{lsodar}}, \code{\link{daspk}}}
+  \itemize{
+    \item \code{\link{rkMethod}} for a list of available Runge-Kutta
+      parameter sets,
+    \item \code{\link{rk}} and \code{\link{euler}}
+    \item \code{\link{lsoda}}, \code{\link{lsode}},
+      \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
+      \code{\link{daspk}} for solvers of the Livermore family,
+    \item \code{\link{ode}} for a general interface to most of the ODE solvers,
+    \item \code{\link{ode.band}} for solving models with a banded
+      Jacobian,
+    \item \code{\link{ode.1D}} for integrating 1-D models,
+    \item \code{\link{ode.2D}} for integrating 2-D models,
+    \item \code{\link{ode.3D}} for integrating 3-D models,
+  }
+  \code{\link{diagnostics}} to print diagnostic messages.
+}
 \keyword{math}
 
