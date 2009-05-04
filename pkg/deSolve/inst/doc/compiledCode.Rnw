@@ -75,7 +75,7 @@ to solve models that are written in \proglang{FORTRAN} or
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
 %% need no \usepackage{Sweave}
-%\VignetteIndexEntry{compiledCode}
+%\VignetteIndexEntry{deSolve: Writing Code in Compiled Languages}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document
 \begin{document}

@@ -62,7 +62,9 @@ initial value problems, R}
 
   The implementation includes stiff integration routines based on the
   ODEPACK Fortan codes \citep{Hindmarsh83}.  It also include
-  Runge-Kutta solvers and the Euler method \citep{Press92}.  Here we
+  Runge-Kutta solvers and the Euler method \citep{Press92}.
+
+  In this vignette we
   outline how to implement differential equations as \R-functions.
 
   Another vignette ("compiledCode") \citep{compiledCode}, deals with differential
@@ -97,7 +99,9 @@ initial value problems, R}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
 %% need no \usepackage{Sweave}
-%\VignetteIndexEntry{rootSolve}
+%\VignetteIndexEntry{solving initial value differential equations in R}
+%\VignetteKeywords{differential equations, ordinary differential equations, differential algebraic equations, partial differential equations, initial value problems, R}
+%\VignettePackage{deSolve}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document
 \begin{document}
@@ -505,6 +509,92 @@ matplot(out[,1],out[,2:3],type="l",lwd=2,
 \label{fig:dae}
 \end{figure}
 \clearpage
+\section{Using the integration options}
+The solvers from the ODEPACK integration routines can be optimised if it
+is known whether the problem is stiff or non-stiff, or if the
+structure of the Jacobian is sparse. We repeat the example from \code{lsode}
+to show how we can make good use of these options.
+
+The model describes the time evolution of 5 state variables:
+<<>>=
+f1 <- function  (t, y, parms)
+{
+  ydot <- vector(len = 5)
+
+  ydot[1] <-  0.1*y[1] -0.2*y[2]
+  ydot[2] <- -0.3*y[1] +0.1*y[2] -0.2*y[3]
+  ydot[3] <-           -0.3*y[2] +0.1*y[3] -0.2*y[4]
+  ydot[4] <-                     -0.3*y[3] +0.1*y[4] -0.2*y[5]
+  ydot[5] <-                               -0.3*y[4] +0.1*y[5]
+
+  return(list(ydot))
+}
+@
+and the initial conditions and output times are:
+<<>>=
+yini  <- 1:5
+times <- 1:20
+@
+The default solution, using \code{lsode} assumes that the model is stiff,
+and the integrator generates the Jacobian, which is assummed to be \emph{full}:
+<<>>=
+out   <- lsode(yini, times, f1, parms = 0, jactype = "fullint")
+@
+
+It is possible for the user to provide the Jacobian. Especially for large
+problems this can result in subtantial time savingsL
+
+In a first case, the Jacobian is written as a full matrix:
+<<>>=
+fulljac <- function  (t, y, parms)
+{
+   jac <- matrix(nrow = 5, ncol = 5, byrow = TRUE,
+                data = c(0.1, -0.2,  0  ,  0  ,  0  ,
+                        -0.3,  0.1, -0.2,  0  ,  0  ,
+                         0  , -0.3,  0.1, -0.2,  0  ,
+                         0  ,  0  , -0.3,  0.1, -0.2,
+                         0  ,  0  ,  0  , -0.3,  0.1)    )
+   return(jac)
+}
+@
+and the model solved as:
+<<>>=
+out2  <- lsode(yini, times, f1, parms = 0, jactype = "fullusr",
+              jacfunc = fulljac)
+@
+The Jacobian matrix is banded, with
+ one nonzero band above (up) and one below(down) the diagonal:
+
+First we let \code{lsode} to estimate the banded Jacobian internally
+(\code{jactype="bandint"}):
+<<>>=
+out3  <- lsode(yini, times, f1, parms = 0, jactype = "bandint",
+                              bandup = 1, banddown = 1)
+@
+
+It is also possible to provide the nonzero bands of the Jacobian in a function:
+<<>>=
+bandjac <- function  (t, y, parms)
+{
+   jac <- matrix(nrow = 3, ncol = 5, byrow = TRUE,
+                 data = c( 0  , -0.2, -0.2, -0.2, -0.2,
+                           0.1,  0.1,  0.1,  0.1,  0.1,
+                          -0.3, -0.3, -0.3, -0.3,    0)    )
+   return(jac)
+}
+@
+in which case the model is solved as:
+<<>>=
+out4  <- lsode(yini, times, f1, parms = 0, jactype = "bandusr",
+              jacfunc = bandjac, bandup = 1, banddown = 1)
+@
+Finally, if the model is specified as a "non-stiff"  (by setting \code{mf=10}),
+there is no need to specify the Jacobian.
+<<>>=
+out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
+@
+\clearpage
+
 \begin{table*}[t]
 \caption{Summary of the functions that solve differential equations}\label{tb:rs}
 \centering

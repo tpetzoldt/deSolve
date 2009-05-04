@@ -258,7 +258,7 @@ out3  <- lsode(yini, times, f1, parms = 0, jactype = "bandint",
 out4  <- lsode(yini, times, f1, parms = 0, jactype = "bandusr",
               jacfunc = bandjac, bandup = 1, banddown = 1)
 
-## nono-stiff method
+## non-stiff method
 out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 
 ## =====================================
