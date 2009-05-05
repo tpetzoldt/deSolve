@@ -79,37 +79,30 @@ diffusion3D <- function(t,Y,par)
   {
    yy    <- array(dim=c(n,n,n),data=Y)  # vector to 3-D array
    dY   <- -r*yy        # consumption
-   BND   <- rep(1,n)   # boundary concentration
-   for (i in 1:n) {
-     y <- yy[i,,]
-     #diffusion in X-direction; boundaries=imposed concentration
-     Flux <- -Dy * rbind(y[1,]-BND,(y[2:n,]-y[1:(n-1),]),BND-y[n,])/dy
-     dY[i,,]   <- dY[i,,] - (Flux[2:(n+1),]-Flux[1:n,])/dy
+   BND   <- matrix(nr=n,nc=n,data=1)   # boundary concentration
 
-     #diffusion in Y-direction
-     Flux <- -Dz * cbind(y[,1]-BND,(y[,2:n]-y[,1:(n-1)]),BND-y[,n])/dz
-     dY[i,,]    <- dY[i,,] - (Flux[,2:(n+1)]-Flux[,1:n])/dz
-   }
-   for (j in 1:n) {
-     y <- yy[,j,]
-     #diffusion in X-direction; boundaries=imposed concentration
-     Flux <- -Dx * rbind(y[1,]-BND,(y[2:n,]-y[1:(n-1),]),BND-y[n,])/dx
-     dY[,j,]   <- dY[,j,] - (Flux[2:(n+1),]-Flux[1:n,])/dx
+   # diffusion in x-direction
 
-     #diffusion in Y-direction
-     Flux <- -Dz * cbind(y[,1]-BND,(y[,2:n]-y[,1:(n-1)]),BND-y[,n])/dz
-     dY[,j,]    <- dY[,j,] - (Flux[,2:(n+1)]-Flux[,1:n])/dz
-   }
-   for (k in 1:n) {
-     y <- yy[,,k]
-     #diffusion in X-direction; boundaries=imposed concentration
-     Flux <- -Dx * rbind(y[1,]-BND,(y[2:n,]-y[1:(n-1),]),BND-y[n,])/dx
-     dY[,,k]   <- dY[,,k] - (Flux[2:(n+1),]-Flux[1:n,])/dx
+   # new array including boundary concentrations in X-direction
+   BNDx <- aperm(array(dim=c(n,n,n+2),
+                  data=c(BND,aperm(yy,c(3,2,1)),BND)),c(3,2,1))
+   # diffusive Flux
+   Flux <- -Dx*(BNDx[2:(n+2),,]-BNDx[1:(n+1),,])/dx
 
-     #diffusion in Y-direction
-     Flux <- -Dy * cbind(y[,1]-BND,(y[,2:n]-y[,1:(n-1)]),BND-y[,n])/dy
-     dY[,,k]    <- dY[,,k] - (Flux[,2:(n+1)]-Flux[,1:n])/dy
-   }
+   # rate of change = - flux gradient
+   dY[] <- dY[] - (Flux[2:(n+1),,]-Flux[1:n,,])/dx
+
+   # diffusion in y-direction
+   BNDy <- aperm(array(dim=c(n,n,n+2),
+                 data=c(BND,aperm(yy,c(1,3,2)),BND)),c(1,3,2))
+   Flux <- -Dy*(BNDy[,2:(n+2),]-BNDy[,1:(n+1),])/dy
+   dY[] <- dY[] - (Flux[,2:(n+1),]-Flux[,1:n,])/dy
+
+   # diffusion in z-direction
+   BNDz <-  array(dim=c(n,n,n+2),data=c(BND,Y,BND))
+   Flux <- -Dz*(BNDz[,,2:(n+2)]-BNDz[,,1:(n+1)])/dz
+   dY[] <- dY[] - (Flux[,,2:(n+1)]-Flux[,,1:n])/dz
+
    return(list(as.vector(dY)))
   }
 
