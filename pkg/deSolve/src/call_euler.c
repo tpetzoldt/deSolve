@@ -1,7 +1,7 @@
 /*==========================================================================*/
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
 /*  Euler Fixed Step Integrator                                               */
-/*    (special version for speed comparison with the general solution)      */
+/*    (special version with less overhead than the general solution)         */
 /*==========================================================================*/
 
 #include "rk_util.h"
@@ -10,7 +10,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	      SEXP Parms, SEXP Nout, SEXP Rho, SEXP Verbose,
 	      SEXP Rpar, SEXP Ipar) {
 
-  /**  Initialization **/
+  /*  Initialization */
   init_N_Protect();
 
   double *tt = NULL, *xs = NULL;
@@ -21,10 +21,11 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   double t, dt;
   int i = 0, j=0, it=0, nt = 0, neq=0;
-  /*========================================================================*/
-  /****** Processing of Arguments                                      ******/
-  /*========================================================================*/
+  
 
+  /*------------------------------------------------------------------------*/
+  /* Processing of Arguments                                                */
+  /*------------------------------------------------------------------------*/
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
@@ -40,16 +41,15 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   //out  =  (double *) R_alloc(nout, sizeof(double));
 
   int verbose = INTEGER(Verbose)[0];
-  /*========================================================================*/
-  /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
+  /* DLL, ipar, rpar (for compatibility with lsoda)                         */
+  /*------------------------------------------------------------------------*/
   int isDll = FALSE;
   int ntot  =  0;
   int isOut = FALSE; //?? do I need this?
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
-  /* code adapted from lsoda to improve compatibility */
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
     isDll = TRUE;
     if (nout > 0) isOut = TRUE;
@@ -61,37 +61,35 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     isDll = FALSE;
     isOut = FALSE;
     ntot = neq;
-    lipar = 3;    // in lsoda = 1;
-    lrpar = nout; // in lsoda = 1;
+    lipar = 3;                    /* in lsoda = 1; */
+    lrpar = nout;                 /* in lsoda = 1; */
   }
   out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
-  //  if (isDll ==1) {
+  
   ipar[0] = nout;              /* first 3 elements of ipar are special */
   ipar[1] = lrpar;
   ipar[2] = lipar;
   if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* rpar is passed via "out" which is IMHO a crude hack.
-       There are, of course more elegant methods *here*, because
-       we have full control over the rk codes.
-       However, for this code was required for the other codes,
-       because it would be unwise to re-implement these highly efficient
+    /* 
+       rpar is passed via "out" which may be seen as a hack.
+       However, such an approach was required for the Livermore solvers.
+       It would have been unwise to re-implement these highly efficient
        codes from scratch again.
        
-       out: first nout elements of out are reserved for output variables
-       other elements are set via argument *rpar* */
+       out:  first nout elements of out are reserved for output variables
+       other elements are set via argument *rpar* 
+    */
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
-  // end new testing code
 
-  /*========================================================================*/
-  /****** Allocation of Workspace                                      ******/
-  /*========================================================================*/
-
+  /*------------------------------------------------------------------------*/
+  /* Allocation of Workspace                                                */
+  /*------------------------------------------------------------------------*/
   PROTECT(R_y0 = allocVector(REALSXP, neq)); incr_N_Protect();
   PROTECT(R_f  = allocVector(REALSXP, neq)); incr_N_Protect();
   y0 = REAL(R_y0);
@@ -108,23 +106,23 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
-  /*========================================================================*/
-  /****** Initialization of Parameters (for DLL functions)             ******/
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
+  /* Initialization of Parameters (for DLL functions)                       */
+  /*------------------------------------------------------------------------*/
 
   initParms(Initfunc, Parms);
-  /*========================================================================*/
-  /****** Initialization of Integration Loop                           ******/
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
+  /* Initialization of Integration Loop                                     */
+  /*------------------------------------------------------------------------*/
   yout[0] = tt[0]; //initial time
   for (i = 0; i < neq; i++) {
     y0[i]              = xs[i];
     yout[(i + 1) * nt] = y0[i];      // <--- check this
   }
 
-  /*========================================================================*/
-  /****** Main Loop                                                    ******/
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
+  /* Main Loop                                                              */
+  /*------------------------------------------------------------------------*/
   for (it = 0; it < nt - 1; it++) {
     t = tt[it];
     dt = tt[it + 1] - t;
@@ -140,9 +138,9 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       for (i = 0; i < neq; i++) yout[it + 1 + nt * (1 + i)] = y0[i];
     }
   } /* end of main loop */
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
   /* call derivs again to get global outputs                                */
-  /*========================================================================*/
+  /*------------------------------------------------------------------------*/
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];

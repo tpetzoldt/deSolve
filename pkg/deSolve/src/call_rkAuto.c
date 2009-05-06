@@ -47,7 +47,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double  hmax  = REAL(Hmax)[0];
   double  hini  = REAL(Hini)[0];
   int  maxsteps = INTEGER(Maxsteps)[0];
-  int  nout     = INTEGER(Nout)[0]; // number of global outputs is func is in a DLL
+  int  nout     = INTEGER(Nout)[0]; /* number of global outputs is func is in a DLL */
   int  verbose  = INTEGER(Verbose)[0];
 
   int stage     = (int)REAL(getListElement(Method, "stage"))[0];
@@ -120,14 +120,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* rpar is passed via "out" which is IMHO a crude hack.
-       There are, of course more elegant methods *here*, because
-       we have full control over the rk codes.
-       However, for this code was required for the other codes,
-       because it would be unwise to re-implement these highly efficient
-       codes from scratch again.
-       
-       out: first nout elements of out are reserved for output variables
+    /* out: first nout elements of out are reserved for output variables
        other elements are set via argument *rpar* */
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
@@ -149,32 +142,26 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   FF  =  (double *) R_alloc(neq * stage, sizeof(double));
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
-  // ThPe: not more necessary, see above
-  //out  =  (double *) R_alloc(nout, sizeof(double));
-
-  // matrix for polynomial interpolation
+  /* matrix for polynomial interpolation */
   int nknots = 4;  // 3rd order polynomials
   int iknots = 0;  // counter for knotes buffer
   double *yknots;
   // ??? neq + 1
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
-  // matrix for holding states and global outputs
+  /* matrix for holding states and global outputs */
   PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
-  // initialize outputs with NA first
+  /* initialize outputs with NA first */
   for (i = 0; i < nt * (neq + nout + 1); i++) yout[i] = NA_REAL;
 
-  // attribute that stores state information, similar to lsoda
+  /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
   PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
   istate = INTEGER(R_istate);
-  istate[0] = 0; // assume succesful return
+  istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
-
-  //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
-  //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];
 
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
@@ -186,12 +173,12 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /****** Initialization of Integration Loop                           ******/
   /**************************************************************************/
 
-  yout[0]   = tt[0];              // initial time
-  yknots[0] = tt[0];              // for polynomial interpolation
+  yout[0]   = tt[0];              /* initial time                 */
+  yknots[0] = tt[0];              /* for polynomial interpolation */
   for (i = 0; i < neq; i++) {
-    y0[i]        = xs[i];         // initial values
-    yout[(i + 1) * nt] = y0[i];   // output array
-    yknots[iknots + nknots * (i + 1)] = xs[i]; // for polynomials
+    y0[i]        = xs[i];         /* initial values               */
+    yout[(i + 1) * nt] = y0[i];   /* output array                 */
+    yknots[iknots + nknots * (i + 1)] = xs[i]; /* for polynomials */
   }
   iknots++;
 
@@ -200,7 +187,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   dt = fmin(hmax, hini);
   hmax = fmin(hmax, tmax - t);
 
- // Initialization of work arrays (to be on the safe side, remove this later)
+  /* Initialize work arrays (to be on the safe side, remove this later) */
   for (i = 0; i < neq; i++)  {
     y1[i] = 0;
     y2[i] = 0;
@@ -212,9 +199,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   /****** Main Loop                                                    ******/
   /**************************************************************************/
-  it     = 1; // step counter; zero element is initial state
-  it_ext = 0; // counter for external time step (dense output)
-  it_tot = 0; // total number of time steps
+  it     = 1; /* step counter; zero element is initial state   */
+  it_ext = 0; /* counter for external time step (dense output) */
+  it_tot = 0; /* total number of time steps                    */
 
   do { 
     /******  save former results of last step if the method allows this
@@ -238,7 +225,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
           tmp[i] = Fj[i] + y0[i];
         }
         /******  Compute Derivatives ******/
-        // pass option to avoid unnecessary copying in derivs
+        /* pass option to avoid unnecessary copying in derivs */
         derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll);
     }
 
@@ -246,19 +233,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /* Estimation of new values                                           */
     /*====================================================================*/
 
-    // -- alternative 1: hand-made
-    //matprod(neq, stage, one, FF, bb1, dy1);
-    //matprod(neq, stage, one, FF, bb2, dy2);
-
-    // -- alternative 2: use BLAS
-    //blas_matprod(FF, neq, stage, bb1, stage, one, dy1);
-    //blas_matprod(FF, neq, stage, bb2, stage, one, dy2);
-
-    // -- alternative 3: use BLAS with reduced error checking
+    /* use BLAS wrapper with reduced error checking */
     blas_matprod1(FF, neq, stage, bb1, stage, one, dy1);
     blas_matprod1(FF, neq, stage, bb2, stage, one, dy2);
 
-    it_tot++; // count total number of time steps
+    it_tot++; /* count total number of time steps */
     for (i = 0; i < neq; i++) {
       y1[i] = y0[i] +  dt * dy1[i];
       y2[i] = y0[i] +  dt * dy2[i];
@@ -271,21 +250,18 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
     dtnew = dt;
     accept = TRUE;
-    if (err == 0) {  // use fixed time step hmax if all tolerances are zero
+    if (err == 0) {  /* use fixed time step hmax if all tolerances are zero */
       accept = TRUE;
       dtnew = hmax;
-      //Rprintf("dtnew %e -- =0=   ", dtnew);
     } else if (err < 1.0) {
       accept = TRUE;
-      dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr)); // 1/qerr
-      //Rprintf("dtnew %e  (++)   \n", dtnew);
+      dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr));
     } else if (err > 1.0) {
       accept = FALSE;
-      dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2); // 1/qerr
-      //Rprintf("2  dtnew %e  (--)   \n", dtnew);
+      dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2);
     }
 
-    if (dtnew < hmin) {     // R: dt !!
+    if (dtnew < hmin) {
       accept=TRUE;
       if (verbose) Rprintf("warning, h < Hmin\n"); // remove this later ...
       istate[0] = -2;
@@ -300,12 +276,12 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       /* case A) "Dense Output": built-in polynomial interpolation          */
       /* available for certain rk formulae, e.g. for rk45dp7                */
       /*--------------------------------------------------------------------*/
-      if (dd) { // i.e. if dd is not NULL
+	if (dd) { /* i.e. if dd is not Zero */
         denspar(FF, y0, y1, dt, dd, neq, stage, rr);
         t_ext = tt[it_ext];
         while (t_ext <= t + dt) { // <= ??
           densout(rr, t, t_ext, dt, tmp, neq);
-          // store outputs
+          /* store outputs */
           if (it_ext < nt) {
             yout[it_ext] = t_ext;
             for (i = 0; i < neq; i++)
@@ -318,17 +294,17 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
         /* without dense output                                               */
         /*--------------------------------------------------------------------*/
         } else {
-          // (1) collect number "nknots" of knots in advanve
-          yknots[iknots] = t + dt;   // time in first column
+          /* (1) collect number "nknots" of knots in advanve */
+          yknots[iknots] = t + dt;   /* time is first column */
           for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y2[i];
           if (iknots < (nknots - 1)) {
             iknots++;
           } else {
-           // (2) do polynomial interpolation
+	   /* (2) do polynomial interpolation */
            t_ext = tt[it_ext];
            while (t_ext <= t + dt) { // <= ??
             neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
-            // (3) store outputs
+            /* (3) store outputs */
             if (it_ext < nt) {
               yout[it_ext] = t_ext;
               for (i = 0; i < neq; i++)
@@ -367,7 +343,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       t = t + dt;
       it++;
       for (i=0; i < neq; i++) y0[i] = y2[i];
-    } // else rejected time step
+    } /* else rejected time step */
     dt = fmin(dtnew, tmax - t);
     if (it_ext > nt) {
       Rprintf("error in rk_solvers.c - call_rkauto: output buffer overflow\n");
@@ -381,9 +357,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   } while (t < tmax); // end of rk main loop
 
   /*====================================================================*/
-  /* call derivs again to get global outputs                          */
+  /* call derivs again to get global outputs                            */
+  /* j = -1 suppresses unnecessary internal copying                     */
   /*====================================================================*/
-  // j = -1 suppresses unnecessary internal copying
+
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
@@ -392,15 +369,14 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
-  // attach essential internal information (codes are compatible to lsoda)
-  // ToDo: respect function evaluations due to global outputs
+  /* attach essential internal information (codes are compatible to lsoda) */
+  /* ToDo: respect function evaluations due to global outputs              */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
-  // release R resources
-  if (verbose) Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n",
-    it, it_ext, it_tot);
-  //Rprintf("Maxsteps %d\n", maxsteps);
+  /* release R resources */
+  if (verbose) 
+    Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", 
+      it, it_ext, it_tot);
   unprotect_all();
-  //init_N_Protect();
   return(R_yout);
 }
