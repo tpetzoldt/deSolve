@@ -91,9 +91,10 @@ options(width=50)
 
 \section{Introduction}
 
-\pkg{deSolve}, the successor of \proglang{R} package \pkg{odesolve} is
-a package to solve ordinary differential equations (ODE), differential
-algebraic equations (DAE) and partial differential equations (PDE).
+\pkg{deSolve} \citep{deSolve}, the successor of \proglang{R}
+package \pkg{odesolve} is a package to solve ordinary differential equations
+(ODE), differential algebraic equations (DAE) and partial differential
+equations (PDE).
 
 One of the prominent features of \pkg{deSolve} is that it allows
 specifying the differential equations either as:

@@ -3,19 +3,21 @@
 \alias{deSolve}
 \docType{package}
 \title{
-  General Solvers for Ordinary Differential Equations
-  (ODE) and for Differential Algebraic Equations (DAE)
+  General Solvers for initial value problems of Ordinary Differential Equations
+  (ODE), partial differential equations (PDE) and for Differential Algebraic
+  Equations (DAE)
 }
 \description{
-  Functions that solve a system of first-order ordinary differential
-  equations (ODE) and of differential algebraic equations (DAE).
+  Functions that solve initial value problems of a system of
+  first-order ordinary differential equations (ODE), of partial
+  differential equations (PDE) and of differential algebraic equations (DAE).
 
   The functions provide an interface to the FORTRAN functions lsoda,
   lsodar, lsode, lsodes of the ODEPACK collection,
   to the FORTRAN functions dvode and daspk and a C-implementation of
   solvers of the Runge-Kutta family with fixed or variable time steps.
 
-  The package also contains routines designed for solving ODEs
+  The package contains routines designed for solving ODEs
   resulting from 1-D, 2-D and 3-D
   partial differential equations (PDE) that have been converted to ODEs by
   numerical differencing.
@@ -25,8 +27,8 @@
   \tabular{ll}{
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
-    Version: \tab 1.1-3\cr
-    Date:    \tab 2009-01-12\cr
+    Version: \tab 1.3\cr
+    Date:    \tab 2009-06-1\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
@@ -45,7 +47,7 @@
   R. Woodrow Setzer (Maintainer)
 }
 \references{
-%% to be filled out when our paper is published
+%% to be filled out later
 Alan C. Hindmarsh, 1983. ODEPACK, A Systematized Collection of ODE Solvers, in
 Scientific Computing, R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam,
 pp. 55-64.

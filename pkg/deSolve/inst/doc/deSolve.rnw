@@ -254,7 +254,7 @@ times     <-seq(0,100,by=0.01)
   to a data frame and stored in '\code{out}'.
   Data frames have the advantage, that their columns can be accessed by
   name, rather than by number. For instance, \code{out$X} will take the
-  outputted concentrations of state variable \code{X}, and so on.
+  outputted values of state variable \code{X}, and so on.
 
   %ThPe: these are not concentrations; simply call them states
 
@@ -461,7 +461,9 @@ columns)
   the rates of change (as in ODE).
 
   %ThPe: please say something about the background of this example
-  Consider the following DAE:
+  %KS: it is an arbitrary formulation; no real meaning.
+  
+  Consider the following simple DAE:
 \begin{eqnarray*}
 \frac{dy_1}{dt}&=&-y_1+y_2\\
 y_1 \cdot y_2 &=& t
