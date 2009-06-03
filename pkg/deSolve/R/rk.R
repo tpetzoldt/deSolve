@@ -24,6 +24,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
        hmax <- ifelse (is.null(times), 0, max(abs(diff(times))))
     if (!is.numeric(hmax))  stop("`hmax' must be numeric")
     if (hmax < 0)           stop ("`hmax' must be a non-negative value")
+    if (hmax == 0)          hmax <- .Machine$double.xmax # i.e. practically unlimited
     if (hini < 0)           stop("`hini' must be a non-negative value")
     if (!is.numeric(y))     stop("`y' must be numeric")
     if (!is.numeric(times)) stop("`times' must be numeric")
