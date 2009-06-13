@@ -281,13 +281,13 @@ pars <- c(
 Fun_ODE <- function (t, y, pars)
 {
   with (as.list(c(y, pars)), {
-    ra  = ka*D        # forward rate
-    rb  = ka/K *A*B   # backward rate
+    ra  <- ka*D        # forward rate
+    rb  <- ka/K *A*B   # backward rate
 
     ## rates of changes
-    dD  = -ra + rb + prod
-    dA  =  ra - rb
-    dB  =  ra - rb - r*B
+    dD  <- -ra + rb + prod
+    dA  <-  ra - rb
+    dB  <-  ra - rb - r*B
     return(list(dy = c(dA, dB, dD),
                 CONC = A+B+D))
   })
@@ -307,11 +307,11 @@ Res_DAE <- function (t, y, yprime, pars)
   with (as.list(c(y, yprime, pars)), {
 
     ## residuals of lumped rates of changes
-    res1 = -dD - dA + prod
-    res2 = -dB + dA - r*B
+    res1 <- -dD - dA + prod
+    res2 <- -dB + dA - r*B
     
     ## and the equilibrium equation
-    eq = K*D - A*B
+    eq   <- K*D - A*B
 
     return(list(c(res1, res2, eq),
                 CONC = A+B+D))
