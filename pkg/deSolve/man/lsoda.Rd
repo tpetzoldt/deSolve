@@ -239,14 +239,14 @@ sigimp <- approxfun(signal$times, signal$import, rule = 2)
 y <- xstart <- c(S = 1, P = 1, K = 1)
 
 ## Solving
-out2 <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
+out <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
 
 ## Plotting
 mf <- par(mfrow = c(2,2))
-plot(out2$time, out2$S,  type = "l", ylab = "substrate")
-plot(out2$time, out2$P, type = "l", ylab = "producer")
-plot(out2$time, out2$K, type = "l", ylab = "consumer")
-plot(out2$P, out2$K, type = "l", xlab = "producer", ylab = "consumer")
+plot(out$time, out$S,  type = "l", ylab = "substrate")
+plot(out$time, out$P, type = "l", ylab = "producer")
+plot(out$time, out$K, type = "l", ylab = "consumer")
+plot(out$P, out$K, type = "l", xlab = "producer", ylab = "consumer")
 par(mfrow = mf)
 
 ## ===================================================
