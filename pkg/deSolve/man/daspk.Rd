@@ -53,11 +53,15 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     attribute, the names will be available inside \code{func}, unless
     \code{ynames} is FALSE.  \code{parms} is a vector or list of
     parameters.  \code{...} (optional) are any other arguments passed to
-    the function.  The return value of \code{func} should be a list,
+    the function.
+    
+    The return value of \code{func} should be a list,
     whose first element is a vector containing the derivatives of
     \code{y} with respect to \code{time}, and whose next elements are
     global values that are required at each point in \code{times}.
-  
+    The derivatives should be specified in the same order as the specification
+    of the state variables \code{y}.
+
     Note that it is not possible to define \code{func} as a compiled
     function in a dynamically loaded shared library. Use \code{res}
     instead.

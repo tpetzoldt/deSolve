@@ -6,11 +6,12 @@
 ### It is very similar to lsode, except for some implementation details.
 ### More specifically, there are more methods (mf) available in vode compared
 ### to lsode.
-### KS: I guess this has to do with the memory management which is more
+### this has probably to do with the memory management which is more
 ### flexible in vode: when a method flag (mf) is positive, vode will save
-###  copy of the Jacobian for reuse in the corrector iteration algorithm; 
+### a copy of the Jacobian for reuse in the corrector iteration algorithm;
 ### for negative flags a copy of the jacobian is not saved.
-### Thus negative flags need less memory, but may be (slightly) faster
+### Thus negative flags need less memory, but positive flags
+### may be (slightly) faster
 ### nb. this reduced memory strategy is the only option of lsode - a mf=21
 ### in lsode is then equivalent to a mf = -21 in vode.
 ### ============================================================================

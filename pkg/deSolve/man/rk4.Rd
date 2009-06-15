@@ -40,7 +40,8 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     The return value of \code{func} should be a list, whose first
     element is a vector containing the derivatives of \code{y} with
     respect to \code{time}, and whose next elements are global values
-    that are required at each point in \code{times}.
+    that are required at each point in \code{times}.  The derivatives
+    should be specified in the same order as the state variables \code{y}.
 
 	  If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
