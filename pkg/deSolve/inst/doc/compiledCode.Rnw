@@ -100,7 +100,7 @@ One of the prominent features of \pkg{deSolve} is that it allows
 specifying the differential equations either as:
 
 \begin{itemize}
-\item pure \proglang{R} code.
+\item pure \proglang{R} code,
 \item functions defined in lower-level languages such as \proglang{FORTRAN},
 \proglang{C}, or \proglang{C++}, which are compiled into a dynamically linked
 library (DLL) and loaded into \proglang{R}.

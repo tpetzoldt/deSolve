@@ -64,13 +64,14 @@ initial value problems, R}
   ODEPACK Fortan codes \citep{Hindmarsh83}.  It also include
   Runge-Kutta solvers and the Euler method \citep{Press92}.
 
-  In this vignette we
-  outline how to implement differential equations as \R-functions.
+  In this vignette we outline how to implement differential equations
+  as \R-functions.
 
-  Another vignette ("compiledCode") \citep{compiledCode}, deals with differential
-  equations implemented in lower-level languages such as \proglang{FORTRAN},
-  \proglang{C}, or \proglang{C++}, which are compiled into a
-  dynamically linked library (DLL) and loaded into \proglang{R}.
+  Another vignette ("compiledCode") \citep{compiledCode}, deals with
+  differential equations implemented in lower-level languages such as
+  \proglang{FORTRAN}, \proglang{C}, or \proglang{C++}, which are
+  compiled into a dynamically linked library (DLL) and loaded into
+  \proglang{R}.  
 }
 
 %% The address of (at least) one author should be given
@@ -331,16 +332,17 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
 \section{Partial differential equations}
 
   As package \ds includes integrators that deal efficiently with
-  arbitrarily sparse and banded Jacobians, it is especially well suited to
-  solve initial value problems resulting from 1-Dimensional and
-  2-Dimensional partial differential equations (PDE). These are first
+  arbitrarily sparse and banded Jacobians, it is especially well
+  suited to solve initial value problems resulting from 1, 2 or
+  3-dimensional partial differential equations (PDE). These are first
   written as ODEs using the method-of-lines approach.
 
   Three special-purpose solvers are included in \ds:
   \begin{itemize}
-    \item \code{ode.band} integrates 1-dimensional problems comprizing one species
-    \item \code{ode.1D} integrates 1-dimensional problems comprizing many species
-    \item \code{ode.2D} integrates 2-dimensional problems
+    \item \code{ode.band} integrates 1-dimensional problems comprizing one species,
+    \item \code{ode.1D} integrates 1-dimensional problems comprizing many species,
+    \item \code{ode.2D} integrates 2-dimensional problems,
+    \item \code{ode.2D} integrates 2-dimensional problems.
   \end{itemize}
 
     As an example, consider the Aphid model described in \citet{Soetaert08}.
@@ -460,10 +462,8 @@ columns)
   The DAE has to be specified by the \emph{residual function} instead of
   the rates of change (as in ODE).
 
-  %ThPe: please say something about the background of this example
-  %KS: it is an arbitrary formulation; no real meaning.
-  
   Consider the following simple DAE:
+
 \begin{eqnarray*}
 \frac{dy_1}{dt}&=&-y_1+y_2\\
 y_1 \cdot y_2 &=& t
@@ -472,6 +472,7 @@ y_1 \cdot y_2 &=& t
   where the first equation is a differential, the second an algebraic equation.
 
   To solve it, it is first rewritten as residual functions:
+
 \begin{eqnarray*}
 0&=&\frac{dy_1}{dt}+y_1-y_2\\
 0&=&y_1 \cdot y_2 - t
@@ -606,6 +607,7 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 \code{ode}                  & integrates systems of ordinary differential equations, assumes a full, banded or arbitrary sparse Jacobian   \\ \hline
 \code{ode.1D}               & integrates systems of ODEs resulting from multicomponent 1-dimensional reaction-transport problems           \\ \hline
 \code{ode.2D}               & integrates systems of ODEs resulting from 2-dimensional reaction-transport problems                          \\ \hline
+\code{ode.3D}               & integrates systems of ODEs resulting from 3-dimensional reaction-transport problems                          \\ \hline
 \code{ode.band}             & integrates systems of ODEs resulting from unicomponent 1-dimensional reaction-transport problems             \\ \hline
 \code{daspk}                &  solves systems of differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
 \code{lsoda}                & integrates ODEs, automatically chooses method for stiff or non-stiff problems, assumes a full or banded Jacobian   \\ \hline
