@@ -1,32 +1,8 @@
-## ThPe:
- - "diagnostics" has not very clear structure
-   We may ?? go to S3, e.g type -> class
-   Note that one out can have several simultanaeous S3 classes,
-   something like:
+Wishlist for Future Releases:
 
-   class(out) <- c("matrix", "deSolve", "deSolvelsoda")
+- code + doc for interpolation in C and Fortran
+- improve diagnostics (S3 classes)
+- more diagnostics for rk
+- PID stepsize control for rk
 
-## KS --> Thpe:
-   AGREED
-
-   => diagnostics.lsoda and diagnostics.vode etc...
-   but what if we have transformed to data.frame. Do we need to define diagnostics.data.frame?
-
-   ThPe: probably next release
-
-## ThPe->ThPe
- - provide additional "diagnostics" for runge-kutta functions:
-    - size of time step
-    - number of rejected steps
-
-
-## ThPe -> ThPe
-
-- implement PID step control
-- implement alternatives for function maxerr
-- ensure at least 4 internal steps for rk methods!! (Neville-Aitken)
-  hmax = tmax - tmin / 4 (or better 5?)
-  - done, but can be improved
-- modularize rk_auto ?
-- check logic of hini, hmax, hmin
 
