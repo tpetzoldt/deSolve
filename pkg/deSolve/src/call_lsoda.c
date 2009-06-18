@@ -479,7 +479,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
     
 	  if (istate == -1) 
      {
-      warning("an excessive amount of work (> maxsteps ) was done, but integration was successful - increase maxsteps");
+      warning("an excessive amount of work (> maxsteps ) was done, but integration was not successful - increase maxsteps");
      }
 	  if (istate == 3 && solver == 4)
 	    { istate = -20;  repcount = 50;  

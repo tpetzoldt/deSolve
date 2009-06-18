@@ -246,7 +246,7 @@ SEXP call_dvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 			   &itol, Rtol, Atol, &itask, &istate, &iopt, rwork,
 			   &lrw, iwork, &liw, jac, &jt, out, ipar);
 	  if (istate == -1) {
-      warning("an excessive amount of work (> mxstep ) was done, but integration was successful - increase maxsteps ?");
+      warning("an excessive amount of work (> mxstep ) was done, but integration was not successful - increase maxsteps ?");
       }
 	  else if (istate == -2)  {
 	      warning("Excessive precision requested.  scale up `rtol' and `atol' e.g by the factor %g\n",10.0);
