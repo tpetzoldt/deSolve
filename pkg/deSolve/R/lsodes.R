@@ -312,25 +312,25 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 ### print to screen...
   if (verbose)   {
-    print("--------------------")
-    print("time settings")
-    print("--------------------")
-    if (itask==1)print("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)print("take one step only and return.")                          else
-    if (itask==3)print("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)print("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)print("take one step, without passing TCRIT, and return.")
-    print("--------------------")
-    print("Integration settings")
-    print("--------------------")
-    if (is.character(func)) print(paste("model function a DLL: ",func)) else
-                            print(paste("model function an R-function: "))
-    if (is.character(jacvec)) print(paste ("jacobian specified as a DLL: ",jacvec)) else
-    if (!is.null(jacvec)) print(paste ("jacobian specified as an R-function: ")) else
-                         print("jacobian not specified")
-    print("--------------------")
-    print("integration method")
-    print("--------------------")
+    printM("--------------------")
+    printM("time settings")
+    printM("--------------------")
+    if (itask==1)printM("normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("take one step only and return.")                          else
+    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("take one step, without passing TCRIT, and return.")
+    printM("--------------------")
+    printM("Integration settings")
+    printM("--------------------")
+    if (is.character(func)) printM(paste("model function a DLL: ",func)) else
+                            printM(paste("model function an R-function: "))
+    if (is.character(jacvec)) printM(paste ("jacobian specified as a DLL: ",jacvec)) else
+    if (!is.null(jacvec)) printM(paste ("jacobian specified as an R-function: ")) else
+                         printM("jacobian not specified")
+    printM("--------------------")
+    printM("integration method")
+    printM("--------------------")
     if (imp == 21)  txt <-" the user has supplied indices to nonzero elements of jacobian, and a jacobian function"
     if (imp == 22)  {
       if (sparsetype=="sparseusr")
@@ -347,7 +347,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (imp == 222)
       txt <-" the jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
    
-    print(txt)
+    printM(txt)
   } 
 
 

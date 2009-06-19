@@ -227,25 +227,25 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
                                         # print to screen...
   if (verbose) {
-    print("--------------------")
-    print("time settings")
-    print("--------------------")
-    if (itask==1)print("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)print("take one step only and return.")                          else
-    if (itask==3)print("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)print("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)print("take one step, without passing TCRIT, and return.")
-    print("--------------------")
-    print("Integration settings")
-    print("--------------------")
-    if (is.character(func)) print(paste("model function a DLL: ",func)) else
-    print("model function an R-function: ")
-    if (is.character(jacfunc)) print(paste ("jacobian specified as a DLL: ",jacfunc)) else
-    if (!is.null(jacfunc))     print("jacobian specified as an R-function: ") else
-    print("jacobian not specified")
-    print("--------------------")
-    print("integration method")
-    print("--------------------")
+    printM("--------------------")
+    printM("time settings")
+    printM("--------------------")
+    if (itask==1)printM("normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("take one step only and return.")                          else
+    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("take one step, without passing TCRIT, and return.")
+    printM("--------------------")
+    printM("Integration settings")
+    printM("--------------------")
+    if (is.character(func)) printM(paste("model function a DLL: ",func)) else
+    printM("model function an R-function: ")
+    if (is.character(jacfunc)) printM(paste ("jacobian specified as a DLL: ",jacfunc)) else
+    if (!is.null(jacfunc))     printM("jacobian specified as an R-function: ") else
+    printM("jacobian not specified")
+    printM("--------------------")
+    printM("integration method")
+    printM("--------------------")
     df   <- c("method flag, mf","meth","miter")
     vals <- c(imp,  meth, miter)
     txt  <- "mf= (10*meth + miter)"
@@ -259,7 +259,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (miter==3)txt<-c(txt,"chord iteration with an internally generated diagonal Jacobian (1 extra call to F per df/dy evaluation)") else
     if (miter==4)txt<-c(txt,"chord iteration with a user-supplied banded Jacobian")                                                    else
     if (miter==5)txt<-c(txt,"chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to F per df/dy evaluation)")
-                                                                                                                                         
+
+    ## !!! ToDo: beautify this
     print(data.frame(parameter=df, value=vals,message=txt))
   }
 

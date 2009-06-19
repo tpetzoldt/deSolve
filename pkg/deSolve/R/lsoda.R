@@ -36,6 +36,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL, 
   ipar=NULL, nout=0, outnames=NULL,...)   {
 
+
 ### check input
   if (!is.numeric(y))
      stop("`y' must be numeric")
@@ -108,7 +109,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
        ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
      } else if (initfunc != dllname && ! is.null(initfunc))
-       stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+       stop(paste("Cannot integrate: initfunc not loaded ",initfunc))
   }
 
   ## If func is a character vector, then
@@ -120,7 +121,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     ## get the pointer and put it in func
     if (is.loaded(funcname, PACKAGE = dllname)) {
       Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
-    } else stop(paste("cannot integrate: dyn function not loaded",funcname))
+    } else stop(paste("Cannot integrate: dyn function not loaded",funcname))
 
     ## Finally, is there a jacobian?
     if (!is.null(jacfunc)) {
@@ -130,7 +131,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (is.loaded(jacfuncname, PACKAGE = dllname))  {
         JacFunc <- getNativeSymbolInfo(jacfuncname, PACKAGE = dllname)$address
       } else
-        stop(paste("cannot integrate: jac function not loaded ",jacfunc))
+        stop(paste("Cannot integrate: jac function not loaded ",jacfunc))
     }
 
     ## If we go this route, the number of "global" results is in nout
@@ -246,22 +247,22 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 # print to screen...
   if (verbose)  {
 
-    print("--------------------")
-    print("time settings")
-    print("--------------------")
-    if (itask==1)print("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)print("take one step only and return.")                          else
-    if (itask==3)print("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)print("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)print("take one step, without passing TCRIT, and return.")
-    print("--------------------")
-    print("Integration settings")
-    print("--------------------")
-    if (is.character(func)) print(paste("model function a DLL: ",func)) else
-                            print("model function an R-function: ")
-    if (is.character(jacfunc)) print(paste ("jacobian specified as a DLL: ",jacfunc)) else
-    if (!is.null(jacfunc))     print("jacobian specified as an R-function: ") else
-                              print("jacobian not specified")
+    printM("--------------------")
+    printM("time settings")
+    printM("--------------------")
+    if (itask==1)printM("Normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("Take one step only and return.")                          else
+    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("Take one step, without passing TCRIT, and return.")
+    printM("--------------------")
+    printM("Integration settings")
+    printM("--------------------")
+    if (is.character(func)) printM(paste("Model function a DLL: ",func)) else
+                            printM("Model function an R-function: ")
+    if (is.character(jacfunc)) printM(paste ("Jacobian specified as a DLL: ",jacfunc)) else
+    if (!is.null(jacfunc))     printM("Jacobian specified as an R-function: ") else
+                              printM("Jacobian not specified")
   }
 
 ### calling solver
@@ -300,51 +301,53 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   attr(out, "type") <- "lsoda"
 
   dimnames(out) <- list(nm,NULL)
+
+  if (verbose) diagnostics(out)
     
-  if (verbose)  {
-    print("--------------------")
-    print("lsoda return code")
-    print("--------------------")
-    idid <- istate[1]
-    print(paste("istate = ",idid))
-
-    if (idid == 2) print(" LSODA was successful") else
-    if (idid == -1) print(" excess work done on this call. (Perhaps wrong jacobian type)") else
-    if (idid == -2) print(" excess accuracy requested. (Tolerances too small.)") else
-    if (idid == -3) print(" illegal input detected. (See printed message.)") else
-    if (idid == -4) print(" repeated error test failures. (Check all input.)") else
-    if (idid == -5) print(" repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of jt or tolerances.)") else
-    if (idid == -6) print(" error weight became zero during problem. (Solution component i vanished, and ATOL or ATOL(i) = 0.)") else
-    if (idid == -7) print(" work space insufficient to finish (see messages)")
-
-    print("--------------------")
-    print("ISTATE values")
-    print("--------------------")
-    df <- c( " istate, the return code",
-             " The number of steps taken for the problem so far.",
-             " The number of function evaluations for the problem so far.",
-             " The number of Jacobian evaluations and LU decompositions so far.",
-             " The method order last used (successfully).",
-             " The order to be attempted on the next step.",
-             " if istate=-4,-5: the index of the component with the largest error vector",
-             " The length of rwork actually required.",
-             " The length of iwork actually required.",
-             " The method indicator for the last succesful step, 1=adams (nonstiff), 2= bdf (stiff)",
-             " The current method indicator to be attempted on th next step, 1=adams (nonstiff), 2= bdf (stiff)")
-
-    ii <- c(1,12:21)
-    print(data.frame(mess=df, val=istate[ii]))
-    print("--------------------")
-    print("RSTATE values")
-    print("--------------------")
-    df <- c( " The step size in t last used (successfully).",
-    " The step size to be attempted on the next step.",
-    " The current value of the independent variable which the solver has actually reached",
-    " Tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected",
-    " the value of t at the time of the last method switch, if any.")
-    print(data.frame(mess=df, val=rstate[1:5]))
-
-  }
-
+#  if (verbose)  {
+#    print("--------------------")
+#    print("lsoda return code")
+#    print("--------------------")
+#    idid <- istate[1]
+#    print(paste("istate = ",idid))
+#
+#    if (idid == 2) print(" LSODA was successful") else
+#    if (idid == -1) print(" excess work done on this call. (Perhaps wrong jacobian type)") else
+#    if (idid == -2) print(" excess accuracy requested. (Tolerances too small.)") else
+#    if (idid == -3) print(" illegal input detected. (See printed message.)") else
+#    if (idid == -4) print(" repeated error test failures. (Check all input.)") else
+#    if (idid == -5) print(" repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of jt or tolerances.)") else
+#    if (idid == -6) print(" error weight became zero during problem. (Solution component i vanished, and ATOL or ATOL(i) = 0.)") else
+#    if (idid == -7) print(" work space insufficient to finish (see messages)")
+#
+#    print("--------------------")
+#    print("ISTATE values")
+#    print("--------------------")
+#    df <- c( " istate, the return code",
+#             " The number of steps taken for the problem so far.",
+#             " The number of function evaluations for the problem so far.",
+#             " The number of Jacobian evaluations and LU decompositions so far.",
+#             " The method order last used (successfully).",
+#             " The order to be attempted on the next step.",
+#             " if istate=-4,-5: the index of the component with the largest error vector",
+#             " The length of rwork actually required.",
+#             " The length of iwork actually required.",
+#             " The method indicator for the last succesful step, 1=adams (nonstiff), 2= bdf (stiff)",
+#             " The current method indicator to be attempted on th next step, 1=adams (nonstiff), 2= bdf (stiff)")
+#
+#    ii <- c(1,12:21)
+#    print(data.frame(mess=df, val=istate[ii]))
+#    print("--------------------")
+#    print("RSTATE values")
+#    print("--------------------")
+#    df <- c( " The step size in t last used (successfully).",
+#    " The step size to be attempted on the next step.",
+#    " The current value of the independent variable which the solver has actually reached",
+#    " Tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected",
+#    " the value of t at the time of the last method switch, if any.")
+#    print(data.frame(mess=df, val=rstate[1:5]))
+#
+#  }
+#
   t(out)
 }

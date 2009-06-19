@@ -1,7 +1,11 @@
-## internal helper function for printing solver return code messages
-## this function is not exported
+## internal helper functions for printing solver return code messages
+## these functions are not exported
 
-printmessage <-function(df, state) {
-  cat("\n", paste(formatC(1:length(df), "##",width=2), df,
+## print combined messages (message and numeric output)
+printmessage <-function(message, state) {
+  cat("\n", paste(formatC(1:length(message), "##",width=2), message,
               signif(state, digits = getOption("digits")), "\n"), "\n")
 }
+
+## print short messages
+printM <- function(message) cat(message, "\n")

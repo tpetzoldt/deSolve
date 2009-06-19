@@ -72,7 +72,7 @@ diagnostics <- function(obj) {
       if (idid == -2) cat("Excess accuracy requested. Tolerances too small.\n") else
       cat("rk returned with undefined return code.\n")
   } else {
-    warning("Unknown return type. Please consult package maintainers.")
+    warning("Unknown return type.")
   }
 
 #### istate
