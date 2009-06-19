@@ -18,7 +18,7 @@
 ###          so, then if jacres is not NULL, it must be a character string
 ###          as well.  In these cases, 'res' is the name
 ###          of a function to be found in the dll named 'dllname' 
-###          (without extension). 'jacres' points to the name of the jacobian.
+###          (without extension). 'jacres' points to the name of the Jacobian.
 ### ============================================================================
 
 
@@ -79,26 +79,26 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
     stop("`maxord' must be numeric")
   if(maxord < 1 || maxord > 5)
     stop("`maxord' must be >1 and <=5")
-  #max number of iterations ~ maxstep; a multiple of 500
+  ## max number of iterations ~ maxstep; a multiple of 500
   maxIt <- max(1,(maxsteps+499)%/%500)
 
 ### Jacobian, method flag
   if (jactype == "fullint" )
-    imp <- 22 # full jacobian, calculated internally
+    imp <- 22 # full Jacobian, calculated internally
   else if (jactype == "fullusr" )
-    imp <- 21 # full jacobian, specified by user function
+    imp <- 21 # full Jacobian, specified by user function
   else if (jactype == "bandusr" )
-    imp <- 24 # banded jacobian, specified by user function
+    imp <- 24 # banded Jacobian, specified by user function
   else if (jactype == "bandint" )
-    imp <- 25 # banded jacobian, specified internally
+    imp <- 25 # banded Jacobian, specified internally
   else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
 
   if (imp %in% c(24,25) && is.null(bandup))
-    stop("daspk: bandup must be specified if banded jacobian")
+    stop("daspk: bandup must be specified if banded Jacobian")
   if (imp %in% c(24,25) && is.null(banddown))
-    stop("daspk: banddown must be specified if banded jacobian")
+    stop("daspk: banddown must be specified if banded Jacobian")
 
-#  if (miter == 4) jacobian should have empty banddown empty rows-vode+daspk only! 
+##  if (miter == 4) Jacobian should have empty banddown empty rows-vode+daspk only! 
   if (imp == 24)
     erow<-matrix(nc=n,nr=banddown,0)
   else erow<-NULL
@@ -113,7 +113,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
   if (!is.numeric(dy))
     stop("`dy' must be numeric")
 
-### model and jacobian function
+### model and Jacobian function
   Ynames  <- attr(y,"names")
   dYnames <- attr(dy,"names")
   Res     <- NULL
@@ -149,7 +149,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
        if (is.loaded(jacname, PACKAGE = dllname)) {
          JacRes <- getNativeSymbolInfo(jacname, PACKAGE = dllname)$address
        } else
-         stop(paste("cannot integrate: jacobian function jacres not loaded ",jacres))
+         stop(paste("cannot integrate: Jacobian function jacres not loaded ",jacres))
      }
 
      if (!is.null(psolfunc)) {
@@ -173,9 +173,9 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
 #           PsolFunc <- getNativeSymbolInfo("dbanps",PACKAGE="deSolve")$address
 #        ipar     <- c(ipar,banddown,bandup)
 #        } else stop(paste("cannot integrate: kryltype not known ",kryltype))
-      ## If we go this route, the number of "global" results is in nout
-      ## and output variable names are in outnames
 
+     ## If we go this route, the number of "global" results is in nout
+     ## and output variable names are in outnames
      Nglobal <- nout
      rho     <- NULL
      if (is.null(outnames))
@@ -228,8 +228,8 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
         res (time,y,dy,parms,...)
       }
     }
-        ## the jacobian
-    if (! is.null(jacfunc)) {        # jacobian associated with func
+    ## the Jacobian
+    if (! is.null(jacfunc)) {        # Jacobian associated with func
 
       tmp <- eval(jacfunc(times[1], y, dy,parms, 1, ...), rho)
       if (! is.matrix(tmp))
@@ -247,7 +247,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
           JF           <-JF + diag(nc=n,x=Rin[2])
         return(JF)
       }
-    } else if (! is.null(jacres)) { # jacobian associated with res
+    } else if (! is.null(jacres)) { # Jacobian associated with res
        tmp <- eval(jacres(times[1], y, dy, parms, 1, ...), rho)
        if (! is.matrix(tmp))
          stop("jacres must return a matrix\n")
@@ -320,10 +320,10 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
 #   }
 # info[14], [16], [17], [18] not implemented
 
-  if (imp %in% c(22,25)) info[5] <- 0  # internal generation jacobian
-  if (imp %in% c(21,24)) info[5] <- 1  # user-defined generation jacobian
-  if (imp %in% c(22,21)) info[6] <- 0  # full jacobian
-  if (imp %in% c(25,24)) info[6] <- 1  # sparse jacobian
+  if (imp %in% c(22,25)) info[5] <- 0  # internal generation Jacobian
+  if (imp %in% c(21,24)) info[5] <- 1  # user-defined generation Jacobian
+  if (imp %in% c(22,21)) info[6] <- 0  # full Jacobian
+  if (imp %in% c(25,24)) info[6] <- 1  # sparse Jacobian
   info[7] <-  hmax != Inf
   info[8] <-  hini != 0
   nrowpd  <- ifelse(info[6]==0, n, 2*banddown+bandup+1)
@@ -410,8 +410,6 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
   attr(out, "rstate") <- rstate
   attr(out, "type") <- "daspk"
   dimnames(out) <- list(nm, NULL)
-
   if (verbose) diagnostics(out)
-
   return(t(out))
 }

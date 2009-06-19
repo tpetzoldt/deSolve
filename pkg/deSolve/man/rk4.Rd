@@ -91,15 +91,13 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
   }
-
    \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.
   }
-
 }
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 \details{
-  \code{rk4} and \code{euler} are special versions of the two fixed steps
+  \code{rk4} and \code{euler} are special versions of the two fixed step
   solvers with less overhead and less functionality (e.g. no interpolation)
   compared to the generic Runge-Kutta codes called by \code{\link{rk}}.
    
@@ -113,11 +111,15 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
 \note{
   For most practical cases, solvers with flexible timestep
   (e.g. \code{rk(method="ode45")} and especially solvers of the
-  Livermore family (e.g. \code{\link{lsoda}}) are superior.
+  Livermore family (ODEPACK, e.g. \code{\link{lsoda}}) are superior.
 }
 
 \examples{
-## numeric solution of logistic growth
+## ===============================================================
+## Example: Analytical and numerical solutions of logistic growth
+## ===============================================================
+
+## the derivative of the logistic
 logist <- function(t, x, parms) {
   with(as.list(parms), {
     dx <- r * x[1] * (1 - x[1]/K)

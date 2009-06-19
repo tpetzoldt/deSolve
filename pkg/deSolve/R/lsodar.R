@@ -70,24 +70,24 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     stop("`maxords' must be >1 and <=5")
 
 ### Jacobian, method flag
-       if (jactype == "fullint" ) jt <- 2 # full jacobian, calculated internally
-  else if (jactype == "fullusr" ) jt <- 1 # full jacobian, specified by user function
-  else if (jactype == "bandusr" ) jt <- 4 # banded jacobian, specified by user function
-  else if (jactype == "bandint" ) jt <- 5 # banded jacobian, specified internally
+       if (jactype == "fullint" ) jt <- 2 # full Jacobian, calculated internally
+  else if (jactype == "fullusr" ) jt <- 1 # full Jacobian, specified by user function
+  else if (jactype == "bandusr" ) jt <- 4 # banded Jacobian, specified by user function
+  else if (jactype == "bandint" ) jt <- 5 # banded Jacobian, specified internally
   else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
 
-  # check other specifications depending on jacobian  
+  ## check other specifications depending on Jacobian  
   if (jt %in% c(4,5) && is.null(bandup))
-    stop("lsodar: bandup must be specified if banded jacobian")
+    stop("lsodar: bandup must be specified if banded Jacobian")
   if (jt %in% c(4,5) && is.null(banddown))
-    stop("lsodar: banddown must be specified if banded jacobian")
+    stop("lsodar: banddown must be specified if banded Jacobian")
   if (is.null(banddown)) banddown <-1
   if (is.null(bandup  )) bandup   <-1
 
   if (jt %in% c(1,4) && is.null(jacfunc))
     stop ("lsoda: cannot perform integration: *jacfunc* NOT specified; either specify *jacfunc* or change *jactype*")
 
-### model and jacobian function
+### model and Jacobian function
 
   Ynames <- attr(y,"names")
   JacFunc  <- NULL
@@ -114,7 +114,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
     } else stop(paste("cannot integrate: dyn function not loaded",funcname))
 
-    ## Is there a jacobian?
+    ## Is there a Jacobian?
     if (!is.null(jacfunc)) {
       if (!is.character(jacfunc))
         stop("If 'func' is dynloaded, so must 'jacfunc' be")
@@ -138,7 +138,6 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
     ## If we go this route, the number of "global" results is in nout
     ## and output variable names are in outnames
-
     Nglobal <- nout
     if (is.null(outnames))
       { Nmtot   <- NULL} else
@@ -156,30 +155,26 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       initpar <- NULL # parameter initialisation not needed if function is not a DLL
 
     rho <- environment(func)
-    # func and jac are overruled, either including ynames, or not
-    # This allows to pass the "..." arguments and the parameters
+    ## func and jac are overruled, either including ynames, or not
+    ## This allows to pass the "..." arguments and the parameters
 
     if (ynames)    {
       Func    <- function(time,state) {
         attr(state,"names") <- Ynames
         func   (time,state,parms,...)[1]
       }
-         
       Func2   <- function(time,state)  {
         attr(state,"names") <- Ynames
         func   (time,state,parms,...)
       }
-         
       JacFunc <- function(time,state){
         attr(state,"names") <- Ynames
         jacfunc(time,state,parms,...)
       }
-
       RootFunc <- function(time,state) {
         attr(state,"names") <- Ynames
         rootfunc(time,state,parms,...)
       }
-
     } else {                            # no ynames...
       Func    <- function(time,state)
         func   (time,state,parms,...)[1]
@@ -192,7 +187,6 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
       RootFunc <- function(time,state)
         rootfunc(time,state,parms,...)
-
     }
         
     ## Call func once to figure out whether and how many "global"
@@ -227,7 +221,6 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          (jt ==1 && dd != c(n,n)))
            stop("Jacobian dimension not ok")
     }
-
   }
 
 ### work arrays iwork, rwork
@@ -240,7 +233,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   lrw = max(lrn,lrs)                         # actual length: max of both
   liw = 20 + n
 
-# only first 20 elements passed to solver; other will be allocated in C-code  
+## only first 20 elements passed to solver; other will be allocated in C-code  
   iwork <- vector("integer",20)
   rwork <- vector("double",20)
   rwork[] <- 0.
@@ -257,31 +250,31 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   rwork[6] <- hmax
   rwork[7] <- hmin
 
-#  the task to be performed.
+##  the task to be performed.
   if (! is.null(times))
       itask <- ifelse (is.null (tcrit), 1,4) else      # times specified
       itask <- ifelse (is.null (tcrit), 2,5)           # only one step
   if(is.null(times)) times<-c(0,1e8)
 
-# print to screen...
+## print to screen...
   if (verbose) {
-    printM("--------------------")
-    printM("time settings")
-    printM("--------------------")
-    if (itask==1)printM("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)printM("take one step only and return.")                          else
-    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)printM("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)printM("take one step, without passing TCRIT, and return.")
-    printM("--------------------")
+    printM("\n--------------------")
+    printM("Time settings")
+    printM("--------------------\n")
+    if (itask==1)printM("  Normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("  Take one step only and return.")                          else
+    if (itask==3)printM("  istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("  Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("  Take one step, without passing TCRIT, and return.")
+    printM("\n--------------------")
     printM("Integration settings")
-    printM("--------------------")
-    if (is.character(func)) printM(paste("model function a DLL: ",func)) else
-                            printM("model function an R-function: ")
-    if (is.character(jacfunc)) printM(paste ("jacobian specified as a DLL: ",jacfunc)) else
-    if (!is.null(jacfunc))     printM("jacobian specified as an R-function: ") else
-                               printM("jacobian not specified")
-    printM("--------------------")
+    printM("--------------------\n")
+    if (is.character(func))    printM(paste("  Model function a DLL: ",func)) else
+                               printM("  Model function an R-function: ")
+    if (is.character(jacfunc)) printM(paste ("  Jacobian specified as a DLL: ",jacfunc)) else
+    if (!is.null(jacfunc))     printM("  Jacobian specified as an R-function: ") else
+                               printM("  Jacobian not specified")
+    cat("\n")
   }
 
 ### calling solver    
@@ -296,7 +289,6 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                as.integer(0), PACKAGE="deSolve")   #
 
 ### saving results    
-
   istate <- attr(out,"istate")
   iroot  <- attr(out, "iroot")
   rstate <- attr(out, "rstate")
@@ -320,10 +312,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   attr(out, "rstate") <- rstate
   attr(out, "iroot")  <- iroot
   attr(out, "type") <- "lsodar"
-
   dimnames(out) <- list(nm,NULL)
-    
   if (verbose) diagnostics(out)
-
-  t(out)
+  return(t(out))
 }

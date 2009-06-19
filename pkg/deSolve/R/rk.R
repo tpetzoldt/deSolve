@@ -134,13 +134,14 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     ## Number of steps until the solver gives up
     nsteps <- min(.Machine$integer.max, maxsteps * length(times))
-
     varstep <- method$varstep
+    vrb <- FALSE # TRUE forces internal debugging output of the C code
+
     if (varstep) {                        # methods with variable step size
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho, as.double(atol),
-        as.double(rtol), as.double(tcrit), as.integer(verbose),
+        as.double(rtol), as.double(tcrit), as.integer(vrb),
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
         as.integer(nsteps))
@@ -148,7 +149,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho,
-        as.double(tcrit), as.integer(verbose),
+        as.double(tcrit), as.integer(vrb),
         as.double(hini), as.double(rpar), as.integer(ipar), method,
         as.integer(nsteps))
     }
@@ -168,9 +169,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     ## Column names and state information
     dimnames(out) <- list(NULL, nm)
     istate <- attr(out, "istate")
-    if (!is.null(istate) && istate[1] == -1)
-    if (verbose) diagnostics(out)
-
     attr(out, "type") <- "rk"
-    out
+    if (verbose) diagnostics(out)
+    return(out)
 }

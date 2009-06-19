@@ -16,7 +16,7 @@
 ###          so, then if jacfunc is not NULL, it must be a character string
 ###          as well.  In these cases, 'func' is the name
 ###          of a function to be found in the dll named 'dllname' 
-###          (without extension). 'jacfunc' points to the name of the jacobian.
+###          (without extension). 'jacfunc' points to the name of the Jacobian.
 ###          if the function pointed to by 'dllname' exists in the dll 
 ###          it is extracted and assumed to be the
 ###          the initializer for the problem.
@@ -81,24 +81,24 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     stop("`maxords' must be >1 and <=5")
 
 ### Jacobian, method flag
-       if (jactype == "fullint" ) jt <- 2 # full jacobian, calculated internally
-  else if (jactype == "fullusr" ) jt <- 1 # full jacobian, specified by user function
-  else if (jactype == "bandusr" ) jt <- 4 # banded jacobian, specified by user function
-  else if (jactype == "bandint" ) jt <- 5 # banded jacobian, specified internally
+       if (jactype == "fullint" ) jt <- 2 # full Jacobian, calculated internally
+  else if (jactype == "fullusr" ) jt <- 1 # full Jacobian, specified by user function
+  else if (jactype == "bandusr" ) jt <- 4 # banded Jacobian, specified by user function
+  else if (jactype == "bandint" ) jt <- 5 # banded Jacobian, specified internally
   else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
 
-  # check other specifications depending on jacobian  
+  ## check other specifications depending on Jacobian  
   if (jt %in% c(4,5) && is.null(bandup))
-    stop("lsoda: bandup must be specified if banded jacobian")
+    stop("lsoda: bandup must be specified if banded Jacobian")
   if (jt %in% c(4,5) && is.null(banddown))
-    stop("lsoda: banddown must be specified if banded jacobian")
+    stop("lsoda: banddown must be specified if banded Jacobian")
   if (is.null(banddown)) banddown <-1
   if (is.null(bandup  )) bandup   <-1
 
   if (jt %in% c(1,4) && is.null(jacfunc))
     stop ("lsoda: cannot perform integration: *jacfunc* NOT specified; either specify *jacfunc* or change *jactype*")
 
-### model and jacobian function
+### model and Jacobian function
   Ynames <- attr(y,"names")
   JacFunc <- NULL
   ModelInit <- NULL
@@ -123,7 +123,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
     } else stop(paste("Cannot integrate: dyn function not loaded",funcname))
 
-    ## Finally, is there a jacobian?
+    ## Finally, is there a Jacobian?
     if (!is.null(jacfunc)) {
       if (!is.character(jacfunc))
          stop("If 'func' is dynloaded, so must 'jacfunc' be")
@@ -155,8 +155,8 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       initpar <- NULL # parameter initialisation not needed if function is not a DLL
 
     rho <- environment(func)
-    # func and jac are overruled, either including ynames, or not
-    # This allows to pass the "..." arguments and the parameters
+    ## func and jac are overruled, either including ynames, or not
+    ## This allows to pass the "..." arguments and the parameters
     if (ynames) {
        Func    <- function(time,state) {
          attr(state,"names") <- Ynames
@@ -221,7 +221,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   lrw = max(lrn,lrs)                       # actual length: max of both
   liw = 20 + n
 
-# only first 20 elements passed to solver; other will be allocated in C-code  
+## only first 20 elements passed to solver; other will be allocated in C-code  
   iwork <- vector("integer",20)
   rwork <- vector("double",20)
   rwork[] <- 0.
@@ -238,48 +238,47 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   rwork[6] <- hmax
   rwork[7] <- hmin
 
-# the task to be performed.
+## the task to be performed.
   if (! is.null(times))
       itask <- ifelse (is.null (tcrit), 1,4) else      # times specified
       itask <- ifelse (is.null (tcrit), 2,5)           # only one step
   if(is.null(times)) times<-c(0,1e8)
 
-# print to screen...
+## print to screen...
   if (verbose)  {
-
-    printM("--------------------")
-    printM("time settings")
-    printM("--------------------")
-    if (itask==1)printM("Normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)printM("Take one step only and return.")                          else
-    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)printM("Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)printM("Take one step, without passing TCRIT, and return.")
-    printM("--------------------")
+    printM("\n--------------------")
+    printM("Time settings")
+    printM("--------------------\n")
+    if (itask==1)printM("  Normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("  Take one step only and return.")                          else
+    if (itask==3)printM("  istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("  Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("  Take one step, without passing TCRIT, and return.")
+    printM("\n--------------------")
     printM("Integration settings")
-    printM("--------------------")
-    if (is.character(func)) printM(paste("Model function a DLL: ",func)) else
-                            printM("Model function an R-function: ")
-    if (is.character(jacfunc)) printM(paste ("Jacobian specified as a DLL: ",jacfunc)) else
-    if (!is.null(jacfunc))     printM("Jacobian specified as an R-function: ") else
-                              printM("Jacobian not specified")
+    printM("--------------------\n")
+    if (is.character(func)) printM(paste("  Model function a DLL: ",func)) else
+                            printM("  Model function an R-function: ")
+    if (is.character(jacfunc)) printM(paste ("  Jacobian specified as a DLL: ", jacfunc)) else
+    if (!is.null(jacfunc))     printM("  Jacobian specified as an R-function: ") else
+                               printM("  Jacobian not specified")
+    cat("\n")                          
   }
 
 ### calling solver
   storage.mode(y) <- storage.mode(times) <- "double"
   IN <-1
 
-  out <- .Call("call_lsoda",y,times,Func,initpar,
+  out <- .Call("call_lsoda", y, times, Func, initpar,
                rtol, atol, rho, tcrit, JacFunc, ModelInit,
                as.integer(verbose), as.integer(itask), as.double(rwork),
-               as.integer(iwork), as.integer(jt),as.integer(Nglobal),
-               as.integer(lrw),as.integer(liw),as.integer(IN),
-               NULL, as.integer(0),as.double (rpar), as.integer(ipar),
+               as.integer(iwork), as.integer(jt), as.integer(Nglobal),
+               as.integer(lrw),as.integer(liw), as.integer(IN),
+               NULL, as.integer(0), as.double(rpar), as.integer(ipar),
                as.integer(0), PACKAGE="deSolve")
 
 ### saving results    
-
-  istate <- attr(out,"istate")
+  istate <- attr(out, "istate")
   rstate <- attr(out, "rstate")
   nm <- c("time",
           if (!is.null(attr(y,"names"))) names(y) else as.character(1:n))
@@ -296,58 +295,10 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     nm <- c(nm, if (!is.null(Nmtot)) Nmtot else
                            as.character((n+1) : (n + Nglobal)))
   }
-  attr(out,"istate") <- istate
-  attr(out,"rstate") <- rstate
+  attr(out, "istate") <- istate
+  attr(out, "rstate") <- rstate
   attr(out, "type") <- "lsoda"
-
   dimnames(out) <- list(nm,NULL)
-
   if (verbose) diagnostics(out)
-    
-#  if (verbose)  {
-#    print("--------------------")
-#    print("lsoda return code")
-#    print("--------------------")
-#    idid <- istate[1]
-#    print(paste("istate = ",idid))
-#
-#    if (idid == 2) print(" LSODA was successful") else
-#    if (idid == -1) print(" excess work done on this call. (Perhaps wrong jacobian type)") else
-#    if (idid == -2) print(" excess accuracy requested. (Tolerances too small.)") else
-#    if (idid == -3) print(" illegal input detected. (See printed message.)") else
-#    if (idid == -4) print(" repeated error test failures. (Check all input.)") else
-#    if (idid == -5) print(" repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of jt or tolerances.)") else
-#    if (idid == -6) print(" error weight became zero during problem. (Solution component i vanished, and ATOL or ATOL(i) = 0.)") else
-#    if (idid == -7) print(" work space insufficient to finish (see messages)")
-#
-#    print("--------------------")
-#    print("ISTATE values")
-#    print("--------------------")
-#    df <- c( " istate, the return code",
-#             " The number of steps taken for the problem so far.",
-#             " The number of function evaluations for the problem so far.",
-#             " The number of Jacobian evaluations and LU decompositions so far.",
-#             " The method order last used (successfully).",
-#             " The order to be attempted on the next step.",
-#             " if istate=-4,-5: the index of the component with the largest error vector",
-#             " The length of rwork actually required.",
-#             " The length of iwork actually required.",
-#             " The method indicator for the last succesful step, 1=adams (nonstiff), 2= bdf (stiff)",
-#             " The current method indicator to be attempted on th next step, 1=adams (nonstiff), 2= bdf (stiff)")
-#
-#    ii <- c(1,12:21)
-#    print(data.frame(mess=df, val=istate[ii]))
-#    print("--------------------")
-#    print("RSTATE values")
-#    print("--------------------")
-#    df <- c( " The step size in t last used (successfully).",
-#    " The step size to be attempted on the next step.",
-#    " The current value of the independent variable which the solver has actually reached",
-#    " Tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected",
-#    " the value of t at the time of the last method switch, if any.")
-#    print(data.frame(mess=df, val=rstate[1:5]))
-#
-#  }
-#
   t(out)
 }

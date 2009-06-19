@@ -48,7 +48,7 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
          { Nmtot   <- outnames} else
       if (length(outnames) > nout)
          Nmtot <- outnames[1:nout] else
-         Nmtot <- c(outnames,(length(outnames)+1):nout)
+         Nmtot <- c(outnames, (length(outnames)+1):nout)
       ## ThPe:
       Nstates <- length(y) # assume length of states is correct
       rho <- NULL
@@ -60,13 +60,13 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
       # func and jac are overruled, either including ynames, or not
       # This allows to pass the "..." arguments and the parameters
       if(ynames) {
-        Func   <- function(time,state,parms) {
-          attr(state,"names") <- Ynames
+        Func   <- function(time, state, parms) {
+          attr(state, "names") <- Ynames
           func   (time,state,parms,...)
         }
       } else {                            # no ynames...
-        Func   <- function(time,state,parms)
-          func   (time,state,parms,...)
+        Func   <- function(time, state, parms)
+          func   (time, state, parms,...)
       }
 
       ## Call func once to figure out whether and how many "global"
@@ -79,17 +79,17 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
         stop(paste("The number of derivatives returned by func() (",
                    length(tmp[[1]]),
                    "must equal the length of the initial conditions vector (",
-                   Nstates,")", sep=""))
+                   Nstates, ")" , sep=""))
 
       ## use "unlist" here because some output variables are vectors/arrays
       Nglobal <- if (length(tmp) > 1)
           length(unlist(tmp[-1]))  else 0
       Nmtot <- attr(unlist(tmp[-1]),"names")
     }
-
+    vrb <- FALSE # TRUE forces internal debugging output of the C code
     ## the CALL to the integrator
     out <- .Call("call_rk4", as.double(y), as.double(times),
-        Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
+        Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(vrb),
         as.double(rpar), as.integer(ipar))
 
     nm <- c("time",
@@ -105,10 +105,7 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
     ## column names and state information
     dimnames(out) <- list(NULL, nm)
     istate <- attr(out, "istate")
-    if (!is.null(istate) && istate[1] == -1)
-
+    attr(out, "type")  <- "rk"
     if (verbose) diagnostics(out)
-
-    attr(out, "type")   <- "rk"
-    out
+    return(out)
 }

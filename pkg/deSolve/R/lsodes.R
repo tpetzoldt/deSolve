@@ -1,7 +1,7 @@
 
 ### ============================================================================
 ### lsodes -- solves ordinary differential equation systems with general
-### sparse jacobian matrix. The structure of the jacobian is either specified
+### sparse Jacobian matrix. The structure of the Jacobian is either specified
 ### by the user or estimated internally.
 ### The sparsity is either estimated internally (default), provided by the user
 ### or of a special type. To date, "1D", "2D", "3D" are supported.
@@ -77,7 +77,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   else if (is.null(jacvec) &&  sparsetype%in%c("sparseusr","1D","2D","3D"))
     imp <- 22      # inz supplied,jac not supplied
   else
-    imp <- 222      # sparse jacobian, calculated internally
+    imp <- 222      # sparse Jacobian, calculated internally
 
 ## Special-purpose sparsity structures: 1-D and 2-D reaction-transport problems
 ## Typically these applications are called via ode.1D, ode.2D and ode.3D
@@ -129,7 +129,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     stop ("Jacobian should at least contain one non-zero value")
 
 
-### model and jacobian function 
+### model and Jacobian function 
 
   JacFunc <- NULL
   Ynames <- attr(y,"names")
@@ -157,7 +157,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     } else
       stop(paste("cannot integrate: dyn function not loaded",funcname))
 
-    ## Finally, is there a jacobian?
+    ## Finally, is there a Jacobian?
     if (!is.null(jacvec)) {
       if (!is.character(jacvec))
         stop("If 'func' is dynloaded, so must 'jacvec' be")
@@ -312,40 +312,40 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 ### print to screen...
   if (verbose)   {
-    printM("--------------------")
-    printM("time settings")
-    printM("--------------------")
-    if (itask==1)printM("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)printM("take one step only and return.")                          else
-    if (itask==3)printM("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)printM("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)printM("take one step, without passing TCRIT, and return.")
-    printM("--------------------")
+    printM("\n--------------------")
+    printM("Time settings")
+    printM("--------------------\n")
+    if (itask==1)printM("  Normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("  Take one step only and return.")                          else
+    if (itask==3)printM("  istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("  Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("  Take one step, without passing TCRIT, and return.")
+    printM("\n--------------------")
     printM("Integration settings")
-    printM("--------------------")
-    if (is.character(func)) printM(paste("model function a DLL: ",func)) else
-                            printM(paste("model function an R-function: "))
-    if (is.character(jacvec)) printM(paste ("jacobian specified as a DLL: ",jacvec)) else
-    if (!is.null(jacvec)) printM(paste ("jacobian specified as an R-function: ")) else
-                         printM("jacobian not specified")
-    printM("--------------------")
-    printM("integration method")
-    printM("--------------------")
-    if (imp == 21)  txt <-" the user has supplied indices to nonzero elements of jacobian, and a jacobian function"
+    printM("--------------------\n")
+    if (is.character(func)) printM(paste("  Model function a DLL: ",func)) else
+                            printM(paste("  Model function an R-function: "))
+    if (is.character(jacvec)) printM(paste ("  Jacobian specified as a DLL: ",jacvec)) else
+    if (!is.null(jacvec)) printM(paste ("  Jacobian specified as an R-function: ")) else
+                         printM("  Jacobian not specified")
+    printM("\n--------------------")
+    printM("Integration method")
+    printM("--------------------\n")
+    if (imp == 21)  txt <-"  The user has supplied indices to nonzero elements of Jacobian, and a Jacobian function"
     if (imp == 22)  {
       if (sparsetype=="sparseusr")
-        txt <-" the user has supplied indices to nonzero elements of jacobian, the jacobian will be estimated internally, by differences"
+        txt <-"  The user has supplied indices to nonzero elements of Jacobian, the Jacobian will be estimated internally, by differences"
       if (sparsetype=="1D")
-        txt <-" the nonzero elements are according to a 1-D model, the jacobian will be estimated internally, by differences"
+        txt <-"  The nonzero elements are according to a 1-D model, the Jacobian will be estimated internally, by differences"
       if (sparsetype=="2D")
-        txt <-" the nonzero elements are according to a 2-D model, the jacobian will be estimated internally, by differences"
+        txt <-"  The nonzero elements are according to a 2-D model, the Jacobian will be estimated internally, by differences"
       if (sparsetype=="3D")
-        txt <-" the nonzero elements are according to a 3-D model, the jacobian will be estimated internally, by differences"
+        txt <-"  The nonzero elements are according to a 3-D model, the Jacobian will be estimated internally, by differences"
                    }
     if (imp == 122)
-      txt <-" the user has supplied the jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"
+      txt <-"  The user has supplied the Jacobian, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to jacvec"
     if (imp == 222)
-      txt <-" the jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
+      txt <-"  The Jacobian will be generated internally, its structure (indices to nonzero elements) will be obtained from NEQ+1 initial calls to func"
    
     printM(txt)
   } 

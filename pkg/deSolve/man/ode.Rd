@@ -100,9 +100,9 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 \keyword{math}
 \examples{
 
-## =========================================
-## Example1: Pred-Prey Lotka-Volterra model
-## =========================================
+## =============================================
+## Example1: Predator-Prey Lotka-Volterra model
+## =============================================
 
 LVmod <- function(Time, State, Pars)
 {
@@ -176,6 +176,11 @@ xstart <- c(S = 1, P = 1, K = 1)
 ## Solve model
 out <- as.data.frame(ode(y = xstart,times = times, 
                      func = lvmodel, parms, input = sigimp))
-plot(out$P,out$K,type = "l",lwd = 2,xlab = "producer",ylab = "consumer")
+
+## Display results
+par(mfrow=c(1,2))
+matplot(out[,1], out[,2:4], type="l", xlab="time", ylab="state")
+legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "K"))
+plot(out$P, out$K, type = "l", lwd = 2, xlab = "producer", ylab = "consumer")
 }
 

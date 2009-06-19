@@ -71,7 +71,7 @@ initial value problems, R}
   differential equations implemented in lower-level languages such as
   \proglang{FORTRAN}, \proglang{C}, or \proglang{C++}, which are
   compiled into a dynamically linked library (DLL) and loaded into
-  \proglang{R}.  
+  \proglang{R}.
 }
 
 %% The address of (at least) one author should be given
@@ -599,10 +599,12 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 \clearpage
 
 \section{A warning}
+
 The solvers from ODEPACK should be first choice for any problem. However,
 there are cases where they give very dubious results.
 
 Consider the following Lotka-Volterra type of model:
+
 <<>>=
 lvmodel <- function(t, x, parms)  {
   with(as.list(c(parms, x)), {
@@ -613,14 +615,18 @@ lvmodel <- function(t, x, parms)  {
   })
 }
 @
-and with the following (biologically not very realistic)
-\footnote{they are not realistic because consumers grow with 100 \% efficiency}
-parameter values:
+
+and with the following (biologically not very realistic)%
+\footnote{they are not realistic because producers grow unlimited with
+  a high rate and consumers with 100 \% efficiency} parameter values:
+
 <<>>=
 parms  <- c(c = 5, d = 0.1, e = 0.1, f = 0.1)
 @
+
 After specification of the initial conditions and the output times, the
 model is solved - using \code{lsoda}, and output plotted.
+
 <<>>=
 xstart <- c(P = 0.5, K = 1)
 times  <- seq(0, 190, 0.1)
@@ -637,31 +643,19 @@ What has happened? Being an implicit method, \code{lsoda} generates very small
 negative values for producers, from day 40 on; these negative values, small
 at first grow in magnitude until they become NaNs.
 
-This is because the model
-equations are not intended to be used with negative numbers, as
-negative concentrations are not realistic.
+This is because the model equations are not intended to be used with
+negative numbers, as negative concentrations are not realistic.
 
-A quick-and-dirty solution is to
-make sure that the model does not calculate with negative numbers,
-by taking the producer concentration to be at least = 0.
-\footnote{note that this solution is what Karline Soetaert would do,
-Thomas Petzoldt does not like the idea, because of the mass balance
-violation it generates.}
-Thus,
+A quick-and-dirty solution is to reduce the maximum time step to a
+considerably small value which, of course, reduces computational
+efficiency:
+
 <<>>=
-lvmodel <- function(t, x, parms)  {
-  with(as.list(c(parms, x)), {
-    P <- max(0,P)
-    dP <- c*P  - d*K*P          # producer
-    dK <- e*P*K  - f*K          # consumer
-    res <- c(dP, dK)
-    list(res)
-  })
-}
-out <- as.data.frame( ode(y = xstart,times = times,
+out <- as.data.frame(ode(y = xstart,times = times,  hmax=0.02,
   func = lvmodel, parms = parms))
-tail(out)
+matplot(out[,1], out[,2:3], type="l")
 @
+
 
 \clearpage
 \begin{table*}[t]

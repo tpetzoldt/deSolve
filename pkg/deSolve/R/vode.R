@@ -9,7 +9,7 @@
 ### this has probably to do with the memory management which is more
 ### flexible in vode: when a method flag (mf) is positive, vode will save
 ### a copy of the Jacobian for reuse in the corrector iteration algorithm;
-### for negative flags a copy of the jacobian is not saved.
+### for negative flags a copy of the Jacobian is not saved.
 ### Thus negative flags need less memory, but positive flags
 ### may be (slightly) faster
 ### nb. this reduced memory strategy is the only option of lsode - a mf=21
@@ -67,13 +67,13 @@ vode          <- function(y, times, func, parms,
 ### Jacobian, method flag
   if (is.null(mf)) {
     if (jactype == "fullint" )
-      imp <- 22 # full jacobian, calculated internally
+      imp <- 22 # full Jacobian, calculated internally
     else if (jactype == "fullusr" )
-      imp <- 21 # full jacobian, specified by user function
+      imp <- 21 # full Jacobian, specified by user function
     else if (jactype == "bandusr" )
-      imp <- 24 # banded jacobian, specified by user function
+      imp <- 24 # banded Jacobian, specified by user function
     else if (jactype == "bandint" )
-      imp <- 25 # banded jacobian, specified internally
+      imp <- 25 # banded Jacobian, specified internally
     else
       stop("jactype must be one of fullint, fullusr, bandusr or bandint if mf not specified")
   } else imp <- mf
@@ -86,7 +86,7 @@ vode          <- function(y, times, func, parms,
   if (miter %in% c(1,4) & is.null(jacfunc))
     stop ("vode: cannot perform integration: *jacfunc* NOT specified; either specify *jacfunc* or change *jactype* or *mf*")
 
-  # check other specifications depending on jacobian
+  # check other specifications depending on Jacobian
   meth <- abs(imp)%/%10   # basic linear multistep method
   jsv  <- sign(imp)
   if (is.null (maxord))
@@ -96,19 +96,19 @@ vode          <- function(y, times, func, parms,
   if (meth==2 && maxord > 5 )
     stop ("vode: maxord too large: should be <= 5")
   if (miter %in% c(4,5) && is.null(bandup))
-    stop("vode: bandup must be specified if banded jacobian")
+    stop("vode: bandup must be specified if banded Jacobian")
   if (miter %in% c(4,5) && is.null(banddown))
-    stop("vode: banddown must be specified if banded jacobian")
+    stop("vode: banddown must be specified if banded Jacobian")
   if (is.null(banddown))
     banddown <-1
   if (is.null(bandup  ))
     bandup   <-1
 
-### model and jacobian function  
+### model and Jacobian function  
   Func <- NULL
   JacFunc <- NULL
     
-  ## if (miter == 4) jacobian should have banddown empty rows-vode only!
+  ## if (miter == 4) Jacobian should have banddown empty rows-vode only!
   if (miter == 4 && banddown>0)
     erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
 
@@ -133,17 +133,17 @@ vode          <- function(y, times, func, parms,
       Func <- getNativeSymbolInfo(funcname, PACKAGE = dllname)$address
     } else stop(paste("cannot integrate: dyn function not loaded ",funcname))
 
-    ## Finally, is there a jacobian?
+    ## Finally, is there a Jacobian?
     if (!is.null(jacfunc)) {
       if (!is.character(jacfunc))
         stop("If 'func' is dynloaded, so must 'jacfunc' be")
-       #  if (miter == 4) jacobian should have empty banddown empty rows-vode only!
+       #  if (miter == 4) Jacobian should have empty banddown empty rows-vode only!
       if (miter == 4&& banddown>0)
-        stop("The combination of user-supplied banded jacobian in a dll is NOT allowed")
+        stop("The combination of user-supplied banded Jacobian in a dll is NOT allowed")
       jacfuncname <- jacfunc
       if(is.loaded(jacfuncname, PACKAGE = dllname)) {
         JacFunc <- getNativeSymbolInfo(jacfuncname, PACKAGE = dllname)$address
-      } else stop(paste("cannot integrate: jacobian function not loaded ",jacfunc))
+      } else stop(paste("cannot integrate: Jacobian function not loaded ",jacfunc))
     }
 
     ## If we go this route, the number of "global" results is in nout
@@ -265,42 +265,45 @@ vode          <- function(y, times, func, parms,
 
 # print to screen...
   if (verbose) {
-    print("--------------------")
-    print("time settings")
-    print("--------------------")
-    if (itask==1)print("normal computation of output values of y(t) at t = TOUT") else
-    if (itask==2)print("take one step only and return.")                          else
-    if (itask==3)print("istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
-    if (itask==4)print("normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
-    if (itask==5)print("take one step, without passing TCRIT, and return.")
-    print("--------------------")
-    print("Integration settings")
-    print("--------------------")
-    if (is.character(func)) print(paste("model function a DLL: ",func)) else
-                            print("model function an R-function: ")
-    if (is.character(jacfunc)) print(paste ("jacobian specified as a DLL: ",jacfunc)) else
-    if (!is.null(jacfunc))     print("jacobian specified as an R-function: ") else
-                               print("jacobian not specified")
-    print("--------------------")
-    print("integration method")
-    print("--------------------")
-    df   <- c("method flag, mf","jsv", "meth","miter")
+    printM("\n--------------------")
+    printM("Time settings")
+    printM("--------------------\n")
+    if (itask==1)printM("  Normal computation of output values of y(t) at t = TOUT") else
+    if (itask==2)printM("  Take one step only and return.")                          else
+    if (itask==3)printM("  istop at the first internal mesh point at or beyond t = TOUT and return. ")  else
+    if (itask==4)printM("  Normal computation of output values of y(t) at t = TOUT but without overshooting t = TCRIT.") else
+    if (itask==5)printM("take one step, without passing TCRIT, and return.")
+    printM("\n--------------------")
+    printM("Integration settings")
+    printM("--------------------\n")
+    if (is.character(func)) printM(paste("  Model function a DLL: ",func)) else
+                            printM("  Model function an R-function: ")
+    if (is.character(jacfunc)) printM(paste ("  Jacobian specified as a DLL: ",jacfunc)) else
+    if (!is.null(jacfunc))     printM("  Jacobian specified as an R-function: ") else
+                               printM("  Jacobian not specified")
+    printM("\n--------------------")
+    printM("Integration method")
+    printM("--------------------")
+    df   <- c("method flag, mf =",
+              "jsv             =", 
+              "meth            =",
+              "miter           =")
     vals <- c(imp, jsv, meth, miter)
-    txt  <- "mf=jsv*(10*meth + miter)"
-    if (jsv==1) txt<-c(txt,"a copy of the Jacobian is saved for reuse in the corrector iteration algorithm" )                     else
-    if (jsv==-1)txt<-c(txt,"a copy of the Jacobian is not saved")
+    txt  <- "; mf = jsv * (10 * meth + miter)"
+    if (jsv==1) txt<-c(txt,"; a copy of the Jacobian is saved for reuse in the corrector iteration algorithm" )                     else
+    if (jsv==-1)txt<-c(txt,"; a copy of the Jacobian is not saved")
 
-    if (meth==1)txt<-c(txt,"the basic linear multistep method: the implicit Adams method")                                             else
-    if (meth==2)txt<-c(txt,"the basic linear multistep method: based on backward differentiation formulas")
+    if (meth==1)txt<-c(txt,"; the basic linear multistep method: the implicit Adams method")                                             else
+    if (meth==2)txt<-c(txt,"; the basic linear multistep method: based on backward differentiation formulas")
 
-    if (miter==0)txt<-c(txt,"functional iteration (no Jacobian matrix is involved")                                                    else
-    if (miter==1)txt<-c(txt,"chord iteration with a user-supplied full (NEQ by NEQ) Jacobian")                                         else
-    if (miter==2)txt<-c(txt,"chord iteration with an internally generated full Jacobian, (NEQ extra calls to F per df/dy value)")      else
-    if (miter==3)txt<-c(txt,"chord iteration with an internally generated diagonal Jacobian (1 extra call to F per df/dy evaluation)") else
-    if (miter==4)txt<-c(txt,"chord iteration with a user-supplied banded Jacobian")                                                    else
-    if (miter==5)txt<-c(txt,"chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to F per df/dy evaluation)")
+    if (miter==0)txt<-c(txt,"; functional iteration (no Jacobian matrix is involved")                                                    else
+    if (miter==1)txt<-c(txt,"; chord iteration with a user-supplied full (NEQ by NEQ) Jacobian")                                         else
+    if (miter==2)txt<-c(txt,"; chord iteration with an internally generated full Jacobian, (NEQ extra calls to F per df/dy value)")      else
+    if (miter==3)txt<-c(txt,"; chord iteration with an internally generated diagonal Jacobian (1 extra call to F per df/dy evaluation)") else
+    if (miter==4)txt<-c(txt,"; chord iteration with a user-supplied banded Jacobian")                                                    else
+    if (miter==5)txt<-c(txt,"; chord iteration with an internally generated banded Jacobian (using ML+MU+1 extra calls to F per df/dy evaluation)")
                                                                                                                                          
-    print(data.frame(parameter=df, value=vals,message=txt))
+    printmessage(df, vals, txt)
   } 
   
 ### calling solver

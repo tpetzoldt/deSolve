@@ -158,11 +158,12 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
 \details{
 
-  The Runge-Kutta solvers are primarily provided for didactic
-  reasons.  For most practical cases, solvers of the Livermore family
-  (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
+  The Runge-Kutta solvers are primarily provided for didactic reasons.
+  For most practical cases, solvers of the Livermore family (ODEPACK;
+  \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
   \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}) are
-  superior and more thoroughly tested; in most cases they are also faster).
+  superior and more thoroughly tested; in most cases they are also
+  faster).
 
   In addition to this, some of the Livermore solvers are also suitable
   for stiff ODEs, differential algebraic equations (DAEs), or partial
@@ -270,9 +271,9 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
 
 \examples{
-## ==============================
-## Example: Lotka-volterra model
-## ==============================
+## =========================================================
+## Example: Resource-producer-consumer Lotka-Volterra model
+## =========================================================
 
 ## Note:
 ## parameters are a list, names accessible via "with" function
