@@ -1,7 +1,7 @@
 /*==========================================================================*/
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
-/*  Euler Fixed Step Integrator                                               */
-/*    (special version with less overhead than the general solution)         */
+/*  Euler Fixed Step Integrator                                             */
+/*    (special version with less overhead than the general solution)        */
 /*==========================================================================*/
 
 #include "rk_util.h"
@@ -10,7 +10,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	      SEXP Parms, SEXP Nout, SEXP Rho, SEXP Verbose,
 	      SEXP Rpar, SEXP Ipar) {
 
-  /*  Initialization */
+  /* Initialization */
   init_N_Protect();
 
   double *tt = NULL, *xs = NULL;
@@ -21,7 +21,6 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   double t, dt;
   int i = 0, j=0, it=0, nt = 0, neq=0;
-  
 
   /*------------------------------------------------------------------------*/
   /* Processing of Arguments                                                */
@@ -37,16 +36,15 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   tmp =  (double *) R_alloc(neq, sizeof(double));
   FF  =  (double *) R_alloc(neq, sizeof(double));
 
-  int  nout  = INTEGER(Nout)[0]; // n of global outputs if func is in a DLL
-  //out  =  (double *) R_alloc(nout, sizeof(double));
-
+  int nout  = INTEGER(Nout)[0]; /* n of global outputs if func is in a DLL */
   int verbose = INTEGER(Verbose)[0];
+
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
   /*------------------------------------------------------------------------*/
   int isDll = FALSE;
   int ntot  =  0;
-  int isOut = FALSE; //?? do I need this?
+  int isOut = FALSE; /* do I need this? */
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
@@ -106,18 +104,19 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
+
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-
   initParms(Initfunc, Parms);
+
   /*------------------------------------------------------------------------*/
   /* Initialization of Integration Loop                                     */
   /*------------------------------------------------------------------------*/
   yout[0] = tt[0]; //initial time
   for (i = 0; i < neq; i++) {
     y0[i]              = xs[i];
-    yout[(i + 1) * nt] = y0[i];      // <--- check this
+    yout[(i + 1) * nt] = y0[i];
   }
 
   /*------------------------------------------------------------------------*/

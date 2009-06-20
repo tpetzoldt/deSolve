@@ -1,3 +1,8 @@
+### ============================================================================
+### Interface to a generalized code for solving explicit variable and fixed
+### step ODE solvers of the Runge-Kutta family, see helpfile for details.
+### ============================================================================
+
 rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE,
   method = rkMethod("rk45dp7", ... ), maxsteps = 5000,

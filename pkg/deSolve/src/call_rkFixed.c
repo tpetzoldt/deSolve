@@ -22,8 +22,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double t, dt, t_ext, tmax;
 
   SEXP Interpolate;
-  int fsal = FALSE;       // fixed step methods have no FSAL
-  int interpolate = TRUE; // polynomial interpolation is done by default
+  int fsal = FALSE;       /* fixed step methods have no FSAL */
+  int interpolate = TRUE; /* polynomial interpolation is done by default */
 
   int i = 0, j=0, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int one=1;
@@ -34,7 +34,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double  tcrit = REAL(Tcrit)[0];
   double  hini  = REAL(Hini)[0];
   int  maxsteps = INTEGER(Maxsteps)[0];
-  int  nout     = INTEGER(Nout)[0]; // number of global outputs is func is in a DLL
+  int  nout     = INTEGER(Nout)[0]; /* number of global outputs is func is in a DLL */
   int  verbose  = INTEGER(Verbose)[0];
 
   int stage = (int)REAL(getListElement(Method, "stage"))[0];
@@ -69,11 +69,10 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   int isDll = 0;
   int ntot  = 0;
-  int isOut = 0; //?? do I need this?
+  int isOut = 0; /* do I need this? */
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
-  // testing code from lsoda
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
     isDll = TRUE;
     if (nout > 0) isOut = TRUE;
@@ -91,7 +90,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
-//  if (isDll ==1) {
   ipar[0] = nout;              /* first 3 elements of ipar are special */
   ipar[1] = lrpar;
   ipar[2] = lipar;
@@ -110,7 +108,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
-  // end new testing code
 
   /**************************************************************************/
   /****** Allocation of Workspace                                      ******/
@@ -125,44 +122,36 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   FF  =  (double *) R_alloc(neq * stage, sizeof(double));
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
-  // ThPe: not more necessary, see above
-  //out  =  (double *) R_alloc(nout, sizeof(double));
-
-  // matrix for polynomial interpolation
-  int nknots = 4;  // 3rd order polynomials
-  int iknots = 0;  // counter for knotes buffer
+  /* matrix for polynomial interpolation */
+  int nknots = 4;  /* 3rd order polynomials */
+  int iknots = 0;  /* counter for knotes buffer */
   double *yknots;
-  // ??? neq + 1
+
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
 
-  // matrix for holding the outputs
+  /* matrix for holding the outputs */
   PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
   yout = REAL(R_yout);
-  // initialize outputs with NA first
+  /* initialize outputs with NA first */
   for (i = 0; i < nt * (neq + 1); i++) yout[i] = NA_REAL;
 
-  // attribute that stores state information, similar to lsoda
+  /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
   PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
   istate = INTEGER(R_istate);
-  istate[0] = 0; // assume succesful return
+  istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
-
-  //PROTECT(RSTATE = allocVector(REALSXP, 5));incr_N_Protect();
-  //for (k = 0;k<5;k++) REAL(RSTATE)[k] = rwork[k+10];
 
   /**************************************************************************/
   /****** Initialization of Parameters (for DLL functions)             ******/
   /**************************************************************************/
-
   initParms(Initfunc, Parms);
 
   /**************************************************************************/
   /****** Initialization of Integration Loop                           ******/
   /**************************************************************************/
-
   yout[0]   = tt[0];              // initial time
   yknots[0] = tt[0];              // for polynomial interpolation
   for (i = 0; i < neq; i++) {
@@ -175,7 +164,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   t = tt[0];                   // t    <- min(Times)
   tmax = fmax(tt[nt], tcrit);   // tmax <- max(Times, Tcrit)
 
-  // Initialization of work arrays (to be on the safe side, remove this later)
+  /* Initialization of work arrays (to be on the safe side, remove this later) */
   for (i = 0; i < neq; i++)  {
     y1[i] = 0;
     //y2[i] = 0;
@@ -184,12 +173,13 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       FF[i + j * neq] = 0;
     }
   }
+
   /**************************************************************************/
   /****** Main Loop                                                    ******/
   /**************************************************************************/
-  it     = 1; // step counter; zero element is initial state
-  it_ext = 0; // counter for external time step (dense output)
-  it_tot = 0; // total number of time steps
+  it     = 1; /* step counter; zero element is initial state   */
+  it_ext = 0; /* counter for external time step (dense output) */
+  it_tot = 0; /* total number of time steps                    */
 
   do {
     /* select time step (possibly irregular) */
@@ -217,10 +207,10 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /* Estimation of new values                                           */
     /*====================================================================*/
 
-    // use BLAS with reduced error checking
+    /* use BLAS with reduced error checking */
     blas_matprod1(FF, neq, stage, bb1, stage, one, dy1);
 
-    it_tot++; // count total number of time steps
+    it_tot++; /* count total number of time steps */
     for (i = 0; i < neq; i++) {
       y1[i] = y0[i] +  dt * dy1[i];
     }
@@ -233,17 +223,17 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       /* "Neville-Aitken-Interpolation";                                  */
       /* the fixed step integrators have no dense output                  */
       /*------------------------------------------------------------------*/
-      // (1) collect number "nknots" of knots in advanve
-      yknots[iknots] = t + dt;   // time in first column
+      /* (1) collect number "nknots" of knots in advanve */
+	yknots[iknots] = t + dt;   /* time in first column */
       for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y1[i];
       if (iknots < (nknots - 1)) {
         iknots++;
       } else {
-       // (2) do polynomial interpolation
+       /* (2) do polynomial interpolation */
        t_ext = tt[it_ext];
-       while (t_ext <= t + dt) { // <= ??
+       while (t_ext <= t + dt) {
         neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
-        // (3) store outputs
+        /* (3) store outputs */
         if (it_ext < nt) {
           yout[it_ext] = t_ext;
           for (i = 0; i < neq; i++)
@@ -289,12 +279,12 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       if (verbose) Rprintf("Max. number of steps exceeded\n");
       break;
     }
-  } while (t < tmax); // end of rk main loop
+  } while (t < tmax); /* end of rk main loop */
 
   /*====================================================================*/
   /* call derivs again to get global outputs                          */
   /*====================================================================*/
-  // j = -1 suppresses unnecessary internal copying
+  /* j = -1 suppresses unnecessary internal copying */
   for (int j = 0; j < nt; j++) {
     t = yout[j];
     for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
@@ -303,12 +293,11 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
-  // attach essential internal information (codes are compatible to lsoda)
-  // ToDo: respect function evaluations due to global outputs
+  /* attach essential internal information (codes are compatible to lsoda) */
+  /* ToDo: respect function evaluations due to global outputs */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
-
-  // release R resources
+  /* release R resources */
   if (verbose) {
     Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", it, it_ext, it_tot);
     Rprintf("Maxsteps %d\n", maxsteps);

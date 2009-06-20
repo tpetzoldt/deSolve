@@ -1,3 +1,8 @@
+### ============================================================================
+### Interface to a special code for Euler's ODE solver
+### with fixed step size and without interpolation, see helpfile for details.
+### ============================================================================
+
 euler <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
   dllname = NULL, initfunc=dllname, initpar = parms,
   rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, ...) {

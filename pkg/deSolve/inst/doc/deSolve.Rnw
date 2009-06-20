@@ -159,8 +159,8 @@ options(width=70)
 
   The model application consists of
   \begin{itemize}
-    \item	Specification of the time at which model output is wanted
-    \item	Integration of the model equations (uses R-functions from \ds)
+    \item	Specification of the time at which model output is wanted,
+    \item	Integration of the model equations (uses R-functions from \ds),
     \item	Plotting of model results.
   \end{itemize}
 
@@ -168,7 +168,7 @@ options(width=70)
 
   \subsection{Model specification}
 
-    1. Model parameters.
+    1. Model parameters
 
     There are three model parameters: $a$, $b$, and $c$ that are defined first.
     Parameters are stored as a vector with assigned names and values.
@@ -178,7 +178,7 @@ parameters <- c(a = -8/3,
                 b = -10,
                 c =  28)
 @
-    2. State variables.
+    2. State variables
 
     The three state variables are also created as a vector, and their
     initial values given.
@@ -207,7 +207,7 @@ state     <- c(X = 1,
 
     The main part of the model calculates the rate of change of the state
     variables. At the end of the function, these rates of change are returned,
-    packed as a list. Note that is necessary to return the rate of change in
+    packed as a list. Note that it is necessary to return the rate of change in
     the same ordering as the specification of the state variables
     (this is very important).
     In this case, as state variables are specified $X$ first, then $Y$ and $Z$,
@@ -268,7 +268,6 @@ head(out)
   3. Plotting results
 
   Finally, the model output is plotted.
-
   The figures are arranged in two rows and two columns (\code{mfrow}), and
   the size of the outer upper margin (the third margin) is increased
   (\code{oma}), such as to allow writing a figure heading (\code{mtext}).
@@ -345,10 +344,10 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
     \item \code{ode.2D} integrates 2-dimensional problems.
   \end{itemize}
 
-    As an example, consider the Aphid model described in \citet{Soetaert08}.
-
+  As an example, consider the Aphid model described in \citet{Soetaert08}.
   It is a model where aphids slowly diffuse and grow on a row of plants.
   The model equations are:
+
   \[
     \frac{{\partial N}}{{\partial t}} =  - \frac{{\partial Flux}}{{\partial {\kern 1pt} x}} + g \cdot N
   \]
@@ -382,19 +381,19 @@ print(system.time(out <-vode  (state,times,Lorenz,parameters)))
   We refer to \citet{Soetaert08} for more information about this model and
   its numerical approximation.
 
-  Here is its implementation in \proglang{R}:
-
+  Here is its implementation in \proglang{R}.
   First the model equations are defined:
-<<>>=
-  Aphid <- function(t,APHIDS,parameters)
-   {
-      deltax     <- c (0.5, rep(1,numboxes-1), 0.5)
-      Flux       <- -D * diff(c(0, APHIDS, 0)) /deltax
-      dAPHIDS    <- -diff(Flux) / delx  + APHIDS*r
 
-      # the return value
-        list(dAPHIDS )
-    }  # end
+<<>>=
+ Aphid <- function(t, APHIDS, parameters)
+   {
+     deltax     <- c (0.5, rep(1, numboxes - 1), 0.5)
+     Flux       <- -D * diff(c(0, APHIDS, 0)) / deltax
+     dAPHIDS    <- -diff(Flux) / delx  + APHIDS * r
+
+     # the return value
+     list(dAPHIDS )
+   } # end
 @
   Then the model parameters and spatial grid are defined
 <<>>=
@@ -482,8 +481,8 @@ y_1 \cdot y_2 &=& t
 <<>>=
 daefun<-function(t,y,dy,parameters)
  {
-       res1  <- dy[1]+y[1]-y[2]
-       res2  <- y[2]*y[1]-t
+    res1  <- dy[1]+y[1]-y[2]
+    res2  <- y[2]*y[1]-t
 
     list(c(res1,res2))
  }
@@ -565,11 +564,12 @@ and the model solved as:
 out2  <- lsode(yini, times, f1, parms = 0, jactype = "fullusr",
               jacfunc = fulljac)
 @
-The Jacobian matrix is banded, with
- one nonzero band above (up) and one below(down) the diagonal:
 
+The Jacobian matrix is banded, with
+ one nonzero band above (up) and one below(down) the diagonal.
 First we let \code{lsode} to estimate the banded Jacobian internally
 (\code{jactype="bandint"}):
+
 <<>>=
 out3  <- lsode(yini, times, f1, parms = 0, jactype = "bandint",
                               bandup = 1, banddown = 1)
@@ -602,7 +602,6 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 
 The solvers from ODEPACK should be first choice for any problem. However,
 there are cases where they give very dubious results.
-
 Consider the following Lotka-Volterra type of model:
 
 <<>>=
@@ -625,7 +624,7 @@ parms  <- c(c = 5, d = 0.1, e = 0.1, f = 0.1)
 @
 
 After specification of the initial conditions and the output times, the
-model is solved - using \code{lsoda}, and output plotted.
+model is solved - using \code{lsoda}:
 
 <<>>=
 xstart <- c(P = 0.5, K = 1)
@@ -639,12 +638,11 @@ tail(out)
 At the end of the simulation, both producers and consumer values are
 Not-A-Numbers!
 
-What has happened? Being an implicit method, \code{lsoda} generates very small
-negative values for producers, from day 40 on; these negative values, small
-at first grow in magnitude until they become NaNs.
-
-This is because the model equations are not intended to be used with
-negative numbers, as negative concentrations are not realistic.
+What has happened? Being an implicit method, \code{lsoda} generates
+very small negative values for producers, from day 40 on; these
+negative values, small at first grow in magnitude until they become
+NaNs.  This is because the model equations are not intended to be used
+with negative numbers, as negative concentrations are not realistic.
 
 A quick-and-dirty solution is to reduce the maximum time step to a
 considerably small value which, of course, reduces computational
@@ -656,9 +654,10 @@ out <- as.data.frame(ode(y = xstart,times = times,  hmax=0.02,
 matplot(out[,1], out[,2:3], type="l")
 @
 
-
 \clearpage
-\begin{table*}[t]
+%\section{Function overview}
+
+\begin{table*}[b]
 \caption{Summary of the functions that solve differential equations}\label{tb:rs}
 \centering
 \begin{tabular}{p{.15\textwidth}p{.75\textwidth}}\hline
@@ -671,11 +670,12 @@ matplot(out[,1], out[,2:3], type="l")
 \code{ode.band}             & integrates systems of ODEs resulting from unicomponent 1-dimensional reaction-transport problems             \\ \hline
 \code{daspk}                &  solves systems of differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
 \code{lsoda}                & integrates ODEs, automatically chooses method for stiff or non-stiff problems, assumes a full or banded Jacobian   \\ \hline
-\code{lsodar}               & same as \code{lsoda}, but includes a root-solving procedure.                            \\ \hline
+\code{lsodar}               & same as \code{lsoda}, but includes a root-solving procedure                            \\ \hline
 \code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian   \\ \hline
 \code{lsodes}               & integrates ODEs, using stiff method and assuming an arbitrary sparse Jacobian           \\ \hline
-\code{rk} or \code{rk4}     & integrates ODEs, using Runge-Kutta methods                                           \\ \hline
-\code{euler}                & integrates ODEs, using Euler's method  \\ \hline
+\code{rk}                   & integrates ODEs, using Runge-Kutta methods (includes Runge-Kutta 4 and Euler as special cases)    \\ \hline
+\code{rk4}                  & integrates ODEs, using the classical Runge-Kutta 4th order method (special code with less options than \code{rk}) \\ \hline
+\code{euler}                & integrates ODEs, using Euler's method  (special code with less options than \code{rk}) \\ \hline
 \hline
 \end{tabular}
 \end{table*}

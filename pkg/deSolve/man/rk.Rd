@@ -194,19 +194,7 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   The return value of \code{func} should be a list, whose first element
   is a vector containing the derivatives of y with respect to time, and
   whose second element contains output variables that are required at
-  each point in time.
-
-  An example is given below:
-
- \code{model <- function(t, Y, parameters)}\cr
-    \code{\{}\cr
-    \code{with(as.list(parameters),\{}\cr
-       \code{dy1 = -k1*Y[1] + k2*Y[2]*Y[3]}\cr
-       \code{dy3 = k3*Y[2]*Y[2]}\cr
-       \code{dy2 = -dy1 - dy3}\cr
-      \code{list(c(dy1,dy2,dy3))}\cr
-      \code{\})}\cr
-  \code{\}}\cr
+  each point in time. Examples are given below.
 }
 \value{
   A matrix with up to as many rows as elements in \code{times} and

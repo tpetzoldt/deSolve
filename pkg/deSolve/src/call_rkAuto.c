@@ -23,16 +23,16 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   double err=0, dtnew=0, t, dt, t_ext, tmax;
 
   SEXP R_FSAL, Interpolate;
-  int fsal = FALSE;       // assume no FSAL
-  int interpolate = TRUE; // polynomial interpolation is done by default
+  int fsal = FALSE;       /* assume no FSAL */
+  int interpolate = TRUE; /* polynomial interpolation is done by default */
 
   int i = 0, j=0, j1=0, k, it=0, it_tot=0, it_ext=0, nt = 0, neq=0;
   int accept = 0;
   int one=1;
 
-  /**************************************************************************/
-  /****** Processing of Arguments                                      ******/
-  /**************************************************************************/
+  /*------------------------------------------------------------------------*/
+  /* Processing of Arguments                                                */
+  /*------------------------------------------------------------------------*/
   int lAtol = LENGTH(Atol);
   double *atol = (double *) R_alloc((int) lAtol, sizeof(double));
 
@@ -86,16 +86,16 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
 
-  /**************************************************************************/
-  /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
-  /**************************************************************************/
-  int isDll = FALSE;
+  /*------------------------------------------------------------------------*/
+  /* DLL, ipar, rpar (for compatibility with lsoda)                         */
+  /*------------------------------------------------------------------------*/
+   int isDll = FALSE;
   int ntot  =  0;
-  int isOut = FALSE; //?? do I need this?
+  int isOut = FALSE; /* do I need this? */
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
-  // code adapted from lsoda to improve compatibility
+  /* code adapted from lsoda to improve compatibility */
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
     isDll = TRUE;
     if (nout > 0) isOut = TRUE;
@@ -107,13 +107,12 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     isDll = FALSE;
     isOut = FALSE;
     ntot = neq;
-    lipar = 3;    // in lsoda = 1;
-    lrpar = nout; // in lsoda = 1;
+    lipar = 3;    /* in lsoda = 1 */
+    lrpar = nout; /* in lsoda = 1 */
   }
   out   = (double *) R_alloc(lrpar, sizeof(double)); 
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
-//  if (isDll ==1) {
   ipar[0] = nout;              /* first 3 elements of ipar are special */
   ipar[1] = lrpar;
   ipar[2] = lipar;
@@ -125,11 +124,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
-  // end new testing code
 
-  /**************************************************************************/
-  /****** Allocation of Workspace                                      ******/
-  /**************************************************************************/
+  /*------------------------------------------------------------------------*/
+  /* Allocation of Workspace                                                */
+  /*------------------------------------------------------------------------*/
   y0  =  (double *) R_alloc(neq, sizeof(double));
   y1  =  (double *) R_alloc(neq, sizeof(double));
   y2  =  (double *) R_alloc(neq, sizeof(double));
@@ -143,10 +141,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
   /* matrix for polynomial interpolation */
-  int nknots = 4;  // 3rd order polynomials
-  int iknots = 0;  // counter for knotes buffer
+  int nknots = 4;  /* 3rd order polynomials */
+  int iknots = 0;  /* counter for knotes buffer */
   double *yknots;
-  // ??? neq + 1
+
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
   /* matrix for holding states and global outputs */
@@ -163,16 +161,14 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
 
-  /**************************************************************************/
-  /****** Initialization of Parameters (for DLL functions)             ******/
-  /**************************************************************************/
-
+  /*------------------------------------------------------------------------*/
+  /* Initialization of Parameters (for DLL functions)                       */
+  /*------------------------------------------------------------------------*/
   initParms(Initfunc, Parms);
 
-  /**************************************************************************/
-  /****** Initialization of Integration Loop                           ******/
-  /**************************************************************************/
-
+  /*------------------------------------------------------------------------*/
+  /* Initialization of Integration Loop                                     */
+  /*------------------------------------------------------------------------*/
   yout[0]   = tt[0];              /* initial time                 */
   yknots[0] = tt[0];              /* for polynomial interpolation */
   for (i = 0; i < neq; i++) {
@@ -196,9 +192,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       FF[i + j * neq] = 0;
     }
   }
-  /**************************************************************************/
-  /****** Main Loop                                                    ******/
-  /**************************************************************************/
+
+  /*------------------------------------------------------------------------*/
+  /* Main Loop                                                              */
+  /*------------------------------------------------------------------------*/
   it     = 1; /* step counter; zero element is initial state   */
   it_ext = 0; /* counter for external time step (dense output) */
   it_tot = 0; /* total number of time steps                    */
@@ -279,7 +276,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	if (dd) { /* i.e. if dd is not Zero */
         denspar(FF, y0, y1, dt, dd, neq, stage, rr);
         t_ext = tt[it_ext];
-        while (t_ext <= t + dt) { // <= ??
+        while (t_ext <= t + dt) {
           densout(rr, t, t_ext, dt, tmp, neq);
           /* store outputs */
           if (it_ext < nt) {
@@ -302,7 +299,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
           } else {
 	   /* (2) do polynomial interpolation */
            t_ext = tt[it_ext];
-           while (t_ext <= t + dt) { // <= ??
+           while (t_ext <= t + dt) {
             neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
             /* (3) store outputs */
             if (it_ext < nt) {
@@ -354,7 +351,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       istate[0] = -1;
       break;
     }
-  } while (t < tmax); // end of rk main loop
+  } while (t < tmax); /* end of rk main loop */
 
   /*====================================================================*/
   /* call derivs again to get global outputs                            */
@@ -375,7 +372,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /* release R resources */
   if (verbose) 
-    Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", 
+    Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d\n", 
       it, it_ext, it_tot);
   unprotect_all();
   return(R_yout);

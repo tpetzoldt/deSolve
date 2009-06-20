@@ -124,7 +124,7 @@ double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
   for (int i = 0; i < n; i++) {
     scal  = Atol[i] +  fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; /* min?? */
     delta = fabs(y2[i] - y1[i]);
-    /* check the following !!! */
+    /* there are also other too */
     if (scal > 0) {
       err   = fmax(err, delta / scal);
       serr  = err + pow(delta/scal, 2.0);
