@@ -135,7 +135,6 @@ diagnostics <- function(obj) {
   }
 
 ### rstate
-  #print(data.frame(mess=df[1:length(ii)], val=istate[ii]))
   printmessage(df[1:length(ii)], istate[ii])
 
   if (type != "rk") {
@@ -148,12 +147,11 @@ diagnostics <- function(obj) {
       "The current value of the independent variable which the solver has actually reached:",
       "Tolerance scale factor > 1.0 computed when a request for too much accuracy was detected:")
 
-    if (type%in% c("lsoda", "lsodar")) {
+    if (type %in% c("lsoda", "lsodar")) {
       df <- c(df,"The value of t at the time of the last method switch, if any:")
       ii <- 1:5
     }
-    #print(data.frame(mess=df, val=rstate[ii]))
-    printmessage(df, rstate)
+    printmessage(df[ii], rstate[ii])
   }
-  invisible(list(istate=istate, rstate=rstate)) # return something more useful
+  invisible(list(istate=istate, rstate=rstate)) # return something more useful; may change in the future
 }

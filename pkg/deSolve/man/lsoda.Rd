@@ -264,26 +264,26 @@ lsexamp <- function(t, y, p)
 {
   yd1 <- -p["k1"] * y[1] + p["k2"] * y[2]*y[3]
   yd3 <- p["k3"] * y[2]^2
-  list(c(yd1,-yd1-yd3,yd3),c(massbalance = sum(y)))
+  list(c(yd1, -yd1-yd3, yd3), c(massbalance = sum(y)))
 }
 
 exampjac <- function(t, y, p)
 {
-  c(-p["k1"],	 p["k1"],  0,
+  matrix(c(-p["k1"],	   p["k1"],       0,
 
-      p["k2"]*y[3],
-    - p["k2"]*y[3] - 2*p["k3"]*y[2],
-                     2*p["k3"]*y[2],
+            p["k2"]*y[3],
+          - p["k2"]*y[3] - 2*p["k3"]*y[2],
+                           2*p["k3"]*y[2],
 
-    p["k2"]*y[2],  -p["k2"]*y[2],  0
-    )
+          p["k2"]*y[2],  -p["k2"]*y[2],  0
+          ), 3, 3)
 }
   
 
 ## measure speed (here and below)
 system.time( 
   out <- lsoda(c(1, 0, 0), times, lsexamp, parms, rtol = 1e-4,
-               atol = my.atol)
+           atol = my.atol, hmax = Inf)
 )  
 out
 
@@ -309,10 +309,12 @@ out
 
 system.time( 
   outJ <- lsoda(c(1, 0, 0), times, lsexamp, parms, rtol = 1e-4,
-              atol = my.atol, jacfunc = exampjac)
+            atol = my.atol, jacfunc = exampjac, jactype = "fullusr", hmax = Inf)
 )
   
-all.equal(out, outJ) # TRUE
+all.equal(as.data.frame(out), as.data.frame(outJ)) # TRUE
+diagnostics(out)
+diagnostics(outJ) # shows what lsoda did internally
 
 }
 \references{

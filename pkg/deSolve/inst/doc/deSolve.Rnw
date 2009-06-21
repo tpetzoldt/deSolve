@@ -598,11 +598,12 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 @
 \clearpage
 
-\section{A warning}
+\section{Troubleshooting}
 
-The solvers from ODEPACK should be first choice for any problem. However,
-there are cases where they give very dubious results.
-Consider the following Lotka-Volterra type of model:
+The solvers from ODEPACK should be first choice for any problem and
+the the defaults of the control parameters are reasonable for many
+practical problems. However, there are cases where they give very
+dubious results.  Consider the following Lotka-Volterra type of model:
 
 <<>>=
 lvmodel <- function(t, x, parms)  {
@@ -645,14 +646,24 @@ NaNs.  This is because the model equations are not intended to be used
 with negative numbers, as negative concentrations are not realistic.
 
 A quick-and-dirty solution is to reduce the maximum time step to a
-considerably small value which, of course, reduces computational
-efficiency:
+considerably small value (e.g. \code{hmax=0.02} which, of course,
+reduces computational efficiency. However, a much better solution is
+to think about the reasons that is in our case the \textbf{absolute}
+accuracy because the states can reach very small absolute
+values. Therefore, in our case, it helps to reduce \code{atol} to a
+very small number or even to zero:
 
 <<>>=
-out <- as.data.frame(ode(y = xstart,times = times,  hmax=0.02,
-  func = lvmodel, parms = parms))
+out <- as.data.frame(ode(y = xstart,times = times, func = lvmodel,
+                         parms = parms, atol = 0))
 matplot(out[,1], out[,2:3], type="l")
 @
+
+It is, of course, not possible to set both, \code{atol} and
+\code{rtol} to zero. As we see at this example, it is always a good
+idea to test simulation results for plausibility. This can be done by
+theoretical considerations or by comparing the outcome of different
+ODE solvers and parametrizations.
 
 \clearpage
 %\section{Function overview}
