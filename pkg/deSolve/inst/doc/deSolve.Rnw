@@ -600,9 +600,11 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 
 \section{Troubleshooting}
 
+\subsection{Avoiding numerical errors}
+
 The solvers from ODEPACK should be first choice for any problem and
 the the defaults of the control parameters are reasonable for many
-practical problems. However, there are cases where they give very
+practical problems. However, there are cases where they may give
 dubious results.  Consider the following Lotka-Volterra type of model:
 
 <<>>=
@@ -624,8 +626,8 @@ and with the following (biologically not very realistic)%
 parms  <- c(c = 5, d = 0.1, e = 0.1, f = 0.1)
 @
 
-After specification of the initial conditions and the output times, the
-model is solved - using \code{lsoda}:
+After specification of initial conditions and output times, the model
+is solved - using \code{lsoda}:
 
 <<>>=
 xstart <- c(P = 0.5, K = 1)
@@ -648,9 +650,9 @@ with negative numbers, as negative concentrations are not realistic.
 A quick-and-dirty solution is to reduce the maximum time step to a
 considerably small value (e.g. \code{hmax=0.02} which, of course,
 reduces computational efficiency. However, a much better solution is
-to think about the reasons that is in our case the \textbf{absolute}
-accuracy because the states can reach very small absolute
-values. Therefore, in our case, it helps to reduce \code{atol} to a
+to think about the reason of the failure, i.e in our case the
+\textbf{absolute} accuracy because the states can reach very small
+absolute values. Therefore, it helps here to reduce \code{atol} to a
 very small number or even to zero:
 
 <<>>=
@@ -660,10 +662,47 @@ matplot(out[,1], out[,2:3], type="l")
 @
 
 It is, of course, not possible to set both, \code{atol} and
-\code{rtol} to zero. As we see at this example, it is always a good
-idea to test simulation results for plausibility. This can be done by
-theoretical considerations or by comparing the outcome of different
-ODE solvers and parametrizations.
+\code{rtol} simultaneously to zero. As we see at this example, it is
+always a good idea to test simulation results for plausibility. This
+can be done by theoretical considerations or by comparing the outcome
+of different ODE solvers and parametrizations.
+
+\subsection{Checking model specification}
+
+If a model outcome is obviously unrealistic or one of the \ds
+functions complains about numerical problems it is even more likely
+that the ``numerical problem'' is in fact a result of an unrealistic
+model or a programming error. In such cases, playing with solver
+parameters will not help.  Here are some common mistakes we observed
+in our models and the codes of our students:
+
+\begin{itemize}
+\item The function with the model definition must return a list with
+  the derivatives of all state variables in correct order (and
+  optionally some global values). Check if the number and order of
+  your states is identical in the initial states \code{y} passed to
+  the solver, in the assignments within your model equations and in
+  the returned values. Check also whether the return value is the last
+  statement of your model definition.
+\item The order of function parameters in the model definition is
+  \code{t, y, parms, ...}.  This order is strictly fixed, so that the
+  \ds solvers can pass their data, but naming is flexible and can be
+  adapted to your needs, e.g. \code{time, init, params}. Note also
+  that all three parameters must be given, even if \code{t} is not
+  used in your model.
+\item Mixing of variable names: if you use the
+  \code{with()}-construction explained above, you must ensure to avoid
+  naming conflicts between parmameters (\code{parms}) and state
+  variables (\code{y}).
+\end{itemize}
+
+The solvers included in package \ds are thorougly tested, however they
+come with no warranty and the user is solely responsible for their
+correct application. If you encounter unexpected behavior, first check
+your model and read the documentation. If this doesn't help, feel free
+to ask a question to an appropriate mailing list,
+e.g. \url{r-help@r-project.org}.
+
 
 \clearpage
 %\section{Function overview}
