@@ -692,7 +692,7 @@ in our models and the codes of our students:
   used in your model.
 \item Mixing of variable names: if you use the
   \code{with()}-construction explained above, you must ensure to avoid
-  naming conflicts between parmameters (\code{parms}) and state
+  naming conflicts between parameters (\code{parms}) and state
   variables (\code{y}).
 \end{itemize}
 
