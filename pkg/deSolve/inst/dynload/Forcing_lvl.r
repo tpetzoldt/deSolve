@@ -41,7 +41,7 @@ times  <- seq(0, 100, by=1)
 signal <- as.data.frame(list(times = times,
                             import = rep(0,length(times))))
 
-signal$import[signal$times >= 10] <- 0.2
+signal$import[signal$times >= 10 & signal$times <= 11] <- 0.2
 
 ftime  <- seq(0,90,0.1)
 sigimp <- approxfun(signal$times, signal$import, rule = 2)
@@ -56,7 +56,9 @@ out <- as.data.frame(lsoda(y=y, times, func = "derivsc",
    parms = parms, dllname = "Forcing_lv",initforc="forcc",
    forcings=forcings, initfunc = "odec", nout = 2,
    outnames = c("Sum","signal")))
-require(DLLutil)
+
+## ThPe: what is "DLLutil ??
+#require(DLLutil)
 
 
 ## Solving
