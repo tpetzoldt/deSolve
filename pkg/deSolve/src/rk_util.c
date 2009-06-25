@@ -24,11 +24,13 @@
 /*   Interface to functions written in compiled languages                     */
 /*============================================================================*/
 
-/* give name to data types */
+/* give name to data types
 typedef void deriv_func(int *, double *, double *,double *, double *, int *);
 
 typedef void init_func (void (*)(int *, double *));
+KSKS  NOW DONE IN deSolve.h
 
+*/
 /*============================================================================*/
 /*   DLL specific functions                                                   */
 /*============================================================================*/

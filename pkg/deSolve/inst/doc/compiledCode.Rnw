@@ -48,6 +48,7 @@ performance, FORTRAN, C}
 
 \Abstract{This document describes how to use the \pkg{deSolve} package
 to solve models that are written in \proglang{FORTRAN} or
+\citep{deSolve}, to solve models that are written in \proglang{FORTRAN} or
 \proglang{C}.}
 
 %% The address of (at least) one author should be given
@@ -84,7 +85,7 @@ to solve models that are written in \proglang{FORTRAN} or
 <<preliminaries,echo=FALSE,results=hide>>=
 library("deSolve")
 options(prompt = "R> ")
-options(width=50)
+options(width=70)
 @
 
 \maketitle
@@ -100,7 +101,7 @@ One of the prominent features of \pkg{deSolve} is that it allows
 specifying the differential equations either as:
 
 \begin{itemize}
-\item pure \proglang{R} code,
+\item pure \proglang{R} code \citep{Rcore},
 \item functions defined in lower-level languages such as \proglang{FORTRAN},
 \proglang{C}, or \proglang{C++}, which are compiled into a dynamically linked
 library (DLL) and loaded into \proglang{R}.
@@ -141,6 +142,9 @@ its sensitivity is to be tested, then it may be worthwhile to
 implement the model in a compiled language.
 \end{itemize}
 
+Starting from deSolve version 1.4, it is now also possible to use
+\emph{forcing functions} in compiled code. These forcing functions are
+automatically updated by the integrators. See last chapter.
 \section{A simple ODE example}
 
 Assume the following simple ODE (which is from the \code{LSODA} source code):
@@ -658,6 +662,175 @@ INTEGER NEQ, J, IP(*)
 \end{verbatim}
 
 
+\section{Using forcing functions}
+
+Forcing functions are treated similar as parameters. This means:
+\begin{itemize}
+\item They are initialised by means of an initialiser function. Its name
+  should be passed to the solver via argument \code{initforc}
+
+  Similar as the parameter initialiser function, the function denoted by
+  \code{initforc} has as its sole argument a pointer to the vector that
+  contains the forcing funcion values in the compiled code. In case of \proglang{C}
+  code, this will be a global vector; in case of \proglang{FORTRAN}, this
+  will be a vector in a common block.
+
+  The solver puts a pointer to this vector and updates the forcing functions
+  in this memory area at each time step. Hence, within the compiled code,
+  forcing functions can be assessed as if they are parameters
+  (although, in contrast to the latter, their values will generally change).
+  No need to update the values for the current time step; this has been done
+  before entering the \code{derivs} function.
+\item The forcing function data series are passed to the integrator, via
+  argument \code{forcings}; if there is only one forcing function data set,
+  then a 2-columned matrix (time, value) will do; else the data should be
+  passed as a list, containing (time,value) matrices with the individual
+  forcing function data sets. Note that the data sets in this list should be
+  \emph{in the same ordering} as the declaration of the forcings in the
+  compiled code.
+\end{itemize}
+
+We implement the example from chapter 3 of the book \citep{Soetaert08} in
+FORTRAN and C.
+
+This model describes the oxygen consumption of a (marine) sediment in response
+to deposition of organic matter (the forcing function). One state variable,
+the organic matter content in the sediment is modeled; it changes as
+a function of the deposition \code{Flux} (forcing) and organic matter decay
+(first-order decay rate \code{k}).
+
+\[
+ \frac{dC}{dt}=Flux_t-k \cdot C
+\]
+
+with initial condition $C(t=0)=C_0$; the latter is estimated as the mean of
+the flux divided by the decay rate.
+
+The FORTRAN code looks like this:
+\begin{verbatim}
+c Initialiser for parameter common block
+      subroutine scocpar(odeparms)
+
+      external odeparms
+      integer N
+      double precision parms(2)
+      common /myparms/parms
+
+      N = 1
+      call odeparms(N, parms)
+      return
+      end
+
+c Initialiser for forcing common block
+      subroutine scocforc(odeforcs)
+
+      external odeforcs
+      integer N
+      double precision forcs(1)
+      common /myforcs/forcs
+
+      N = 1
+      call odeforcs(N, forcs)
+      return
+      end
+
+c Rate of change and output variables
+
+      subroutine scocder (neq, t, y, ydot,out,IP)
+
+      integer          neq, IP(*)
+      double precision t, y(neq), ydot(neq), out(*), k, depo
+      common /myparms/k
+      common /myforcs/depo
+
+      if(IP(1) < 2) call rexit("nout should be at least 2")
+
+      ydot(1) = -k*y(1) + depo
+
+      out(1)= k*y(1)
+      out(2)= depo
+
+      return
+      end
+
+\end{verbatim}
+Here the subroutine \code{scocpar} is business as usual; it initialises the
+parameter common block (there is only one parameter);
+
+Subroutine \code{odeforcs} does the same for the forcing function, which is
+also positioned in a common block, called \code{myforcs}.
+
+This common block is made available in the derivative subroutine (here called
+\code{scocder}), where the forcing function is named \code{depo}.
+
+At each time step, the integrator updates the value of this forcing function
+to the correct time point. In this way, the forcing functions can be used
+as if they are (time-varying) parameters.
+
+All that's left to do is to pass the forcing function data set and the name
+of the forcing function initialiser routine. This is how to do it in R.
+
+First the data are inputted:
+<<>>=
+Flux <- matrix(ncol=2,byrow=TRUE,data=c(
+  1, 0.654, 11, 0.167,   21, 0.060, 41, 0.070, 73,0.277, 83,0.186,
+  93,0.140,103, 0.255,  113, 0.231,123, 0.309,133,1.127,143,1.923,
+  153,1.091,163,1.001,  173, 1.691,183, 1.404,194,1.226,204,0.767,
+  214, 0.893,224,0.737, 234,0.772,244, 0.726,254,0.624,264,0.439,
+  274,0.168,284 ,0.280, 294,0.202,304, 0.193,315,0.286,325,0.599,
+  335, 1.889,345, 0.996,355,0.681,365,1.135))
+head(Flux)
+@
+and the parameter given a value (there is only one)
+<<>>=
+parms <- 0.01
+@
+The initial condition \code{Yini} is estimated as the annual mean of the Flux and
+divided by the decay rate (parameter).
+<<>>=
+meanDepo <- mean(approx(Flux[,1],Flux[,2], xout=seq(1,365,by=1))$y)
+Yini <- c(y=meanDepo/parms)
+@
+After defining the output times, the model is run, using integration routine
+\code{ode}.
+
+The \emph{name} of the derivate function \code{"scocder"},
+of the dll \code{"deSolve"}\footnote{this example is made part of the deSolve
+package, hence the name of the dll is "deSolve"}    and of the
+initialiser function \code{"scocpar"} are passed, as in previous examples.
+
+In addition, the forcing function data
+set is also passed (\code{forcings=Flux}) as is the name of the forcing
+initialisation function (\code{initforc="scocforc"}).
+<<>>=
+times <- 1:365
+out <- as.data.frame( ode(y=Yini, times, func = "scocder",
+    parms = parms, dllname = "deSolve",
+    initforc="scocforc",  forcings=Flux,
+    initfunc = "scocpar", nout = 2,
+    outnames = c("Mineralisation","Depo")))
+head(out)
+@
+Finally, the results are plotted:
+<<label=scoc,include=FALSE>>=
+plot(out$time, out$Depo, type="l", col="red",
+  xlab="days", ylab="mmol C/m2/ d")
+lines(out$time, out$Mineralisation, lwd=2, col="blue")
+legend("topleft",lwd=1:2,col=c("red","blue"), c("Flux","Mineralisation"))
+@
+\setkeys{Gin}{width=0.4\textwidth}
+
+\begin{figure}
+\begin{center}
+<<label=figscoc,fig=TRUE,echo=FALSE>>=
+<<scoc>>
+@
+\end{center}
+\caption{Solution of the ordinary differential equation -
+  see text for R-code}
+\label{fig:scoc}
+\end{figure}
+
 \section{Final remark}
 
 Detailed information about communication between \proglang{C},
@@ -672,12 +845,11 @@ is lost. Moreover, mistakes are easily made and paid harder in
 compiled code: often a programming error will terminate
 \proglang{R}. In addition, these errors may not be simple to trace.
 
-
+\clearpage
 %% this adds References to the PDF-Index without adding an obsolete section
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliography{integration}
-
 
 \end{document}
 

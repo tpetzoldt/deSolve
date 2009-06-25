@@ -16,7 +16,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, 
   maxord=NULL, bandup=NULL, banddown=NULL, maxsteps=5000, 
   dllname=NULL,initfunc=dllname, initpar=parms, 
-  rpar=NULL, ipar=NULL, nout=0, outnames=NULL,...)  
+  rpar=NULL, ipar=NULL, nout=0, outnames=NULL,forcings=NULL,
+  initforc = NULL,...)
 {
 ### check input
   if (!is.numeric(y))     stop("`y' must be numeric")
@@ -78,6 +79,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 ### model and Jacobian function  
   JacFunc <- NULL
   Ynames <- attr(y,"names")
+  flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
 
   ModelInit <- NULL
   if (!is.null(dllname)) {
@@ -87,6 +89,9 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
     } else if (initfunc != dllname && ! is.null(initfunc))
       stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+
+    if (! is.null(forcings))
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
   }
 
   ## If func is a character vector, then
@@ -274,7 +279,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                as.integer(iwork), as.integer(imp),as.integer(Nglobal),
                as.integer(lrw),as.integer(liw),as.integer(IN),
                NULL, as.integer(0), as.double (rpar), as.integer(ipar),
-               as.integer(0), PACKAGE="deSolve")
+               as.integer(0), flist$tmat, flist$fmat, flist$imat,
+               flist$ModelForc, PACKAGE="deSolve")
 
 ### saving results    
 

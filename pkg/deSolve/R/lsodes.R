@@ -14,7 +14,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   maxord=NULL, maxsteps=5000, lrw=NULL, liw=NULL, 
   dllname=NULL, initfunc=dllname,
   initpar=parms, rpar=NULL, ipar=NULL, 
-  nout=0, outnames=NULL,...)  
+  nout=0, outnames=NULL,forcings=NULL,
+  initforc = NULL,...)
 {
 
 ### check input
@@ -133,6 +134,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
   JacFunc <- NULL
   Ynames <- attr(y,"names")
+  flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
 
   ModelInit <- NULL
   if (!is.null(dllname))   {
@@ -142,6 +144,9 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
        ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
      } else if (initfunc != dllname && ! is.null(initfunc))
        stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+
+    if (! is.null(forcings))
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
   }
 
   ## If func is a character vector, then
@@ -362,7 +367,8 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                as.integer(iwork), as.integer(imp),as.integer(Nglobal),
                as.integer(lrw),as.integer(liw),as.integer(IN),
                NULL, as.integer(0), as.double (rpar), as.integer(ipar),
-               as.integer(Type),PACKAGE="deSolve")
+               as.integer(Type),flist$tmat, flist$fmat, flist$imat,
+               flist$ModelForc, PACKAGE="deSolve")
 
 ### saving results    
 

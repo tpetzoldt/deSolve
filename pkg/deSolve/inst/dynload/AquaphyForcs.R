@@ -1,0 +1,94 @@
+
+#===============================================================================
+# Running the aquaphy model with light and dilution a forcing functions...
+#===============================================================================
+
+parameters <- c(maxPhotoSynt   = 0.125,      # mol C/mol C/hr
+                rMortPHY       = 0.001,      # /hr
+                alpha          = -0.125/150, # uEinst/m2/s/hr
+                pExudation     = 0.0,        # -
+                maxProteinSynt = 0.136,      # mol C/mol C/hr
+                ksDIN          = 1.0,        # mmol N/m3
+                minpLMW        = 0.05,       # mol C/mol C
+                maxpLMW        = 0.15,       # mol C/mol C
+                minQuotum      = 0.075,      # mol C/mol C
+                maxStorage     = 0.23,       # /h
+                respirationRate= 0.0001,     # /h
+                pResp          = 0.4,        # -
+                catabolismRate = 0.06,       # /h
+                rNCProtein     = 0.2,        # mol N/mol C
+                inputDIN       = 10.0,       # mmol N/m3
+                rChlN          = 1)          # g Chl/mol N
+
+
+# This is how to compile it;
+#system("R CMD SHLIB AquaphyForcing.f")
+dyn.load("AquaphyForcing.dll")
+
+## =======================
+## The initial conditions
+## =======================
+times <- seq(0, 24*20, 1)
+
+# create the forcing functions
+ftime  <- seq(0,750,by=0.5)
+parval <- pmax(0,250 + 350*sin(ftime*2*pi/24)+(runif(length(ftime))-0.5)*250)
+Par    <- matrix(nc=2,c(ftime,parval))
+plot(Par,type="l")
+
+Dilu <- matrix(nc=2,c(0,1000,0.01,0.01))
+
+Forc <- list(Par=Par,Dilu=Dilu)
+
+state     <- c(DIN     = 6.,    # mmol N/m3
+              PROTEIN = 20.0,   # mmol C/m3
+              RESERVE = 5.0,    # mmol C/m3
+              LMW     = 1.0)    # mmol C/m3
+
+## ==================
+## Running the model
+## ==================
+
+
+names(state) <- c("DIN","PROTEIN","RESERVE","LMW")
+outnames <- c("PAR","TotalN","PhotoSynthesis",
+                "NCratio","ChlCratio","Chlorophyll")
+
+out <- ode(state,times,dllname="AquaphyForcing",
+      func="aquaphy2",initfunc="initaqparms",
+      initforc="initaqforc",forcings=Forc,
+      parms=parameters,nout=6,outnames=outnames)
+
+out2 <- ode(state,times,dllname="AquaphyForcing",
+      func="aquaphy2",initfunc="initaqparms",
+      initforc="initaqforc",forcings=Forc,method="euler",
+      parms=parameters,nout=6,outnames=outnames)
+
+out <- as.data.frame(out)
+
+## ======================
+## Plotting model output
+## ======================
+
+par(mfrow = c(2, 2), oma = c(0, 0, 3, 0))
+
+plot (times, out$PAR, type = "l", main = "PAR",
+      xlab = "time, hours",ylab = "uEinst/m2/s")
+
+plot (times, out$Chlorophyll, type = "l",
+      main = "Chlorophyll", xlab = "time, hours",ylab = "ug/l")
+
+
+plot (times, out$DIN, type = "l", main = "DIN",
+      xlab = "time, hours",ylab = "mmolN/m3")
+
+plot (times, out$NCratio, type = "l", main = "NCratio",
+      xlab = "time, hours", ylab = "molN/molC")
+
+mtext(outer = TRUE, side = 3, "AQUAPHY", cex = 1.5)
+
+## =====================
+## Summary model output
+## =====================
+t(summary(out))
+

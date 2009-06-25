@@ -20,10 +20,12 @@
 
 #include "deSolve.h"
 
-typedef void deriv_func(int *, double *, double *,double *, double *, int *);
+/*typedef void deriv_func(int *, double *, double *,double *, double *, int *);
+KS - Done now in deSolve.h
+
 
 typedef void init_func (void (*)(int *, double *));
-
+*/
 void R_test_call(DllInfo *info);
 
 void R_unload_test_call(DllInfo *info);

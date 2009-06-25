@@ -29,7 +29,8 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
     jactype = "fullint", estini = NULL, verbose=FALSE, tcrit = NULL,
     hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord =5, bandup=NULL,
     banddown=NULL, maxsteps=5000, dllname=NULL, initfunc=dllname,
-    initpar=parms, rpar=NULL, ipar=NULL,nout=0, outnames=NULL, ...) {
+    initpar=parms, rpar=NULL, ipar=NULL,nout=0, outnames=NULL,
+    forcings=NULL, initforc = NULL, ...) {
 
 ### check input 
   if (!is.numeric(y))
@@ -121,6 +122,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
   PsolFunc<- NULL
     
   ModelInit <- NULL
+  flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
 
   if (!is.null(dllname))  {
     if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
@@ -128,6 +130,8 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
       ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
     } else if (initfunc != dllname && ! is.null(initfunc))
        stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+    if (! is.null(forcings))
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
   }
 
   ## If res is a character vector, then
@@ -393,7 +397,9 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
       JacRes, ModelInit, PsolFunc, as.integer(verbose),as.integer(info),
       as.integer(iwork),as.double(rwork), as.integer(Nglobal),as.integer(maxIt),
       as.integer(bandup),as.integer(banddown),as.integer(nrowpd),
-      as.double (rpar), as.integer(ipar),PACKAGE = "deSolve")
+      as.double (rpar), as.integer(ipar),
+      flist$tmat, flist$fmat, flist$imat, flist$ModelForc,
+      PACKAGE = "deSolve")
 
 ### saving results    
 

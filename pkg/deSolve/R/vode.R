@@ -22,7 +22,7 @@ vode          <- function(y, times, func, parms,
   verbose=FALSE,  tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord=NULL, 
   bandup=NULL, banddown=NULL, maxsteps=5000, dllname=NULL, 
   initfunc=dllname, initpar=parms, rpar=NULL, ipar=NULL,
-  nout=0, outnames=NULL, ...)  {
+  nout=0, outnames=NULL, forcings=NULL, initforc = NULL, ...)  {
 
 ### check input
   if (!is.numeric(y))
@@ -113,14 +113,18 @@ vode          <- function(y, times, func, parms,
     erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
 
   Ynames <- attr(y,"names")
-
+  flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
+
   if (!is.null(dllname))  {
     if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) {
       ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
     } else if (initfunc != dllname && ! is.null(initfunc))
       stop(paste("cannot integrate: initfunc not loaded ",initfunc))
+
+    if (! is.null(forcings))
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
   }
 
   ## If func is a character vector, then
@@ -313,7 +317,7 @@ vode          <- function(y, times, func, parms,
        rho, tcrit, JacFunc, ModelInit, as.integer(verbose),as.integer(itask),
        as.double(rwork),as.integer(iwork), as.integer(imp),as.integer(Nglobal),
        as.integer(liw),as.integer(lrw),as.double (rpar), as.integer(ipar),
-       PACKAGE = "deSolve")
+       flist$tmat, flist$fmat, flist$imat, flist$ModelForc, PACKAGE = "deSolve")
 
 ### saving results    
 

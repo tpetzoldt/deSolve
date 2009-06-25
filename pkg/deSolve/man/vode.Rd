@@ -32,7 +32,8 @@
   tcrit = NULL, hmin = 0, hmax = NULL, hini = 0, ynames = TRUE,
   maxord = NULL, bandup = NULL, banddown = NULL, maxsteps = 5000,
   dllname = NULL, initfunc = dllname, initpar = parms, rpar = NULL,
-  ipar = NULL, nout = 0, outnames = NULL, ...)
+  ipar = NULL, nout = 0, outnames = NULL, forcings=NULL,
+  initforc = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -177,6 +178,20 @@
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
   }
+  \item{forcings }{only used if \file{dllname} is specified: a list with
+    the forcing function data sets, each present as a two-columned matrix,
+    with (time,value); interpolation outside the interval
+    [min(\code{times}), max(\code{times})] is done by taking the value at
+    the closest data extreme.
+
+    See package vignette \code{"compiledCode"}.
+  }
+  \item{initforc }{if not \code{NULL}, the name of the forcing function
+    initialisation function, as provided in
+    \file{dllname}. It MUST be present if \code{forcings} has been given a
+    value.
+    See package vignette \code{"compiledCode"}.
+  }
   \item{... }{additional arguments passed to \code{func} and
     \code{jacfunc} allowing this to be a generic function.
   }
@@ -199,8 +214,11 @@
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
+## =============================================================================
+## ex. 1
 ## The famous Lorenz equations: chaos in the earth's atmosphere
 ## Lorenz 1963. J. Atmos. Sci. 20, 130-141.
+## =============================================================================
 
 chaos <- function(t, state, parameters)
 {
@@ -219,6 +237,38 @@ times <- seq(0, 100, 0.01)
 out   <- as.data.frame(vode(state, times, chaos, 0))
 
 plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
+
+## =============================================================================
+## ex. 2
+## SCOC model, in fortran  - to see the FORTRAN code:
+## browseURL(paste(system.file(package="deSolve"),"/dynload/scoc.f",sep=""))
+## example from Soetaert and Herman, 2009, chapter 3. (simplified)
+## =============================================================================
+
+# Forcing function data
+Flux <- matrix(ncol=2,byrow=TRUE,data=c(
+  1, 0.654, 11, 0.167,   21, 0.060, 41, 0.070, 73,0.277, 83,0.186,
+  93,0.140,103, 0.255,  113, 0.231,123, 0.309,133,1.127,143,1.923,
+  153,1.091,163,1.001,  173, 1.691,183, 1.404,194,1.226,204,0.767,
+  214, 0.893,224,0.737, 234,0.772,244, 0.726,254,0.624,264,0.439,
+  274,0.168,284 ,0.280, 294,0.202,304, 0.193,315,0.286,325,0.599,
+  335, 1.889,345, 0.996,355,0.681,365,1.135))
+
+parms <- c(k=0.01)
+
+meanDepo <- mean(approx(Flux[,1],Flux[,2], xout=seq(1,365,by=1))$y)
+Yini <- meanDepo/parms
+
+times <- 1:365
+out <- as.data.frame( vode(Yini, times, func = "scocder",
+    parms = parms, dllname = "deSolve",
+    initforc="scocforc",  forcings=Flux,
+    initfunc = "scocpar", nout = 2,
+    outnames = c("Mineralisation","Depo")))
+
+plot(out$time,out$Depo,type="l",col="red")
+lines(out$time,out$Mineralisation,col="blue")
+
 }
 \references{
   

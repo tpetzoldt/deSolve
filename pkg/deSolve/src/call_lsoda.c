@@ -37,6 +37,16 @@ void F77_NAME(dlsodar)(void (*)(int *, double *, double *, double *, double *, i
 		     void (*)(int *, double *, double *, int *, double *),  /* rootfunc */
          int *, int *, double *, int *);
 
+/* KS @#$: wrapper above the derivate function that first estimates the
+values of the forcing functions */
+
+static void forc_lsoda (int *neq, double *t, double *y,
+                         double *ydot, double *yout, int *iout)
+{
+  updatedeforc(t);
+  derfun(neq, t, y, ydot, yout, iout);
+}
+
 /* interface between fortran function call and R function 
    Fortran code calls lsoda_derivs(N, t, y, ydot, yout, iout) 
    R code called as odesolve_deriv_func(time, y) and returns ydot 
@@ -119,23 +129,24 @@ static void lsoda_jacvec (int *neq, double *t, double *y, int *j,
 
 
 /* give name to data types */
-typedef void deriv_func(int *, double *, double *,double *, double *, int *);
 typedef void root_func (int *, double *, double *,int *, double *);
 typedef void jac_func  (int *, double *, double *, int *,
 		                    int *, double *, int *, double *, int *);
 typedef void jac_vec   (int *, double *, double *, int *,
 		                    int *, int *, double *, double *, int *);
-typedef void init_func (void (*)(int *, double *));
 
 
 
-/* MAIN C-FUNCTION, CALLED FROM R-code */
+/* MAIN C-FUNCTION, CALLED FROM R-code
+KS @#$: extra arguments here for forcing functions: Tvec, Fvec, Ivec, initforc
+ */
 
 SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 		SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc,
 		SEXP verbose, SEXP iTask, SEXP rWork, SEXP iWork, SEXP jT, 
     SEXP nOut, SEXP lRw, SEXP lIw, SEXP Solver, SEXP rootfunc, 
-    SEXP nRoot, SEXP Rpar, SEXP Ipar, SEXP Type)
+    SEXP nRoot, SEXP Rpar, SEXP Ipar, SEXP Type, SEXP Tvec, SEXP Fvec,
+    SEXP Ivec,SEXP initforc)
 
 {
 /******************************************************************************/
@@ -155,7 +166,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   jac_func   *jac=NULL;
   jac_vec    *jacvec;
   root_func  *root=NULL;
-  init_func  *initializer;
+/* KS @#$: *initforcings */
+  init_func  *initializer, *initforcings;
     
 /******************************************************************************/
 /******                         STATEMENTS                               ******/
@@ -354,6 +366,25 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 	  initializer = (init_func *) R_ExternalPtrAddr(initfunc);
 	  initializer(Initdeparms);
 	  }
+  /* KS @#$ forcings */
+    if (!isNull(initforc))
+    	{
+       nforc =LENGTH(Ivec)-1; /* nforc, fvec, ivec =globals */
+
+       i = LENGTH(Fvec);
+       fvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) fvec[j] = REAL(Fvec)[j];
+
+       tvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) tvec[j] = REAL(Tvec)[j];
+
+       i = LENGTH (Ivec);
+       ivec = (int *) R_alloc(i, sizeof(int));
+       for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
+
+	     initforcings = (init_func *) R_ExternalPtrAddr(initforc);
+	     initforcings(Initdeforc);
+       }
 
 /* pointers to functions derivs, jac, jacvec and root, passed to FORTRAN */
 
@@ -364,6 +395,11 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
       if (isOut) {dy = (double *) R_alloc(neq, sizeof(double));
                   for (j = 0; j < neq; j++) dy[j] = 0.; }
 	  
+	  /* KS @#$ here overruling derivs if forcing */
+      if(!isNull(initforc)) {
+        derfun = (deriv_func *) R_ExternalPtrAddr(func);
+        derivs = (deriv_func *) forc_lsoda;
+      }
     } else {
       /* interface function between fortran and R passed to Fortran*/ 
       derivs = (deriv_func *) lsoda_derivs; 

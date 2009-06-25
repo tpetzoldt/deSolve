@@ -27,15 +27,14 @@
 ### appropriate method.  It always starts with the nonstiff method.
 ### ============================================================================
 
-
+## KS: two extra arguments for forcings...
 lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 	jacfunc=NULL, jactype = "fullint", 
   verbose=FALSE, tcrit = NULL, hmin=0, hmax=NULL, hini=0,
   ynames=TRUE, maxordn = 12, maxords = 5,
   bandup = NULL, banddown = NULL, maxsteps = 5000,
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL, 
-  ipar=NULL, nout=0, outnames=NULL,...)   {
-
+  ipar=NULL, nout=0, outnames=NULL, forcings=NULL, initforc = NULL, ...)   {
 
 ### check input
   if (!is.numeric(y))
@@ -101,6 +100,8 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 ### model and Jacobian function
   Ynames <- attr(y,"names")
   JacFunc <- NULL
+## KS: FORCINGS ##
+  flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
   if (!is.null(dllname))  {
      if (is.loaded(initfunc, PACKAGE = dllname,
@@ -110,6 +111,9 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
        ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
      } else if (initfunc != dllname && ! is.null(initfunc))
        stop(paste("Cannot integrate: initfunc not loaded ",initfunc))
+  ## KS: Forcings
+    if (! is.null(forcings))
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
   }
 
   ## If func is a character vector, then
@@ -269,13 +273,15 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   storage.mode(y) <- storage.mode(times) <- "double"
   IN <-1
 
-  out <- .Call("call_lsoda", y, times, Func, initpar,
+  ## KS: flist$: extra arguments for forcings..
+  out <- .Call("call_lsoda",y,times,Func,initpar,
                rtol, atol, rho, tcrit, JacFunc, ModelInit,
                as.integer(verbose), as.integer(itask), as.double(rwork),
                as.integer(iwork), as.integer(jt), as.integer(Nglobal),
                as.integer(lrw),as.integer(liw), as.integer(IN),
                NULL, as.integer(0), as.double(rpar), as.integer(ipar),
-               as.integer(0), PACKAGE="deSolve")
+               as.integer(0), flist$tmat, flist$fmat, flist$imat,
+               flist$ModelForc, PACKAGE="deSolve")
 
 ### saving results    
   istate <- attr(out, "istate")

@@ -14,6 +14,13 @@ void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*,
                   double *, double *, double *, int *, double *, double *, 
                         int *, double *, int *));   
 
+static void forc_daspk (double *t, double *y, double *yprime, double *cj,
+                       double *delta, int *ires, double *yout, int *iout)
+{
+  updatedeforc(t);
+  res_fun(t, y, yprime, cj, delta, ires, yout, iout);
+}
+
 static void daspk_psol (int *neq, double *t, double *y, double *yprime, 
                         double *savr, double *wk, double *cj, double* wght,
                         double *wp, int *iwp, double *b, double *eplin, 
@@ -22,10 +29,7 @@ static void daspk_psol (int *neq, double *t, double *y, double *yprime,
 /* not yet implemented */
 }
 
-/* interface between fortran function call and R function 
-   Fortran code calls vode_derivs(N, t, y, ydot, yout, iout) 
-   R code called as vode_deriv_func(time, y) and returns ydot 
-   Note: passing of parameter values and "..." is done in R-function vode*/
+/* interface between fortran function call and R function  */
 
 static void daspk_res (double *t, double *y, double *yprime, double *cj, 
                        double *delta, int *ires, double *yout, int *iout)
@@ -94,8 +98,7 @@ static void daspk_jac (double *t, double *y, double *yprime,
 }
 
 /* give name to data types */
-typedef void res_func(double *, double *, double *, double*, double *,
-                      int*, double *, int*);
+
 typedef void jac_func(double *, double *, double *, double *, double *,
                       double *, int *);
 typedef void psol_func(int *, double *, double *, double *, double *,
@@ -104,14 +107,14 @@ typedef void psol_func(int *, double *, double *, double *, double *,
 typedef void kryljac_func(double *, int *, int *, double *, double *,
                           double *, double *, double *,
            double *, double *, double *, double *, int*, int*, double *, int*);
-typedef void init_func(void (*)(int *, double *));
 
 /* MAIN C-FUNCTION, CALLED FROM R-code */
 
 SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms, 
 		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
 		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,  
-    SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar, SEXP Ipar)
+    SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar,
+    SEXP Ipar, SEXP Tvec, SEXP Fvec, SEXP Ivec,SEXP initforc)
 {
 /******************************************************************************/
 /******                   DECLARATION SECTION                            ******/
@@ -128,7 +131,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   res_func  *Resfun;
   jac_func  *jac=NULL;
   psol_func *psol=NULL;
-  init_func *initializer;
+  init_func *initializer, *initforcings;
   kryljac_func *kryljac=NULL;
 
 /******************************************************************************/
@@ -227,20 +230,42 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   PROTECT(de_gparms = parms);                        incr_N_Protect();  
 
  /* The initialisation routine */
-  if (!isNull(initfunc))
-    	{
+  if (!isNull(initfunc))	{
 	     initializer = (init_func *) R_ExternalPtrAddr(initfunc);
-	     initializer(Initdeparms); 	}
+	     initializer(Initdeparms);
+  }
+  if (!isNull(initforc)) {
+       nforc =LENGTH(Ivec)-1; /* nforc, fvec, ivec =globals */
+
+       i = LENGTH(Fvec);
+       fvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) fvec[j] = REAL(Fvec)[j];
+
+       tvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) tvec[j] = REAL(Tvec)[j];
+
+       i = LENGTH (Ivec);
+       ivec = (int *) R_alloc(i, sizeof(int));
+       for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
+
+	     initforcings = (init_func *) R_ExternalPtrAddr(initforc);
+	     initforcings(Initdeforc);
+  }
+
 
  /* pointers to functions res, psol and jac, passed to the FORTRAN subroutine */
 
-  if (isDll == 1) 
-    { /* DLL address passed to fortran */
+  if (isDll == 1)  {       /* DLL address passed to fortran */
       Resfun = (res_func *) R_ExternalPtrAddr(res);
       /* no need to communicate with R - but output variables set here */            
       delta = (double *) R_alloc(n_eq, sizeof(double));
       for (j = 0; j < n_eq; j++) delta[j] = 0.;
-      
+
+      if(!isNull(initforc)) {
+        res_fun = (res_func *) R_ExternalPtrAddr(res);
+        Resfun = (res_func *) forc_daspk;
+      }
+
     } else {
       /* interface function between fortran and R passed to Fortran*/     
       Resfun = (res_func *) daspk_res;

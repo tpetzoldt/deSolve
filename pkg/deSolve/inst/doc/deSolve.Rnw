@@ -71,7 +71,8 @@ initial value problems, R}
   differential equations implemented in lower-level languages such as
   \proglang{FORTRAN}, \proglang{C}, or \proglang{C++}, which are
   compiled into a dynamically linked library (DLL) and loaded into
-  \proglang{R}.
+  \proglang{R}.  
+  \proglang{R} \citep{Rcore}.
 }
 
 %% The address of (at least) one author should be given
@@ -296,7 +297,7 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 \end{center}
 \caption{Solution of the ordinary differential equation -
   see text for R-code}
-\label{fig:dae}
+\label{fig:ode}
 \end{figure}
 
 \subsection{Solvers for initial value problems of ordinary differential
