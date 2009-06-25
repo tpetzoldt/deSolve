@@ -1,6 +1,6 @@
 
 #===============================================================================
-# Running the aquaphy model with light and dilution a forcing functions...
+# Running the aquaphy model with light and dilution as forcing functions...
 #===============================================================================
 
 parameters <- c(maxPhotoSynt   = 0.125,      # mol C/mol C/hr

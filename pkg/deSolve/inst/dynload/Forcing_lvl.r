@@ -1,6 +1,4 @@
-# dyn.unload("Forcing_lv.dll")
-# system("R CMD SHLIB Forcing_lv.c")
-# dyn.load("Forcing_lv.dll")
+
 ###############################################################################
 # Implements the lv test model, as given in Forcing_lv.c
 # A model in C-code and comprising a forcing function
@@ -10,7 +8,11 @@
 # do make sure that these files are in the working directory...
 # (if not, use setwd() )
 ###############################################################################
-require(deSolve)
+
+library(deSolve)
+
+# This is how to compile it:
+#system("R CMD SHLIB Forcing_lv.c")
 dyn.load("Forcing_lv.dll")
 
 

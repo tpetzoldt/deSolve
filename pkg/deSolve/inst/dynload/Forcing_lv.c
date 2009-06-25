@@ -39,6 +39,6 @@ void derivsc(int *neq, double *t, double *y, double *ydot, double *yout, int*ip)
 
     yout[0] = y[0]+y[1]+y[2];
     yout[1] = import;
-    warning("y %g %g %g %g %g",*t,y[0],y[1],y[2],import);
+    Rprintf("y %g\t %g\t %g\t %g\t %g\n", *t, y[0], y[1], y[2], import);
 }
 
