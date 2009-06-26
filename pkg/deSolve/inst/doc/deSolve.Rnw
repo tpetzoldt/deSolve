@@ -22,7 +22,7 @@
 \title{Package \pkg{deSolve}: Solving Initial Value Differential
   Equations in \proglang{R}}
 
-\plaintitle{Package \deSolve: Solving Initial Value Differential
+\Plaintitle{Package deSolve: Solving Initial Value Differential
   Equations in R}
 
 \Keywords{differential equations, ordinary differential equations,
@@ -75,8 +75,7 @@ initial value problems, R}
   differential equations implemented in lower-level languages such as
   \proglang{FORTRAN}, \proglang{C}, or \proglang{C++}, which are
   compiled into a dynamically linked library (DLL) and loaded into
-  \proglang{R}.
-  \proglang{R} \citep{Rcore}.
+  \proglang{R}.  \proglang{R} \citep{Rcore}.
 }
 
 %% The address of (at least) one author should be given

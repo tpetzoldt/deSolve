@@ -12,7 +12,7 @@
 library(deSolve)
 
 # This is how to compile it:
-#system("R CMD SHLIB Forcing_lv.c")
+system("R CMD SHLIB Forcing_lv.c")
 dyn.load("Forcing_lv.dll")
 
 
