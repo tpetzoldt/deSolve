@@ -104,7 +104,7 @@ initial value problems, R}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
 %% need no \usepackage{Sweave}
-%\VignetteIndexEntry{solving initial value differential equations in R}
+%\VignetteIndexEntry{Solving Initial Value Differential Equations in R}
 %\VignetteKeywords{differential equations, ordinary differential equations, differential algebraic equations, partial differential equations, initial value problems, R}
 %\VignettePackage{deSolve}
 
