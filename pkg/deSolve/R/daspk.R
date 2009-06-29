@@ -30,7 +30,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
     hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord =5, bandup=NULL,
     banddown=NULL, maxsteps=5000, dllname=NULL, initfunc=dllname,
     initpar=parms, rpar=NULL, ipar=NULL,nout=0, outnames=NULL,
-    forcings=NULL, initforc = NULL, ...) {
+    forcings=NULL, initforc = NULL, fcontrol=NULL, ...) {
 
 ### check input 
   if (!is.numeric(y))
@@ -131,7 +131,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
     } else if (initfunc != dllname && ! is.null(initfunc))
        stop(paste("cannot integrate: initfunc not loaded ",initfunc))
     if (! is.null(forcings))
-      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose,fcontrol)
   }
 
   ## If res is a character vector, then

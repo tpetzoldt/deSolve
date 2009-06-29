@@ -59,6 +59,7 @@ long int nforc;
 double * tvec;
 double * fvec;
 int    * ivec;
+int    fmethod;
 
 /* for each forcing function: index to current position in tmat, fmat,
  current value, interpolation factor, current forcing time, next forcing time,

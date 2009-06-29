@@ -1,6 +1,20 @@
+Started this release
+- code + doc for interpolation in C and Fortran
+- linear and constant interpolation    (see example(vode))
+- interpolation options in a list - to avoid growth of arguments..
+  AND assure backward compatibility
+
+To do
+- explain forcing options in compiledCode vignette
+
+Wishlist this release
+- forcings and initfunc for R models too.
+
+- pass control parameters (KS: do not understand: time steps etc???)
+
+
 Wishlist for Future Releases:
 
-- code + doc for interpolation in C and Fortran
 - improve diagnostics (S3 classes)
 - more diagnostics for rk
 - PID stepsize control for rk

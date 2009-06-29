@@ -30,7 +30,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   banddown = NULL, maxsteps = 5000, dllname = NULL,
   initfunc = dllname, initpar = parms, rpar = NULL,
   ipar = NULL, nout = 0, outnames = NULL,
-  forcings=NULL, initforc = NULL,  ...)
+  forcings=NULL, initforc = NULL, fcontrol=NULL,  ...)
 }
 
 \arguments{
@@ -251,6 +251,9 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     value.
     See package vignette \code{"compiledCode"}.
   }
+  \item{fcontrol }{A list of control parameters for the forcing functions.
+    See "Details" of \link{vode} or vignette \code{compiledCode}.
+  }
   \item{... }{additional arguments passed to \code{func},
     \code{jacfunc}, \code{res} and \code{jacres}, allowing this to be a
     generic function.
@@ -357,7 +360,8 @@ DAE <- as.data.frame(daspk(y = y, dy = dy, times = times,
 ## plotting output
 ## ================
 opa <- par(mfrow = c(2,2))
-for (i in 2:5) 
+
+for (i in 2:5)
 {
 plot(ODE$time,ODE[,i],xlab = "time",
      ylab = "conc",main = names(ODE)[i],type = "l")
@@ -368,6 +372,8 @@ legend("bottomright",lty = c(1,NA),pch = c(NA,1),
        
 # difference between both implementations:
 max(abs(ODE-DAE))
+
+par(mfrow = opa)
 
 ## ======================================
 ## same DAE model, now with the jacobian
@@ -400,6 +406,35 @@ DAE2 <- as.data.frame(daspk(y = y, dy = dy, times = times,
 max(abs(DAE-DAE2))
 
 ## See \dynload subdirectory for a FORTRAN implementation of this model
+
+## =============================================================================
+## The chemical model as a DLL, with production a forcing function
+## =============================================================================
+times <- seq(0, 100, by = 2)
+
+pars <- c(K = 1, ka   = 1e6, r    = 1)
+
+## Initial conc; D is in equilibrium with A,B
+y     <- c(A = 2, B = 3, D = 2*3/pars["K"])
+
+## Initial rate of change
+dy  <- c(dA = 0, dB = 0, dD = 0)
+
+# production increases with time
+prod <- matrix(nc=2,data=c(seq(0,100,by=10),0.1*(1+runif(11)*1)))
+
+ODE_dll <- as.data.frame(daspk(y=y,dy=dy,times=times,res="chemres",
+          dllname="deSolve", initfunc="initparms",
+          initforc="initforcs", parms=pars, forcings=prod,
+          atol=1e-10,rtol=1e-10,nout=2, outnames=c("CONC","Prod")))
+
+opa <- par(mfrow = c(1,2))
+plot(ODE_dll$time,ODE_dll$Prod,xlab = "time",
+     ylab = "/day",main = "production rate",type = "l")
+plot(ODE_dll$time,ODE_dll$D,xlab = "time",
+     ylab = "conc",main = "D",type = "l")
+par(mfrow = opa)
+
 }
 \references{
   L. R. Petzold, A Description of DASSL: A Differential/Algebraic

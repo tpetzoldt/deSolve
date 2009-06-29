@@ -22,7 +22,8 @@ vode          <- function(y, times, func, parms,
   verbose=FALSE,  tcrit = NULL, hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord=NULL, 
   bandup=NULL, banddown=NULL, maxsteps=5000, dllname=NULL, 
   initfunc=dllname, initpar=parms, rpar=NULL, ipar=NULL,
-  nout=0, outnames=NULL, forcings=NULL, initforc = NULL, ...)  {
+  nout=0, outnames=NULL, forcings=NULL, initforc = NULL,
+  fcontrol=NULL, ...)  {
 
 ### check input
   if (!is.numeric(y))
@@ -124,7 +125,7 @@ vode          <- function(y, times, func, parms,
       stop(paste("cannot integrate: initfunc not loaded ",initfunc))
 
     if (! is.null(forcings))
-      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose,fcontrol)
   }
 
   ## If func is a character vector, then

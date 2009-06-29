@@ -57,10 +57,6 @@ out <- as.data.frame(lsoda(y=y, times, func = "derivsc",
    forcings=forcings, initfunc = "odec", nout = 2,
    outnames = c("Sum","signal")))
 
-## ThPe: what is "DLLutil ??
-#require(DLLutil)
-
-
 ## Solving
 Out <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
 

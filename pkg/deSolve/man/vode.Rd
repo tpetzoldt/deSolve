@@ -33,7 +33,7 @@
   maxord = NULL, bandup = NULL, banddown = NULL, maxsteps = 5000,
   dllname = NULL, initfunc = dllname, initpar = parms, rpar = NULL,
   ipar = NULL, nout = 0, outnames = NULL, forcings=NULL,
-  initforc = NULL, ...)
+  initforc = NULL, fcontrol=NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -192,6 +192,9 @@
     value.
     See package vignette \code{"compiledCode"}.
   }
+  \item{fcontrol }{A list of control parameters for the forcing functions.
+    See "Details".
+  }
   \item{... }{additional arguments passed to \code{func} and
     \code{jacfunc} allowing this to be a generic function.
   }
@@ -268,6 +271,29 @@ out <- as.data.frame( vode(Yini, times, func = "scocder",
 
 plot(out$time,out$Depo,type="l",col="red")
 lines(out$time,out$Mineralisation,col="blue")
+
+# Constant interpolation of forcing function - left side of interval
+fcontrol<-list(method="constant")
+
+out2 <- as.data.frame( vode(Yini, times, func = "scocder",
+    parms = parms, dllname = "deSolve",
+    initforc="scocforc",  forcings=Flux, fcontrol=fcontrol,
+    initfunc = "scocpar", nout = 2,
+    outnames = c("Mineralisation","Depo")))
+
+plot(out2$time,out2$Depo,type="l",col="red")
+lines(out2$time,out2$Mineralisation,col="blue")
+
+# Constant interpolation of forcing function - middle of interval
+fcontrol<-list(method="constant",f=0.5)
+
+out3 <- as.data.frame( vode(Yini, times, func = "scocder",
+    parms = parms, dllname = "deSolve",
+    initforc="scocforc",  forcings=Flux, fcontrol=fcontrol,
+    initfunc = "scocpar", nout = 2,
+    outnames = c("Mineralisation","Depo")))
+
+lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
 
 }
 \references{
@@ -428,6 +454,47 @@ lines(out$time,out$Mineralisation,col="blue")
      }
    }
    For more information, see the comments in the original code dvode.f
+
+  The \bold{fcontrol} argument is a list that can supply any of the following
+  components (conform the definitions in the \link{approx} function):
+  \describe{
+    \item{method }{specifies the interpolation method to be used.
+      Choices are "linear" or "constant",}
+    \item{rule }{an integer describing how interpolation is to take place
+      outside the interval [min(times), max(times)].
+      If \code{rule} is \code{1} then an error will be triggered and the
+      calculation will stop if \code{times} extends the interval of the
+      forcing function data set. If it is \code{2}, the *default*, the
+      value at the closest data extreme is used, a warning will be printed if
+      \code{verbose} is TRUE,
+
+      Note that the default differs from the \code{approx} default}
+    \item{f }{For method=\code{"constant"} a number between \code{0} and
+      \code{1} inclusive, indicating a compromise between left- and
+      right-continuous step functions. If \code{y0} and \code{y1} are the
+      values to the left and right of the point then the value is
+      \code{y0*(1-f)+y1*f} so that \code{f=0} is right-continuous and
+      \code{f=1} is left-continuous,
+      }
+    \item{ties }{Handling of tied \code{times} values. Either a function
+      with a single vector argument returning a single number result or the
+      string "ordered".
+
+      Note that the default is "ordered", hence the existence of ties will
+      NOT be investigated; in the \code{C} code this will mean that -if ties
+      exist, the first value will be used; if the dataset is not ordered,
+      then nonsense will be produced.
+
+      Alternative values for \code{ties} are \code{mean}, \code{min} etc
+      }
+   }
+   The defaults are:
+
+   \code{fcontrol=list(method="linear", rule = 2,  f = 0, ties = "ordered")}
+
+   Note that only ONE specification is allowed, even if there is more than
+   one forcing function data set.
+
 }
 \seealso{
   \itemize{

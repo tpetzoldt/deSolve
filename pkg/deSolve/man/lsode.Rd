@@ -33,7 +33,7 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   maxsteps = 5000, dllname = NULL, initfunc = dllname,
   initpar = parms, rpar = NULL, ipar = NULL, nout = 0,
   outnames = NULL, forcings=NULL,
-  initforc = NULL, ...)
+  initforc = NULL, fcontrol=NULL, ...)
 }
 
 \arguments{
@@ -191,6 +191,9 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     \file{dllname}. It MUST be present if \code{forcings} has been given a
     value.
     See package vignette \code{"compiledCode"}.
+  }
+  \item{fcontrol }{A list of control parameters for the forcing functions.
+    See "Details" of \link{vode} or vignette \code{compiledCode}.
   }
   \item{... }{additional arguments passed to \code{func} and
     \code{jacfunc} allowing this to be a generic function.

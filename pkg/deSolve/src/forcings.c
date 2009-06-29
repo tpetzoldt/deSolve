@@ -44,7 +44,9 @@ void Initdeforc(int *N, double *forc)
      curval[i] = fvec[ii];
      curtime[i] = tvec[ii];
      nexttime[i] = tvec[ii+1];
-     intpol[i] = (fvec[ii+1]-fvec[ii])/(nexttime[i]-curtime[i]);
+     if (fmethod == 1) {
+       intpol[i] = (fvec[ii+1]-fvec[ii])/(nexttime[i]-curtime[i]);
+     } else  intpol[i] = 0;
      forc[i] = curval[i];
    }
    forcings = forc;      /* set pointer to c globals or fortran common block */
@@ -93,13 +95,18 @@ void updatedeforc(double *time)
        findex[i] = ii;
        curval[i] = fvec[ii];
        curtime[i] = tvec[ii];
-       if (zerograd == 0) {
+       if ((zerograd == 0) & (fmethod == 1)) {  /* fmethod 1=linear */
          nexttime[i] = tvec[ii+1];
          intpol[i] = (fvec[ii+1]-fvec[ii])/(nexttime[i]-curtime[i]); }
-       else {
-         nexttime[i] = 1e20 ; /* as large as possible */
+       else if (fmethod == 2) {
+         nexttime[i] = tvec[ii+1];
          intpol[i] = 0;
        }
+       else {
+         nexttime[i] = DBL_MAX ; /* as large as possible */
+         intpol[i] = 0;
+       }
+       
      }
 
      forcings[i]=curval[i]+intpol[i]*(*time-curtime[i]);

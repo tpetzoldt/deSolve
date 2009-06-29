@@ -661,6 +661,60 @@ DOUBLE PRECISION T, Y(*), IAN(*), JAN(*), PDJ(*), OUT(*)
 INTEGER NEQ, J, IP(*)
 \end{verbatim}
 
+\section{Testing functions written in compiled code}
+Two utilities have been included to test the function implementation
+in compiled code:
+\begin{itemize}
+\item \code{DLLfunc} to test the implementation of the derivative function
+  as used in ODEs. This function returns the derivative $\frac{dy}{dt}$.
+\item \code{DLLres} to test the implementation of the residual function
+  as used in DAEs. This function returns the residual function
+  $\frac{dy}{dt}-f(y,t)$.
+\end{itemize}
+These functions serve no other purpose than to test whether the compiled code
+returns what it should be.
+
+\subsection{DLLfunc}
+We test whether the ccl4 model returns the proper rates of changes.
+(Note: see example(ccl4model) for a more comprehensive implementation)
+<<>>=
+# Parameter values and initial conditions
+Parms <- c(0.182, 4.0, 4.0, 0.08, 0.04, 0.74, 0.05, 0.15, 0.32,
+        16.17, 281.48, 13.3, 16.17, 5.487, 153.8, 0.04321671,
+        0.4027255, 1000, 0.02, 1.0, 3.8)
+
+yini <- c( AI=21, AAM=0, AT=0, AF=0, AL=0, CLT=0,  AM=0  )
+
+# the rate of change
+DLLfunc(y = yini, dllname = "deSolve", func = "derivsccl4",
+        initfunc = "initccl4", parms = Parms, times = 1,
+        nout = 3, outnames = c("DOSE", "MASS", "CP")  )
+@
+\subsection{DLLres}
+
+The deSolve package contains a FORTRAN implementation of the chemical model
+described above (section 4.1), but where the production rate is included
+as a forcing function.
+
+Here we use \code{DLLres} to test it:
+<<>>=
+pars <- c(K = 1, ka   = 1e6, r    = 1)
+
+## Initial conc; D is in equilibrium with A,B
+y     <- c(A = 2, B = 3, D = 2*3/pars["K"])
+
+## Initial rate of change
+dy  <- c(dA = 0, dB = 0, dD = 0)
+
+# production increases with time
+prod <- matrix(nc=2,data=c(seq(0,100,by=10),seq(0.1,0.5,len=11)))
+
+DLLres(y=y,dy=dy,times=5,res="chemres",
+          dllname="deSolve", initfunc="initparms",
+          initforc="initforcs", parms=pars, forcings=prod,
+          nout=2, outnames=c("CONC","Prod"))
+
+@
 
 \section{Using forcing functions}
 
@@ -690,6 +744,52 @@ Forcing functions are treated similar as parameters. This means:
   compiled code.
 \end{itemize}
 
+A number of options allow to finetune certain settings. They are in a list
+called \code{fcontrol} which can be supplied as argument when calling the
+solvers. The options are similar to the arguments from \R function
+\code{approx}, howevers the dafault settings are often different.
+The following options can be specified:
+\begin{itemize}
+    \item \code{method} specifies the interpolation method to be used.
+      Choices are "linear" or "constant", the default is "linear", which
+      means linear interpolation (same as \code{approx})
+    \item \code{rule }, an integer describing how interpolation is to take place
+      \emph{outside} the interval [min(times), max(times)].
+      If \code{rule} is \code{1} then an error will be triggered and the
+      calculation will stop if interpolation is necessary.
+      If it is \code{2}, the default, the value at
+      the closest data extreme is used, a warning will be printed if
+      \code{verbose} is TRUE.
+
+      Note that the default differs from the \code{approx} default.
+    \item \code{f } For method=\code{"constant"} a number between \code{0} and
+      \code{1} inclusive, indicating a compromise between left- and
+      right-continuous step functions. If \code{y0} and \code{y1} are the
+      values to the left and right of the point then the value is
+      \code{y0*(1-f)+y1*f} so that \code{f=0} is right-continuous and
+      \code{f=1} is left-continuous. The default is to have \code{f=0};
+      for some data sets it may be more realistic to set \code{f=0.5}.
+    \item \code{ties } Handling of tied \code{times} values. Either a function
+      with a single vector argument returning a single number result or the
+      string "ordered".
+
+      Note that the default is "ordered", hence the existence of ties will
+      NOT be investigated; this will mean that -if ties
+      exist, the first value will be used; if the dataset is not ordered,
+      then nonsense will be produced.
+
+      Alternative values for \code{ties} are \code{mean}, \code{min} etc...
+      which will average, or take the minimal value if multiple values exist
+      at one time level.
+\end{itemize}
+The default settings of \code{fcontrol} are:
+
+   \code{fcontrol=list(method="linear", rule = 2,  f = 0, ties = "ordered")}
+
+   Note that only ONE specification is allowed, even if there is more than
+   one forcing function data set. (may/should change in the future).
+
+\subsection{A simple example}
 We implement the example from chapter 3 of the book \citep{Soetaert08} in
 FORTRAN and C.
 
@@ -811,23 +911,41 @@ out <- as.data.frame( ode(y=Yini, times, func = "scocder",
     outnames = c("Mineralisation","Depo")))
 head(out)
 @
+
+Now, the way the forcing functions are interpolated are changed:
+Rather than linear interpolation, constant (block, step) interpolation is used.
+
+<<>>=
+fcontrol <- list(method="constant")
+out2 <- as.data.frame( ode(y=Yini, times, func = "scocder",
+    parms = parms, dllname = "deSolve",
+    initforc="scocforc",  forcings=Flux, fcontrol=fcontrol,
+    initfunc = "scocpar", nout = 2,
+    outnames = c("Mineralisation","Depo")))
+@
 Finally, the results are plotted:
 <<label=scoc,include=FALSE>>=
+par (mfrow=c(1,2))
 plot(out$time, out$Depo, type="l", col="red",
-  xlab="days", ylab="mmol C/m2/ d")
+  xlab="days", ylab="mmol C/m2/ d", main="method='linear'")
 lines(out$time, out$Mineralisation, lwd=2, col="blue")
 legend("topleft",lwd=1:2,col=c("red","blue"), c("Flux","Mineralisation"))
+
+plot(out2$time, out2$Depo, type="l", col="red",
+  xlab="days", ylab="mmol C/m2/ d", main="method='constant'")
+lines(out2$time, out2$Mineralisation, lwd=2, col="blue")
+
 @
-\setkeys{Gin}{width=0.4\textwidth}
+\setkeys{Gin}{width=0.8\textwidth}
 
 \begin{figure}
 \begin{center}
-<<label=figscoc,fig=TRUE,echo=FALSE>>=
+<<label=figscoc,fig=TRUE,echo=FALSE, width=13, height=6>>=
 <<scoc>>
 @
 \end{center}
-\caption{Solution of the ordinary differential equation -
-  see text for R-code}
+\caption{Solution of the SCOC model, implemented in compiled code, and
+including a forcing function - see text for R-code}
 \label{fig:scoc}
 \end{figure}
 

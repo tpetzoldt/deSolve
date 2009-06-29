@@ -146,7 +146,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 		SEXP verbose, SEXP iTask, SEXP rWork, SEXP iWork, SEXP jT, 
     SEXP nOut, SEXP lRw, SEXP lIw, SEXP Solver, SEXP rootfunc, 
     SEXP nRoot, SEXP Rpar, SEXP Ipar, SEXP Type, SEXP Tvec, SEXP Fvec,
-    SEXP Ivec,SEXP initforc)
+    SEXP Ivec, SEXP initforc)
 
 {
 /******************************************************************************/
@@ -369,7 +369,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   /* KS @#$ forcings */
     if (!isNull(initforc))
     	{
-       nforc =LENGTH(Ivec)-1; /* nforc, fvec, ivec =globals */
+
+       nforc =LENGTH(Ivec)-2; /* nforc, fvec, ivec =globals */
 
        i = LENGTH(Fvec);
        fvec = (double *) R_alloc((int) i, sizeof(double));
@@ -378,10 +379,12 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
        tvec = (double *) R_alloc((int) i, sizeof(double));
        for (j = 0; j < i; j++) tvec[j] = REAL(Tvec)[j];
 
-       i = LENGTH (Ivec);
+       i = LENGTH (Ivec)-1; /* last element: the interpolation method...*/
        ivec = (int *) R_alloc(i, sizeof(int));
        for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
 
+       fmethod =INTEGER(Ivec)[i];
+       
 	     initforcings = (init_func *) R_ExternalPtrAddr(initforc);
 	     initforcings(Initdeforc);
        }

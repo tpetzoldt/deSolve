@@ -17,7 +17,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   maxord=NULL, bandup=NULL, banddown=NULL, maxsteps=5000, 
   dllname=NULL,initfunc=dllname, initpar=parms, 
   rpar=NULL, ipar=NULL, nout=0, outnames=NULL,forcings=NULL,
-  initforc = NULL,...)
+  initforc = NULL, fcontrol=NULL, ...)
 {
 ### check input
   if (!is.numeric(y))     stop("`y' must be numeric")
@@ -91,7 +91,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       stop(paste("cannot integrate: initfunc not loaded ",initfunc))
 
     if (! is.null(forcings))
-      flist <- checkforcings(forcings,times,dllname,initforc,verbose)
+      flist <- checkforcings(forcings,times,dllname,initforc,verbose,fcontrol)
   }
 
   ## If func is a character vector, then

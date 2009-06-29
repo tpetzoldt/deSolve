@@ -1,3 +1,4 @@
+ require(deSolve)
 
 #===============================================================================
 # Running the aquaphy model with light and dilution as forcing functions...

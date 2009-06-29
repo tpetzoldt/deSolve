@@ -43,7 +43,9 @@
 }
 \author{
   Karline Soetaert,
+  
   Thomas Petzoldt,
+
   R. Woodrow Setzer (Maintainer)
 }
 \references{
@@ -76,6 +78,10 @@ SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
 
   \code{\link{rk}}, \code{\link{rk4}}, \code{\link{euler}} for Runge-Kutta
   solvers.
+
+  \code{\link{DLLfunc}}, \code{\link{DLLres}}, for testing model implementations
+  in compiled code.
+
 }
 
 \examples{

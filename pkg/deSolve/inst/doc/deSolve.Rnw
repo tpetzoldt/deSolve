@@ -301,7 +301,7 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 \end{center}
 \caption{Solution of the ordinary differential equation -
   see text for R-code}
-\label{fig:ode}
+\label{fig:dae}
 \end{figure}
 
 \subsection{Solvers for initial value problems of ordinary differential

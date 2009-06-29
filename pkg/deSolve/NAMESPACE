@@ -5,4 +5,4 @@ export(aquaphy, ccl4model, daspk, lsoda, lsodar, lsode, lsodes,
 
 export(rk, rk4, euler, rkMethod)
 
-
+export(DLLfunc, DLLres)
