@@ -65,13 +65,14 @@ initial value problems, R}
   \end{itemize}
 
   The implementation includes stiff integration routines based on the
-  ODEPACK Fortan codes \citep{Hindmarsh83}.  It also include
-  Runge-Kutta solvers and the Euler method \citep{Press92}.
+  ODEPACK Fortran codes \citep{Hindmarsh83}.  It also includes fixed
+  and adative time-step Runge-Kutta solvers and the Euler method
+  \citep{Press92}.
 
   In this vignette we outline how to implement differential equations
   as \R-functions.
 
-  Another vignette ("compiledCode") \citep{compiledCode}, deals with
+  Another vignette (``compiledCode'') \citep{compiledCode}, deals with
   differential equations implemented in lower-level languages such as
   \proglang{FORTRAN}, \proglang{C}, or \proglang{C++}, which are
   compiled into a dynamically linked library (DLL) and loaded into
