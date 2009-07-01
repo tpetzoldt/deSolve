@@ -318,7 +318,7 @@ vode          <- function(y, times, func, parms,
        rho, tcrit, JacFunc, ModelInit, as.integer(verbose),as.integer(itask),
        as.double(rwork),as.integer(iwork), as.integer(imp),as.integer(Nglobal),
        as.integer(liw),as.integer(lrw),as.double (rpar), as.integer(ipar),
-       flist$tmat, flist$fmat, flist$imat, flist$ModelForc, PACKAGE = "deSolve")
+       flist, PACKAGE = "deSolve")
 
 ### saving results    
 

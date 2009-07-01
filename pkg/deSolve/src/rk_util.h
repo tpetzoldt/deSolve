@@ -34,8 +34,6 @@ SEXP getvar(SEXP name, SEXP Rho);
 
 SEXP getInputs(SEXP symbol, SEXP Rho);
 
-SEXP getListElement(SEXP list, const char *str);
-
 void blas_matprod1(double *x, int nrx, int ncx,
 		    double *y, int nry, int ncy, double *z);
 
@@ -56,8 +54,6 @@ void densout(double *r, double t0, double t, double dt, double* res, int neq);
 void neville(double *xx, double *y, double tnew, double *ynew, int n, int ksig);
 
 void shiftBuffer (double *x, int n, int k);
-
-void initParms(SEXP Initfunc, SEXP Parms);
 
 void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
   int it_tot, int stage, int fsal, int qerr);

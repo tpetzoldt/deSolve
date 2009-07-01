@@ -279,8 +279,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
                as.integer(iwork), as.integer(imp),as.integer(Nglobal),
                as.integer(lrw),as.integer(liw),as.integer(IN),
                NULL, as.integer(0), as.double (rpar), as.integer(ipar),
-               as.integer(0), flist$tmat, flist$fmat, flist$imat,
-               flist$ModelForc, PACKAGE="deSolve")
+               as.integer(0), flist, PACKAGE="deSolve")
 
 ### saving results    
 

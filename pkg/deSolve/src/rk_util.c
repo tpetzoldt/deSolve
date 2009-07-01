@@ -65,7 +65,7 @@ SEXP getInputs(SEXP symbol, SEXP Rho) {
   return(getvar(symbol, Rho));
 }
 
-/* -- getvar from list ------------------------------------------------------ */
+/* -- getvar from list -KS: now in deSolve.h------------------------------------
 SEXP getListElement(SEXP list, const char *str) {
   SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
   int i;
@@ -76,7 +76,7 @@ SEXP getListElement(SEXP list, const char *str) {
      break;
    }
   return elmt;
-}
+}                                                         */
 
 /*============================================================================*/
 /*   Arithmetic utilities                                                     */
@@ -255,14 +255,6 @@ void shiftBuffer (double *x, int n, int k) {
       x[i + j * n] = x[i + 1 + j * n];
 }
 
-void initParms(SEXP Initfunc, SEXP Parms) {
-  if (inherits(Initfunc, "NativeSymbol"))  {
-    PROTECT(de_gparms = Parms); incr_N_Protect();
-    init_func *initializer;
-    initializer = (init_func *) R_ExternalPtrAddr(Initfunc);
-    initializer(Initdeparms);
-  }
-}
 
 void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
   int it_tot, int stage, int fsal, int qerr) {

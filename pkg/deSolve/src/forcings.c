@@ -5,8 +5,46 @@ to the integration routines */
 
 int    finit = 0;
 
+/*         -----     Check for presence of forcing functions     -----        */
 
-/*         -----     INITIALISATION     -----
+
+int initForcings(SEXP flist) {
+
+    SEXP Tvec, Fvec, Ivec, initforc;
+    int i, j, isForcing = 0;
+    init_func  *initforcings;
+
+
+    initforc = getListElement(flist,"ModelForc");
+    if (!isNull(initforc))
+    	{
+    	 Tvec = getListElement(flist,"tmat");
+       Fvec = getListElement(flist,"fmat");
+       Ivec = getListElement(flist,"imat");
+       nforc =LENGTH(Ivec)-2; /* nforc, fvec, ivec =globals */
+
+       i = LENGTH(Fvec);
+       fvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) fvec[j] = REAL(Fvec)[j];
+
+       tvec = (double *) R_alloc((int) i, sizeof(double));
+       for (j = 0; j < i; j++) tvec[j] = REAL(Tvec)[j];
+
+       i = LENGTH (Ivec)-1; /* last element: the interpolation method...*/
+       ivec = (int *) R_alloc(i, sizeof(int));
+       for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
+
+       fmethod =INTEGER(Ivec)[i];
+
+	     initforcings = (init_func *) R_ExternalPtrAddr(initforc);
+	     initforcings(Initdeforc);
+
+       isForcing = 1;
+       }
+       return(isForcing);
+}
+
+/*         -----     INITIALISATION  called from compiled code   -----
    1. Check the length of forcing functions in solver call and code in DLL
    2. Initialise the forcing function vectors
    3. set pointer to DLL fortran common block or C globals /

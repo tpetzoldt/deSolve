@@ -397,8 +397,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
       JacRes, ModelInit, PsolFunc, as.integer(verbose),as.integer(info),
       as.integer(iwork),as.double(rwork), as.integer(Nglobal),as.integer(maxIt),
       as.integer(bandup),as.integer(banddown),as.integer(nrowpd),
-      as.double (rpar), as.integer(ipar),
-      flist$tmat, flist$fmat, flist$imat, flist$ModelForc,
+      as.double (rpar), as.integer(ipar), flist,
       PACKAGE = "deSolve")
 
 ### saving results    

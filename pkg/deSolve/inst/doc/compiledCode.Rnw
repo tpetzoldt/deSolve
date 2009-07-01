@@ -746,7 +746,7 @@ Forcing functions are treated similar as parameters. This means:
 
 A number of options allow to finetune certain settings. They are in a list
 called \code{fcontrol} which can be supplied as argument when calling the
-solvers. The options are similar to the arguments from \R function
+solvers. The options are similar to the arguments from R function
 \code{approx}, howevers the dafault settings are often different.
 The following options can be specified:
 \begin{itemize}

@@ -114,7 +114,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
 		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,  
     SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar,
-    SEXP Ipar, SEXP Tvec, SEXP Fvec, SEXP Ivec,SEXP initforc)
+    SEXP Ipar, SEXP flist)
 {
 /******************************************************************************/
 /******                   DECLARATION SECTION                            ******/
@@ -122,16 +122,15 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 
 /* These R-structures will be allocated and returned to R*/
   SEXP   yout, yout2=NULL, ISTATE, RWORK;
-  int    i, j, k, nt, ny, repcount, latol, lrtol, lrw, liw, isDll, maxit;
-  double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol, *out;
+  int    i, j, k, nt, ny, repcount, latol, lrtol, lrw, liw, isDll;
+  int    maxit, isForcing;
+  double *xytmp,  *xdytmp, *rwork, tin, tout, *Atol, *Rtol;
   double *delta=NULL, cj;
-  int    *Info,  ninfo, idid, *iwork, mflag, nout, ntot, ires;
-  int    lrpar, lipar, *ipar;
+  int    *Info,  ninfo, idid, *iwork, mflag, ires;
 
   res_func  *Resfun;
   jac_func  *jac=NULL;
   psol_func *psol=NULL;
-  init_func *initializer, *initforcings;
   kryljac_func *kryljac=NULL;
 
 /******************************************************************************/
@@ -146,8 +145,6 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   n_eq = ny;                          /* n_eq is a global variable */
   nt = LENGTH(times);  
   mflag = INTEGER(verbose)[0];        
-  nout  = INTEGER(nOut)[0]; 
-  ntot  = n_eq+nout;
 
   ninfo=LENGTH(info);
   ml = INTEGER(bd)[0]; 
@@ -155,45 +152,19 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   nrowpd = INTEGER(nRowpd)[0];  
   maxit = INTEGER(maxIt)[0];
 
-/* The output:
-    out and ipar are used to pass output variables (number set by nout)
-    followed by other input (e.g. forcing functions) provided 
-    by R-arguments rpar, ipar
-    ipar[0]: number of output variables, ipar[1]: length of rpar, 
-    ipar[2]: length of ipar */
-
-
-
-  if (inherits(res, "NativeSymbol"))  /* function is a dll */
-  {
-   isDll = 1; 
-   lrpar = nout + LENGTH(Rpar);       /* length of rpar */
-   lipar = 3    + LENGTH(Ipar);       /* length of ipar */
-
-  } else                              /* function is not a dll */
-  {
+/* function is a dll ?*/
+  if (inherits(res, "NativeSymbol")) {
+   isDll = 1;
+  } else {
    isDll = 0;
-   lipar = 3;
-   lrpar = nout; 
   }
-   out   = (double *) R_alloc(lrpar, sizeof(double));
-   ipar  = (int *)    R_alloc(lipar, sizeof(int));
 
-   if (isDll ==1)
-   {
-    ipar[0] = nout;          /* first 3 elements of ipar are special */
-    ipar[1] = lrpar;
-    ipar[2] = lipar;
-    /* other elements of ipar are set in R-function lsodx via argument *ipar* */        
-    for (j = 0; j < LENGTH(Ipar);j++) ipar[j+3] = INTEGER(Ipar)[j];
-    
-    /* first nout elements of rpar reserved for output variables 
-      other elements are set in R-function lsodx via argument *rpar* */
-    for (j = 0; j < nout;        j++) out[j] = 0.;  
-    for (j = 0; j < LENGTH(Rpar);j++) out[nout+j] = REAL(Rpar)[j];
-   }
+/* initialise output ... */
+  initOut(isDll, n_eq, nOut, Rpar, Ipar);
 
-   
+/*  output always done here in C-code (<-> lsode, vode)... */
+  ntot  = n_eq+nout;
+
   /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));
    for (j = 0; j < ninfo; j++) Info[j] = INTEGER(info)[j];  
@@ -227,33 +198,13 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   PROTECT(Y = allocVector(REALSXP,(n_eq)));          incr_N_Protect();
   PROTECT(YPRIME = allocVector(REALSXP,(n_eq)));     incr_N_Protect();
   PROTECT(yout = allocMatrix(REALSXP,ntot+1,nt));    incr_N_Protect();
-  PROTECT(de_gparms = parms);                        incr_N_Protect();  
 
- /* The initialisation routine */
-  if (!isNull(initfunc))	{
-	     initializer = (init_func *) R_ExternalPtrAddr(initfunc);
-	     initializer(Initdeparms);
-  }
-  if (!isNull(initforc)) {
-       nforc =LENGTH(Ivec)-2; /* nforc, fvec, ivec =globals */
+  /**************************************************************************/
+  /****** Initialization of Parameters and Forcings (DLL functions)    ******/
+  /**************************************************************************/
+  initParms(initfunc, parms);
 
-       i = LENGTH(Fvec);
-       fvec = (double *) R_alloc((int) i, sizeof(double));
-       for (j = 0; j < i; j++) fvec[j] = REAL(Fvec)[j];
-
-       tvec = (double *) R_alloc((int) i, sizeof(double));
-       for (j = 0; j < i; j++) tvec[j] = REAL(Tvec)[j];
-
-       i = LENGTH (Ivec)-1; /* last element: the interpolation method...*/
-       ivec = (int *) R_alloc(i, sizeof(int));
-       for (j = 0; j < i; j++) ivec[j] = INTEGER(Ivec)[j];
-
-       fmethod =INTEGER(Ivec)[i];
-
-	     initforcings = (init_func *) R_ExternalPtrAddr(initforc);
-	     initforcings(Initdeforc);
-  }
-
+  isForcing = initForcings(flist);
 
  /* pointers to functions res, psol and jac, passed to the FORTRAN subroutine */
 
@@ -263,7 +214,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       delta = (double *) R_alloc(n_eq, sizeof(double));
       for (j = 0; j < n_eq; j++) delta[j] = 0.;
 
-      if(!isNull(initforc)) {
+      if(isForcing==1) {
         res_fun = (res_func *) R_ExternalPtrAddr(res);
         Resfun = (res_func *) forc_daspk;
       }

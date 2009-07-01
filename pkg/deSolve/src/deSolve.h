@@ -5,7 +5,6 @@ SEXP Time, Y, YPRIME , Rin;
 extern SEXP de_gparms;
 
 typedef void deriv_func(int *, double *, double *,double *,double *, int *);
-void updatedeforc(double *);
 deriv_func * derfun;
 
 typedef void res_func(double *, double *, double *, double*, double *,
@@ -14,6 +13,7 @@ res_func * res_fun;
 
 typedef void init_func (void (*)(int *, double *));
 
+void updatedeforc(double *);
 
 /* vode globals */
 extern SEXP vode_deriv_func;
@@ -39,9 +39,12 @@ void incr_N_Protect(void);
 void unprotect_all(void);
 void my_unprotect(int);
 
-/* declarations for initideparms;*/
+
+/* declarations for initialisations;*/
+void initParms(SEXP Initfunc, SEXP Parms);
 void Initdeparms(int *, double *);
 void Initdeforc(int *, double *);
+void initOut(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
 
 /* use in daspk */
 long int n_eq;
@@ -49,10 +52,17 @@ long int mu;
 long int ml;
 long int nrowpd;
 
+/* output in DLL globals */
+int nout, ntot, isOut, lrpar, lipar, *ipar;
+double *out;
 
 /* KS globals for the forcings */
-/* the number of forcings */
-long int nforc;
+int initForcings(SEXP list);
+
+SEXP getListElement(SEXP list, const char *str);
+
+long int nforc;  /* the number of forcings */
+
 /* Input data. three vectors:
   tmat, fmat: time, forcing function data value
   imat: index to start of each forcing function in tmat, fmat*/

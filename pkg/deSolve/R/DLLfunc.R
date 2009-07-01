@@ -48,8 +48,7 @@ DLLfunc <- function (func, times, y,
     out <- .Call("call_DLL", y, dy, as.double(times[1]), Func,  ModelInit, #Outinit,
                  as.double(parms),as.integer(nout),
                  as.double(rpar),as.integer(ipar),as.integer(1),
-                 flist$tmat, flist$fmat, flist$imat, flist$ModelForc,
-                 PACKAGE = "deSolve")
+                 flist, PACKAGE = "deSolve")
 
     out <- list(dy = out[1:n], var = out[(n + 1):(n +
             nout)])
@@ -108,8 +107,7 @@ DLLres <- function (res, times, y, dy, parms,
     out <- .Call("call_DLL", y, dy, as.double(times[1]), Res,  ModelInit, #Outinit,
                  as.double(parms),as.integer(nout),
                  as.double(rpar),as.integer(ipar),as.integer(2),
-                 flist$tmat, flist$fmat, flist$imat, flist$ModelForc,
-                 PACKAGE = "deSolve")
+                 flist, PACKAGE = "deSolve")
 
     out <- list(delta = out[1:n], var = out[(n + 1):(n +
             nout)])
