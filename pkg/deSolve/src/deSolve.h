@@ -15,12 +15,7 @@ typedef void init_func (void (*)(int *, double *));
 
 void updatedeforc(double *);
 
-/* vode globals */
-extern SEXP vode_deriv_func;
-extern SEXP vode_jac_func;
-extern SEXP vode_envir;
-
-/* lsoda globals */
+/* livermore solver globals */
 extern SEXP odesolve_deriv_func;
 extern SEXP odesolve_jac_func;
 extern SEXP odesolve_jac_vec;
@@ -45,6 +40,11 @@ void initParms(SEXP Initfunc, SEXP Parms);
 void Initdeparms(int *, double *);
 void Initdeforc(int *, double *);
 void initOut(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
+
+
+void sparsity1D (SEXP Type, int* iwork, int neq, int liw);
+void sparsity2D (SEXP Type, int* iwork, int neq, int liw);
+void sparsity3D (SEXP Type, int* iwork, int neq, int liw);
 
 /* use in daspk */
 long int n_eq;

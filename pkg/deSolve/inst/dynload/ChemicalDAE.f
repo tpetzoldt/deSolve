@@ -1,14 +1,13 @@
 c----------------------------------------------------------------
-c----------------------------------------------------------------
-c--- The chemical model example of daspk but with the
+c The chemical model example of daspk but with the
 c production rate a forcing function rather than 
 c a parameter...
 c----------------------------------------------------------------
 
 
-c -------- daspkdll.f -> daspkdll.dll ------
-c compile in R with: system("g77 -shared -o daspkfor.dll daspkfor.f")
-c or with system("R CMD SHLIB daspkfor.f")
+c -------- ChemicalDAE.f -> ChemicalDAE.dll ------
+c compile in R with: system("g77 -shared -o ChemicalDAE.dll ChemicalDAE.f")
+c or with system("R CMD SHLIB ChemicalDAE.f")
     
 c----------------------------------------------------------------
 c Initialiser for parameter common block

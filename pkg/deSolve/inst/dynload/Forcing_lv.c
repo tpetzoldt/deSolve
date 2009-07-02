@@ -1,6 +1,6 @@
 /* compile within R with system("R CMD SHLIB Forcing_lv.c") */
 /* Example adapted from lsoda help file */
-#include <R.h> /* gives F77_CALL through R_ext/RS.h */
+#include <R.h>
 
 static double parms[6];
 static double forc[1];

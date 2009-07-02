@@ -313,12 +313,14 @@ vode          <- function(y, times, func, parms,
   
 ### calling solver
   storage.mode(y) <- storage.mode(times) <- "double"
-
-  out <- .Call("call_dvode", y, times, Func, initpar, rtol, atol,   # Karline: Func and JacFunc
+  IN <- 5   # vode is livermore solver type 5
+  
+  out <- .Call("call_lsoda", y, times, Func, initpar, rtol, atol,
        rho, tcrit, JacFunc, ModelInit, as.integer(verbose),as.integer(itask),
        as.double(rwork),as.integer(iwork), as.integer(imp),as.integer(Nglobal),
-       as.integer(liw),as.integer(lrw),as.double (rpar), as.integer(ipar),
-       flist, PACKAGE = "deSolve")
+       as.integer(lrw),as.integer(liw),as.integer(IN),NULL,
+       as.integer(0), as.double (rpar), as.integer(ipar),
+       as.integer(0), flist, PACKAGE = "deSolve")
 
 ### saving results    
 
@@ -330,8 +332,8 @@ vode          <- function(y, times, func, parms,
   if (Nglobal > 0) {
     if (!is.character(func)) {                  # if a DLL: already done...
       out2 <- matrix(nrow = Nglobal, ncol = ncol(out))
-      for (i in 1:ncol(out2)) {                  # calculate output variables at each output time:
-        y <- out[-1, i]                        # state variables of this time step
+      for (i in 1:ncol(out2)) {                 # calculate output variables at each output time:
+        y <- out[-1, i]                         # state variables of this time step
         names(y) <- nm[-1]
         out2[, i] <- unlist(Func2(out[1, i], y)[-1])
       }
