@@ -111,12 +111,12 @@ void updatedeforc(double *time)
      {
        ntime = nexttime[i];
        while (*time > ntime){
-         if (ii+1 > maxindex[i]) {   /* this probably redundant...*/
+         if (ii+2 > maxindex[i]) {   /* this probably redundant...*/
            zerograd=1;
            break;
          }
          ii = ii+1;
-         ntime = tvec[ii];
+         ntime = tvec[ii+1];   /* KS check */
        }
        change=1;
      }
@@ -148,6 +148,7 @@ void updatedeforc(double *time)
      }
 
      forcings[i]=curval[i]+intpol[i]*(*time-curtime[i]);
+  /*  Rprintf("y %g\t %g\t %g\t %g\t  %g\n", curval[i], intpol[i], curtime[i], *time, forcings[i]);*/
 
    }
 

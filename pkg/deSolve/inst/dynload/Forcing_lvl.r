@@ -12,7 +12,7 @@
 library(deSolve)
 
 # This is how to compile it:
-system("R CMD SHLIB Forcing_lv.c")
+#system("R CMD SHLIB Forcing_lv.c")
 dyn.load("Forcing_lv.dll")
 
 
@@ -43,7 +43,7 @@ signal <- as.data.frame(list(times = times,
 
 signal$import[signal$times >= 10 & signal$times <= 11] <- 0.2
 
-ftime  <- seq(0,90,0.1)
+ftime  <- seq(0,900,0.1)
 sigimp <- approxfun(signal$times, signal$import, rule = 2)
 
 Sigimp <- approx(signal$times, signal$import, xout=ftime,rule = 2)$y
@@ -52,13 +52,15 @@ forcings <- cbind(ftime,Sigimp)
 ## Start values for steady state
 xstart<-y <- c(S = 1, P = 1, K = 1)
 
+print(system.time(
 out <- as.data.frame(lsoda(y=y, times, func = "derivsc",
    parms = parms, dllname = "Forcing_lv",initforc="forcc",
    forcings=forcings, initfunc = "odec", nout = 2,
    outnames = c("Sum","signal")))
+))
 
 ## Solving
-Out <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
+print(system.time(Out <- as.data.frame(lsoda(xstart, times, lvmodel, parms))))
 
 ## Plotting
 mf <- par(mfrow = c(2,2))
