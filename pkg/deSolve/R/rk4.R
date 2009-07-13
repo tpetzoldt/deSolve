@@ -3,13 +3,13 @@
 ### with fixed step size and without interpolation, see helpfile for details.
 ### ============================================================================
 
-rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
-  dllname = NULL, initfunc=dllname, initpar = parms,
-  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, forcings=NULL,
-  initforc = NULL, fcontrol=NULL, ...) {
+rk4 <- function(y, times, func, parms, verbose = FALSE, ynames = TRUE,
+  dllname = NULL, initfunc = dllname, initpar = parms,
+  rpar = NULL,  ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
+  initforc = NULL, fcontrol = NULL, ...) {
 
     ## check input
-    checkInputEuler(y,times,func,dllname)
+    checkInputEuler(y, times, func, dllname)
     n <- length(y)
 
     Ynames <- attr(y,"names")
@@ -38,8 +38,8 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
     } else {
       initpar <- NULL # parameter initialisation not needed if function is not a DLL
       rho <- environment(func)
-      # func and jac are overruled, either including ynames, or not
-      # This allows to pass the "..." arguments and the parameters
+      ## func and jac are overruled, either including ynames, or not
+      ## This allows to pass the "..." arguments and the parameters
       if(ynames) {
         Func   <- function(time, state, parms) {
           attr(state, "names") <- Ynames
@@ -62,12 +62,12 @@ rk4 <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
     ## the CALL to the integrator
     out <- .Call("call_rk4", as.double(y), as.double(times),
         Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(vrb),
-        as.double(rpar), as.integer(ipar))
+        as.double(rpar), as.integer(ipar), flist)
 
     out <- saveOutrk(out, y, n, Nglobal, Nmtot,
-                     iin = c(1,12,13,15), iout=c(1:3,18))
+                     iin = c(1, 12, 13, 15), iout=c(1:3, 18))
 
-    attr(out, "type")  <- "rk"
+    attr(out, "type") <- "rk"
     if (verbose) diagnostics(out)
     return(out)
 }

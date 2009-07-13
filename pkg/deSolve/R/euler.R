@@ -64,7 +64,7 @@ euler <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
     ## the CALL to the integrator
     out <- .Call("call_euler", as.double(y), as.double(times),
         Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
-        as.double(rpar), as.integer(ipar))
+        as.double(rpar), as.integer(ipar), flist, PACKAGE="deSolve")
 
     ## saving results
     out <- saveOutrk(out, y, n, Nglobal, Nmtot,

@@ -248,7 +248,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 
 /* pointers to functions derivs, jac, jacvec and root, passed to FORTRAN */
 
-  if (isDll ==1) 
+  if (isDll) 
     { /* DLL address passed to fortran */
       derivs = (deriv_func *) R_ExternalPtrAddr(func);  
       /* no need to communicate with R - but output variables set here */
@@ -256,7 +256,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
                   for (j = 0; j < neq; j++) dy[j] = 0.; }
 	  
 	  /* KS @#$ here overruling derivs if forcing */
-      if(isForcing==1) {
+      if (isForcing) {
         derfun = (deriv_func *) R_ExternalPtrAddr(func);
         derivs = (deriv_func *) forc_lsoda;
       }
@@ -270,7 +270,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 
   if (!isNull(jacfunc) && solver !=3)  /* lsodes uses jacvec */
     {
-      if (isDll ==1)
+      if (isDll)
 	    {
 	     jac = (jac_func *) R_ExternalPtrAddr(jacfunc);
 	    } else  {
@@ -281,7 +281,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 
   if (!isNull(jacfunc) && solver ==3)   /*lsodes*/
     {
-      if (isDll ==1)
+      if (isDll)
 	    {
 	     jacvec = (jac_vec *) R_ExternalPtrAddr(jacfunc);
 	    } else  {

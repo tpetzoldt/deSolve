@@ -21,17 +21,6 @@
 #include "deSolve.h"
 
 /*============================================================================*/
-/*   Interface to functions written in compiled languages                     */
-/*============================================================================*/
-
-/* give name to data types
-typedef void deriv_func(int *, double *, double *,double *, double *, int *);
-
-typedef void init_func (void (*)(int *, double *));
-KSKS  NOW DONE IN deSolve.h
-
-*/
-/*============================================================================*/
 /*   DLL specific functions                                                   */
 /*============================================================================*/
 
@@ -140,7 +129,8 @@ double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
 /*   CALL TO THE MODEL FUNCTION                                             */
 /*==========================================================================*/
 void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
-	    double *ydot, double *yout, int j, int neq, int *ipar, int isDll) {
+	    double *ydot, double *yout, int j, int neq, int *ipar, int isDll,
+            int isForcing) {
   SEXP Val, R_fcall;
   SEXP R_t;
   SEXP R_y;
@@ -156,6 +146,7 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     /*   Function is a DLL function                                           */
     /*------------------------------------------------------------------------*/
     deriv_func *cderivs;
+    if (isForcing) updatedeforc(&t); 
     cderivs = (deriv_func *) R_ExternalPtrAddr(Func);
     cderivs(&neq, &t, y, ytmp, yout, ipar);
     if (j >= 0)

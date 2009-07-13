@@ -23,6 +23,9 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (is.character(method)) method <- rkMethod(method)
     if (is.null(tcrit)) tcrit <- max(times)
 
+    ## Workaround for fixed step methods
+    if (is.null(hini)) hini <- 0 # means that steps in "times" are used as they are
+
     ## Check if interpolation is switched off
     if (!is.null(method$interpolation) && !method$interpolation) {
       cat("\nMethod without or with disabled interpolation\n")
@@ -44,12 +47,12 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     ## Model as shared object (DLL)?
     Ynames <- attr(y,"names")
     Initfunc <- NULL
-    flist    <-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
+    flist    <-list(fmat = 0, tmat = 0, imat = 0, ModelForc = NULL)
     Nstates <- length(y) # assume length of states is correct
 
     if (is.character(func)) {
-      DLL <- checkDLL(func,NULL,dllname,
-                    initfunc,verbose,nout, outnames)
+      DLL <- checkDLL(func, NULL, dllname,
+                      initfunc, verbose, nout, outnames)
 
       Initfunc <- DLL$ModelInit
       Func     <- DLL$Func
@@ -57,11 +60,11 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       Nmtot    <- DLL$Nmtot
 
       if (! is.null(forcings))
-        flist <- checkforcings(forcings,times,dllname,initforc,verbose,fcontrol)
+        flist <- checkforcings(forcings, times, dllname, initforc, verbose, fcontrol)
 
       rho <- NULL
-      if (is.null(ipar)) ipar<-0
-      if (is.null(rpar)) rpar<-0
+      if (is.null(ipar)) ipar <- 0
+      if (is.null(rpar)) rpar <- 0
 
     } else {
       initpar <- NULL # parameter initialisation not needed if function is not a DLL
@@ -71,18 +74,18 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       ## This allows to pass the "..." arguments and the parameters
         if(ynames) {
          Func   <- function(time,state,parms){
-           attr(state,"names") <- Ynames
-           func   (time,state,parms,...)}
+           attr(state, "names") <- Ynames
+           func(time, state, parms, ...)}
         } else {                            # no ynames...
          Func   <- function(time,state,parms)
-           func   (time,state,parms,...)
+           func(time, state, parms, ...)
         }
 
       ## Call func once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
-      FF <- checkFuncEuler(Func,times,y,parms,rho,Nstates)
-      Nglobal<-FF$Nglobal
-      Nmtot <- FF$Nmtot
+      FF <- checkFuncEuler(Func, times, y, parms, rho, Nstates)
+      Nglobal <- FF$Nglobal
+      Nmtot   <- FF$Nmtot
     }
 
     ## handle length of atol and rtol
@@ -95,9 +98,9 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     rtol <- rep(rtol, length.out = Nstates)
 
     ## Number of steps until the solver gives up
-    nsteps <- min(.Machine$integer.max, maxsteps * length(times))
+    nsteps  <- min(.Machine$integer.max, maxsteps * length(times))
     varstep <- method$varstep
-    vrb <- FALSE # TRUE forces internal debugging output of the C code
+    vrb <- FALSE # TRUE would force internal debugging output of the C code
 
     ## KS -> Thomas: still need to pass flist
     if (varstep) {                        # methods with variable step size
@@ -107,19 +110,21 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         as.double(rtol), as.double(tcrit), as.integer(vrb),
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
-        as.integer(nsteps))
+        as.integer(nsteps), flist)
     } else {                              # fixed step methods
+      #cat("hini=", hini, "\n")  # !!! temporary workaround; fix this
+      #hini <- 0                 # !!! temporary workaround; fix this
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho,
         as.double(tcrit), as.integer(vrb),
         as.double(hini), as.double(rpar), as.integer(ipar), method,
-        as.integer(nsteps))
+        as.integer(nsteps), flist)
     }
 
     ## saving results
     out <- saveOutrk(out, y, n, Nglobal, Nmtot,
-                     iin = c(1,12,13,15), iout=c(1:3,18))
+                     iin = c(1,12,13,15), iout = c(1:3, 18))
 
     attr(out, "type") <- "rk"
     if (verbose) diagnostics(out)
