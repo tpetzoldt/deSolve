@@ -367,8 +367,9 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   PROTECT(ISTATE = allocVector(INTSXP, 23));incr_N_Protect();
   for (k = 0;k<21;k++) INTEGER(ISTATE)[k+1] = iwork[k];
 
-  PROTECT(RWORK = allocVector(REALSXP, 4));incr_N_Protect();
-  for (k = 0;k<4;k++) REAL(RWORK)[k] = rwork[k+10];
+  PROTECT(RWORK = allocVector(REALSXP, 3));incr_N_Protect();
+  for (k = 1;k<3;k++) REAL(RWORK)[k] = rwork[k+1];
+  REAL(RWORK)[0] = rwork[6];
 
   INTEGER(ISTATE)[0] = idid;  
   if (idid > 0)

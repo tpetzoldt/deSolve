@@ -1,7 +1,7 @@
 \name{lsode}
 \alias{lsode}
 
-\title{General Solver for Ordinary Differential Equations (ODE)}
+\title{Solver for Ordinary Differential Equations (ODE)}
 
 \description{
   Solves the initial value problem for stiff or nonstiff systems of
@@ -209,19 +209,13 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   `lsode' returns with an unrecoverable error.  If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
       
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  lsode returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
-  TRUE, the settings of istate and rstate will be written to the screen
-
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## ========================================
+## =======================================================================
 ## Example 1:
 ##   Various ways to solve the same model.
-## ========================================
+## =======================================================================
 
 ## the model, 5 state variables
 f1 <- function  (t, y, parms)
@@ -282,11 +276,11 @@ out4  <- lsode(yini, times, f1, parms = 0, jactype = "bandusr",
 ## non-stiff method
 out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 
-## =====================================
+## =======================================================================
 ## Example 2:
 ##   diffusion on a 2-D grid
 ##   partially specified jacobian
-## =====================================
+## =======================================================================
 
 diffusion2D <- function(t, Y, par)
 {
@@ -324,11 +318,14 @@ for (i in 1:n) {
 }
 filled.contour(y, color.palette = terrain.colors)
 
-## jacfunc need not be estimated exactly
-## a crude approximation, with a smaller bandwidth will do.
-## Here the half-bandwidth 1 is used, whereas the true
-## half-bandwidths are equal to n.
-## This corresponds to ignoring the y-direction coupling in the ODEs.
+## =======================================================================
+## Example 3:
+##   jacfunc need not be estimated exactly
+##   a crude approximation, with a smaller bandwidth will do.
+##   Here the half-bandwidth 1 is used, whereas the true
+##   half-bandwidths are equal to n.
+##   This corresponds to ignoring the y-direction coupling in the ODEs.
+## =======================================================================
 
 print(system.time(
   for (i in 1:20) {
@@ -419,41 +416,15 @@ par(ask = pa)
   \bold{Models} may be defined in compiled C or Fortran code, as well as
   in an \R-function. See package vignette \code{"compiledCode"} for details.
   
-  The output will have the attributes \bold{istate}, and \bold{rstate},
-  two vectors with several useful elements.
-  
+  The output will have the attributes \bold{istate} and \bold{rstate},
+  two vectors with several
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
+
   If \code{verbose} = TRUE, the settings of istate and rstate will be
   written to the screen.
-      
-  The following elements of \bold{istate} are meaningful:
+  See vignette("deSolve") for an explanation of each element in these vectors.
 
-  \itemize{
-    \item el 1 : returns the conditions under which the last call to lsode returned. 
-      2  if lsode was successful,
-      -1 if excess work done,
-      -2 means excess accuracy requested. (Tolerances too small), 
-      -3 means illegal input detected. (See printed message.),
-      -4 means repeated error test failures. (Check all input),
-      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-    \item el 12 : The number of steps taken for the problem so far.
-    \item el 13 : The number of evaluations for the problem so far.
-    \item el 14 : The number of Jacobian evaluations  and LU decompositions so far.
-    \item el 15 : The method order last used (successfully).
-    \item el 16 : The order to be attempted on the next step.
-    \item el 17 : if el 1 = -4,-5: the largest component in the error vector,
-  }
-  \bold{rstate} contains the following:
-  \itemize{
-    \item 1: The step size in t last used (successfully).
-    \item 2: The step size to be attempted on the next step.
-    \item 3: The current value of the independent variable which the
-       solver has actually reached, i.e. the current internal mesh point
-       in t.
-    \item 4: A tolerance scale factor, greater than 1.0, computed when
-       a request for too much accuracy was detected.
-  }
-  For more information, see the comments in the original code lsode.f
 }
 \seealso{
   \itemize{

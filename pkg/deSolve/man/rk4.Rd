@@ -11,10 +11,12 @@
 \usage{
 euler(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   dllname = NULL, initfunc = dllname, initpar = parms,
-  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
+  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL,
+  forcings=NULL, initforc = NULL, fcontrol=NULL, ...)
 rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   dllname = NULL, initfunc = dllname, initpar = parms,
-  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, ...)
+  rpar = NULL, ipar = NULL, nout = 0, outnames = NULL,
+  forcings=NULL, initforc = NULL, fcontrol=NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -49,7 +51,8 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     \code{"compiledCode"} for more
     details.
   }
-  \item{parms }{vector or list of parameters used in \code{func}}
+  \item{parms }{vector or list of parameters used in \code{func}.
+  }
   \item{verbose }{a logical value that, when TRUE, triggers more
     verbose output from the ODE solver.
   }
@@ -64,7 +67,7 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   }
   \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
-    \file{dllname}. See package vignette \code{"compiledCode"}.
+    \file{dllname}. See package vignette \code{"compiledCode"},
   }
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
@@ -91,6 +94,23 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
   }
+  \item{forcings }{only used if \file{dllname} is specified: a list with
+    the forcing function data sets, each present as a two-columned matrix,
+    with (time,value); interpolation outside the interval
+    [min(\code{times}), max(\code{times})] is done by taking the value at
+    the closest data extreme.
+
+    See package vignette \code{"compiledCode"}.
+  }
+  \item{initforc }{if not \code{NULL}, the name of the forcing function
+    initialisation function, as provided in
+    \file{dllname}. It MUST be present if \code{forcings} has been given a
+    value.
+    See package vignette \code{"compiledCode"}.
+  }
+  \item{fcontrol }{A list of control parameters for the forcing functions.
+    See "Details" of \link{vode} or vignette \code{compiledCode}.
+  }
    \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.
   }
@@ -115,9 +135,9 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
 }
 
 \examples{
-## ===============================================================
+## =======================================================================
 ## Example: Analytical and numerical solutions of logistic growth
-## ===============================================================
+## =======================================================================
 
 ## the derivative of the logistic
 logist <- function(t, x, parms) {

@@ -1,6 +1,6 @@
 \name{lsodar}
 \alias{lsodar}
-\title{General Solver for Ordinary Differential Equations (ODE),
+\title{Solver for Ordinary Differential Equations (ODE),
   Switching Automatically Between Stiff and Non-stiff Methods and With
   Root Finding
 }
@@ -219,22 +219,16 @@
   \code{y} has a names attribute, it will be used to label the columns
   of the output value.
       
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  lsodar returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
-  TRUE, the settings of istate and rstate will be written to the screen.
-  
-  If a root has been found, the output will also have the attribute
+  If a root has been found, the output will have the attribute
   \code{iroot}, an integer indicating which root has been found.
   
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## ===================================================
+## =======================================================================
 ## Example 1:
 ##   from lsodar source code
-## ===================================================
+## =======================================================================
 
 Fun <- function (t, y, parms)
 {
@@ -262,11 +256,13 @@ out   <- lsodar(y = y, times = times, fun = Fun, rootfun = rootFun,
                 rtol = 1e-4, atol = c(1e-6, 1e-10, 1e-6), parms = NULL)
 print(paste("root is found for eqn", which(attributes(out)$iroot == 1)))
 print(out[nrow(out),])
+
+diagnostics(out)
   
-## ===================================================
+## =======================================================================
 ## Example 2:
 ##   using lsodar to estimate steady-state conditions
-## ===================================================
+## =======================================================================
 
 ## Bacteria (Bac) are growing on a substrate (Sub)
 model <- function(t, state, pars)
@@ -362,46 +358,16 @@ print(out)
   for details.  Examples in
   Fortran are in the \file{dynload} subdirectory of the \code{deSolve}
   package directory.
-  
-  
+
   The output will have the attributes \bold{istate} and \bold{rstate},
   and if a root was found \bold{iroot}, three vectors with several
-  useful elements.
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
 
   If \code{verbose} = TRUE, the settings of istate and rstate will be
   written to the screen.
-  
-  The following elements of \bold{istate} are meaningful:    
-   
-  \itemize{
-    \item el 1 : returns the conditions under which the last call to lsodar returned.
-      2  if lsodar was successful,
-      3 if lsodar was succesful and one or more roots were found - see \code{iroot}.
-      -1 if excess work done,
-      -2 means excess accuracy requested. (Tolerances too small),
-      -3 means illegal input detected. (See printed message.),
-      -4 means repeated error test failures. (Check all input),
-      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0.)
-    \item el 12 : The number of steps taken for the problem so far.
-    \item el 13 : The number of function evaluations for the problem so far.,
-    \item el 14 : The number of Jacobian evaluations and LU decompositions so far.,
-    \item el 15 : The method order last used (successfully).,
-    \item el 16 : The order to be attempted on the next step.,
-    \item el 17 : if el 1 = -4,-5: the largest component in the error vector,
-    \item el 18 : The length of rwork actually required.,
-    \item el 19 : The length of IUSER actually required.,
-    \item el 20 : The method indicator for the last succesful step, 1 = adams (nonstiff), 2 = bdf (stiff),
-    \item el 21 : The current method indicator to be attempted on th next step, 1 = adams (nonstiff), 2 = bdf (stiff),
-  } 
-  \bold{rstate} contains the following:
-  \itemize{
-    \item 1: The step size in t last used (successfully).
-    \item 2: The step size to be attempted on the next step.
-    \item 3: A tolerance scale factor, greater than 1.0, computed when a request for too much accuracy was detected.
-    \item 4: the value of t at the time of the last method switch, if any.
-  }
-  
+  See vignette("deSolve") for an explanation of each element in these vectors.
+
   \bold{iroot} is a vector, its length equal to the number of constraint
   functions it will have a value of 1 for the constraint function whose
   root that has been found and 0 otherwise.

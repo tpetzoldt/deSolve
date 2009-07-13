@@ -1,7 +1,7 @@
 \name{vode}
 \alias{vode}
 
-\title{General Solver for Ordinary Differential Equations (ODE)}
+\title{Solver for Ordinary Differential Equations (ODE)}
 
 \description{
   Solves the initial value problem for stiff or nonstiff systems of 
@@ -207,21 +207,14 @@
   row for each element in \code{times} unless the Fortran routine `vode'
   returns with an unrecoverable error.  If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
-      
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  vode returned. Normal is \code{istate[1] = 2}.  If \code{verbose =
-  TRUE}, the settings of istate and rstate will be written to the
-  screen.
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## =============================================================================
+## =======================================================================
 ## ex. 1
 ## The famous Lorenz equations: chaos in the earth's atmosphere
 ## Lorenz 1963. J. Atmos. Sci. 20, 130-141.
-## =============================================================================
+## =======================================================================
 
 chaos <- function(t, state, parameters)
 {
@@ -241,12 +234,12 @@ out   <- as.data.frame(vode(state, times, chaos, 0))
 
 plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
 
-## =============================================================================
+## =======================================================================
 ## ex. 2
 ## SCOC model, in fortran  - to see the FORTRAN code:
 ## browseURL(paste(system.file(package="deSolve"),"/dynload/scoc.f",sep=""))
 ## example from Soetaert and Herman, 2009, chapter 3. (simplified)
-## =============================================================================
+## =======================================================================
 
 # Forcing function data
 Flux <- matrix(ncol=2,byrow=TRUE,data=c(
@@ -406,54 +399,15 @@ lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
   in an R-function. See package vignette \code{"compiledCode"} for details.
   
   
-   The output will have the attributes \bold{istate}, and \bold{rstate},
-   two vectors with several useful elements.
+  The output will have the attributes \bold{istate} and \bold{rstate},
+  two vectors with several
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
 
-   If \code{verbose = TRUE}, the settings of istate and rstate will be
-   written to the screen.
-      
-   The following elements of \bold{istate} are meaningful:
-   \describe{
-     \item{el 1:}{returns the conditions under which the last call to
-       vode returned.
-       
-       \itemize{
-         \item  2 if DVODE was successful,
-         \item -1 if excess work done,
-         \item -2 means excess accuracy requested. (Tolerances too small),
-         \item -3 means illegal input detected. (See printed message.),
-         \item -4 means repeated error test failures. (Check all input),
-         \item -5 means repeated convergence failures. (Perhaps bad
-           Jacobian supplied or wrong choice of MF or tolerances.),
-         \item -6 means error weight became zero during
-           problem. (Solution component i vanished, and \code{atol} or
-           \code{atol(i)} = 0).
-       }
-     }
-     \item{el 12:}{The number of steps taken for the problem so far.}
-     \item{el 13:}{The number of function evaluations for the problem so far.}
-     \item{el 14:}{The number of Jacobian evaluations so far.}
-     \item{el 15:}{The method order last used (successfully).}
-     \item{el 16:}{The order to be attempted on the next step.}
-     \item{el 17:}{if el 1 = -4,-5: the largest component in the error vector}
-     \item{el 20:}{The number of matrix LU decompositions so far.}
-     \item{el 21:}{The number of nonlinear (Newton) iterations so far.}
-     \item{el 22:}{The number of convergence failures of the solver so far.}
-     \item{el 23:}{The number of error test failures of the integrator so far.}
-   }
-   \bold{rstate} contains the following:
-   \describe{
-     \item{1:}{The step size in t last used (successfully).}
-     \item{2:}{The step size to be attempted on the next step.}
-     \item{3:}{The current value of the independent variable which the
-       solver has actually reached, i.e. the current internal mesh point
-       in t.
-     }
-     \item{4:}{A tolerance scale factor, greater than 1.0, computed when
-       a request for too much accuracy was detected.
-     }
-   }
-   For more information, see the comments in the original code dvode.f
+  If \code{verbose} = TRUE, the settings of istate and rstate will be
+  written to the screen.
+  See vignette("deSolve") for an explanation of each element in these vectors.
+
 
   The \bold{fcontrol} argument is a list that can supply any of the following
   components (conform the definitions in the \link{approx} function):

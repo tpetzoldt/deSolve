@@ -74,9 +74,9 @@
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-#############################################################
-# Diffusion in 3-D; imposed boundary conditions
-#############################################################
+## =======================================================================
+## Diffusion in 3-D; imposed boundary conditions
+## =======================================================================
 diffusion3D <- function(t,Y,par)
   {
 

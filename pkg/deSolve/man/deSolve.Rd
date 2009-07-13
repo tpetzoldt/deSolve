@@ -3,8 +3,8 @@
 \alias{deSolve}
 \docType{package}
 \title{
-  General Solvers for initial value problems of Ordinary Differential Equations
-  (ODE), partial differential equations (PDE) and for Differential Algebraic
+  General Solvers for Initial Value Problems of Ordinary Differential Equations
+  (ODE), Partial Differential Equations (PDE) and for Differential Algebraic
   Equations (DAE)
 }
 \description{
@@ -27,7 +27,7 @@
   \tabular{ll}{
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
-    Version: \tab 1.4\cr
+    Version: \tab 1.5\cr
     Date:    \tab 2009-06-25\cr
     License: \tab GNU Public License 2 or above\cr
   }

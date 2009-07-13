@@ -6,25 +6,10 @@
 ###          on input, y and dy contains the initial values of the state 
 ###          variables and rates of changes for times[1]
 ###          parms is a vector of parameters for func.  They should not
-###          change during the integration. `rtol', and `atol'
-###          are, respectively, the relative tolerance parameter, and the
-###          absolute tolerance parameter.  `atol' may be scaler or vector.
-###          `rtol' is a scalar or a vector.
-###
-###          The return value is a matrix whose rows correspond to the values
-###          in `times', and columns to the elements of `y'.
-###
-###          'res' may be a string instead of an R function.  If
-###          so, then if jacres is not NULL, it must be a character string
-###          as well.  In these cases, 'res' is the name
-###          of a function to be found in the dll named 'dllname' 
-###          (without extension). 'jacres' points to the name of the Jacobian.
+###          change during the integration.
 ### ============================================================================
 
-
-
-
-daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
+daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     nalg=0, rtol=1e-6, atol=1e-8, jacfunc=NULL, jacres=NULL,
     jactype = "fullint", estini = NULL, verbose=FALSE, tcrit = NULL,
     hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord =5, bandup=NULL,
@@ -85,21 +70,21 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
 
 ### Jacobian, method flag
   if (jactype == "fullint" )
-    imp <- 22 # full Jacobian, calculated internally
+    imp <- 22 # full, calculated internally
   else if (jactype == "fullusr" )
-    imp <- 21 # full Jacobian, specified by user function
+    imp <- 21 # full, specified by user function
   else if (jactype == "bandusr" )
-    imp <- 24 # banded Jacobian, specified by user function
+    imp <- 24 # banded, specified by user function
   else if (jactype == "bandint" )
-    imp <- 25 # banded Jacobian, specified internally
-  else stop("jactype must be one of fullint, fullusr, bandusr or bandint")
+    imp <- 25 # banded, calculated internally
+  else stop("'jactype' must be one of 'fullint', 'fullusr', 'bandusr' or 'bandint'")
 
   if (imp %in% c(24,25) && is.null(bandup))
-    stop("daspk: bandup must be specified if banded Jacobian")
+    stop("'bandup' must be specified if banded Jacobian")
   if (imp %in% c(24,25) && is.null(banddown))
-    stop("daspk: banddown must be specified if banded Jacobian")
+    stop("'banddown' must be specified if banded Jacobian")
 
-##  if (miter == 4) Jacobian should have empty banddown empty rows-vode+daspk only! 
+  #  if (miter == 4) Jacobian should have empty banddown empty rows-vode+daspk only!
   if (imp == 24)
     erow<-matrix(nc=n,nr=banddown,0)
   else erow<-NULL
@@ -336,7 +321,7 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
 
   info[9] <- maxord!=5
  
-  if (! is.null (estini)) info[11] <- estini        # daspk will estimate dy and algebraic equ.
+  if (! is.null (estini)) info[11] <- estini # daspk will estimate dy and algebraic equ.
   if (info[11] > 2 || info[11]< 0 ) stop("daspk: illegal value for estini")
     
 # length of rwork and iwork 
@@ -404,6 +389,8 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
 
   out [1,1] <- times[1]
   istate <- attr(out, "istate")
+  istate <- setIstate(istate,iin=c(1,8:9,12:20),
+                      iout=c(1,6,5,2:4,13,12,19,9,8,11))
   rstate <- attr(out, "rstate")
 
   ## ordinary output variables already estimated
@@ -416,5 +403,5 @@ daspk          <- function(y, times, func=NULL, parms,  dy=NULL,  res=NULL,
   attr(out, "type") <- "daspk"
   dimnames(out) <- list(nm, NULL)
   if (verbose) diagnostics(out)
-  return(t(out))
+  t(out)
 }

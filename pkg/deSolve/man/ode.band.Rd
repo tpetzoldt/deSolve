@@ -75,11 +75,11 @@
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
 
-## =================================================
-## The Aphid model from Soetaert and Herman, 2008.
+## =======================================================================
+## The Aphid model from Soetaert and Herman, 20098.
 ## A practical guide to ecological modelling.
 ## Using R as a simulation platform. Springer.
-## =================================================
+## =======================================================================
 
 ## 1-D diffusion model
 

@@ -1,6 +1,6 @@
 \name{DLLres}
 \alias{DLLres}
-\title{Evaluates a residual derivative function represented in a DLL
+\title{Evaluates a Residual Derivative Function Represented in a DLL
 }
 \description{Calls a residual function, F(t,y,y') of a DAE system (differential
   algebraic equations) defined in a compiled language as a DLL.
@@ -81,9 +81,9 @@ package \code{deSolve}.
 \keyword{utilities}
 
 \examples{
-## =============================================================================
-## The residuals from the chemical model from daspk, with production a forcing function
-## =============================================================================
+## =========================================================================
+## Residuals from the daspk chemical model, production a forcing function
+## =========================================================================
 # Parameter values and initial conditions
 # see example(daspk) for a more comprehensive implementation
 

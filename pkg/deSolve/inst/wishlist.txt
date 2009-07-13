@@ -1,22 +1,37 @@
-Started this release
-- code + doc for interpolation in C and Fortran
-- linear and constant interpolation    (see example(vode))
-- interpolation options in a list - to avoid growth of arguments..
-  AND assure backward compatibility
+deSolve release 2.0
 
-To do
-- explain forcing options in compiledCode vignette
+** done **
+- code + doc for temporal interpolation in C and Fortran - done
+- linear + constant interpolation - done
+- interpolation options in a list - avoids growth of arguments..
+  AND assure backward compatibility - done
+- explain forcing options in compiledCode vignette   - done
+- Update vignette with diagnostics example - done
+- S3 classes for DE output  (DE = differential equation) - done
+- print method for DE output (done - in file ode.R)
+- improve diagnostics for all    (note: NO S3 classes needed...)
 
-Wishlist this release
-- forcings and initfunc for R models too.
+** in progress **
+- make help files more readable
+   * removed istate and rstate description from Rd files
+     -> now in a TABLE in vignette - but still needs to be checked
 
+** to decide **
+do we need:
+- ? root extraction for lsodar or is "attributes(out)$iroot" enough?
+- ? istate and rstate extraction for all?  or "attributes(out)$istate" ?
+- ? write a plot.ode function ? (~ as in FME), multiple figures on a window
+
+** To do **
+- make possible to use banded solvers with compiled code (now only lsodes) KS
+- more diagnostics for rk  - ThPe
+- PID stepsize control for rk - ThPe
+- unscramble output names in case 1-D model (see example Thomas !) - KS
+
+** Wishlist **
+- forcings and initfunc for R models too. -
+  KS: difficult - what is the best strategy ?
+    * compatible to forcing functions in DLL
+    * compatible to approxfun, but not using bisectioning
 - pass control parameters (KS: do not understand: time steps etc???)
-
-
-Wishlist for Future Releases:
-
-- improve diagnostics (S3 classes)
-- more diagnostics for rk
-- PID stepsize control for rk
-
 

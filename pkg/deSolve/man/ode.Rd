@@ -3,7 +3,8 @@
 
 \title{General Solver for Ordinary Differential Equations}
 
-\description{Solves a system of ordinary differential equations.}
+\description{Solves a system of ordinary differential equations; a wrapper
+around the implemented ODE solvers}
 
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
@@ -100,9 +101,9 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 \keyword{math}
 \examples{
 
-## =============================================
+## =======================================================================
 ## Example1: Predator-Prey Lotka-Volterra model
-## =============================================
+## =======================================================================
 
 LVmod <- function(Time, State, Pars)
 {
@@ -134,9 +135,9 @@ matplot(out$time,out[,2:3],type = "l",xlab = "time",ylab = "Conc",
         main = "Lotka-Volterra",lwd = 2)
 legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 
-## ==========================================================
+## =======================================================================
 ## Example2: Resource-producer-consumer Lotka-Volterra model
-## ==========================================================
+## =======================================================================
 
 ## Note:
 ## 1. parameter and state variable names made

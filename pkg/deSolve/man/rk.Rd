@@ -27,7 +27,8 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   hini = hmax, ynames = TRUE, method = rkMethod("rk45dp7", ... ),
   maxsteps = 5000, dllname = NULL, initfunc = dllname,
   initpar = parms, rpar = NULL, ipar = NULL,
-  nout = 0, outnames = NULL, ...)
+  nout = 0, outnames = NULL, forcings=NULL,
+  initforc = NULL, fcontrol=NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
@@ -63,7 +64,8 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     for more details.
     
   }
-  \item{parms }{vector or list of parameters used in \code{func}}
+  \item{parms }{vector or list of parameters used in \code{func}.
+  }
   \item{rtol }{relative error tolerance, either a scalar or an array as
     long as \code{y}. Only applicable to methods with variable time
     step, see details.
@@ -150,7 +152,23 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
   }
+  \item{forcings }{only used if \file{dllname} is specified: a list with
+    the forcing function data sets, each present as a two-columned matrix,
+    with (time,value); interpolation outside the interval
+    [min(\code{times}), max(\code{times})] is done by taking the value at
+    the closest data extreme.
 
+    See package vignette \code{"compiledCode"}.
+  }
+  \item{initforc }{if not \code{NULL}, the name of the forcing function
+    initialisation function, as provided in
+    \file{dllname}. It MUST be present if \code{forcings} has been given a
+    value.
+    See package vignette \code{"compiledCode"}.
+  }
+  \item{fcontrol }{A list of control parameters for the forcing functions.
+    See "Details" of \link{vode} or vignette \code{compiledCode}.
+  }
   \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.
   }
@@ -259,9 +277,9 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
 
 \examples{
-## =========================================================
+## =======================================================================
 ## Example: Resource-producer-consumer Lotka-Volterra model
-## =========================================================
+## =======================================================================
 
 ## Note:
 ## parameters are a list, names accessible via "with" function

@@ -284,8 +284,7 @@ surprised to find the double precision vector \code{yout} and
 the integer vector \code{ip} at the
 end. Indeed none of the \pkg{ODEPACK} functions allow this, although
 it is standard in the \code{vode} and \code{daspk} codes.  To make all
-integrators compatible (and as we think the omission of these vectors
-in the \pkg{ODEPACK} solvers is a design flaw), we have altered the
+integrators compatible, we have altered the
 \pkg{ODEPACK} \proglang{FORTRAN} codes to consistently pass these
 vectors. }
 

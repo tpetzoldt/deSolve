@@ -78,10 +78,10 @@
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## ============================================================
+## =======================================================================
 ## A Lotka-Volterra predator-prey model with predator and prey
 ## dispersing in 2 dimensions
-## ============================================================
+## =======================================================================
 
 ## ==================
 ## Model definitions
@@ -161,11 +161,11 @@ for (i in seq(1, length(times), by = 1))
    col = Col(100), xlab = "x", ylab = "y", zlim = range(out[,2:(NN+1)]))
 }
 
-## ============================================================
-## An example with a cyclic boundary condition...
+## =======================================================================
+## An example with a cyclic boundary condition.
 ## Diffusion in 2-D; extra flux on 2 boundaries,
 ## cyclic boundary in y
-## ============================================================
+## =======================================================================
 
 
 diffusion2D <- function(t,Y,par)

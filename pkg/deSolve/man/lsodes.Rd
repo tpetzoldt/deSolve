@@ -1,6 +1,6 @@
 \name{lsodes}
 \alias{lsodes}
-\title{General Solver for Ordinary Differential Equations (ODE) With
+\title{Solver for Ordinary Differential Equations (ODE) With
   Sparse Jacobian
 }
 \description{
@@ -205,21 +205,16 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \code{lsodes} returns with an unrecoverable error.  If \code{y} has a
   names attribute, it will be used to label the columns of the output
   value.
-      
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  lsodes returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
-  TRUE, the settings of istate and rstate will be written to the screen.
+
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
 ## Various ways to solve the same model.
 
-## =============================
-## The example from lsodes code
+## =======================================================================
+## The example from lsodes source code
 ## A chemical model
-## =============================
+## =======================================================================
 
 n  <- 12
 y  <- rep(1, n)
@@ -262,18 +257,18 @@ chemistry <- function (time,Y,pars)
   })
 }
 
-## --------------------------------------------------------------
+## =======================================================================
 ## application 1. lsodes estimates the structure of the jacobian
 ##                and calculates the jacobian by differences
-## --------------------------------------------------------------
+## =======================================================================
 out <- lsodes(func = chemistry, y = y, parms = parms, times = times,
               atol = atol, rtol = rtol, verbose = TRUE)
 
-## --------------------------------------------------------------
+## =======================================================================
 ## application 2. the structure of the jacobian is input
 ##                lsodes calculates the jacobian by differences
 ##                this is not so efficient...
-## --------------------------------------------------------------
+## =======================================================================
 
 ## elements of Jacobian that are not zero
 nonzero <-  matrix(nc = 2, byrow = TRUE, data = c(
@@ -297,10 +292,10 @@ out2 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
             sparsetype = "sparseusr", inz = nonzero,   
              atol = atol, rtol = rtol, verbose = TRUE, lrw = 351)
                             
-## --------------------------------------------------------------
+## =======================================================================
 ## application 3. lsodes estimates the structure of the jacobian
 ##                the jacobian (vector) function is input
-## --------------------------------------------------------------
+## =======================================================================
 chemjac <- function (time, Y, j, pars)
 {
   with (as.list(pars), {
@@ -366,11 +361,11 @@ chemjac <- function (time, Y, j, pars)
 out3 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
               jacvec = chemjac, atol = atol, rtol = rtol)
 
-## --------------------------------------------------------------------
+## =======================================================================
 ## application 4. The structure of the jacobian (nonzero elements) AND
 ##                the jacobian (vector) function is input
 ##                not very efficient...
-## --------------------------------------------------------------------
+## =======================================================================
 out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
                lrw = 351, sparsetype = "sparseusr", inz = nonzero,
                jacvec = chemjac, atol = atol, rtol = rtol,
@@ -432,45 +427,15 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
   \bold{Models} may be defined in compiled C or Fortran code, as well as
   in an \R-function. See package vignette \code{"compiledCode"} for details.
   
-  
-  The output will have the attributes  \bold{istate}, and
-  \bold{rstate}, two vectors with several useful elements.
-  
-  If \code{verbose = TRUE}, the settings of istate and rstate will be
+  The output will have the attributes \bold{istate} and \bold{rstate},
+  two vectors with several
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
+
+  If \code{verbose} = TRUE, the settings of istate and rstate will be
   written to the screen.
-      
-  The following elements of \bold{istate} are meaningful:
-  
-  \itemize{
-    \item el 1 : returns the conditions under which the last call to lsodes returned. 
-      2  if lsodes was successful,
-      -1 if excess work done,
-      -2 means excess accuracy requested. (Tolerances too small),
-      -3 means illegal input detected. (See printed message.),
-      -4 means repeated error test failures. (Check all input),
-      -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances),
-      -6 means error weight became zero during problem. (Solution component i vanished, and atol or atol(i) = 0).
-    \item el 12 : The number of steps taken for the problem so far.
-    \item el 13 : The number of function evaluations for the problem so far, excluding those for structure determination.
-    \item el 14 : The number of Jacobian evaluations  and LU decompositions so far, excluding those for structure determination.
-    \item el 15 : The method order last used (successfully).,
-    \item el 16 : The order to be attempted on the next step.,
-    \item el 17 : if el 1 = -4,-5: the largest component in the error vector,
-    \item el 18 : The length of rwork actually required.,
-    \item el 19 : The length of iwork actually required.,
-    \item el 20 : The number of nonzero elements in the sparse jacobian.
-  }
-  \bold{rstate} contains the following:
-  \itemize{
-    \item 1: The step size in t last used (successfully).
-    \item 2: The step size to be attempted on the next step.
-    \item 3: The current value of the independent variable which the
-      solver has actually reached, i.e. the current internal mesh point
-      in t.
-    \item 4: A tolerance scale factor, greater than 1.0, computed when a
-      request for too much accuracy was detected.
-  }
-  For more information, see the comments in the original code lsodes.f
+  See vignette("deSolve") for an explanation of each element in these vectors.
+
 }
 \seealso{
   \itemize{

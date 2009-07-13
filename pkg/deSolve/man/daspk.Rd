@@ -1,6 +1,6 @@
 \name{daspk}
 \alias{daspk}
-\title{General Solver for Differential Algebraic Equations (DAE)}
+\title{Solver for Differential Algebraic Equations (DAE)}
 \description{
   Solves either:
   \itemize{
@@ -269,15 +269,10 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   \code{y} has a names attribute, it will be used to label the columns
   of the output value.
       
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  daspk returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
-  TRUE, the settings of istate and rstate will be written to the screen.
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## ====================================================
+## =======================================================================
 ## Coupled chemical reactions including an equilibrium
 ## modeled as (1) an ODE and (2) as a DAE
 ##
@@ -285,7 +280,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
 ## subjected to equilibrium reaction D <- > A + B
 ## D is produced at a constant rate, prod
 ## B is consumed at 1s-t order rate, r
-## ====================================================
+## Chemical problem formulation 1: ODE
+## =======================================================================
 
 ## Dissociation constant
 K <- 1 
@@ -296,9 +292,6 @@ pars <- c(
         r    = 1,
         prod = 0.1)
 
-## ====================================
-## Chemical problem formulation 1: ODE
-## ====================================
 
 Fun_ODE <- function (t, y, pars)
 {
@@ -315,14 +308,14 @@ Fun_ODE <- function (t, y, pars)
   })
 }
 
-## ======================================================
+## =======================================================================
 ## Chemical problem formulation 2: DAE
 ## 1. get rid of the fast reactions ra and rb by taking
 ## linear combinations   : dD+dA = prod (res1) and
 ##                         dB-dA = -r*B (res2)
 ## 2. In addition, the equilibrium condition (eq) reads:
 ## as ra = rb : ka*D = ka/K*A*B = >      K*D = A*B
-## ======================================================
+## =======================================================================
 
 Res_DAE <- function (t, y, yprime, pars)
 {
@@ -375,9 +368,9 @@ max(abs(ODE-DAE))
 
 par(mfrow = opa)
 
-## ======================================
+## =======================================================================
 ## same DAE model, now with the jacobian
-## ======================================
+## =======================================================================
 jacres_DAE <- function (t, y, yprime, pars, cj)
 {
     with (as.list(c(y, yprime, pars)), {
@@ -407,9 +400,9 @@ max(abs(DAE-DAE2))
 
 ## See \dynload subdirectory for a FORTRAN implementation of this model
 
-## =============================================================================
+## =======================================================================
 ## The chemical model as a DLL, with production a forcing function
-## =============================================================================
+## =======================================================================
 times <- seq(0, 100, by = 2)
 
 pars <- c(K = 1, ka   = 1e6, r    = 1)
@@ -517,52 +510,15 @@ par(mfrow = opa)
   in Fortran are in the \file{dynload} subdirectory of the
   \code{deSolve} package directory.
 
-  The output will have the attributes \bold{istate}, and \bold{rstate}, two
-  vectors with several useful elements.
+  The output will have the attributes \bold{istate} and \bold{rstate},
+  two vectors with several
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
 
   If \code{verbose} = TRUE, the settings of istate and rstate will be
   written to the screen.
-  
-  The following elements of \bold{istate} are meaningful:
-  \itemize{
-    \item el 1 : returns the conditions under which the last call to
-      daspk returned.
-      2  if daspk was successful,
-      -1 if excess work done,
-      -2 means excess accuracy requested. (Tolerances too small),
-      -3 means illegal input detected. (See printed message.),
-      -4 means repeated error test failures. (Check all input),
-      -5 means repeated convergence failures.
-        (Perhaps bad Jacobian supplied or wrong choice of MF or tolerances.),
-      -6 means error weight became zero during problem.
-	(Solution component i vanished, and atol or atol(i) = 0.)
-    \item el 12 : The number of steps taken for the problem so far.
-    \item el 13 : The number of function evaluations for the problem so
-      far.,
-    \item el 14 : The number of Jacobian evaluations so far.,
-    \item el 15 : The method order last used (successfully).,
-    \item el 16 : The order to be attempted on the next step.,
-    \item el 17 : if el 1 = -4,-5: the largest component in the error
-      vector,
-    \item el 20 : The number of matrix LU decompositions so far.,
-    \item el 21 : The number of nonlinear (Newton) iterations so far.,
-    \item el 22 : The number of convergence failures of the solver so
-      far ,
-    \item el 23 : The number of error test failures of the integrator so
-      far.
-  }
-  \bold{rstate} contains the following:
-  \itemize{
-    \item 1: The step size in t last used (successfully).
-    \item 2: The step size to be attempted on the next step.
-    \item 3: The current value of the independent variable which the
-      solver has actually reached, i.e. the current internal mesh point
-      in t.
-    \item 4: A tolerance scale factor, greater than 1.0, computed when a
-      request for too much accuracy was detected.
-  }
-  For more information about possible options, see the comments in the
-  original code daspk.f.
+  See vignette("deSolve") for an explanation of each element in these vectors.
+
 }
 \seealso{
   \itemize{

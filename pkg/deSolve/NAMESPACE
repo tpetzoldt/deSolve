@@ -6,3 +6,5 @@ export(aquaphy, ccl4model, SCOC, daspk, lsoda, lsodar, lsode, lsodes,
 export(rk, rk4, euler, rkMethod)
 
 export(DLLfunc, DLLres)
+
+S3method("print", "DE")

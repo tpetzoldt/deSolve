@@ -1,6 +1,6 @@
 \name{DLLfunc}
 \alias{DLLfunc}
-\title{Evaluates a derivative function represented in a DLL}
+\title{Evaluates a Derivative Function Represented in a DLL}
 \description{Calls a function, defined in a compiled language as a DLL}
 \usage{DLLfunc(func, times, y, parms, dllname,
   initfunc=dllname,  rpar=NULL, ipar=NULL, nout=0,
@@ -74,10 +74,10 @@ packages \code{deSolve} and/or \code{rootSolve}.
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
 \examples{
-## =============================================================================
+## ==========================================================================
 ## ex. 1
 ## ccl4model
-## =============================================================================
+## ==========================================================================
 # Parameter values and initial conditions
 # see example(ccl4model) for a more comprehensive implementation
 
@@ -92,10 +92,10 @@ DLLfunc(y = yini, dllname = "deSolve", func = "derivsccl4",
         initfunc = "initccl4", parms = Parms, times = 1,
         nout = 3, outnames = c("DOSE", "MASS", "CP")  )
 
-## =============================================================================
+## ==========================================================================
 ## ex. 2
 ## SCOC model, in fortran  - to see the FORTRAN code:
-## =============================================================================
+## ==========================================================================
 
 # Forcing function "data"
 Flux  <- matrix(ncol=2,byrow=TRUE,data=c(1, 0.654, 2, 0.167))

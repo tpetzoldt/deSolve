@@ -1,7 +1,7 @@
 \name{lsoda}
 \alias{lsoda}
 \title{
-  General Solver for Ordinary Differential Equations (ODE),
+  Solver for Ordinary Differential Equations (ODE),
   Switching Automatically Between Stiff and Non-stiff Methods
 }
 \description{
@@ -209,15 +209,10 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   returns with an unrecoverable error. If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
     
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements.  See details.  The first
-  element of istate returns the conditions under which the last call to
-  lsoda returned. Normal is \code{istate[1] = 2}.  If \code{verbose} =
-  TRUE, the settings of istate and rstate will be written to the screen.
 }
 \author{R. Woodrow Setzer <setzer.woodrow@epa.gov>}
 \examples{
-## ===================================================
+## =======================================================================
 ## Example 1:
 ##   A simple resource limited Lotka-Volterra-Model
 ##
@@ -226,7 +221,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 ##    accessible via "with" function
 ## 2. function sigimp accessible through lexical scoping
 ##    (see also ode and rk examples)
-## ===================================================
+## =======================================================================
 
 lvmodel <- function(t, x, parms) {
   with(as.list(c(parms, x)), {
@@ -268,10 +263,10 @@ plot(out$time, out$K, type = "l", ylab = "consumer")
 plot(out$P, out$K, type = "l", xlab = "producer", ylab = "consumer")
 par(mfrow = mf)
 
-## ===================================================
+## =======================================================================
 ## Example 2:
 ##  from lsoda source code
-## ===================================================
+## =======================================================================
 
 ## names makes this easier to read, but may slow down execution.
 parms   <- c(k1 = 0.04, k2 = 1e4, k3 = 3e7)
@@ -401,42 +396,15 @@ diagnostics(outJ) # shows what lsoda did internally
   Examples in both C and Fortran are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
   
-  The output will have the attributes \bold{istate}, and \bold{rstate},
-  two vectors with several useful elements.
+  The output will have the attributes \bold{istate} and \bold{rstate},
+  two vectors with several
+  useful elements. Their values can be displayed using R-function
+  \code{attributes}, or by calling \code{\link{diagnostics}}
 
-  If \code{verbose = TRUE}, the settings of istate and rstate will be
+  If \code{verbose} = TRUE, the settings of istate and rstate will be
   written to the screen.
+  See vignette("deSolve") for an explanation of each element in these vectors.
 
-  The following elements of \bold{istate} are meaningful:    
-  \itemize{
-    \item el 1 : returns the conditions under which the last call to lsoda returned.
-    2  if LSODA was successful, -1 if excess work done, -2 means excess accuracy
-    requested. (Tolerances too small),
-    -3 means illegal input detected. (See printed message.), -4 means repeated
-    error test failures. (Check all input),
-    -5 means repeated convergence failures. (Perhaps bad Jacobian supplied or
-    wrong choice of MF or tolerances.),
-    -6 means error weight became zero during problem. (Solution component i
-    vanished, and atol or atol(i) = 0.)
-    \item el 12 : The number of steps taken for the problem so far.
-    \item el 13 : The number of function evaluations for the problem so far.,
-    \item el 14 : The number of Jacobian evaluations and LU decompositions so far.,
-    \item el 15 : The method order last used (successfully).,
-    \item el 16 : The order to be attempted on the next step.,
-    \item el 17 : if el 1 = -4,-5: the largest component in the error vector,
-    \item el 20 : The method indicator for the last succesful step, 1 = adams
-      (nonstiff), 2 = bdf (stiff),
-    \item el 21 : The current method indicator to be attempted on th next step,
-      1 = adams (nonstiff), 2 = bdf (stiff),
-   }
-   \bold{rstate} contains the following:
-   \itemize{
-      \item 1: The step size in t last used (successfully).
-      \item 2: The step size to be attempted on the next step.
-      \item 3: A tolerance scale factor, greater than 1.0, computed when a
-        request for too much accuracy was detected.
-      \item 4: the value of t at the time of the last method switch, if any.
-}
     }
 \seealso{
   \itemize{
