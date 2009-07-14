@@ -232,6 +232,15 @@ out   <- ode(Y,times,model,parms=parms,
 \subsection{ODE model implementation in C}
 \label{sec:Cexamp}
 
+In order to create compiled models (.DLL = dynamic link libraries on
+Windows or .so = shared objects on other systems) you must have a
+recent version of the GNU compiler suite installed, which is quite
+standard for Linux. Windows users find all the required tools on
+\url{http://www.murdoch-sutherland.com/Rtools/}.  Getting DLLs
+produced by other compilers to communicate with R is much more
+complicated and therefore not recommended. More details can be found
+on \url{http://cran.r-project.org/doc/manuals/R-admin.html}.
+
 The call to the derivative and Jacobian function is more complex for
 compiled code compared to \proglang{R}-code, because it has to comply
 with the interface needed by the integrator source codes.
@@ -333,7 +342,8 @@ name (\code{k1},...).
 \subsection{Running ODE models implemented in compiled code}
 
 To run the models described above, the code in \code{mymod.f} and
-\code{mymod.c} must first be compiled.
+\code{mymod.c} must first be compiled\footnote{This requires a
+  correctly installed GNU compiler, see above.}.
 
 This can simply be done in \proglang{R} itself, using the
 \code{system} command:
