@@ -10,6 +10,7 @@ deSolve release 2.0
 - S3 classes for DE output  (DE = differential equation) - done
 - print method for DE output (done - in file ode.R)
 - improve diagnostics for all    (note: NO S3 classes needed...)
+- forcing functions for rk solvers
 
 ** in progress **
 - make help files more readable
@@ -19,8 +20,14 @@ deSolve release 2.0
 ** to decide **
 do we need:
 - ? root extraction for lsodar or is "attributes(out)$iroot" enough?
-- ? istate and rstate extraction for all?  or "attributes(out)$istate" ?
-- ? write a plot.ode function ? (~ as in FME), multiple figures on a window
+  -> T.P., yes, we need a small function (or a specific print)
+- ? istate and rstate extraction for all?  or "attributes(out)$istate"?
+  -> T.P.: what do you mean? We already have diagnostics. If this is
+     not enough for you: write two functions istate() and rstate()
+- ? write a plot.ode function ? (~ as in FME), multiple figures on a
+   window
+  -> TP: yes! My students loose most of their time in R with plotting
+
 
 ** To do **
 - make possible to use banded solvers with compiled code (now only lsodes) KS
@@ -33,5 +40,14 @@ do we need:
   KS: difficult - what is the best strategy ?
     * compatible to forcing functions in DLL
     * compatible to approxfun, but not using bisectioning
+  TP: suggestion 1: write a wrapper, similar to the func but with
+    the approx stuff outside; this then calls func
+  suggestion 2: give "initforc" the option to set forcings with an R function
+    and then interpolate this behind the scene with the C
+    functionality
+  suggestion 3: leave it as is and provide a special approxSeq, based
+    on your existing sequentially interpolating C function.
+    This is IMHO the simplest method to understand for our students.
 - pass control parameters (KS: do not understand: time steps etc???)
-
+  TP: I mean a few additional control parameters for the rk methods,
+    e.g. tuning of stepsize control. Can be passed via rkMethod.

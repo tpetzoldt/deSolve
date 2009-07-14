@@ -294,7 +294,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   { jroot = (int *) R_alloc(nroot, sizeof(int));
      for (j=0; j<nroot; j++) jroot[j] = 0;
   
-    if (isDll ==1) 
+    if (isDll) 
     {
       root = (root_func *) R_ExternalPtrAddr(rootfunc);
     } else {

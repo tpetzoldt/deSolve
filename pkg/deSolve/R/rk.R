@@ -112,8 +112,6 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         as.double(rpar), as.integer(ipar), method,
         as.integer(nsteps), flist)
     } else {                              # fixed step methods
-      #cat("hini=", hini, "\n")  # !!! temporary workaround; fix this
-      #hini <- 0                 # !!! temporary workaround; fix this
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho,
