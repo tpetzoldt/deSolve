@@ -9,7 +9,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP Parms, SEXP Nout, SEXP Rho,
   SEXP Rtol, SEXP Atol, SEXP Tcrit, SEXP Verbose,
   SEXP Hmin, SEXP Hmax, SEXP Hini, SEXP Rpar, SEXP Ipar,
-		 SEXP Method, SEXP Maxsteps, SEXP Flist) {
+  SEXP Method, SEXP Maxsteps, SEXP Flist) {
 
   /**  Initialization **/
   init_N_Protect();
@@ -20,9 +20,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP  R_yout;
   double *y0,  *y1,  *y2,  *dy1,  *dy2, *out, *yout;
 
-  double err=0, dtnew=0, t, dt, t_ext, tmax;
+  double err=0, errold=0, dtnew=0, t, dt, t_ext, tmax;
 
-  SEXP R_FSAL, Interpolate;
+  SEXP R_FSAL, Interpolate, Alpha, Beta;
   int fsal = FALSE;       /* assume no FSAL */
   int interpolate = TRUE; /* polynomial interpolation is done by default */
 
@@ -74,6 +74,14 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (length(Interpolate)) interpolate = INTEGER(Interpolate)[0];
 
   double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+  double  beta  = 0;      //0.4/qerr;
+  double  alpha = 1/qerr; //1/qerr - 0.75 * beta;
+
+  PROTECT(Beta = getListElement(Method, "beta")); incr_N_Protect();
+  if (length(Beta)) beta = REAL(Beta)[0];
+
+  PROTECT(Alpha = getListElement(Method, "alpha")); incr_N_Protect();
+  if (length(Alpha)) alpha = REAL(Alpha)[0];
 
   PROTECT(R_FSAL = getListElement(Method, "FSAL")); incr_N_Protect();
   if (length(R_FSAL)) fsal = INTEGER(R_FSAL)[0];
@@ -89,7 +97,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
   /*------------------------------------------------------------------------*/
-   int isDll = FALSE;
+  int isDll = FALSE;
   int ntot  =  0;
   int isOut = FALSE; /* do I need this? */
   int lrpar= 0, lipar = 0;
@@ -245,6 +253,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /*====================================================================*/
     /*      stepsize adjustment                                           */
     /*====================================================================*/
+    errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
     err = maxerr(y1, y2, atol, rtol, neq);
 
     dtnew = dt;
@@ -254,10 +263,13 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       dtnew = hmax;
     } else if (err < 1.0) {
       accept = TRUE;
-      dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr));
+      //dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr));
+      dtnew = fmin(hmax, dt * 0.9 * pow(err, -alpha) * pow(errold, beta));
     } else if (err > 1.0) {
       accept = FALSE;
-      dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2);
+      //dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2);
+      dtnew = dt * fmax(0.9 * pow(err, -alpha) * pow(errold, beta), 0.2);
+      //dtnew = dt * 0.9 * pow(err, -alpha) * pow(errold, beta);
     }
 
     if (dtnew < hmin) {

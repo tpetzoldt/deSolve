@@ -93,16 +93,19 @@ rkMethod(method = NULL, ...)
   \item{varstep}{boolean value specifying if the method allows for
     variable time step (\code{TRUE}) or not (\code{FALSE}).
   }
-  \item{interpolation}{boolean value to switch internal interpolation
-    off.  Note that this works only if time steps match exactly. This
-    may not work as expected for all cases because of floating point
-    rounding errors (see R FAQ about ``Why doesn't R think these numbers
-    are equal?'').
+
+  \item{interpolation}{optional boolean value to switch internal
+    interpolation off.  Note that this works only if time steps match
+    exactly. This may not work as expected for all cases because of
+    floating point rounding errors (see R FAQ about ``Why doesn't R
+    think these numbers are equal?'').
   }
-  \item{FSAL}{(first same as last) boolean value specifying if the
-    method allows re-use of the last function evaluation (\code{TRUE})
-    or not (\code{FALSE} or \code{NULL}).
+  
+  \item{FSAL}{(first same as last) optional boolean value specifying if
+    the method allows re-use of the last function evaluation
+    (\code{TRUE}) or not (\code{FALSE} or \code{NULL}).
   }
+  
   \item{A}{coefficient matrix of the method. As \code{link{rk}} supports
     only explicit methods, this matrix must be lower triangular.
     \code{A} must be a vector for fixed step methods where only the
@@ -117,16 +120,27 @@ rkMethod(method = NULL, ...)
   }
   \item{c}{coefficients for calculating the intermediate time steps.}
   
-  \item{d}{coefficients for built-in polynomial interpolation of the
-    outputs from internal steps (dense output), currently only available
-    for method \code{rk45dp7} (Dormand-Prince).
+  \item{d}{optional coefficients for built-in polynomial interpolation
+    of the outputs from internal steps (dense output), currently only
+    available for method \code{rk45dp7} (Dormand-Prince).
   }
+  
   \item{stage}{number of function evaluations needed (corresponds to
     number of rows in A).
   }
   \item{Qerr}{global error order of the method, important for automatic
     time-step adjustment.
   }
+
+  \item{alpha}{optional tuning parameter for stepsize
+    adjustment. Typical values are \deqn{1/Qerr} (default) or, if beta
+    is set, \deqn{1/Qerr - 0.75 beta}
+  }
+  
+  \item{beta}{optional tuning parameter for stepsize adjustment. Typical
+    values are \deqn{0} (default) or \deqn{0.4/Qerr}
+  }
+
 }
 
 \references{

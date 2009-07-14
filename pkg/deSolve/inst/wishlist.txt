@@ -11,6 +11,7 @@ deSolve release 2.0
 - print method for DE output (done - in file ode.R)
 - improve diagnostics for all    (note: NO S3 classes needed...)
 - forcing functions for rk solvers
+- simple PID stepsize control (not really important for our testcases)
 
 ** in progress **
 - make help files more readable
@@ -26,14 +27,15 @@ do we need:
      not enough for you: write two functions istate() and rstate()
 - ? write a plot.ode function ? (~ as in FME), multiple figures on a
    window
-  -> TP: yes! My students loose most of their time in R with plotting
+  -> TP: Not sure. Con: There are already many examples in the docs. 
+    Pro: My students loose most of their time in R with plotting issues.
 
 
 ** To do **
 - make possible to use banded solvers with compiled code (now only lsodes) KS
 - more diagnostics for rk  - ThPe
-- PID stepsize control for rk - ThPe
 - unscramble output names in case 1-D model (see example Thomas !) - KS
+  ThPe: ??? I have not found anything problematic, what have I missed?
 
 ** Wishlist **
 - forcings and initfunc for R models too. -
@@ -48,6 +50,4 @@ do we need:
   suggestion 3: leave it as is and provide a special approxSeq, based
     on your existing sequentially interpolating C function.
     This is IMHO the simplest method to understand for our students.
-- pass control parameters (KS: do not understand: time steps etc???)
-  TP: I mean a few additional control parameters for the rk methods,
-    e.g. tuning of stepsize control. Can be passed via rkMethod.
+
