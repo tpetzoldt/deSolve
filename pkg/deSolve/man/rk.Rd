@@ -216,17 +216,18 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 }
 \value{
   A matrix of class \code{deSolve} with up to as many rows as elements
-  in \code{times} and as many columns as elements in \code{y} plus the number of "global"
-  values returned in the next elements of the return from \code{func},
-  plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the Fortran routine `lsoda'
-  returns with an unrecoverable error. If \code{y} has a names
-  attribute, it will be used to label the columns of the output value.
+  in \code{times} and as many columns as elements in \code{y} plus the
+  number of "global" values returned in the next elements of the return
+  from \code{func}, plus and additional column for the time value.
+  There will be a row for each element in \code{times} unless the
+  integration routine returns with an unrecoverable error. If \code{y}
+  has a names attribute, it will be used to label the columns of the
+  output value.
 }
 
 \note{
   Arguments \code{rpar} and \code{ipar} are provided for compatibility
-  with \code{lsoda}, but not yet thoroughly tested.
+  with \code{lsoda}.
 }
 
 \references{

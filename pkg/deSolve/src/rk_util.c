@@ -155,7 +155,8 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = REAL(VECTOR_ELT(Val, 0))[i];
 
-    /* extract outputs from second and following list elements; essentially unlist */
+    /* extract outputs from second and following list elements */
+    /* this is essentially an unlist for non-nested numeric lists */
     if (j < 0) {
       int elt = 1, ii = 0, l;
       for (i = 0; i < nout; i++)  {
