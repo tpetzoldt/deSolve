@@ -69,7 +69,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /**************************************************************************/
   int isDll = FALSE;
   int ntot  = 0;
-  int isOut = FALSE; /* do I need this? */
+  int isOut = FALSE; /* do I need this? KS: NO*/
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 

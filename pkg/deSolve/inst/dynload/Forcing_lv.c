@@ -26,7 +26,6 @@ void forcc(void (* odeforcs)(int *, double *))
 {
     int N=1;
     odeforcs(&N, forc);
-/*    Rprintf("%g\n", DBL_MAX); */
 }
 
 /* Derivatives */
@@ -40,6 +39,5 @@ void derivsc(int *neq, double *t, double *y, double *ydot, double *yout, int*ip)
 
     yout[0] = y[0]+y[1]+y[2];
     yout[1] = import;
-/*    Rprintf("y %g\t %g\t %g\t %g\t %g\n", *t, y[0], y[1], y[2], import);*/
 }
 

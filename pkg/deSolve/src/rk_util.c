@@ -54,25 +54,13 @@ SEXP getInputs(SEXP symbol, SEXP Rho) {
   return(getvar(symbol, Rho));
 }
 
-/* -- getvar from list -KS: now in deSolve.h------------------------------------
-SEXP getListElement(SEXP list, const char *str) {
-  SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
-  int i;
-
-  for (i = 0; i < length(list); i++)
-   if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
-     elmt = VECTOR_ELT(list, i);
-     break;
-   }
-  return elmt;
-}                                                         */
 
 /*============================================================================*/
 /*   Arithmetic utilities                                                     */
 /*============================================================================*/
 
 /*----------------------------------------------------------------------------*/
-/* Matrix Multiplikation                                                      */
+/* Matrix Multiplication                                                      */
 /* a reduced version without NA checking, this is ensured otherwise           */
 /*----------------------------------------------------------------------------*/
 

@@ -230,9 +230,13 @@ chaos <- function(t, state, parameters)
 
 state <- c(x = 1, y = 1, z = 1)
 times <- seq(0, 100, 0.01)
-out   <- as.data.frame(vode(state, times, chaos, 0))
 
-plot(out$x, out$y, type = "l", main = "Lorenz butterfly")
+out   <- vode(state, times, chaos, 0)
+
+plot(out, type="l")   # all versus time
+plot(out[,"x"], out[,"y"], type = "l", main = "Lorenz butterfly",
+  xlab="x",ylab="y")
+
 
 ## =======================================================================
 ## ex. 2

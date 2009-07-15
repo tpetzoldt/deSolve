@@ -47,7 +47,7 @@ void F77_NAME(dvode)(void (*)(int *, double *, double *, double *,
 			            int *, double *, int *, double*, int*),
 		     int *, double *, int *);
 
-/* KS @#$: wrapper above the derivate function that first estimates the
+/* KS: wrapper above the derivate function that first estimates the
 values of the forcing functions */
 
 static void forc_lsoda (int *neq, double *t, double *y,
@@ -255,7 +255,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
       if (isOut) {dy = (double *) R_alloc(neq, sizeof(double));
                   for (j = 0; j < neq; j++) dy[j] = 0.; }
 	  
-	  /* KS @#$ here overruling derivs if forcing */
+	  /* here overruling derivs if forcing */
       if (isForcing) {
         derfun = (deriv_func *) R_ExternalPtrAddr(func);
         derivs = (deriv_func *) forc_lsoda;

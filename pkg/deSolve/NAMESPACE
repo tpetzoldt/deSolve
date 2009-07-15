@@ -7,4 +7,5 @@ export(rk, rk4, euler, rkMethod)
 
 export(DLLfunc, DLLres)
 
-S3method("print", "DE")
+S3method("print", "deSolve")
+S3method("plot", "deSolve")

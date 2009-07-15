@@ -214,7 +214,7 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   }
   attr(out,"istate") <- istate
   attr(out, "rstate") <- rstate
-  class(out) <- c("DE","matrix")    # a differential equation
+  class(out) <- c("deSolve","matrix")    # a differential equation
   dimnames(out) <- list(nm,NULL)
   return (t(out))
 }
@@ -244,7 +244,7 @@ saveOutrk <- function(out, y, n, Nglobal, Nmtot,
   istate <- setIstate(istate,iin, iout)
   attr(out,"istate") <- istate
 
-  class(out) <- c("DE","matrix")    # a differential equation
+  class(out) <- c("deSolve","matrix")    # a differential equation
   return(out)
 }
 

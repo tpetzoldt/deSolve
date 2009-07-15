@@ -48,7 +48,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   int isDll = FALSE;
   int ntot  =  0;
-  int isOut = FALSE; //?? do I need this?
+  int isOut = FALSE; //?? do I need this? KS: I think NOT; you estimate outputvariables here anyway
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 

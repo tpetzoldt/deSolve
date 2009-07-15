@@ -106,7 +106,7 @@ out <- as.data.frame(aquaphy(times, state, parameters))
 ## Plotting model output
 ## -----------------------------
 
-par(mfrow = c(2, 2), oma = c(0, 0, 3, 0))    
+par(mfrow = c(2, 2), oma = c(0, 0, 3, 0))
 col <- grey(0.9)
 ii <- 1:length(out$PAR)              
 
@@ -164,7 +164,9 @@ state     <- c(DIN     = 6.,    # mmol N/m3
               RESERVE = 5.0,    # mmol C/m3
               LMW     = 1.0)    # mmol C/m3
               
-out2 <- as.data.frame(aquaphy(times, state, parameters, Par))
+out <- aquaphy(times, state, parameters, Par)
+
+out2 <- as.data.frame(out) # facilitates printing...
 
 plot (times, out2$PAR, type = "l",
       main = "PAR", xlab = "time, hours",ylab = "uEinst/m2/s")
@@ -180,6 +182,11 @@ plot (times, out2$NCratio, type = "l", main = "NCratio",
       xlab = "time, hours", ylab = "molN/molC")
 
 mtext(outer = TRUE, side = 3, "AQUAPHY, PAR=forcing", cex = 1.5)
+
+# Now all variables plotted in one figure...
+plot(out,type="l")
+
+par(mfrow=c(1,1))
 
 }
 \references{

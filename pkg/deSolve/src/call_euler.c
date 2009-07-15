@@ -129,8 +129,6 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     dt = tt[it + 1] - t;
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
-    // only temporarily here; move to derivs
-    //if (isForcing) updatedeforc(&t);
     derivs(Func, t, y0, Parms, Rho, f, out, 0, neq, ipar, isDll, isForcing);
     for (i = 0; i < neq; i++) {
       y0[i]  = y0[i] + dt * f[i];

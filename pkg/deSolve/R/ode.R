@@ -198,7 +198,3 @@ ode.band  <- function (y, times, func, parms, nspec=NULL, bandup=nspec,
 
 }
 
-### ============================================================================
-
-print.DE <- function(x,...)
-  print(as.data.frame(x))

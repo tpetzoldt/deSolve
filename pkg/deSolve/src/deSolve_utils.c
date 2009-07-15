@@ -65,7 +65,9 @@ void Initdeparms(int *N, double *parms)
   Nparms = LENGTH(de_gparms);
   if ((*N) != Nparms)
     {
+      warning("Number of parameters passed to solver, %i; number in DLL, %i\n",Nparms, *N);
       PROBLEM "Confusion over the length of parms"
+
       ERROR;
     } 
   else

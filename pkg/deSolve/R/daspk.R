@@ -401,6 +401,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   attr(out, "istate") <- istate
   attr(out, "rstate") <- rstate
   attr(out, "type") <- "daspk"
+  class(out) <- c("deSolve","matrix")    # a differential equation
   dimnames(out) <- list(nm, NULL)
   if (verbose) diagnostics(out)
   t(out)

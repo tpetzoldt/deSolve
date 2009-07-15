@@ -1,5 +1,7 @@
 \name{ode}
 \alias{ode}
+\alias{plot.deSolve}
+\alias{print.deSolve}
 
 \title{General Solver for Ordinary Differential Equations}
 
@@ -9,8 +11,10 @@ around the implemented ODE solvers}
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45"), ...)
-}
 
+\method{plot}{deSolve}(x, t=1, what = 2:ncol(x), \dots)
+\method{print}{deSolve}(x, \dots)
+}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -50,7 +54,17 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"} or
     \code{"ode45"}) or a function that performs integration, or a list
     of class \code{rkMethod}.}
-   \item{... }{additional arguments passed to the integrator.}
+  \item{x }{an object of class \code{DiffEq}, as returned by the integrators,
+    and to be printed or plotted.
+  }
+  \item{t }{the name or the index of the independent variable,
+    usually \code{"times"}
+  }
+  \item{what }{the name or the index to the variables that should be plotted.
+    Default = all variables.
+  }
+   \item{... }{additional arguments passed to the integrator or to the
+     methods.}
 }
 
 \value{
@@ -175,13 +189,19 @@ sigimp <- approxfun(signal$times, signal$import, rule = 2)
 xstart <- c(S = 1, P = 1, K = 1)
 
 ## Solve model
-out <- as.data.frame(ode(y = xstart,times = times, 
-                     func = lvmodel, parms, input = sigimp))
+out <- ode(y = xstart,times = times,
+           func = lvmodel, parms, input = sigimp)
 
 ## Display results
-par(mfrow=c(1,2))
+mf <- par(mfrow=c(1,2))
 matplot(out[,1], out[,2:4], type="l", xlab="time", ylab="state")
 legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "K"))
-plot(out$P, out$K, type = "l", lwd = 2, xlab = "producer", ylab = "consumer")
+plot(out[,"P"], out[,"K"], type = "l", lwd = 2, xlab = "producer",
+  ylab = "consumer")
+
+plot(out)
+
+par(mfrow=mf)
+
 }
 
