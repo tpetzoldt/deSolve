@@ -162,12 +162,24 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
 
     PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms)); incr_N_Protect();
     PROTECT(Val = eval(R_fcall, Rho)); incr_N_Protect();
-    /* extract the states of list "val" */
+
+    /* extract the states from first list element of "Val" */
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = REAL(VECTOR_ELT(Val, 0))[i];
-    /* extract outputs from second list element */
-    if (j < 0)
-      for (i = 0; i < nout; i++)  yout[i] = REAL(VECTOR_ELT(Val, 1))[i];
+
+    /* extract outputs from second and following list elements; essentially unlist */
+    if (j < 0) {
+      int elt = 1, ii = 0, l;
+      for (i = 0; i < nout; i++)  {
+	l = LENGTH(VECTOR_ELT(Val, elt));
+        //Rprintf("len=%d \n", l);
+        if (ii == l) {
+	    ii = 0; elt++;
+	}
+        yout[i] = REAL(VECTOR_ELT(Val, elt))[ii];
+        ii++;
+      }
+    }
     my_unprotect(4);
   }
 }
