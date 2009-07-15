@@ -23,9 +23,6 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (is.character(method)) method <- rkMethod(method)
     if (is.null(tcrit)) tcrit <- max(times)
 
-    ## Workaround for fixed step methods
-    if (is.null(hini)) hini <- 0 # means that steps in "times" are used as they are
-
     ## Check if interpolation is switched off
     if (!is.null(method$interpolation) && !method$interpolation) {
       cat("\nMethod without or with disabled interpolation\n")
@@ -102,8 +99,8 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     varstep <- method$varstep
     vrb <- FALSE # TRUE would force internal debugging output of the C code
 
-    ## KS -> Thomas: still need to pass flist
-    if (varstep) {                        # methods with variable step size
+    if (varstep) {  # methods with variable step size
+      if (is.null(hini)) hini <- hmax
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho, as.double(atol),
@@ -111,7 +108,10 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         as.double(hmin), as.double(hmax), as.double(hini),
         as.double(rpar), as.integer(ipar), method,
         as.integer(nsteps), flist)
-    } else {                              # fixed step methods
+    } else {        # fixed step methods
+      ## hini=0 for fixed step methods means
+      ## that steps in "times" are used as they are
+      if (is.null(hini)) hini <- 0
       out <- .Call("call_rkFixed", as.double(y), as.double(times),
         Func, Initfunc, parms,
         as.integer(Nglobal), rho,
