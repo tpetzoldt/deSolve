@@ -12,7 +12,7 @@ around the implemented ODE solvers}
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45"), ...)
 
-\method{plot}{deSolve}(x, t=1, which = 2:ncol(x), \dots)
+\method{plot}{deSolve}(x, which = 2:ncol(x), \dots)
 \method{print}{deSolve}(x, \dots)
 }
 \arguments{
@@ -56,9 +56,6 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     of class \code{rkMethod}.}
   \item{x }{an object of class \code{DiffEq}, as returned by the integrators,
     and to be printed or plotted.
-  }
-  \item{t }{the name or the index of the independent variable,
-    usually \code{"times"}
   }
   \item{which }{the name or the index to the variables that should be plotted.
     Default = all variables.

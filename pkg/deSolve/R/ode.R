@@ -69,6 +69,8 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
     out <- lsodes(y=y,times=times,func=func,parms,sparsetype="1D",nnz=c(nspec,dimens),...)
 
   } else {
+    NL <-names(y)
+
   # internal function #
     bmodel <- function (time,state,pars,model,...) {
       Modconc <-  model(time,state[ij],pars,...)   # ij: reorder state variables
@@ -101,6 +103,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
     else
       stop ("cannot run ode.1D: method should be one of vode, lsoda, lsodar, lsode")
       out[,(ii+1)] <- out[,2:(N+1)]
+      if (! is.null(NL)) colnames(out)[2:(N+1)]<- NL
   }
   return(out)
 }

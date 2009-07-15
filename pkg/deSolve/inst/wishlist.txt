@@ -12,30 +12,39 @@ deSolve release 2.0
 - improve diagnostics for all    (note: NO S3 classes needed...)
 - forcing functions for rk solvers
 - simple PID stepsize control (not really important for our testcases)
+- unscramble output names in case 1-D model (see example Thomas !) - KS
+  ThPe: ??? I have not found anything problematic, what have I missed?
+  It does not matter; it has been solved; the names were S1 M1 S2 M2
+  and should have been S1 S2 ... M1 M2 ...   OK now
 
 ** in progress **
 - make help files more readable
    * removed istate and rstate description from Rd files
-     -> now in a TABLE in vignette - but still needs to be checked
+     -> now in a TABLE in vignette
 
-** to decide **
+
+
+** to decide **   -> KS decided it is DONE!
+Ks->ThPe: if you agree, this section of the wishlist will be removed
 do we need:
 - ? root extraction for lsodar or is "attributes(out)$iroot" enough?
   -> T.P., yes, we need a small function (or a specific print)
+  -> KS: the print is already taken care of.  No need to take further action
 - ? istate and rstate extraction for all?  or "attributes(out)$istate"?
   -> T.P.: what do you mean? We already have diagnostics. If this is
      not enough for you: write two functions istate() and rstate()
-- ? write a plot.ode function ? (~ as in FME), multiple figures on a
-   window
-  -> TP: Not sure. Con: There are already many examples in the docs. 
-    Pro: My students loose most of their time in R with plotting issues.
+  -> KS: mostly one does not want that, except to test the effect of input
+  parameters on solver performance; this is so unlikely that there is no need
+  for specific functions; => attributions(out)$istate should be enough  -DONE
+
 
 
 ** To do **
 - make possible to use banded solvers with compiled code (now only lsodes) KS
+  KS->ThPe but lsodes is much more efficient than lsode (+- 20%
+           however, there is the rwork problem....
+           what do you think?
 - more diagnostics for rk  - ThPe
-- unscramble output names in case 1-D model (see example Thomas !) - KS
-  ThPe: ??? I have not found anything problematic, what have I missed?
 
 ** Wishlist **
 - forcings and initfunc for R models too. -
@@ -50,4 +59,7 @@ do we need:
   suggestion 3: leave it as is and provide a special approxSeq, based
     on your existing sequentially interpolating C function.
     This is IMHO the simplest method to understand for our students.
+
+KS: Gave up for now; approxfun () is very efficient!
+KS->ThPe: if you agree with that, will remove that from the wishlist.
 
