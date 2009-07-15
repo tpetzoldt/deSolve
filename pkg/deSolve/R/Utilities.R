@@ -7,7 +7,7 @@ print.deSolve <- function(x,...)
 
 ### ============================================================================
 
-plot.deSolve <- function (x, t = 1, what = 2:ncol(x), ...)
+plot.deSolve <- function (x, t = 1, which = 2:ncol(x), ...)
 {
     var <- colnames(x)
     if (length(t) != 1)
@@ -22,20 +22,20 @@ plot.deSolve <- function (x, t = 1, what = 2:ncol(x), ...)
         if (min(t) < 1)
             stop("index in 't' should be >0")
     }
-    if (!is.numeric(what)) {
-        ln <- length(what)
-        Select <- which(var %in% what)
+    if (!is.numeric(which)) {
+        ln <- length(which)
+        Select <- which(var %in% which)
         if (length(Select) != ln)
-            stop("not all variables in 'what' are in 'x'")
-        what <- Select
+            stop("not all variables in 'which' are in 'x'")
+        which <- Select
     }
     else {
-        if (max(what) > ncol(x))
-            stop("index in 'what' too large")
-        if (min(what) < 1)
-            stop("index in 'what' should be >0")
+        if (max(which) > ncol(x))
+            stop("index in 'which' too large")
+        if (min(which) < 1)
+            stop("index in 'which' should be >0")
     }
-    np <- length(what)
+    np <- length(which)
     dots <- list(...)
     nmdots <- names(dots)
     if (!"mfrow" %in% nmdots) {
@@ -54,7 +54,7 @@ plot.deSolve <- function (x, t = 1, what = 2:ncol(x), ...)
     dots$ylab <- if (is.null(dots$ylab))
         ""
     else dots$ylab
-    for (i in what) {
+    for (i in which) {
         if (Main)
             dots$main <- colnames(x)[i]
         do.call("plot", c(alist(x[, t], x[, i]), dots))

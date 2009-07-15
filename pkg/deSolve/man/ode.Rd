@@ -12,7 +12,7 @@ around the implemented ODE solvers}
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45"), ...)
 
-\method{plot}{deSolve}(x, t=1, what = 2:ncol(x), \dots)
+\method{plot}{deSolve}(x, t=1, which = 2:ncol(x), \dots)
 \method{print}{deSolve}(x, \dots)
 }
 \arguments{
@@ -60,7 +60,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   \item{t }{the name or the index of the independent variable,
     usually \code{"times"}
   }
-  \item{what }{the name or the index to the variables that should be plotted.
+  \item{which }{the name or the index to the variables that should be plotted.
     Default = all variables.
   }
    \item{... }{additional arguments passed to the integrator or to the
@@ -68,21 +68,14 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 }
 
 \value{
-  
-  A matrix with up to as many rows as elements in times and as many
+  A matrix of class \code{deSolve} with up to as many rows as elements in
+  \code{times} and as many
   columns as elements in \code{y} plus the number of "global" values
   returned in the second element of the return from \code{func}, plus an
   additional column (the first) for the time value.  There will be one
   row for each element in \code{times} unless the integrator returns
   with an unrecoverable error.  If \code{y} has a names attribute, it
   will be used to label the columns of the output value.
-    
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements. The first element of istate
-  returns the conditions under which the last call to the integrator
-  returned. Normal is \code{istate = 2}.  If \code{verbose = TRUE}, the
-  settings of istate and rstate will be written to the screen. See the
-  help for the selected integrator for details.
 
 }
 \author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}

@@ -1,14 +1,14 @@
 deSolve release 2.0
 
 ** done **
-- code + doc for temporal interpolation in C and Fortran - done
-- linear + constant interpolation - done
+- code + doc for temporal interpolation in C and Fortran
+- linear + constant interpolation
 - interpolation options in a list - avoids growth of arguments..
-  AND assure backward compatibility - done
-- explain forcing options in compiledCode vignette   - done
-- Update vignette with diagnostics example - done
-- S3 classes for DE output  (DE = differential equation) - done
-- print method for DE output (done - in file ode.R)
+  AND assure backward compatibility
+- explain forcing options in compiledCode vignette
+- Update vignette with diagnostics example
+- S3 classes for deSolve output  (deSolve = class of differential equation)
+- print and plot method for deSolve output (in file utilities.R)
 - improve diagnostics for all    (note: NO S3 classes needed...)
 - forcing functions for rk solvers
 - simple PID stepsize control (not really important for our testcases)

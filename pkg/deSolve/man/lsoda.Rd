@@ -201,8 +201,8 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
 }
 \value{
-  A matrix with up to as many rows as elements in \code{times} and as
-  many columns as elements in \code{y} plus the number of "global"
+  A matrix of class \code{deSolve} with up to as many rows as elements
+  in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
   for each element in \code{times} unless the Fortran routine `lsoda'

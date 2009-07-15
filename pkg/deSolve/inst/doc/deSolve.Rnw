@@ -132,8 +132,6 @@ options(width=70)
   The Lorenz model describes the dynamics of three state variables, $X$,
   $Y$ and $Z$.
 
-  %ThPe: It would be nice to have one sentence about what these states are
-
   The model equations are:
 
   \[

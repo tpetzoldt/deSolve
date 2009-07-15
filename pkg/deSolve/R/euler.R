@@ -60,7 +60,6 @@ euler <- function(y, times, func, parms, verbose = FALSE, ynames=TRUE,
 
     }
 
-    ## KS -> Thomas: still need to pass flist
     ## the CALL to the integrator
     out <- .Call("call_euler", as.double(y), as.double(times),
         Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),

@@ -215,26 +215,13 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   each point in time. Examples are given below.
 }
 \value{
-  A matrix with up to as many rows as elements in \code{times} and
-  as many columns as elements in \code{y} plus the number of "global"
+  A matrix of class \code{deSolve} with up to as many rows as elements
+  in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the solver returns with an
-  unrecoverable error.  If \code{y} has a names attribute, it will be
-  used to label the columns of the output value.
-
-  The output will have the attributes \code{istate}, and \code{rstate},
-  two vectors with several useful elements, whose interpretation is
-  compatible with \code{\link{lsoda}}:
-
-  \item{el 1:}{0 for normal return, -2 means excess accuracy requested
-    (tolerances too small).
-  }
-  \item{el 12:}{the number of steps taken for the problem so far.}
-  \item{el 13:}{the number of function evaluations for the problem so
-    far.
-  }
-  \item{el 15:}{the order of the method.}
+  for each element in \code{times} unless the Fortran routine `lsoda'
+  returns with an unrecoverable error. If \code{y} has a names
+  attribute, it will be used to label the columns of the output value.
 }
 
 \note{

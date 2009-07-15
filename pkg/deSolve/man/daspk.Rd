@@ -260,7 +260,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   }
 }
 \value{
-  A matrix with up to as many rows as elements in times and as many
+  A matrix of class \code{deSolve} with up to as many rows as elements in
+  \code{times} and as many
   columns as elements in \code{y} plus the number of "global" values
   returned in the next elements of the return from \code{func} or
   \code{res}, plus an additional column (the first) for the time value.

@@ -209,16 +209,14 @@
   }
 }
 \value{
-  A matrix with up to as many rows as elements in \code{times} and as
-  many columns as elements in \code{y} plus the number of "global"
+  A matrix of class \code{deSolve} with up to as many rows as elements
+  in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the Fortran routine `lsodar'
-  returns with an unrecoverable error or has found a root, in which case
-  the last row will contain the function value at the root.  \cr If
-  \code{y} has a names attribute, it will be used to label the columns
-  of the output value.
-      
+  for each element in \code{times} unless the Fortran routine `lsoda'
+  returns with an unrecoverable error. If \code{y} has a names
+  attribute, it will be used to label the columns of the output value.
+
   If a root has been found, the output will have the attribute
   \code{iroot}, an integer indicating which root has been found.
   
