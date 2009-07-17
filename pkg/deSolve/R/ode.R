@@ -105,6 +105,10 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
       out[,(ii+1)] <- out[,2:(N+1)]
       if (! is.null(NL)) colnames(out)[2:(N+1)]<- NL
   }
+  if (is.null(dimens)) dimens <- N/nspec
+  attr (out,"dimens") <- dimens
+  attr (out,"nspec") <- nspec
+
   return(out)
 }
 
@@ -141,6 +145,9 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="2D",
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
 
+  attr (out,"dimens") <- dimens
+  attr (out,"nspec") <- nspec
+
   return(out)
 }
 
@@ -169,6 +176,8 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, ...){
   # use lsodes - note:expects rev(dimens)...
    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="3D",
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
+  attr (out,"dimens") <- dimens
+  attr (out,"nspec") <- nspec
 
   return(out)
 }
@@ -185,19 +194,24 @@ ode.band  <- function (y, times, func, parms, nspec=NULL, bandup=nspec,
   if (is.null(method))
     method <- "lsode"
   if (method == "vode")
-   vode(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
+   out <- vode(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
         jactype="bandint", ...)
   else if (method == "lsode")
-   lsode(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
+   out <- lsode(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
          jactype="bandint", ...)
   else if (method == "lsoda")
-   lsoda(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
+   out <- lsoda(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
          jactype="bandint", ...)
   else if (method == "lsodar")
-   lsodar(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
+   out <- lsodar(y, times, func, parms=parms, bandup=bandup, banddown=banddown,
           jactype="bandint", ...)
   else
    stop ("cannot run ode.band: method should be one of vode, lsoda, lsodar or lsode")
 
+  N     <- length(y)
+
+  attr (out,"dimens") <- N/nspec
+  attr (out,"nspec") <- nspec
+  return(out)
 }
 
