@@ -133,12 +133,12 @@ rkMethod(method = NULL, ...)
   }
 
   \item{alpha}{optional tuning parameter for stepsize
-    adjustment. Typical values are \deqn{1/Qerr} (default) or, if beta
-    is set, \deqn{1/Qerr - 0.75 beta}
+    adjustment. Typical values are \eqn{1/Qerr} (default) or, if beta
+    is set, \eqn{1/Qerr - 0.75 beta}
   }
   
   \item{beta}{optional tuning parameter for stepsize adjustment. Typical
-    values are \deqn{0} (default) or \deqn{0.4/Qerr}
+    values are \eqn{0} (default) or \eqn{0.4/Qerr}
   }
 
 }

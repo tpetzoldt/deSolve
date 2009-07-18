@@ -213,8 +213,6 @@ void densout(double *r, double t0, double t, double dt, double* res, int neq) {
 /*    n:    number of knots per signal                                        */
 /*    x[0 .. n-1]:          vector of x values                                */
 /*    y[0 .. n-1, 0 .. ksig] array  of y values                               */
-/*                                                                            */
-/*    ToDo: check if ringbuffer is faster; rewrite eventually                 */
 /*----------------------------------------------------------------------------*/
 void neville(double *xx, double *y, double tnew, double *ynew, int n, int ksig) {
   int i, j, k;

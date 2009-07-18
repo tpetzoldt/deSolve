@@ -252,23 +252,24 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /*====================================================================*/
     /*      stepsize adjustment                                           */
     /*====================================================================*/
-    errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
+    
     err = maxerr(y1, y2, atol, rtol, neq);
-
     dtnew = dt;
-    accept = TRUE;
-    if (err == 0) {  /* use fixed time step hmax if all tolerances are zero */
+    //accept = TRUE;
+    if (err == 0) {  /* use max scale if all tolerances are zero */
+      dtnew = fmin(dt * 10, hmax);
+      errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
       accept = TRUE;
-      dtnew = hmax;
     } else if (err < 1.0) {
-      accept = TRUE;
       //dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr));
-      dtnew = fmin(hmax, dt * 0.9 * pow(err, -alpha) * pow(errold, beta));
+      // increase step size only if last one was accepted
+      if (accept) dtnew = fmin(hmax, dt * 0.9 * pow(err, -alpha) * pow(errold, beta));
+      errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
+      accept = TRUE;
     } else if (err > 1.0) {
       accept = FALSE;
       //dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2);
-      dtnew = dt * fmax(0.9 * pow(err, -alpha) * pow(errold, beta), 0.2);
-      //dtnew = dt * 0.9 * pow(err, -alpha) * pow(errold, beta);
+      dtnew = dt * fmax(0.9 * pow(err, -alpha), 0.2);
     }
 
     if (dtnew < hmin) {
