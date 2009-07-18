@@ -6,7 +6,7 @@
 \description{
   Solves a system of ordinary differential equations.
   
-  Assumes a banded jacobian matrix, but does not rearrange the state
+  Assumes a banded Jacobian matrix, but does not rearrange the state
   variables (in contrast to ode.1D).  Suitable for 1-D models that
   include transport only between adjacent layers and that model only one
   species.
@@ -45,10 +45,10 @@
   }
   \item{parms }{parameters passed to \code{func}.}
   \item{nspec }{the number of *species* (components) in the model.}
-  \item{bandup }{the number of nonzero bands above the jacobian
+  \item{bandup }{the number of nonzero bands above the Jacobian
     diagonal.
   }
-  \item{banddown }{the number of nonzero bands below the jacobian
+  \item{banddown }{the number of nonzero bands below the Jacobian
     diagonal.
   }
   \item{method }{the integrator to use, one of \code{"vode"},

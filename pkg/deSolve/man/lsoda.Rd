@@ -82,24 +82,24 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     long as \code{y}. See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function, that computes the
-    jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations dydot(i)/dy(j), or
     a string giving the name of a function or subroutine in
-    \file{dllname} that computes the jacobian (see Details below for
+    \file{dllname} that computes the Jacobian (see Details below for
     more about this option).  In some circumstances, supplying
     \code{jacfunc} can speed up the computations, if the system is
     stiff.  The \R calling sequence for \code{jacfunc} is identical to
     that of \code{func}.
 
-    If the jacobian is a full matrix, \code{jacfunc} should return a
+    If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
     matrix elements by columns (the way \R and Fortran store matrices).
     
-    If the jacobian is banded, \code{jacfunc} should return a matrix
-    containing only the nonzero bands of the jacobian, rotated
+    If the Jacobian is banded, \code{jacfunc} should return a matrix
+    containing only the nonzero bands of the Jacobian, rotated
     row-wise. See first example of \code{lsode}.
   }
-  \item{jactype }{the structure of the jacobian, one of \code{"fullint"},
+  \item{jactype }{the structure of the Jacobian, one of \code{"fullint"},
     \code{"fullusr"}, \code{"bandusr"} or \code{"bandint"} - either
     full or banded and estimated internally or by user.
   }
@@ -318,7 +318,7 @@ out
 ## at t =  4.0000e+09   y =  4.659031e-07  1.863613e-12  9.999995e-01
 ## at t =  4.0000e+10   y =  1.404280e-08  5.617126e-14  1.000000e+00
 
-## Using the analytic jacobian speeds up execution a little :
+## Using the analytic Jacobian speeds up execution a little :
 
 system.time( 
   outJ <- lsoda(c(1, 0, 0), times, lsexamp, parms, rtol = 1e-4,
@@ -354,14 +354,14 @@ diagnostics(outJ) # shows what lsoda did internally
   the appropriate method.  It always starts with the nonstiff method.
     
   
-  The form of the \bold{jacobian} can be specified by \code{jactype} which can
+  The form of the \bold{Jacobian} can be specified by \code{jactype} which can
   take the following values:
   \describe{
-    \item{"fullint"}{a full jacobian, calculated internally by lsoda, the default,}
-    \item{"fullusr"}{a full jacobian, specified by user function \code{jacfunc},}
-    \item{"bandusr"}{a banded jacobian, specified by user function \code{jacfunc}
+    \item{"fullint"}{a full Jacobian, calculated internally by lsoda, the default,}
+    \item{"fullusr"}{a full Jacobian, specified by user function \code{jacfunc},}
+    \item{"bandusr"}{a banded Jacobian, specified by user function \code{jacfunc}
       the size of the bands specified by \code{bandup} and \code{banddown},}
-    \item{"bandint"}{banded jacobian, calculated by lsoda; the size of the bands
+    \item{"bandint"}{banded Jacobian, calculated by lsoda; the size of the bands
       specified by \code{bandup} and \code{banddown}.}
   }
   If \code{jactype} = "fullusr" or "bandusr" then the user must supply a

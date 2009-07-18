@@ -76,24 +76,24 @@
     long as \code{y}. See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function, that computes the
-    jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations dydot(i)/dy(j), or
     a string giving the name of a function or subroutine in
-    \file{dllname} that computes the jacobian (see Details below for
+    \file{dllname} that computes the Jacobian (see Details below for
     more about this option).  In some circumstances, supplying
     \code{jacfunc} can speed up the computations, if the system is
     stiff.  The \R calling sequence for \code{jacfunc} is identical to
     that of \code{func}.
 
-    If the jacobian is a full matrix, \code{jacfunc} should return a
+    If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
     matrix elements by columns (the way \R and Fortran store matrices).
     
-    If the jacobian is banded, \code{jacfunc} should return a matrix
-    containing only the nonzero bands of the jacobian, rotated
+    If the Jacobian is banded, \code{jacfunc} should return a matrix
+    containing only the nonzero bands of the Jacobian, rotated
     row-wise. See first example of \code{lsode}.
   }
-  \item{jactype }{the structure of the jacobian, one of
+  \item{jactype }{the structure of the Jacobian, one of
     \code{"fullint"}, \code{"fullusr"}, \code{"bandusr"} or
     \code{"bandint"} - either full or banded and estimated internally or
     by user.
@@ -326,20 +326,20 @@ print(out)
   condition, and otherwise returns the solution according the specified
   stop condition.
   
-  The form of the \bold{jacobian} can be specified by \code{jactype}
+  The form of the \bold{Jacobian} can be specified by \code{jactype}
   which can take the following values:
   \describe{
-    \item{jactype = "fullint":}{a full jacobian, calculated internally
+    \item{jactype = "fullint":}{a full Jacobian, calculated internally
       by lsodar, the default,
     }
-    \item{jactype = "fullusr":}{a full jacobian, specified by user
+    \item{jactype = "fullusr":}{a full Jacobian, specified by user
       function \code{jacfunc},
     }
-    \item{jactype = "bandusr":}{a banded jacobian, specified by user
+    \item{jactype = "bandusr":}{a banded Jacobian, specified by user
       function \code{jacfunc}; the size of the bands specified by
       \code{bandup} and \code{banddown},
     }
-    \item{jactype = "bandint":}{banded jacobian, calculated by lsodar;
+    \item{jactype = "bandint":}{banded Jacobian, calculated by lsodar;
       the size of the bands specified by \code{bandup} and
       \code{banddown}.
     }

@@ -80,23 +80,23 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     long as \code{y}. See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
-    jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations dydot(i)/dy(j), or
     a string giving the name of a function or subroutine in
-    \file{dllname} that computes the jacobian (see Details below for
+    \file{dllname} that computes the Jacobian (see Details below for
     more about this option).  In some circumstances, supplying
     \code{jacfunc} can speed up the computations, if the system is
     stiff.  The \R calling sequence for \code{jacfunc} is identical to
     that of \code{func}.
 
-    If the jacobian is a full matrix,
+    If the Jacobian is a full matrix,
     \code{jacfunc} should return a matrix dydot/dy, where the ith row
     contains the derivative of \eqn{dy_i/dt} with respect to \eqn{y_j},
     or a vector containing the matrix elements by columns (the way \R
-    and Fortran store matrices).  \cr If the jacobian is banded,
+    and Fortran store matrices).  \cr If the Jacobian is banded,
     \code{jacfunc} should return a matrix containing only the nonzero
-    bands of the jacobian, rotated row-wise. See first example of \code{lsode}.
+    bands of the Jacobian, rotated row-wise. See first example of \code{lsode}.
   }
-  \item{jactype }{the structure of the jacobian, one of
+  \item{jactype }{the structure of the Jacobian, one of
     \code{"fullint"}, \code{"fullusr"}, \code{"bandusr"} or
     \code{"bandint"} - either full or banded and estimated internally or
     by user; overruled if \code{mf}is not \code{NULL}.
@@ -136,10 +136,10 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     method (meth = 2). Reduce maxord to save storage space.
   }
   \item{bandup }{number of non-zero bands above the diagonal, in case
-    the jacobian is banded.
+    the Jacobian is banded.
   }
   \item{banddown }{number of non-zero bands below the diagonal, in case
-    the jacobian is banded.
+    the Jacobian is banded.
   }
   \item{maxsteps }{maximal number of steps per output interval taken by the
     solver.
@@ -230,7 +230,7 @@ f1 <- function  (t, y, parms)
   return(list(ydot))
 }
 
-## the jacobian, written as a full matrix
+## the Jacobian, written as a full matrix
 fulljac <- function  (t, y, parms)
 {
    jac <- matrix(nrow = 5, ncol = 5, byrow = TRUE,
@@ -242,7 +242,7 @@ fulljac <- function  (t, y, parms)
    return(jac)
 }
 
-## the jacobian, written in banded form
+## the Jacobian, written in banded form
 bandjac <- function  (t, y, parms)
 {
    jac <- matrix(nrow = 3, ncol = 5, byrow = TRUE,
@@ -256,19 +256,19 @@ bandjac <- function  (t, y, parms)
 yini  <- 1:5
 times <- 1:20
 
-## default: stiff method, internally generated, full jacobian
+## default: stiff method, internally generated, full Jacobian
 out   <- lsode(yini, times, f1, parms = 0, jactype = "fullint")
 
-## stiff method, user-generated full jacobian
+## stiff method, user-generated full Jacobian
 out2  <- lsode(yini, times, f1, parms = 0, jactype = "fullusr",
               jacfunc = fulljac)
 
-## stiff method, internally-generated banded jacobian
+## stiff method, internally-generated banded Jacobian
 ## one nonzero band above (up) and below(down) the diagonal
 out3  <- lsode(yini, times, f1, parms = 0, jactype = "bandint",
                               bandup = 1, banddown = 1)
 
-## stiff method, user-generated banded jacobian
+## stiff method, user-generated banded Jacobian
 out4  <- lsode(yini, times, f1, parms = 0, jactype = "bandusr",
               jacfunc = bandjac, bandup = 1, banddown = 1)
 
@@ -278,7 +278,7 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 ## =======================================================================
 ## Example 2:
 ##   diffusion on a 2-D grid
-##   partially specified jacobian
+##   partially specified Jacobian
 ## =======================================================================
 
 diffusion2D <- function(t, Y, par)
@@ -361,17 +361,17 @@ par(ask = pa)
   The options for \bold{jactype} are
   
   \describe{
-    \item{jactype = "fullint"}{a full jacobian, calculated internally by
+    \item{jactype = "fullint"}{a full Jacobian, calculated internally by
       lsode, corresponds to \code{mf} = 22,
     }
-    \item{jactype = "fullusr"}{a full jacobian, specified by user
+    \item{jactype = "fullusr"}{a full Jacobian, specified by user
       function \code{jacfunc}, corresponds to \code{mf} = 21,
     }
-    \item{jactype = "bandusr"}{a banded jacobian, specified by user
+    \item{jactype = "bandusr"}{a banded Jacobian, specified by user
       function \code{jacfunc}; the size of the bands specified by
       \code{bandup} and \code{banddown}, corresponds to \code{mf} = 24,
     }
-    \item{jactype = "bandint"}{a banded jacobian, calculated by lsode;
+    \item{jactype = "bandint"}{a banded Jacobian, calculated by lsode;
       the size of the bands specified by \code{bandup} and
       \code{banddown}, corresponds to \code{mf} = 25.
     }
@@ -406,7 +406,7 @@ par(ask = pa)
   If MITER = 1 or 4, the user must supply a subroutine \code{jacfunc}.
   
   Inspection of the example below shows how to specify both a banded and
-  full jacobian.
+  full Jacobian.
   
   The input parameters \code{rtol}, and \code{atol} determine the
   \bold{error control} performed by the solver.  See \code{\link{lsoda}}

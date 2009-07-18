@@ -79,24 +79,24 @@
     long as \code{y}.  See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
-    jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations dydot(i)/dy(j), or
     a string giving the name of a function or subroutine in
-    \file{dllname} that computes the jacobian (see Details below for
+    \file{dllname} that computes the Jacobian (see Details below for
     more about this option).  In some circumstances, supplying
     \code{jacfunc} can speed up the computations, if the system is
     stiff.  The \R calling sequence for \code{jacfunc} is identical to
     that of \code{func}.
 
-    If the jacobian is a full matrix, \code{jacfunc} should return a
+    If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
     matrix elements by columns (the way \R and Fortran store matrices).
 
-    If the jacobian is banded, \code{jacfunc} should return a matrix
-    containing only the nonzero bands of the jacobian, rotated
+    If the Jacobian is banded, \code{jacfunc} should return a matrix
+    containing only the nonzero bands of the Jacobian, rotated
     row-wise. See first example of \code{lsode}.
   }
-  \item{jactype }{the structure of the jacobian, one of
+  \item{jactype }{the structure of the Jacobian, one of
     \code{"fullint"}, \code{"fullusr"}, \code{"bandusr"} or
     \code{"bandint"} - either full or banded and estimated internally or
     by user; overruled if \code{mf} is not \code{NULL}.
@@ -334,17 +334,17 @@ lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
   
   The options for \bold{jactype} are
   \describe{
-    \item{jac = "fullint":}{a full jacobian, calculated internally by
+    \item{jac = "fullint":}{a full Jacobian, calculated internally by
       vode, corresponds to \code{mf} = 22,
     }
-    \item{jac = "fullusr":}{a full jacobian, specified by user function
+    \item{jac = "fullusr":}{a full Jacobian, specified by user function
       \code{jacfunc}, corresponds to \code{mf} = 21,
     }
-    \item{jac = "bandusr":}{a banded jacobian, specified by user
+    \item{jac = "bandusr":}{a banded Jacobian, specified by user
       function \code{jacfunc}; the size of the bands specified by
       \code{bandup} and \code{banddown}, corresponds to \code{mf} = 24,
     }
-    \item{jac = "bandint":}{a banded jacobian, calculated by vode; the
+    \item{jac = "bandint":}{a banded Jacobian, calculated by vode; the
       size of the bands specified by \code{bandup} and \code{banddown},
       corresponds to \code{mf} = 25.
     }
@@ -392,7 +392,7 @@ lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
   If MITER = 1 or 4, the user must supply a subroutine \code{jacfunc}.
   
   The example for integrator \code{\link{lsode}} demonstrates how to
-  specify both a banded and full jacobian.
+  specify both a banded and full Jacobian.
   
   The input parameters \code{rtol}, and \code{atol} determine the
   \bold{error control} performed by the solver.  If the request for

@@ -771,7 +771,7 @@ contents is displayed by function \code{diagnostics(out)}}
 14 & The number of Jacobian evaluations and LU decompositions so far  \\ \hline
 15 & The method indicator for the last succesful step, 1 = adams
       (nonstiff), 2 = bdf (stiff), \\ \hline
-17 & The number of nonzero elements in the sparse jacobian \\ \hline
+17 & The number of nonzero elements in the sparse Jacobian \\ \hline
 18 & The current method indicator to be attempted on the next step,
       1 = adams (nonstiff), 2 = bdf (stiff), \\ \hline
 19 & The number of convergence failures of the linear iteration so far, \\ \hline

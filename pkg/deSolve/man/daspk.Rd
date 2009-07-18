@@ -111,18 +111,18 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     one value for each y.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
-    jacobian of the system of differential equations. Only used in case
+    Jacobian of the system of differential equations. Only used in case
     the system is an ODE (y' = f(t,y)), specified by \code{func}. The \R
     calling sequence for \code{jacfunc} is identical to that of
     \code{func}.
     
-    If the jacobian is a full matrix, \code{jacfunc} should return a
+    If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
     matrix elements by columns (the way \R and Fortran store matrices).
     
-    If the jacobian is banded, \code{jacfunc} should return a matrix
-    containing only the nonzero bands of the jacobian, rotated
+    If the Jacobian is banded, \code{jacfunc} should return a matrix
+    containing only the nonzero bands of the Jacobian, rotated
     row-wise. See first example of lsode.
   }
   \item{jacres }{ \code{jacres} and not \code{jacfunc} should be used if
@@ -141,16 +141,16 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     \code{ynames} is \code{FALSE}. \code{parms} is a vector of
     parameters (which may have a names attribute).
     
-    If the jacobian is a full matrix, \code{jacres} should return the
+    If the Jacobian is a full matrix, \code{jacres} should return the
     matrix dG/dy + cj*dG/dyprime, where the ith row is the sum of the
     derivatives of \eqn{G_i} with respect to \eqn{y_j} and the scaled
     derivatives of \eqn{G_i} with respect to \eqn{dy_j}.
     
-    Ff the jacobian is banded, \code{jacres} should return only the
-    nonzero bands of the jacobian, rotated rowwise. See details for the
+    Ff the Jacobian is banded, \code{jacres} should return only the
+    nonzero bands of the Jacobian, rotated rowwise. See details for the
     calling sequence when \code{jacres} is a string.
   }
-  \item{jactype }{the structure of the jacobian, one of
+  \item{jactype }{the structure of the Jacobian, one of
     \code{"fullint"}, \code{"fullusr"}, \code{"bandusr"} or
     \code{"bandint"} - either full or banded and estimated internally or
     by the user.
@@ -191,11 +191,11 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     to save storage space ( <= 5)
   }
   \item{bandup }{number of non-zero bands above the diagonal, in case
-    the jacobian is banded (and \code{jactype} one of
+    the Jacobian is banded (and \code{jactype} one of
     "bandint","bandusr")
   }
   \item{banddown }{number of non-zero bands below the diagonal, in case
-    the jacobian is banded (and \code{jactype} one of
+    the Jacobian is banded (and \code{jactype} one of
     "bandint","bandusr")
   }
   \item{maxsteps }{maximal number of steps per output interval taken by the
@@ -370,7 +370,7 @@ max(abs(ODE-DAE))
 par(mfrow = opa)
 
 ## =======================================================================
-## same DAE model, now with the jacobian
+## same DAE model, now with the Jacobian
 ## =======================================================================
 jacres_DAE <- function (t, y, yprime, pars, cj)
 {
@@ -474,21 +474,21 @@ par(mfrow = opa)
   y' and algebraic variables (their number specified with \code{nalg})
   will be estimated, when \code{estini} = 2, y will be estimated.
   
-  The form of the \bold{jacobian} can be specified by
+  The form of the \bold{Jacobian} can be specified by
   \code{jactype}. This is one of:
   
   \describe{
-    \item{jactype = "fullint":}{a full jacobian, calculated internally
+    \item{jactype = "fullint":}{a full Jacobian, calculated internally
       by \code{daspk}, the default,
     }
-    \item{jactype = "fullusr":}{a full jacobian, specified by user
+    \item{jactype = "fullusr":}{a full Jacobian, specified by user
       function \code{jacfunc} or \code{jacres},
     }
-    \item{jactype = "bandusr":}{a banded jacobian, specified by user
+    \item{jactype = "bandusr":}{a banded Jacobian, specified by user
       function \code{jacfunc} or \code{jacres}; the size of the bands
       specified by \code{bandup} and \code{banddown},
     }
-    \item{jactype = "bandint":}{a banded jacobian, calculated by
+    \item{jactype = "bandint":}{a banded Jacobian, calculated by
       \code{daspk}; the size of the bands specified by \code{bandup} and
       \code{banddown}.
     }

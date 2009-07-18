@@ -70,17 +70,17 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     long as \code{y}.  See details.
   }
   \item{jacvec }{if not \code{NULL}, an \R function that computes a
-    column of the jacobian of the system of differential equations
+    column of the Jacobian of the system of differential equations
     dydot(i)/dy(j), or a string giving the name of a function or
     subroutine in \file{dllname} that computes the column of the
-    jacobian (see Details below for more about this option).  The \R
+    Jacobian (see Details below for more about this option).  The \R
     calling sequence for \code{jacvec} is identical to that of
     \code{func}, but with extra parameter \code{j}, denoting the column
     number.  Thus, \code{jacvec} should be called as: \code{jacvec =
     func(t, y, j, parms)} and \code{jacvec} should return a vector
-    containing column \code{j} of the jacobian, i.e.  its i-th value is
+    containing column \code{j} of the Jacobian, i.e.  its i-th value is
     dydot(i)/dy(j). If this function is absent, \code{lsodes} will
-    generate the jacobian by differences.
+    generate the Jacobian by differences.
   }
   \item{sparsetype }{the sparsity structure of the Jacobian, one of
     "sparseint" or "sparseusr", sparsity estimated internally by lsodes
@@ -256,15 +256,15 @@ chemistry <- function (time,Y,pars)
 }
 
 ## =======================================================================
-## application 1. lsodes estimates the structure of the jacobian
-##                and calculates the jacobian by differences
+## application 1. lsodes estimates the structure of the Jacobian
+##                and calculates the Jacobian by differences
 ## =======================================================================
 out <- lsodes(func = chemistry, y = y, parms = parms, times = times,
               atol = atol, rtol = rtol, verbose = TRUE)
 
 ## =======================================================================
-## application 2. the structure of the jacobian is input
-##                lsodes calculates the jacobian by differences
+## application 2. the structure of the Jacobian is input
+##                lsodes calculates the Jacobian by differences
 ##                this is not so efficient...
 ## =======================================================================
 
@@ -291,8 +291,8 @@ out2 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
              atol = atol, rtol = rtol, verbose = TRUE, lrw = 351)
                             
 ## =======================================================================
-## application 3. lsodes estimates the structure of the jacobian
-##                the jacobian (vector) function is input
+## application 3. lsodes estimates the structure of the Jacobian
+##                the Jacobian (vector) function is input
 ## =======================================================================
 chemjac <- function (time, Y, j, pars)
 {
@@ -360,8 +360,8 @@ out3 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
               jacvec = chemjac, atol = atol, rtol = rtol)
 
 ## =======================================================================
-## application 4. The structure of the jacobian (nonzero elements) AND
-##                the jacobian (vector) function is input
+## application 4. The structure of the Jacobian (nonzero elements) AND
+##                the Jacobian (vector) function is input
 ##                not very efficient...
 ## =======================================================================
 out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
@@ -401,16 +401,16 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
   If matrix \code{inz} is present, then it should contain indices (row,
   column) to the nonzero elements in the Jacobian matrix.
   
-  If  \code{jacvec} and \code{inz} are present, then the jacobian is
+  If  \code{jacvec} and \code{inz} are present, then the Jacobian is
   fully specified by the user.
   
   If \code{jacvec} is present, but not \code{nnz} then the structure of
-  the jacobian will be obtained from NEQ + 1 calls to \code{jacvec}.
+  the Jacobian will be obtained from NEQ + 1 calls to \code{jacvec}.
   
-  If \code{nnz} is present, but not \code{jacvec} then the jacobian will
+  If \code{nnz} is present, but not \code{jacvec} then the Jacobian will
   be estimated internally, by differences. 
   
-  If neither \code{nnz} nor \code{jacvec} is present, then the jacobian
+  If neither \code{nnz} nor \code{jacvec} is present, then the Jacobian
   will be generated internally by differences, its structure (indices to
   nonzero elements) will be obtained from NEQ + 1 initial calls to
   \code{func}.
