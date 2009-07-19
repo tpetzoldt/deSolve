@@ -80,23 +80,22 @@ checkforcings <- function (forcings,times,dllname,
      for (i in 1:nf) {
 
        x <- forcings[[i]][,1]
+       nx <- length(x)
        if (length(ux <- unique(x)) < nx) {  # there are non-unique values
          y <- forcings[[i]][,2]
-         if (missing(con$ties))
+         ties <- con$tiesn
+         if (missing(ties))
            warning("collapsing to unique 'x' values")
-          y <- as.vector(tapply(y, x, con$ties))
+          y <- as.vector(tapply(y, x, ties))
           x <- sort(ux)
-          nx <- length(x)
-          forcings[[i]][,1] <-  x
-          forcings[[i]][,2] <-  y
+          forcings[[i]] <- cbind(x, y)
 
        } else {                             # values are unique, but need sorting
           y <- forcings[[i]][,2]
           o <- order(x)
           x <- x[o]
           y <- y[o]
-          forcings[[i]][,1] <-  x
-          forcings[[i]][,2] <-  y
+          forcings[[i]] <-  cbind(x,y)
        }
     } # i
   }

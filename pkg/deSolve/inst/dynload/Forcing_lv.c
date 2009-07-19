@@ -15,8 +15,8 @@ static double forc[1];
 
 #define import forc[0]
 
-/* initializer: same name as the dll (without extension) */
-void odec(void (* odeparms)(int *, double *))
+/* initializers*/
+void parmsc(void (* odeparms)(int *, double *))
 {
     int N=6;
     odeparms(&N, parms);
@@ -28,13 +28,12 @@ void forcc(void (* odeforcs)(int *, double *))
     odeforcs(&N, forc);
 }
 
-/* Derivatives */
+/* derivative function */
 void derivsc(int *neq, double *t, double *y, double *ydot, double *yout, int*ip)
 {
     if (ip[0] <2) error("nout should be at least 2");
     ydot[0] = import - b*y[0]*y[1] + g*y[2]     ;
     ydot[1] = c*y[0]*y[1]  - d*y[2]*y[1]        ;
-    
     ydot[2] = e*y[1]*y[2]  - f*y[2]             ;
 
     yout[0] = y[0]+y[1]+y[2];

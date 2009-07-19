@@ -47,8 +47,7 @@ performance, FORTRAN, C}
 \Plainauthor{Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer}
 
 \Abstract{This document describes how to use the \pkg{deSolve} package
-to solve models that are written in \proglang{FORTRAN} or
-\citep{deSolve}, to solve models that are written in \proglang{FORTRAN} or
+\citep{deSolve} to solve models that are written in \proglang{FORTRAN} or
 \proglang{C}.}
 
 %% The address of (at least) one author should be given
@@ -675,16 +674,18 @@ Two utilities have been included to test the function implementation
 in compiled code:
 \begin{itemize}
 \item \code{DLLfunc} to test the implementation of the derivative function
-  as used in ODEs. This function returns the derivative $\frac{dy}{dt}$.
+  as used in ODEs. This function returns the derivative $\frac{dy}{dt}$ and
+  the output variables.
 \item \code{DLLres} to test the implementation of the residual function
   as used in DAEs. This function returns the residual function
-  $\frac{dy}{dt}-f(y,t)$.
+  $\frac{dy}{dt}-f(y,t)$ and the output variables.
 \end{itemize}
 These functions serve no other purpose than to test whether the compiled code
-returns what it should be.
+returns what it should.
 
 \subsection{DLLfunc}
-We test whether the ccl4 model returns the proper rates of changes.
+We test whether the ccl4 model, which is part of \code{deSolve} package,
+returns the proper rates of changes.
 (Note: see example(ccl4model) for a more comprehensive implementation)
 <<>>=
 # Parameter values and initial conditions
@@ -702,8 +703,8 @@ DLLfunc(y = yini, dllname = "deSolve", func = "derivsccl4",
 \subsection{DLLres}
 
 The deSolve package contains a FORTRAN implementation of the chemical model
-described above (section 4.1), but where the production rate is included
-as a forcing function.
+described above (section 4.1), where the production rate is included
+as a forcing function (see next section).
 
 Here we use \code{DLLres} to test it:
 <<>>=
@@ -727,10 +728,11 @@ DLLres(y=y,dy=dy,times=5,res="chemres",
 
 \section{Using forcing functions}
 
-Forcing functions are treated similar as parameters. This means:
+Forcing functions in DLLs are implemented in a similar way as parameters.
+This means:
 \begin{itemize}
 \item They are initialised by means of an initialiser function. Its name
-  should be passed to the solver via argument \code{initforc}
+  should be passed to the solver via argument \code{initforc}.
 
   Similar as the parameter initialiser function, the function denoted by
   \code{initforc} has as its sole argument a pointer to the vector that
@@ -747,7 +749,7 @@ Forcing functions are treated similar as parameters. This means:
 \item The forcing function data series are passed to the integrator, via
   argument \code{forcings}; if there is only one forcing function data set,
   then a 2-columned matrix (time, value) will do; else the data should be
-  passed as a list, containing (time,value) matrices with the individual
+  passed as a list, containing (time, value) matrices with the individual
   forcing function data sets. Note that the data sets in this list should be
   \emph{in the same ordering} as the declaration of the forcings in the
   compiled code.
@@ -756,13 +758,14 @@ Forcing functions are treated similar as parameters. This means:
 A number of options allow to finetune certain settings. They are in a list
 called \code{fcontrol} which can be supplied as argument when calling the
 solvers. The options are similar to the arguments from R function
-\code{approx}, howevers the dafault settings are often different.
+\code{approx}, howevers the default settings are often different.
+
 The following options can be specified:
 \begin{itemize}
     \item \code{method} specifies the interpolation method to be used.
       Choices are "linear" or "constant", the default is "linear", which
       means linear interpolation (same as \code{approx})
-    \item \code{rule }, an integer describing how interpolation is to take place
+    \item \code{rule}, an integer describing how interpolation is to take place
       \emph{outside} the interval [min(times), max(times)].
       If \code{rule} is \code{1} then an error will be triggered and the
       calculation will stop if interpolation is necessary.
@@ -771,19 +774,19 @@ The following options can be specified:
       \code{verbose} is TRUE.
 
       Note that the default differs from the \code{approx} default.
-    \item \code{f } For method=\code{"constant"} a number between \code{0} and
-      \code{1} inclusive, indicating a compromise between left- and
+    \item \code{f}, for method=\code{"constant"} is a number between \code{0}
+      and \code{1} inclusive, indicating a compromise between left- and
       right-continuous step functions. If \code{y0} and \code{y1} are the
       values to the left and right of the point then the value is
       \code{y0*(1-f)+y1*f} so that \code{f=0} is right-continuous and
-      \code{f=1} is left-continuous. The default is to have \code{f=0};
-      for some data sets it may be more realistic to set \code{f=0.5}.
-    \item \code{ties } Handling of tied \code{times} values. Either a function
-      with a single vector argument returning a single number result or the
-      string "ordered".
+      \code{f=1} is left-continuous. The default is to have \code{f=0}.
+      For some data sets it may be more realistic to set \code{f=0.5}.
+    \item \code{ties}, the handling of tied \code{times} values. Either a
+      function with a single vector argument returning a single number result
+      or the string "ordered".
 
       Note that the default is "ordered", hence the existence of ties will
-      NOT be investigated; this will mean that -if ties
+      NOT be investigated; in practice this means that, if ties
       exist, the first value will be used; if the dataset is not ordered,
       then nonsense will be produced.
 
@@ -798,9 +801,9 @@ The default settings of \code{fcontrol} are:
    Note that only ONE specification is allowed, even if there is more than
    one forcing function data set. (may/should change in the future).
 
-\subsection{A simple example}
+\subsection{A simple FORTRAN example}
 We implement the example from chapter 3 of the book \citep{Soetaert08} in
-FORTRAN and C.
+FORTRAN.
 
 This model describes the oxygen consumption of a (marine) sediment in response
 to deposition of organic matter (the forcing function). One state variable,
@@ -957,6 +960,136 @@ lines(out2$time, out2$Mineralisation, lwd=2, col="blue")
 including a forcing function - see text for R-code}
 \label{fig:scoc}
 \end{figure}
+
+\subsection{An example in C}
+Consider the following R-code which implements a resource-producer-consumer
+Lotka-Volterra type of model in R (it is a modified version of the example
+of function \code{ode}):
+<<>>=
+lvmodel <- function(t, x, parms, input)  {
+   with(as.list(c(parms, x)), {
+     import <- input(t)
+     dS <- import - b*S*P + g*K    # substrate
+     dP <- c*S*P  - d*K*P          # producer
+     dK <- e*P*K  - f*K            # consumer
+     res <- c(dS, dP, dK)
+     list(res,signal=import)
+   })
+}
+
+## The parameters
+parms  <- c(b = 0.1, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
+
+## vector of timesteps
+times  <- seq(0, 100, by=0.1)
+
+## external signal with several rectangle impulses
+signal <- as.data.frame(list(times = times,
+                 import = rep(0, length(times))))
+
+signal$import <- ifelse((trunc(signal$times) %% 2 == 0), 0, 1)
+sigimp <- approxfun(signal$times, signal$import, rule = 2)
+
+## Start values for steady state
+xstart <- c(S = 1, P = 1, K = 1)
+
+## Solve model
+print (system.time(
+out <- ode(y = xstart,times = times,
+           func = lvmodel, parms, input = sigimp)
+))
+@
+All output is printed at once:
+<<label=lv,include=FALSE>>=
+plot(out, type="l")
+@
+\setkeys{Gin}{width=1.0\textwidth}
+
+\begin{figure}
+\begin{center}
+<<label=figlv,fig=TRUE,echo=FALSE>>=
+<<lv>>
+@
+\end{center}
+\caption{Solution of the lotka-volterra resource (S)-producer (P) -
+consumer (K) model with time-variable input (signal) - see text for R-code}
+\label{fig:lv}
+\end{figure}
+The C-code, in file \url{Forcing\_lv.c}, can be found in the packages
+\url{/inst/dynload} subdirectory. It can be compiled, from within R by
+\begin{verbatim}
+system("R CMD SHLIB Forcing_lv.c")
+\end{verbatim}
+
+After defining the parameter and forcing vectors, and giving them
+comprehensible names, the parameter and forcing initialiser functions
+are defined (\code{parmsc} and \code{forcc} respectively). Next is the
+derivative function, \code{derivsc}.
+\begin{verbatim}
+#include <R.h>
+
+static double parms[6];
+static double forc[1];
+
+/* A trick to keep up with the parameters and forcings */
+#define b parms[0]
+#define c parms[1]
+#define d parms[2]
+#define e parms[3]
+#define f parms[4]
+#define g parms[5]
+
+#define import forc[0]
+
+/* initializers: */
+void odec(void (* odeparms)(int *, double *))
+{
+    int N=6;
+    odeparms(&N, parms);
+}
+
+void forcc(void (* odeforcs)(int *, double *))
+{
+    int N=1;
+    odeforcs(&N, forc);
+}
+
+/* derivative function */
+void derivsc(int *neq, double *t, double *y, double *ydot,
+  double *yout, int*ip)
+{
+    if (ip[0] <2) error("nout should be at least 2");
+    ydot[0] = import - b*y[0]*y[1] + g*y[2]     ;
+    ydot[1] = c*y[0]*y[1]  - d*y[2]*y[1]        ;
+    ydot[2] = e*y[1]*y[2]  - f*y[2]             ;
+
+    yout[0] = y[0]+y[1]+y[2];
+    yout[1] = import;
+}
+
+\end{verbatim}
+
+After defining the forcing function time series, which is to be interpolated
+by the integration routine, and loading the DLL, the model is run;
+
+\begin{verbatim}
+
+Sigimp <- approx(signal$times, signal$import, xout=ftime,rule = 2)$y
+forcings <- cbind(ftime,Sigimp)
+
+dyn.load("Forcing_lv.dll")
+out <- ode(y=xstart, times, func = "derivsc",
+   parms = parms, dllname = "Forcing_lv",initforc="forcc",
+   forcings=forcings, initfunc = "parmsc", nout = 2,
+   outnames = c("Sum","signal"),method=rkMethod("rk34f"))
+dyn.unload("Forcing_lv.dll")
+\end{verbatim}
+This code executes about 30 times faster than the R-code.
+
+With a longer simulation time, the difference becomes more pronounced,
+e.g. with times till 800 days, the DLL code executes 200 times faster
+\footnote{this is due to the sequential update of the forcing functions by
+the solvers, compared to the bisectioning approach used by approxfun}
 
 \section{Final remark}
 

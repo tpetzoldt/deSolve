@@ -76,10 +76,7 @@ int    fmethod;
  max time (to be removed).....
 */
 int    * findex;
-double * curval;
 double * intpol;
-double * curtime;
-double * nexttime;
 int    * maxindex;
 
 double * forcings;

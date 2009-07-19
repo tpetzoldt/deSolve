@@ -52,16 +52,17 @@ forcings <- cbind(ftime,Sigimp)
 xstart<-y <- c(S = 1, P = 1, K = 1)
 
 print(system.time(
-out <- as.data.frame(rk(y=y, times, func = "derivsc",
+out <-  ode(y=y, times, func = "derivsc",
    parms = parms, dllname = "Forcing_lv",initforc="forcc",
-   forcings=forcings, initfunc = "odec", nout = 2,
-   outnames = c("Sum","signal"),method=rkMethod("rk34f")))
+   forcings=forcings, initfunc = "parmsc", nout = 2,
+   outnames = c("Sum","signal"))
 ))
 
 ## Solving
-print(system.time(Out <- as.data.frame(rk(xstart, times[1:100], lvmodel, parms))))
+print(system.time(Out <- ode(xstart, times, lvmodel, parms)))
 
 ## Plotting
+out <- as.data.frame(out)
 mf <- par(mfrow = c(2,2))
 plot(out$time, out$S,  type = "l", ylab = "substrate")
 plot(out$time, out$P, type = "l", ylab = "producer")

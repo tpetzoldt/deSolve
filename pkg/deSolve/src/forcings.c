@@ -50,6 +50,9 @@ int initForcings(SEXP flist) {
    3. set pointer to DLL fortran common block or C globals /
 */
 
+
+/* THESE ARE CLEANER VERSIONS ; the other versions are in isnt/removed.txt*/
+
 void Initdeforc(int *N, double *forc)
 {
   int i, ii;
@@ -66,12 +69,8 @@ void Initdeforc(int *N, double *forc)
 */
    finit = 1;
    findex   = (int    *) R_alloc(nforc, sizeof(int));
-   curval   = (double *) R_alloc(nforc, sizeof(double));
    intpol   = (double *) R_alloc(nforc, sizeof(double));
-   curtime  = (double *) R_alloc(nforc, sizeof(double));
-   nexttime = (double *) R_alloc(nforc, sizeof(double));
    maxindex = (int    *) R_alloc(nforc, sizeof(int));
-
 
 /* Input is in three vectors:
    tvec, fvec: time and value;
@@ -81,25 +80,17 @@ void Initdeforc(int *N, double *forc)
      ii = ivec[i]-1;
      findex[i] = ii;
      maxindex[i] = ivec[i+1]-2;
-     curval[i] = fvec[ii];
-     curtime[i] = tvec[ii];
-     nexttime[i] = tvec[ii+1];
      if (fmethod == 1) {
-       intpol[i] = (fvec[ii+1]-fvec[ii])/(nexttime[i]-curtime[i]);
+       intpol[i] = (fvec[ii+1]-fvec[ii])/(tvec[ii+1]-tvec[ii]);
      } else  intpol[i] = 0;
-     forc[i] = curval[i];
+     forc[i] = fvec[ii];
    }
    forcings = forc;      /* set pointer to c globals or fortran common block */
-
 }
-
-/*         -----     UPDATING forcing functions at each time     -----
-*/
 
 void updatedeforc(double *time)
 {
-  int i, ii, change, zerograd;
-  double ntime;
+  int i, ii,  zerograd;
 
 /* check if initialised? */
    if (finit == 0)
@@ -107,52 +98,28 @@ void updatedeforc(double *time)
 
    for (i=0; i<nforc; i++) {
      ii = findex[i];
-     change=0;
+
      zerograd=0;
-     if (*time > nexttime[i])
-     {
-       ntime = nexttime[i];
-       while (*time > ntime){
+     while (*time > tvec[ii+1]){
          if (ii+2 > maxindex[i]) {   /* this probably redundant...*/
            zerograd=1;
            break;
          }
          ii = ii+1;
-         ntime = tvec[ii+1];   /* KS check */
        }
-       change=1;
-     }
-     if (*time < curtime[i])
-     {
-       ntime = curtime[i];
-       while (*time < ntime){
+    while (*time < tvec[ii]){       /* test here for ii < 1 ?...*/
          ii = ii-1;
-         ntime = tvec[ii];
-       }
-       change=1;
-     }
-     if (change == 1) {
+    }
+    if (ii != findex[i]) {
        findex[i] = ii;
-       curval[i] = fvec[ii];
-       curtime[i] = tvec[ii];
        if ((zerograd == 0) & (fmethod == 1)) {  /* fmethod 1=linear */
-         nexttime[i] = tvec[ii+1];
-         intpol[i] = (fvec[ii+1]-fvec[ii])/(nexttime[i]-curtime[i]); }
-       else if (fmethod == 2) {
-         nexttime[i] = tvec[ii+1];
-         intpol[i] = 0;
-       }
+         intpol[i] = (fvec[ii+1]-fvec[ii])/(tvec[ii+1]-tvec[ii]); }
        else {
-         nexttime[i] = DBL_MAX ; /* as large as possible */
          intpol[i] = 0;
        }
-       
      }
 
-     forcings[i]=curval[i]+intpol[i]*(*time-curtime[i]);
-  /*  Rprintf("y %g\t %g\t %g\t %g\t  %g\n", curval[i], intpol[i], curtime[i], *time, forcings[i]);*/
-
+     forcings[i]=fvec[ii]+intpol[i]*(*time-tvec[ii]);
    }
-
 }
 

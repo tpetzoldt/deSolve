@@ -145,6 +145,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   n_eq = ny;                          /* n_eq is a global variable */
   nt = LENGTH(times);  
   mflag = INTEGER(verbose)[0];        
+  nout  = INTEGER(nOut)[0];
+  ntot  = n_eq+nout;
 
   ninfo=LENGTH(info);
   ml = INTEGER(bd)[0]; 
@@ -160,7 +162,32 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   }
 
 /* initialise output ... */
-  initOut(isDll, n_eq, nOut, Rpar, Ipar);
+  if (isDll==1)  /* function is a dll */
+  {
+   lrpar = nout + LENGTH(Rpar);       /* length of rpar */
+   lipar = 3    + LENGTH(Ipar);       /* length of ipar */
+
+  } else                              /* function is not a dll */
+  {
+   lipar = 3;
+   lrpar = nout;
+  }
+   out   = (double *) R_alloc(lrpar, sizeof(double));
+   ipar  = (int *)    R_alloc(lipar, sizeof(int));
+
+   if (isDll ==1)
+   {
+    ipar[0] = nout;          /* first 3 elements of ipar are special */
+    ipar[1] = lrpar;
+    ipar[2] = lipar;
+    /* other elements of ipar are set in R-function lsodx via argument *ipar* */
+    for (j = 0; j < LENGTH(Ipar);j++) ipar[j+3] = INTEGER(Ipar)[j];
+
+    /* first nout elements of rpar reserved for output variables
+      other elements are set in R-function lsodx via argument *rpar* */
+    for (j = 0; j < nout;        j++) out[j] = 0.;
+    for (j = 0; j < LENGTH(Rpar);j++) out[nout+j] = REAL(Rpar)[j];
+   }
 
 /*  output always done here in C-code (<-> lsode, vode)... */
   ntot  = n_eq+nout;

@@ -29,10 +29,10 @@ dyn.load("AquaphyForcing.dll")
 ## =======================
 ## The initial conditions
 ## =======================
-times <- seq(0, 24*20, 1)
+times <- seq(10, 24*20, 1)
 
 # create the forcing functions
-ftime  <- seq(0,750,by=0.5)
+ftime  <- seq(0,500,by=0.5)
 parval <- pmax(0,250 + 350*sin(ftime*2*pi/24)+(runif(length(ftime))-0.5)*250)
 Par    <- matrix(nc=2,c(ftime,parval))
 plot(Par,type="l")
