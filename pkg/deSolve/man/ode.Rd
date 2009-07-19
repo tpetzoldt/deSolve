@@ -12,7 +12,8 @@ around the implemented ODE solvers}
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45"), ...)
 
-\method{plot}{deSolve}(x, which = 2:ncol(x), \dots)
+\method{plot}{deSolve}(x, which = 2:ncol(x), ask = prod(par("mfcol")) <
+  length(which) && dev.interactive(), \dots)
 \method{print}{deSolve}(x, \dots)
 }
 \arguments{
@@ -54,14 +55,16 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"} or
     \code{"ode45"}) or a function that performs integration, or a list
     of class \code{rkMethod}.}
-  \item{x }{an object of class \code{DiffEq}, as returned by the integrators,
+  \item{x }{an object of class \code{deSolve}, as returned by the integrators,
     and to be printed or plotted.
   }
   \item{which }{the name or the index to the variables that should be plotted.
     Default = all variables.
   }
-   \item{... }{additional arguments passed to the integrator or to the
-     methods.}
+  \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
+    each plot, see \code{\link{par}(ask=.)}.}
+  \item{... }{additional arguments passed to the integrator or to the
+    methods.}
 }
 
 \value{
@@ -109,10 +112,8 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 ## Example1: Predator-Prey Lotka-Volterra model
 ## =======================================================================
 
-LVmod <- function(Time, State, Pars)
-{
-  with(as.list(c(State, Pars)),
-  {
+LVmod <- function(Time, State, Pars) {
+  with(as.list(c(State, Pars)), {
     Ingestion    <- rIng  * Prey*Predator
     GrowthPrey   <- rGrow * Prey*(1-Prey/K)
     MortPredator <- rMort * Predator
@@ -128,7 +129,7 @@ pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
              rGrow  = 1.0,    # /day, growth rate of prey
              rMort  = 0.2 ,   # /day, mortality rate of predator
              assEff = 0.5,    # -, assimilation efficiency
-             K      = 10  )   # mmol/m3, carrying capacity
+             K      = 10)     # mmol/m3, carrying capacity
 
 yini    <- c(Prey = 1, Predator = 2)
 times   <- seq(0, 200, by = 1)
@@ -144,10 +145,8 @@ legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 ## =======================================================================
 
 ## Note:
-## 1. parameter and state variable names made
-##    accessible via "with" statement
-## 2. function sigimp passed as an argument (input) to model
-##    (see also lsoda and rk examples)
+## Function sigimp passed as an argument (input) to model
+##   (see also lsoda and rk examples)
 
 lvmodel <- function(t, x, parms, input)  {
   with(as.list(c(parms, x)), {
@@ -161,10 +160,10 @@ lvmodel <- function(t, x, parms, input)  {
 }
 
 ## The parameters 
-parms  <- c(b = 0.0, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
+parms  <- c(b = 0.001, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
 
 ## vector of timesteps
-times  <- seq(0, 100, length = 101)
+times  <- seq(0, 200, length = 101)
 
 ## external signal with rectangle impulse
 signal <- as.data.frame(list(times = times,
@@ -182,15 +181,15 @@ xstart <- c(S = 1, P = 1, K = 1)
 out <- ode(y = xstart,times = times,
            func = lvmodel, parms, input = sigimp)
 
-## Display results
-mf <- par(mfrow=c(1,2))
-matplot(out[,1], out[,2:4], type="l", xlab="time", ylab="state")
+## Default plot method
+plot(out, type="l")
+
+## User specified plotting
+mf <- par(mfrow = c(1, 2))
+matplot(out[,1], out[,2:4], type = "l", xlab = "time", ylab = "state")
 legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "K"))
 plot(out[,"P"], out[,"K"], type = "l", lwd = 2, xlab = "producer",
   ylab = "consumer")
-
-plot(out)
-
 par(mfrow=mf)
 
 }
