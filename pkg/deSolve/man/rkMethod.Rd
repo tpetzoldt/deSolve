@@ -69,8 +69,8 @@ rkMethod(method = NULL, ...)
       frequent interpolation of external data needs to be avoided.
   
     \item Interpolation for other methods than "rk45dp7" (alias "ode45")
-      is done by 3rd order Neville-Aitken polynomials only. This needs
-      at least 4 internal time steps and may lead to local inaccuracies
+      is done Neville-Aitken polynomials only (5th order by default). This needs
+      at least 6 internal time steps and may lead to local inaccuracies
       for badly behaving systems if external and internal time steps are
       too different.
     
@@ -94,13 +94,6 @@ rkMethod(method = NULL, ...)
     variable time step (\code{TRUE}) or not (\code{FALSE}).
   }
 
-  \item{interpolation}{optional boolean value to switch internal
-    interpolation off.  Note that this works only if time steps match
-    exactly. This may not work as expected for all cases because of
-    floating point rounding errors (see R FAQ about ``Why doesn't R
-    think these numbers are equal?'').
-  }
-  
   \item{FSAL}{(first same as last) optional boolean value specifying if
     the method allows re-use of the last function evaluation
     (\code{TRUE}) or not (\code{FALSE} or \code{NULL}).
@@ -132,11 +125,20 @@ rkMethod(method = NULL, ...)
     time-step adjustment.
   }
 
-  \item{alpha}{optional tuning parameter for stepsize
-    adjustment. Typical values are \eqn{1/Qerr} (default) or, if beta
-    is set, \eqn{1/Qerr - 0.75 beta}
+  \item{nknots}{integer value specifying the order of interpolation polynomials
+    for methods without dense output (default = 5th order). If \code{nknots} < 2
+    internal
+    interpolation is switched off.  Note that this works only if time steps match
+    exactly. This may not work as expected for all cases because of
+    floating point rounding errors (see R FAQ about ``Why doesn't R
+    think these numbers are equal?'').
   }
-  
+
+  \item{alpha}{optional tuning parameter for stepsize
+    adjustment. If \code{alpha} is omitted, it is set to
+    \eqn{1/Qerr - 0.75 beta}. The default value is
+    \eqn{1/Qerr} (for \code{beta} = 0).}
+
   \item{beta}{optional tuning parameter for stepsize adjustment. Typical
     values are \eqn{0} (default) or \eqn{0.4/Qerr}
   }
@@ -193,7 +195,7 @@ func <- function(t, x, parms) {
     list(res)
   })
 }
-times  <- seq(0, 20, length = 21)
+times  <- seq(0, 200, length = 101)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
 x <- c(P = 2, K = 1)
 
@@ -201,9 +203,21 @@ ode(x, times, func, parms, method = rkMethod("rk4"))
 
 ode(x, times, func, parms, method = "ode45")
 
-## disable polynomial interpolation (dense output)
-## and fall back to linear approximation
-ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL))
+## disable dense-output interpolation
+## and fall back to Neville-Aitken polynomials
+o0 <- ode(x, times, func, parms, method = "lsoda", hmax=10000)
+o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"), hmax=10000)
+o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL, nknots=3), hmax=20)
+
+## show differences between methods
+par(mfrow=c(3,1))
+matplot(o1[,1], o1[,-1], type="l", xlab="Time", main="State Variables")
+matplot(o1[,1], o2[,-1], type="p", pch=16, add=TRUE)
+matplot(o0[,1], o1[,-1]-o0[,-1], type="l", lty="solid", xlab="Time",
+  main="Difference: rk45dp7 - lsoda")
+matplot(o1[,1], o2[,-1]-o0[,-1], type="l", lty="dashed", xlab="Time",
+  main="difference: Neville-Aitken - Dense Output")
+abline(h=0, col="grey")
 
 ## define and use a new rk method
 ode(x, times, func, parms, 

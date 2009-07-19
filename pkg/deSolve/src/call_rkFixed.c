@@ -21,7 +21,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   double t, dt, t_ext, tmax;
 
-  SEXP Interpolate;
   int fsal = FALSE;       /* fixed step methods have no FSAL */
   int interpolate = TRUE; /* polynomial interpolation is done by default */
 
@@ -51,10 +50,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
   
-  PROTECT(Interpolate = getListElement(Method, "interpolate")); incr_N_Protect();
-  if (length(Interpolate)) interpolate = INTEGER(Interpolate)[0];
-
-  double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+    double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
 
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
   tt = NUMERIC_POINTER(Times);
@@ -122,10 +118,16 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   rr  =  (double *) R_alloc(neq * 5, sizeof(double));
 
   /* matrix for polynomial interpolation */
-  int nknots = 4;  /* 3rd order polynomials */
-  int iknots = 0;  /* counter for knotes buffer */
+  SEXP R_nknots;
+  int nknots = 6;  /* 6 = 5th order polynomials by default*/
+  int iknots = 0;  /* counter for knots buffer */
   double *yknots;
 
+  PROTECT(R_nknots = getListElement(Method, "nknots")); incr_N_Protect();
+  if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
+
+  if (nknots < 2) {nknots=1; interpolate = FALSE;}
+  
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
 

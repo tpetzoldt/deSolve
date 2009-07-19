@@ -23,17 +23,26 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (is.character(method)) method <- rkMethod(method)
     if (is.null(tcrit)) tcrit <- max(times)
 
-    ## Check if interpolation is switched off
-    if (!is.null(method$interpolation) && !method$interpolation) {
+    ## Check interpolation order
+    if (is.null(method$nknots)) {
+      method$nknots <- 5L # fifth order polynomials by default
+    } else {
+      method$nknots <- as.integer(ceiling(method$nknots))
+    }
+    nknots <- method$nknots
+    if (nknots > 8) {
+        warning("Large number of nknots does not make sense.")
+    } else if (nknots < 2) {
       cat("\nMethod without or with disabled interpolation\n")
     } else {
       trange <- diff(range(times))
-      ## ensure that we have at least 4..5 knots
+      ## ensure that we have at least nknots + 2 data points; + 0.5 for safety)
       ## to allow 3rd order polynomial interpolation
       ## for methods without built-in dense output
+
       if ((is.null(method$d) &                             # has no "dense output"?
-        (hmax > 0.2 * trange))) {                          # time steps too large?
-        hini <- hmax <- 0.2 * trange
+        (hmax > 1.0/(nknots + 2.5) * trange))) {           # time steps too large?
+        hini <- hmax <- 1.0/(nknots + 2.5) * trange
         if (hmin < hini) hmin <- hini
         cat("\nNote: Method ", method$ID,
             " needs intermediate steps for interpolation\n")

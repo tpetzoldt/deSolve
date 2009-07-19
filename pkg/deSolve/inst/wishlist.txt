@@ -1,8 +1,6 @@
 deSolve release 2.0
 
 *** TO DO NOW ***
-plot function should halt if too many plots requested. Decide on how many.
-(to avoid error "figure margins too large" while still opening a window.)
 
 
 ** done **
@@ -16,8 +14,9 @@ plot function should halt if too many plots requested. Decide on how many.
 - print and plot method for deSolve output (in file utilities.R)
 - improve diagnostics for all    (note: NO S3 classes needed...)
 - forcing functions for rk solvers
-- simple PID stepsize control (not really important for our testcases)
+- simple PI stepsize control (not really important for our testcases)
 - unscramble output names in case 1-D
+- plot.deSolve asks user after each page of plots (default 3 x 3)
 
 ** in progress **
 - make help files more readable
@@ -32,7 +31,13 @@ plot function should halt if too many plots requested. Decide on how many.
            however, there is the rwork problem....
            what do you think?
   KS: low priority - VERY technical
-- more diagnostics for rk  - ThPe (low priority, who will need this...)
+- more diagnostics for rk  - ThPe (low priority, who will need
+this...)
+
+- ThPe: more consistency of the .Rd help file examples:
+  - rename lvmodel (because similar name as LVmod); --> SPK (substrate
+  - producer, consumer) or SPC? or other suggestion???
+ 
 
 ** Wishlist **
 
