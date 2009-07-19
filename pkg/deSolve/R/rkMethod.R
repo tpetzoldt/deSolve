@@ -163,11 +163,32 @@ rkMethod <- function(method = NULL, ...) {
   ## modify a known or add a completely new method)
   ldots <- list(...)
   out[names(ldots)] <- ldots
-  class(out) <- c("list", "rkMethod")
 
   ## return the IDs of the methods if called with an empty argument list
-  if (is.null(method) & length(ldots) == 0)
+  if (is.null(method) & length(ldots) == 0) {
     out <- as.vector(unlist(knownMethods))
+  } else {
+    ## check size consistency of parameter sets
+    sl    <- lapply(out, length)
+    stage <- out$stage
+    if (is.matrix(out$A)) {
+      if (nrow(out$A) != stage | ncol(out$A)  < stage -1 | ncol(out$A) > stage)
+        stop("Size of matrix A does not match stage")
+    } else {
+      if (length(out$A) != stage) stop("Size of A does not match stage")
+    }
+    if (stage != sl$b1 | stage != sl$c)
+      stop("Wrong rkMethod, length of parameters do not match")
+    if (out$varstep & is.null(out$b2))
+      stop("Variable stepsize method needs non-empty b2")
+    if (!is.null(out$b2))
+      if (sl$b2 != stage)
+        stop("Wrong rkMethod, length of b2 must be empty or equal to stage")
+    if (!is.null(out$d))
+      if (sl$d != stage)
+        stop("Wrong rkMethod, length of d must be empty or equal to stage")
+    class(out) <- c("list", "rkMethod")
+  }
 
   out
 }

@@ -203,11 +203,11 @@ ode(x, times, func, parms, method = rkMethod("rk4"))
 
 ode(x, times, func, parms, method = "ode45")
 
+o0 <- ode(x, times, func, parms, method = "lsoda")
+o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"))
 ## disable dense-output interpolation
 ## and fall back to Neville-Aitken polynomials
-o0 <- ode(x, times, func, parms, method = "lsoda", hmax=10000)
-o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"), hmax=10000)
-o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL, nknots=3), hmax=20)
+o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL))
 
 ## show differences between methods
 par(mfrow=c(3,1))
