@@ -1,6 +1,5 @@
 \name{ode}
 \alias{ode}
-\alias{plot.deSolve}
 \alias{print.deSolve}
 
 \title{General Solver for Ordinary Differential Equations}
@@ -12,8 +11,6 @@ around the implemented ODE solvers}
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45"), ...)
 
-\method{plot}{deSolve}(x, which = 2:ncol(x), ask = prod(par("mfcol")) <
-  length(which) && dev.interactive(), \dots)
 \method{print}{deSolve}(x, \dots)
 }
 \arguments{
@@ -47,7 +44,6 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     of the shared library (without extension) which must be loaded
     before \code{lsoda()} is called. See package vignette
     \code{"compiledCode"} for more details.
-    
   }
   \item{parms }{parameters passed to \code{func}.}
   \item{method }{the integrator to use, either a string (\code{"lsoda"},
@@ -55,14 +51,8 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"} or
     \code{"ode45"}) or a function that performs integration, or a list
     of class \code{rkMethod}.}
-  \item{x }{an object of class \code{deSolve}, as returned by the integrators,
-    and to be printed or plotted.
-  }
-  \item{which }{the name or the index to the variables that should be plotted.
-    Default = all variables.
-  }
-  \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
-    each plot, see \code{\link{par}(ask=.)}.}
+   \item{x }{an object of class \code{deSolve}, as returned by the
+    integrators, and to be printed.}
   \item{... }{additional arguments passed to the integrator or to the
     methods.}
 }
@@ -91,6 +81,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 
 \seealso{
   \itemize{
+    \item \code{\link{plot.deSolve}} for plotting the outputs,
     \item \code{\link{ode.band}} for solving models with a banded
       Jacobian,
     \item \code{\link{ode.1D}} for integrating 1-D models,
@@ -141,7 +132,7 @@ matplot(out$time,out[,2:3],type = "l",xlab = "time",ylab = "Conc",
 legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 
 ## =======================================================================
-## Example2: Resource-producer-consumer Lotka-Volterra model
+## Example2: Substrate-Producer-Consumer Lotka-Volterra model
 ## =======================================================================
 
 ## Note:
