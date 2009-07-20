@@ -273,17 +273,17 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 ## parameters are a list, names accessible via "with" function
 ## (see also ode and lsoda examples)
 
-lvmodel <- function(t, x, parms) {
+SPCmod <- function(t, x, parms) {
   S <- x[1] # substrate
   P <- x[2] # producer
-  K <- x[3] # consumer
+  C <- x[3] # consumer
 
   with(parms, {
     import <- approx(signal$times, signal$import, t)$y
-    dS <- import - b * S * P + g * K
-    dP <- c * S * P  - d * K * P
-    dK <- e * P * K  - f * K
-    res <- c(dS, dP, dK)
+    dS <- import - b * S * P + g * C
+    dP <- c * S * P  - d * C * P
+    dC <- e * P * C  - f * C
+    res <- c(dS, dP, dC)
     list(res)
   })
 }
@@ -301,19 +301,19 @@ signal$import[signal$times >= 10 & signal$times <= 11] <- 0.2
 parms <- list(b = 0.0, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
 
 ## Start values for steady state
-y <- xstart <- c(S = 1, P = 1, K = 1)
+y <- xstart <- c(S = 1, P = 1, C = 1)
 
 system.time({
 ## Euler method
-out1  <- as.data.frame(rk(xstart, times, lvmodel, parms,
+out1  <- as.data.frame(rk(xstart, times, SPCmod, parms,
                           hini = 0.1, method = "euler"))
 
 ## classical Runge-Kutta 4th order
-out2 <- as.data.frame(rk(xstart, times, lvmodel, parms,
+out2 <- as.data.frame(rk(xstart, times, SPCmod, parms,
                          hini = 1, method = "rk4"))
 
 ## Dormand-Prince method of order 5(4)
-out3 <- as.data.frame(rk(xstart, times, lvmodel, parms,
+out3 <- as.data.frame(rk(xstart, times, SPCmod, parms,
                          hmax = 1, method = "rk45dp7"))
 })
 
@@ -326,13 +326,13 @@ plot (out1$time, out1$P, type = "l", ylab = "Producer")
 lines(out2$time, out2$P, col = "red", lty = "dotted")
 lines(out3$time, out3$P, col = "green", lty = "dotted")
 
-plot (out1$time, out1$K, type = "l", ylab = "Consumer")
-lines(out2$time, out2$K, col = "red", lty = "dotted", lwd = 2)
-lines(out3$time, out3$K, col = "green", lty = "dotted")
+plot (out1$time, out1$C, type = "l", ylab = "Consumer")
+lines(out2$time, out2$C, col = "red", lty = "dotted", lwd = 2)
+lines(out3$time, out3$C, col = "green", lty = "dotted")
 
-plot (out1$P, out1$K, type = "l", xlab = "Producer", ylab = "Consumer")
-lines(out2$P, out2$K, col = "red",   lty = "dotted", lwd = 2)
-lines(out3$P, out3$K, col = "green", lty = "dotted")
+plot (out1$P, out1$C, type = "l", xlab = "Producer", ylab = "Consumer")
+lines(out2$P, out2$C, col = "red",   lty = "dotted", lwd = 2)
+lines(out3$P, out3$C, col = "green", lty = "dotted")
 
 legend("center", legend = c("euler", "rk4", "rk45dp7"),
   lty = c(1, 3, 3), lwd = c(1, 2, 1),

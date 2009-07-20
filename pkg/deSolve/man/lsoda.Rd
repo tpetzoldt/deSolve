@@ -223,13 +223,13 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 ##    (see also ode and rk examples)
 ## =======================================================================
 
-lvmodel <- function(t, x, parms) {
+SPCmod <- function(t, x, parms) {
   with(as.list(c(parms, x)), {
     import <- sigimp(t)
-    dS <- import - b*S*P + g*K     #substrate
-    dP <- c*S*P  - d*K*P           #producer
-    dK <- e*P*K  - f*K             #consumer
-    res <- c(dS, dP, dK)
+    dS <- import - b*S*P + g*C     #substrate
+    dP <- c*S*P  - d*C*P           #producer
+    dC <- e*P*C  - f*C             #consumer
+    res <- c(dS, dP, dC)
     list(res)
   })
 }
@@ -250,17 +250,17 @@ sigimp <- approxfun(signal$times, signal$import, rule = 2)
 
 
 ## Start values for steady state
-y <- xstart <- c(S = 1, P = 1, K = 1)
+y <- xstart <- c(S = 1, P = 1, C = 1)
 
 ## Solving
-out <- as.data.frame(lsoda(xstart, times, lvmodel, parms))
+out <- as.data.frame(lsoda(xstart, times, SPCmod, parms))
 
 ## Plotting
 mf <- par(mfrow = c(2,2))
 plot(out$time, out$S,  type = "l", ylab = "substrate")
 plot(out$time, out$P, type = "l", ylab = "producer")
-plot(out$time, out$K, type = "l", ylab = "consumer")
-plot(out$P, out$K, type = "l", xlab = "producer", ylab = "consumer")
+plot(out$time, out$C, type = "l", ylab = "consumer")
+plot(out$P, out$C, type = "l", xlab = "producer", ylab = "consumer")
 par(mfrow = mf)
 
 ## =======================================================================

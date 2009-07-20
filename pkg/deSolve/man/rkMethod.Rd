@@ -189,15 +189,15 @@ rkMethod("ode45")   # an alias for the same method
 
 func <- function(t, x, parms) {
   with(as.list(c(parms, x)),{
-    dP  <- a * P      - b * K * P
-    dK  <- b * P * K  - c * K
-    res <- c(dP, dK)
+    dP  <- a * P      - b * C * P
+    dC  <- b * P * C  - c * C
+    res <- c(dP, dC)
     list(res)
   })
 }
 times  <- seq(0, 200, length = 101)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
-x <- c(P = 2, K = 1)
+x <- c(P = 2, C = 1)
 
 ode(x, times, func, parms, method = rkMethod("rk4"))
 

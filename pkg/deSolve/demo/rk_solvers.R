@@ -12,13 +12,13 @@ plotIt <- function(col="red") {
   lines(out2$time, out2$P, col=col,   lty="dotted", lwd=3)
   lines(out3$time, out3$P, col="green", lty="dotted")
 
-  plot (out1$time, out1$K, type="l",    ylim=c(0,3))
-  lines(out2$time, out2$K, col=col,   lty="dotted", lwd=3)
-  lines(out3$time, out3$K, col="green", lty="dotted")
+  plot (out1$time, out1$C, type="l",    ylim=c(0,3))
+  lines(out2$time, out2$C, col=col,   lty="dotted", lwd=3)
+  lines(out3$time, out3$C, col="green", lty="dotted")
 
-  plot (out1$P, out1$K, type="l")
-  lines(out2$P, out2$K, col=col,   lty="dotted", lwd=3)
-  lines(out3$P, out3$K, col="green", lty="dotted")
+  plot (out1$P, out1$C, type="l")
+  lines(out2$P, out2$C, col=col,   lty="dotted", lwd=3)
+  lines(out3$P, out3$C, col="green", lty="dotted")
 }
 
 
@@ -27,13 +27,13 @@ plotIt <- function(col="red") {
 parms  <- c(b=0.0, c=0.1, d=0.1, e=0.1, f=0.1, g=0.0)
 
 ## The model
-lvmodel <- function(t, x, parms, input)  {
+SPCmod <- function(t, x, parms, input)  {
   with(as.list(c(parms, x)),  {
     import <- input(t)
-    dS <- import - b*S*P + g*K
-    dP <- c*S*P  - d*K*P
-    dK <- e*P*K  - f*K
-    res<-c(dS, dP, dK)
+    dS <- import - b*S*P + g*C
+    dP <- c*S*P  - d*C*P
+    dC <- e*P*C  - f*C
+    res<-c(dS, dP, dC)
     list(res)
   })
 }
@@ -51,54 +51,54 @@ sigimp <- approxfun(signal$times, signal$import, rule=2)
 
 
 ## Start values for steady state
-xstart <- c(S=1, P=1, K=1)
+xstart <- c(S=1, P=1, C=1)
 
 
 ## Classical RK4 with fixed time step
-system.time(out1  <- as.data.frame(rk4(xstart, times, lvmodel, parms, input=sigimp)))
+system.time(out1  <- as.data.frame(rk4(xstart, times, SPCmod, parms, input=sigimp)))
 
 ## LSODA
-system.time(out3 <- as.data.frame(lsoda(xstart, times, lvmodel,
+system.time(out3 <- as.data.frame(lsoda(xstart, times, SPCmod,
   hmax=1, parms, input=sigimp)))
 
 ## same: rk4 fixed step, generalized implementation
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   method = rkMethod("rk4"), input=sigimp)))
 
 plotIt("blue")
 
 ## rk2, note smaller time step !!
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=.5,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=.5,
   method = rkMethod("rk2"), input=sigimp)))
 
 plotIt()
 
 ## Euler, note smaller time step !!
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=.1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=.1,
   method = rkMethod("euler"), input=sigimp)))
 
 plotIt("blue")
 
 # rk23bs
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   method = rkMethod("rk23bs"), input=sigimp)))
 
 plotIt()
 
 ## Runge-Kutta-Fehlberg  45
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   hmax = 1, method = rkMethod("rk45f"), input=sigimp)))
 
 plotIt("blue")
 
 ## Prince-Dormand  5(4)7m
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   hmax = 1, method = rkMethod("rk45dp7"), input=sigimp)))
 
 plotIt()
 
 ##other syntax
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   hmax = 1, method = "rk45dp7", input=sigimp)))
 
 plotIt("blue")
@@ -106,7 +106,7 @@ plotIt("blue")
 ## tolerance values can also be set for single state variables
 ## if all tolerance values are zero, hmax is taken as fixed step
 ## Prince-Dormand  5(4)7m
-system.time(out2 <- as.data.frame(rk(xstart, times, lvmodel, parms, hini=1,
+system.time(out2 <- as.data.frame(rk(xstart, times, SPCmod, parms, hini=1,
   hmax = 1, method = rkMethod("rk45dp7"), input=sigimp,
   atol=c(0, 0, 0), rtol=c(0, 0, 0), maxsteps=1e5)))
 

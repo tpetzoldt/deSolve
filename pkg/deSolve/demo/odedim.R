@@ -13,8 +13,7 @@ pa <- par (ask=FALSE)
 ## Model equations
 ## ================
 
-lvmod <- function (time, state, parms, N, rr, ri, dr, dri)
-{
+lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
   with (as.list(parms), {
     PREY <- state[1:N]
     PRED <- state[(N+1):(2*N)]
@@ -57,7 +56,7 @@ parms <- c(Da     = 0.05,       # m2/d, dispersion coefficient
            rGrow  = 1.0,        # /day, growth rate of prey
            rMort  = 0.2 ,       # /day, mortality rate of pred
            assEff = 0.5,        # -, assimilation efficiency
-           cap    = 10 )        # density, carrying capacity
+           cap    = 10)         # density, carrying capacity
 
 ## Initial conditions: both present in central circle (box 1) only
 state    <- rep(0, 2*N)
@@ -157,8 +156,8 @@ NN <- N*N                     # total number of boxes
 
 ## initial conditions
 yini    <- rep(0, 2*N*N)
-cc      <- c((NN/2):(NN/2+1)+N/2, (NN/2):(NN/2+1)-N/2)
-yini[cc] <- yini[NN+cc] <- 1
+cc      <- c((NN/2):(NN/2+1) + N/2, (NN/2):(NN/2+1) - N/2)
+yini[cc] <- yini[NN + cc] <- 1
 
 ## solve model (5000 state variables...
 times   <- seq(0, 75, by = 0.1)
@@ -176,12 +175,12 @@ for (i in seq(1, length(times), by = 10))
 
 
 for (i in seq(1, length(times), by = 1))  {
-   Prey <- out[i,(2+N):(1+2*N)]
-   Pred <- out[i,NN+(2+N):(1+2*N)]
-   matplot(1:N,cbind(Prey,Pred),
-   main=paste("2-D L-V, day",times[i]), type="l", lwd=2,
+   Prey <- out[i, (2+N):(1+2*N)]
+   Pred <- out[i, NN+(2+N):(1+2*N)]
+   matplot(1:N, cbind(Prey, Pred),
+   main=paste("2-D L-V, day", times[i]), type = "l", lwd = 2,
    col = c("blue","red"), xlab = "x", ylab = "Conc", ylim = ylim)
-   legend("topright",c("Prey","Predator"),col= c("blue","red"), lwd=2)
+   legend("topright", c("Prey", "Predator"), col = c("blue", "red"), lwd = 2)
 }
 
 par(pa)

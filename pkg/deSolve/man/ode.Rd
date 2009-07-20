@@ -148,13 +148,13 @@ legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 ## Function sigimp passed as an argument (input) to model
 ##   (see also lsoda and rk examples)
 
-lvmodel <- function(t, x, parms, input)  {
+SPCmod <- function(t, x, parms, input)  {
   with(as.list(c(parms, x)), {
     import <- input(t)
-    dS <- import - b*S*P + g*K    # substrate
-    dP <- c*S*P  - d*K*P          # producer
-    dK <- e*P*K  - f*K            # consumer
-    res <- c(dS, dP, dK)
+    dS <- import - b*S*P + g*C    # substrate
+    dP <- c*S*P  - d*C*P          # producer
+    dC <- e*P*C  - f*C            # consumer
+    res <- c(dS, dP, dC)
     list(res)
   })
 }
@@ -175,11 +175,11 @@ sigimp <- approxfun(signal$times, signal$import, rule = 2)
 
 
 ## Start values for steady state
-xstart <- c(S = 1, P = 1, K = 1)
+xstart <- c(S = 1, P = 1, C = 1)
 
 ## Solve model
 out <- ode(y = xstart,times = times,
-           func = lvmodel, parms, input = sigimp)
+           func = SPCmod, parms, input = sigimp)
 
 ## Default plot method
 plot(out, type="l")
@@ -187,8 +187,8 @@ plot(out, type="l")
 ## User specified plotting
 mf <- par(mfrow = c(1, 2))
 matplot(out[,1], out[,2:4], type = "l", xlab = "time", ylab = "state")
-legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "K"))
-plot(out[,"P"], out[,"K"], type = "l", lwd = 2, xlab = "producer",
+legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "C"))
+plot(out[,"P"], out[,"C"], type = "l", lwd = 2, xlab = "producer",
   ylab = "consumer")
 par(mfrow=mf)
 

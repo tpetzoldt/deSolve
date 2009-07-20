@@ -990,13 +990,13 @@ resource-producer-consumer Lotka-Volterra type of model in R (it is a
 modified version of the example of function \code{ode}):
 
 <<>>=
-lvmodel <- function(t, x, parms, input)  {
+SPCmod <- function(t, x, parms, input)  {
   with(as.list(c(parms, x)), {
     import <- input(t)
-    dS <- import - b*S*P + g*K    # substrate
-    dP <- c*S*P  - d*K*P          # producer
-    dK <- e*P*K  - f*K            # consumer
-    res <- c(dS, dP, dK)
+    dS <- import - b*S*P + g*C    # substrate
+    dP <- c*S*P  - d*C*P          # producer
+    dC <- e*P*C  - f*C            # consumer
+    res <- c(dS, dP, dC)
     list(res, signal = import)
   })
 }
@@ -1015,12 +1015,12 @@ signal$import <- ifelse((trunc(signal$times) %% 2 == 0), 0, 1)
 sigimp <- approxfun(signal$times, signal$import, rule = 2)
 
 ## Start values for steady state
-xstart <- c(S = 1, P = 1, K = 1)
+xstart <- c(S = 1, P = 1, C = 1)
 
 ## Solve model
 print (system.time(
 out <- ode(y = xstart,times = times,
-           func = lvmodel, parms, input = sigimp)
+           func = SPCmod, parms, input = sigimp)
 ))
 @
 
@@ -1038,7 +1038,7 @@ plot(out, type="l")
 @
 \end{center}
 \caption{Solution of the lotka-volterra resource (S)-producer (P) -
-consumer (K) model with time-variable input (signal) - see text for R-code}
+consumer (C) model with time-variable input (signal) - see text for R-code}
 \label{fig:lv}
 \end{figure}
 

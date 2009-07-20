@@ -34,9 +34,6 @@ deSolve release 2.0
 - more diagnostics for rk  - ThPe (low priority, who will need
 this...)
 
-- ThPe: more consistency of the .Rd help file examples:
-  - rename lvmodel (because similar name as LVmod); --> SPK (substrate
-  - producer, consumer) or SPC? or other suggestion???
  
 
 ** Wishlist **

@@ -641,7 +641,7 @@ practical problems. However, there are cases where they may give
 dubious results.  Consider the following Lotka-Volterra type of model:
 
 <<>>=
-lvmodel <- function(t, x, parms)  {
+SPCmod <- function(t, x, parms)  {
   with(as.list(c(parms, x)), {
     dP <- c*P  - d*K*P          # producer
     dK <- e*P*K  - f*K          # consumer
@@ -667,7 +667,7 @@ xstart <- c(P = 0.5, K = 1)
 times  <- seq(0, 190, 0.1)
 
 out <- as.data.frame( ode(y = xstart,times = times,
-  func = lvmodel, parms = parms))
+  func = SPCmod, parms = parms))
 tail(out)
 @
 
@@ -689,7 +689,7 @@ absolute values. Therefore, it helps here to reduce \code{atol} to a
 very small number or even to zero:
 
 <<>>=
-out <- as.data.frame(ode(y = xstart,times = times, func = lvmodel,
+out <- as.data.frame(ode(y = xstart,times = times, func = SPCmod,
                          parms = parms, atol = 0))
 matplot(out[,1], out[,2:3], type="l")
 @
