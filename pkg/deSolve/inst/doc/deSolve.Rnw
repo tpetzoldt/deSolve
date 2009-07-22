@@ -572,9 +572,8 @@ out   <- lsode(yini, times, f1, parms = 0, jactype = "fullint")
 @
 
 It is possible for the user to provide the Jacobian. Especially for
-large problems this can result in subtantial time savingsL
-
-In a first case, the Jacobian is written as a full matrix:
+large problems this can result in subtantial time savings.  In a first
+case, the Jacobian is written as a full matrix:
 
 <<>>=
 fulljac <- function  (t, y, parms) {
@@ -643,9 +642,9 @@ dubious results.  Consider the following Lotka-Volterra type of model:
 <<>>=
 SPCmod <- function(t, x, parms)  {
   with(as.list(c(parms, x)), {
-    dP <- c*P  - d*K*P          # producer
-    dK <- e*P*K  - f*K          # consumer
-    res <- c(dP, dK)
+    dP <- c*P   - d*C*P      # producer
+    dC <- e*P*C - f*C        # consumer
+    res <- c(dP, dC)
     list(res)
   })
 }
@@ -663,10 +662,10 @@ After specification of initial conditions and output times, the model
 is solved - using \code{lsoda}:
 
 <<>>=
-xstart <- c(P = 0.5, K = 1)
+xstart <- c(P = 0.5, C = 1)
 times  <- seq(0, 190, 0.1)
 
-out <- as.data.frame( ode(y = xstart,times = times,
+out <- as.data.frame(ode(y = xstart, times = times,
   func = SPCmod, parms = parms))
 tail(out)
 @
@@ -681,7 +680,7 @@ NaNs.  This is because the model equations are not intended to be used
 with negative numbers, as negative concentrations are not realistic.
 
 A quick-and-dirty solution is to reduce the maximum time step to a
-considerably small value (e.g. \code{hmax=0.02} which, of course,
+considerably small value (e.g. \code{hmax = 0.02} which, of course,
 reduces computational efficiency. However, a much better solution is
 to think about the reason of the failure, i.e in our case the
 \textbf{absolute} accuracy because the states can reach very small
@@ -764,7 +763,7 @@ e.g. \url{r-help@r-project.org}.
 \end{table*}
 
 \begin{table*}[b]
-\caption{meaning of the integer return parameters in the different integration
+\caption{Meaning of the integer return parameters in the different integration
 routines. If \code{out} is the output matrix, then this vector can be
 retrieved by function \code{attributes(out)\$istate}; its
 contents is displayed by function \code{diagnostics(out)}}
@@ -778,43 +777,43 @@ contents is displayed by function \code{diagnostics(out)}}
     requested, -3: illegal input detected, -4: repeated error test failures,
     -5: repeated convergence failures, -6: error weight became zero
     \\ \hline
-2 & The number of steps taken for the problem so far,\\ \hline
-3 & The number of function evaluations for the problem so far.,\\ \hline
-4 & The number of Jacobian evaluations so far.,\\ \hline
-5 & The method order last used (successfully).,\\ \hline
-6 & The order of the method to be attempted on the next step.,\\ \hline
-7 & If return flag = -4,-5: the largest component in the error vector,\\ \hline
-8 & The length of the real work array actually required. (FORTRAN code),\\ \hline
-9 & The length of the integer work array actually required. (FORTRAN code),\\ \hline
-10 & The number of matrix LU decompositions so far,  \\ \hline
-11 & The number of nonlinear (Newton) iterations so far ,\\ \hline
-12 & The number of convergence failures of the solver so far,\\ \hline
-13 & The number of error test failures of the integrator so far,\\ \hline
-14 & The number of Jacobian evaluations and LU decompositions so far  \\ \hline
-15 & The method indicator for the last succesful step, 1 = adams
-      (nonstiff), 2 = bdf (stiff), \\ \hline
-17 & The number of nonzero elements in the sparse Jacobian \\ \hline
-18 & The current method indicator to be attempted on the next step,
-      1 = adams (nonstiff), 2 = bdf (stiff), \\ \hline
-19 & The number of convergence failures of the linear iteration so far, \\ \hline
+2 & the number of steps taken for the problem so far\\ \hline
+3 & the number of function evaluations for the problem so far\\ \hline
+4 & the number of Jacobian evaluations so far\\ \hline
+5 & the method order last used (successfully)\\ \hline
+6 & the order of the method to be attempted on the next step\\ \hline
+7 & If return flag = -4,-5: the largest component in the error vector\\ \hline
+8 & the length of the real work array actually required. (FORTRAN code)\\ \hline
+9 & the length of the integer work array actually required. (FORTRAN code)\\ \hline
+10 & the number of matrix LU decompositions so far\\ \hline
+11 & the number of nonlinear (Newton) iterations so far\\ \hline
+12 & the number of convergence failures of the solver so far\\ \hline
+13 & the number of error test failures of the integrator so far\\ \hline
+14 & the number of Jacobian evaluations and LU decompositions so far\\ \hline
+15 & the method indicator for the last succesful step, 1 = adams
+      (nonstiff), 2 = bdf (stiff)\\ \hline
+17 & the number of nonzero elements in the sparse Jacobian\\ \hline
+18 & the current method indicator to be attempted on the next step,
+      1 = adams (nonstiff), 2 = bdf (stiff)\\ \hline
+19 & the number of convergence failures of the linear iteration so far\\ \hline
 \hline
 \end{tabular}
 \end{table*}
 
 \begin{table*}[b]
-\caption{meaning of the double precision return parameters in the different integration
-routines. If \code{out} is the output matrix, then this vector can be
-retrieved by function \code{attributes(out)\$rstate}; its
-contents is displayed by function \code{diagnostics(out)}}
+  \caption{Meaning of the double precision return parameters in the different integration
+    routines. If \code{out} is the output matrix, then this vector can be
+    retrieved by function \code{attributes(out)\$rstate}; its
+    contents is displayed by function \code{diagnostics(out)}}
 \centering
 \begin{tabular}{p{.05\textwidth}p{.95\textwidth}}\hline
 \rule[-3mm]{0mm}{8mm}       Nr &Description\\
 \hline \hline
-1 & The step size in t last used (successfully),\\ \hline
-2 & The step size to be attempted on the next step\\ \hline
-3 & The current value of the independent variable which the solver has actually reached, \\ \hline
-4 & A tolerance scale factor, greater than 1.0, computed when a
-        request for too much accuracy was detected,\\ \hline
+1 & the step size in t last used (successfully)\\ \hline
+2 & the step size to be attempted on the next step\\ \hline
+3 & the current value of the independent variable which the solver has actually reached\\ \hline
+4 & a tolerance scale factor, greater than 1.0, computed when a
+        request for too much accuracy was detected\\ \hline
 5 & the value of t at the time of the last method switch, if any (only \code{lsoda, lsodar})
 \\ \hline
 \hline
