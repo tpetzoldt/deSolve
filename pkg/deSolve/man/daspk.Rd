@@ -129,7 +129,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     the system is specified by the residual function F(t,y,y'),
     i.e. \code{jacres} is used in conjunction with \code{res}.
     
-    If \code{jacres} is an R-function, the calling sequence for
+    If \code{jacres} is an \R-function, the calling sequence for
     \code{jacres} is identical to that of \code{res}, but with extra
     parameter \code{cj}.  Thus it should be called as: \code{jacres = 
     func(t, y, dy, parms, cj, ...)}.  Here \code{t} is the current time

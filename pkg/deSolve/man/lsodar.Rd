@@ -78,8 +78,10 @@
   \item{jacfunc }{if not \code{NULL}, an \R function, that computes the
     Jacobian of the system of differential equations dydot(i)/dy(j), or
     a string giving the name of a function or subroutine in
-    \file{dllname} that computes the Jacobian (see Details below for
-    more about this option).  In some circumstances, supplying
+    \file{dllname} that computes the Jacobian (see vignette
+    \code{"compiledCode"} for more about this option).
+
+    In some circumstances, supplying
     \code{jacfunc} can speed up the computations, if the system is
     stiff.  The \R calling sequence for \code{jacfunc} is identical to
     that of \code{func}.

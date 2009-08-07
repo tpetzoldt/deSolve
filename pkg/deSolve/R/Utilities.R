@@ -7,7 +7,7 @@ print.deSolve <- function(x, ...)
 
 ### ============================================================================
 
-plot.deSolve <- function (x, which = 2:ncol(x), ask = NULL, ...) {
+plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     if (is.null(ask))
         ask <- prod(par("mfcol")) < length(which) && dev.interactive()
     t <- 1     # column with "times"
@@ -20,6 +20,7 @@ plot.deSolve <- function (x, which = 2:ncol(x), ask = NULL, ...) {
         which <- Select
     }
     else {
+        which <- which + 1  # "which now refers to the column number
         if (max(which) > ncol(x))
             stop("index in 'which' too large")
         if (min(which) < 1)

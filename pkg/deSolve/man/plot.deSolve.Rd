@@ -7,15 +7,15 @@
 Plot the output of numeric integration routines.
 }
 \usage{
-\method{plot}{deSolve}(x, which = 2:ncol(x), ask = NULL, ...)
+\method{plot}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 }
 
 \arguments{
   \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be plotted.}
 
-  \item{which }{the name or the index to the variables that should be
-    plotted.  Default = all variables.}
+  \item{which }{the name(s) or the index to the variables that should be
+    plotted.  Default = all variables. }
 
   \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
     each plot, if \code{NULL} the user is only asked if more than one

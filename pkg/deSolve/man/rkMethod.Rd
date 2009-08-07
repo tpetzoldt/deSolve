@@ -40,6 +40,7 @@ rkMethod(method = NULL, ...)
     "rk23"             \tab | \tab Runge-Kutta, order 2(3), Octave: \bold{ode23}\cr
     "rk23bs", "ode23"  \tab | \tab Bogacki-Shampine, order 2(3), Matlab: \bold{ode23}\cr
     "rk34f"            \tab | \tab Runge-Kutta-Fehlberg, order 3(4)\cr
+    "rk45ck"           \tab | \tab Runge-Kutta Cash-Karp, order 4(5)\cr
     "rk45f"            \tab | \tab Runge-Kutta-Fehlberg, order 4(5), Octave: \bold{ode45, pair=1} \cr
     "rk45e"            \tab | \tab Runge-Kutta-England, order 4(5)\cr
     "rk45dp6"          \tab | \tab Dormand-Prince, order 4(5), local order 6\cr
@@ -153,6 +154,10 @@ rkMethod(method = NULL, ...)
   Butcher, J. C. (1987) The numerical analysis of ordinary differential
   equations, Runge-Kutta and general linear methods, Wiley, Chichester
   and New York.
+
+  Cash, J. R. and Karp A. H., 1990. A variable order Runge-Kutta method
+  for initial value problems with rapidly varying right-hand sides,
+  ACM Transactions on Mathematical Software \bold{16}, 201--222.
 
   Dormand, J. R. and Prince, P. J. (1980) A family of embedded
   Runge-Kutta formulae, J. Comput. Appl. Math. \bold{6}(1), 19--26.

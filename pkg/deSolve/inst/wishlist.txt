@@ -1,5 +1,8 @@
 deSolve release 2.0
 
+KS: added the runge kutta 4(5) method of Cash-Karp. (request from Jeff Cash).
+
+
 *** TO DO NOW ***
 
 
