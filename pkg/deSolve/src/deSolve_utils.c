@@ -40,10 +40,10 @@ SEXP daspk_envir;
 
 SEXP de_gparms;
 
-/*==================================================
+/*======================================================
 Parameter initialisation functions
-note: forcing initialisation ftion is in forcings.c
-===================================================*/
+note: forcing initialisation function is in forcings.c
+=======================================================*/
 
 void initParms(SEXP Initfunc, SEXP Parms) {
   // ks: added this to prevent entering this if initfunc does not exist

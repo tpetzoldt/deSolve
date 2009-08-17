@@ -4,11 +4,10 @@
 
 checkInput <- function(y, times, func, rtol, atol,
   jacfunc, tcrit, hmin, hmax, hini, dllname, jacname="jacfunc")
-
 {
   if (!is.numeric(y))     stop("`y' must be numeric")
   n <- length(y)
-  if (! is.null(times)&&!is.numeric(times))
+  if (! is.null(times) && !is.numeric(times))
     stop("`times' must be NULL or numeric")
   if (!is.function(func) && !is.character(func))
     stop("`func' must be a function or character vector")
@@ -39,10 +38,10 @@ checkInput <- function(y, times, func, rtol, atol,
 ## Check solver input - euler and rk4
 ## ========================================================================
 
-checkInputEuler <- function (y,times,func,dllname){
+checkInputEuler <- function (y, times, func, dllname) {
     if (!is.numeric(y))  stop("`y' must be numeric")
     n <- length(y)
-    if (! is.null(times)&&!is.numeric(times))
+    if (! is.null(times) && !is.numeric(times))
         stop("`times' must be NULL or numeric")
     if (!is.function(func) && !is.character(func))
       stop("`func' must be a function or character vector")
@@ -54,8 +53,7 @@ checkInputEuler <- function (y,times,func,dllname){
 ## Check ode function call - livermore solvers
 ## ========================================================================
 
-checkFunc<- function (Func2,times,y,rho)
-{
+checkFunc<- function (Func2, times, y, rho) {
     ## Call func once to figure out whether and how many "global"
     ## results it wants to return and some other safety checks
     tmp <- eval(Func2(times[1], y), rho)
@@ -80,8 +78,7 @@ checkFunc<- function (Func2,times,y,rho)
 ## Check ode function call - euler and rk solvers
 ## ========================================================================
 
-checkFuncEuler<- function (Func,times,y,parms,rho,Nstates)
-{
+checkFuncEuler<- function (Func,times,y,parms,rho,Nstates) {
       ## Call func once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
       tmp <- eval(Func(times[1], y, parms), rho)
@@ -113,7 +110,7 @@ checkDLL <- function (func,jacfunc,dllname,
     if (! is.null(initfunc))  # KS: ADDED THAT to allow absence of initfunc
       if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran"))  {
-      ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
+        ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
       } else if (initfunc != dllname && ! is.null(initfunc))
         stop(paste("'initfunc' not loaded ",initfunc))
 
@@ -121,8 +118,8 @@ checkDLL <- function (func,jacfunc,dllname,
     if (is.null(initfunc)) initfunc <- NA
 
 
-  ## copy value of func to funcname
-  ## check to make sure it describes a function in a loaded dll
+    ## copy value of func to funcname
+    ## check to make sure it describes a function in a loaded dll
 
     funcname <- func
     ## get the pointer and put it in func
@@ -142,7 +139,7 @@ checkDLL <- function (func,jacfunc,dllname,
       if(is.loaded(jacfuncname, PACKAGE = dllname))  {
         JacFunc <- getNativeSymbolInfo(jacfuncname, PACKAGE = dllname)$address
       } else stop(paste("cannot integrate: jac function not loaded ",jacfunc))
-    } else JacFunc <-NULL
+    } else JacFunc <- NULL
     Nglobal <- nout
     if (is.null(outnames))
       { Nmtot   <- NULL} else
@@ -184,7 +181,7 @@ printtask <- function(itask,func,jacfunc) {
 setIstate <- function(istate, iin, iout)
 {
   IstateOut <- rep(NA,21)
-  IstateOut[iout]<- istate[iin]
+  IstateOut[iout] <- istate[iin]
   IstateOut
 }
 
@@ -203,7 +200,7 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   rstate[1:nr] <- Rstate[1:nr]
   
   nm <- c("time",
-          if (!is.null(attr(y,"names"))) names(y) else as.character(1:n))
+          if (!is.null(attr(y, "names"))) names(y) else as.character(1:n))
   if (Nglobal > 0) {
     if (!is.character(func)) {         # if a DLL: already done...
       out2 <- matrix( nrow=Nglobal, ncol=ncol(out))
@@ -226,11 +223,10 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
 }
 
 ## =============================================================================
-## Output cleanup  - for the rungekutta solvers
+## Output cleanup  - for the Runge-Kutta solvers
 ## =============================================================================
 
-saveOutrk <- function(out, y, n, Nglobal, Nmtot,
-                      iin, iout)  {
+saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout)  {
 
   ## Names for the outputs
   nm <- c("time",
