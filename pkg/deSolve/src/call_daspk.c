@@ -190,7 +190,6 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
    }
 
 /*  output always done here in C-code (<-> lsode, vode)... */
-  ntot  = n_eq+nout;
 
   /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));

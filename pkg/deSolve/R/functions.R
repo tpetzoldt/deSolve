@@ -20,9 +20,9 @@ checkInput <- function(y, times, func, rtol, atol,
   if (!is.null(jacfunc) && !(is.function(jacfunc) || is.character(jacfunc)))
     stop(paste(jacname," must be a function or character vector"))
   if (length(atol) > 1 && length(atol) != n)
-    stop("`atol' must either be a scaler, or as long as `y'")
+    stop("`atol' must either be a scalar, or as long as `y'")
   if (length(rtol) > 1 && length(rtol) != n)
-    stop("`rtol' must either be a scaler, or as long as `y'")
+    stop("`rtol' must either be a scalar, or as long as `y'")
   if (!is.numeric(hmin))   stop("`hmin' must be numeric")
   if (hmin < 0)            stop("`hmin' must be a non-negative value")
   if (is.null(hmax))
@@ -108,11 +108,17 @@ checkFuncEuler<- function (Func,times,y,parms,rho,Nstates)
 checkDLL <- function (func,jacfunc,dllname,
                       initfunc,verbose,nout, outnames, JT=1) {
 
-    if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
+    if (sum(duplicated (c(func,initfunc,jacfunc))) >0)
+      stop("func, initfunc, or jacfunc cannot be the same")
+    if (! is.null(initfunc))  # KS: ADDED THAT to allow absence of initfunc
+      if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran"))  {
       ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
-    } else if (initfunc != dllname && ! is.null(initfunc))
-      stop(paste("'initfunc' not loaded ",initfunc))
+      } else if (initfunc != dllname && ! is.null(initfunc))
+        stop(paste("'initfunc' not loaded ",initfunc))
+
+    # Easier to deal with NA in C-code
+    if (is.null(initfunc)) initfunc <- NA
 
 
   ## copy value of func to funcname

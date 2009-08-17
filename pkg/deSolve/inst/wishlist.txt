@@ -1,9 +1,38 @@
 deSolve release 2.0
 
+*** RECENT CHANGES ***
 KS: added the runge kutta 4(5) method of Cash-Karp. (request from Jeff Cash).
 
+KS: daspk now works with banded jacobians and func specified...
+
+KS: small change to plot.deSolve: variables can be addressed by their number
+plot(out, which = 1:7)
+
+KS: output variable creation is unefficient as it is done after the integration
+it may lead to strange results if globals are altered...
+This occurs in all codes, not just the lsodas. Solvable in runge kuttas:
+
+#example code:
+
+Global1 <- 1
+
+model <- function(t,state,parms) {
+  if (t > 10) Global1 <<- 100
+  return (list(c(0), gl =Global1))
+}
+
+out <- ode(y=1,func=model,parms=NULL,times=1:100)
+head(out)
+
+# end example code
 
 *** TO DO NOW ***
+
+- make runge-kutta help file less negative (suggestion from Jeff Cash:
+  suggest to use RK23 for simple problems, rk45 for rough problems.
+  
+- ?? implement delays (why? ddesolve implements a very simple runge-kutta)
+
 
 
 ** done **

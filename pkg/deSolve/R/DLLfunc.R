@@ -17,24 +17,24 @@ DLLfunc <- function (func, times, y,
     flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
     Ynames <- attr(y, "names")
 
+
     if(is.null(dllname)|| !is.character(dllname))
             stop("`dllname' must be a name referring to a dll")
-    if (is.loaded(initfunc, PACKAGE = dllname,
+
+    if (! is.null(initfunc))
+      if (is.loaded(initfunc, PACKAGE = dllname,
             type = "") || is.loaded(initfunc, PACKAGE = dllname,
             type = "Fortran"))
       {ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
-        } else if (initfunc != dllname && ! is.null(initfunc))
+      } else if (initfunc != dllname && ! is.null(initfunc))
             stop(paste("cannot integrate: initfunc not loaded ",initfunc))        
+
+    if (is.null(initfunc)) initfunc <- NA
   ## KS: Forcings
+
     if (! is.null(forcings))
       flist <- checkforcings(forcings,times,dllname,initforc,TRUE,fcontrol)
 
-
-## the output initialiser...
-#    if (is.loaded(initout, PACKAGE = dllname,
-#            type = "") || is.loaded(initout, PACKAGE = dllname,
-#            type = "Fortran")) 
-#    Outinit <- getNativeSymbolInfo(initout, PACKAGE = dllname)$address
 
 ## the function
     if (!is.character(func))
@@ -49,9 +49,10 @@ DLLfunc <- function (func, times, y,
                  as.double(parms),as.integer(nout),
                  as.double(rpar),as.integer(ipar),as.integer(1),
                  flist, PACKAGE = "deSolve")
-
-    out <- list(dy = out[1:n], var = out[(n + 1):(n +
-            nout)])
+    vout <- if (nout>0)
+      out[(n + 1):(n + nout)]
+      else NA
+    out <- list(dy = out[1:n], var = vout)
     if (!is.null(Ynames)) names(out$dy) <-Ynames
     if (! is.null(outnames)) names(out$var) <- outnames
 return(out) # a list with the rate of change (dy) and output variables (var)
@@ -84,12 +85,14 @@ DLLres <- function (res, times, y, dy, parms,
 
     if(is.null(dllname)|| !is.character(dllname))
             stop("`dllname' must be a name referring to a dll")
-    if (is.loaded(initfunc, PACKAGE = dllname,
+    if (! is.null(initfunc))
+      if (is.loaded(initfunc, PACKAGE = dllname,
             type = "") || is.loaded(initfunc, PACKAGE = dllname,
             type = "Fortran")) 
-      {ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
+        {ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
         } else if (initfunc != dllname && ! is.null(initfunc))
             stop(paste("cannot integrate: initfunc not loaded ",initfunc))        
+    if (is.null(initfunc)) initfunc <- NA
 
   ## KS: Forcings
     if (! is.null(forcings))
@@ -109,8 +112,10 @@ DLLres <- function (res, times, y, dy, parms,
                  as.double(rpar),as.integer(ipar),as.integer(2),
                  flist, PACKAGE = "deSolve")
 
-    out <- list(delta = out[1:n], var = out[(n + 1):(n +
-            nout)])
+    vout <- if (nout>0)
+      out[(n + 1):(n + nout)]
+      else NA
+    out <- list(delta = out[1:n], var = vout)
     if (!is.null(Ynames)) names(out$delta) <-Ynames
     if (! is.null(outnames)) names(out$var) <- outnames
 

@@ -46,9 +46,9 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   if (!is.null(jacres) && !(is.function(jacres) || is.character(jacres)))
     stop("`jacres' must be a function or character vector")
   if (length(atol) > 1 && length(atol) != n)
-    stop("`atol' must either be a scaler, or as long as `y'")
+    stop("`atol' must either be a scalar, or as long as `y'")
   if (length(rtol) > 1 && length(rtol) != n)
-    stop("`rtol' must either be a scaler, or as long as `y'")
+    stop("`rtol' must either be a scalar, or as long as `y'")
   if (!is.numeric(hmin))
     stop("`hmin' must be numeric")
   if (hmin < 0)
@@ -84,7 +84,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   if (imp %in% c(24,25) && is.null(banddown))
     stop("'banddown' must be specified if banded Jacobian")
 
-  #  if (miter == 4) Jacobian should have empty banddown empty rows-vode+daspk only!
+  #  if (miter == 4) Jacobian should have banddown empty rows-vode+daspk only!
   if (imp == 24)
     erow<-matrix(nc=n,nr=banddown,0)
   else erow<-NULL
@@ -185,11 +185,11 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     if (is.null(initfunc))
       initpar <- NULL # parameter initialisation not needed if function is not a DLL
     
-    rho <- environment(func)
     ## func or res and jac are overruled, either including ynames, or not
     ## This allows to pass the "..." arguments and the parameters
 
     if (is.null(res))  {               # res is NOT specified, func is
+      rho <- environment(func)
       Res    <- function(time,y,dy) {
         if (ynames) attr(y,"names")  <- Ynames
         FF <-func   (time,y,parms,...)
@@ -201,6 +201,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
          func   (time,y,parms,...)
       }
     } else {                       # res is specified
+      rho <- environment(res)
       Res   <- function(time,y,dy){
         if (ynames) {
           attr(y,"names")  <- Ynames
@@ -220,7 +221,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     ## the Jacobian
     if (! is.null(jacfunc)) {        # Jacobian associated with func
 
-      tmp <- eval(jacfunc(times[1], y, dy,parms, 1, ...), rho)
+      tmp <- eval(jacfunc(times[1], y, parms, ...), rho)
       if (! is.matrix(tmp))
         stop("jacfunc must return a matrix\n")
 
@@ -229,14 +230,16 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
           attr(y,"names")  <- Ynames
           attr(dy,"names") <- dYnames
         }
-        JF <- -1* rbind(jacfunc(Rin[1],y,dy,parms,...),erow)
-        if (imp %in% c(24,25))
+        JF <- -1* jacfunc(Rin[1],y,parms,...)
+        if (imp %in% c(24,25)) {
           JF[bandup+1,]<-JF[bandup+1,]+Rin[2]
+          JF <- rbind(erow,JF )
+          }
         else
-          JF           <-JF + diag(nc=n,x=Rin[2])
+          JF           <-JF + diag(nc=n,nr=n,x=Rin[2])
         return(JF)
       }
-    } else if (! is.null(jacres)) { # Jacobian associated with res
+    } else if (! is.null(jacres)) { # Jacobian given
        tmp <- eval(jacres(times[1], y, dy, parms, 1, ...), rho)
        if (! is.matrix(tmp))
          stop("jacres must return a matrix\n")
@@ -250,7 +253,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
            attr(y,"names")  <- Ynames
            attr(dy,"names") <- dYnames
          }
-         rbind(jacres(Rin[1],y,dy,parms,Rin[2],...),erow)
+         rbind(erow,jacres(Rin[1],y,dy,parms,Rin[2],...))
        }
     } else JacRes <- NULL
          

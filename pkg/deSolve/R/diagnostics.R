@@ -70,15 +70,20 @@ df <- c( "The return code :",                                              #1
          "The number of error test failures of the integrator so far:",      #13
          "The number of Jacobian evaluations and LU decompositions so far:", #14,
          "The method indicator for the last succesful step,
-           1=adams (nonstiff), 2= bdf (stiff):" , #15
+           1=adams (nonstiff), 2= bdf (stiff):" ,                            #15
          "The current method indicator to be attempted on the next step,
-           1=adams (nonstiff), 2= bdf (stiff):", #16
+           1=adams (nonstiff), 2= bdf (stiff):",                             #16
          "The number of nonzero elements in the sparse Jacobian:" ,           #17
-         "The order of the method:",                                          #18
+         "The order (or maximum order) of the method:",                       #18
          "The number of convergence failures of the linear iteration so far", #19
          "The number of linear (Krylov) iterations so far ",                  #20
          "The number of psol calls so far:")                                  #21
-
+  if (name =="mebdfi")
+    df[19:21] <- c(
+         "The number of backsolves so far",
+         "The number of times a new coefficient matrix has been formed so far",
+         "The number of times the order of the method has been changed so far")
+  
   if (is.na(istate[14])) istate[14]<-istate[4]+istate[10]  # Jacobian+LU
   cat("\n--------------------\n")
   cat("INTEGER values\n")
