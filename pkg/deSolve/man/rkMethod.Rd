@@ -58,14 +58,24 @@ rkMethod(method = NULL, ...)
 
 \note{  
   \itemize{
+    \item adaptive stepsize Runge-Kuttas are preferred if the solution
+      contains parts where it changes fast, and parts where nothing much
+      happens. They will take small steps over bumpy ground and long steps
+      over uninteresting terrain.
       
     \item Among the \code{rk} solvers, "rk45dp7" (alias "ode45") is used
       by default, because of its relatively high order (4), re-use of
       the last intermediate steps (FSAL = first same as last) and
-      built-in polynomial interpolation (dense output). Solver "rk23bs",
-      that supports also FSAL, may be useful for slightly stiff systems
-      if demands on precision are low. Classical "rk4" is traditionally
-      used in cases where an adequate stepsize is known a-priori or if
+      built-in polynomial interpolation (dense output).
+
+    \item Solver "rk23bs", that supports also FSAL, may be useful for
+      slightly stiff systems if demands on precision are low.
+
+    \item Another good choice, assuring medium accuracy, is the Cash-Karp
+      Runge-Kutta method, "rk45ck".
+
+    \item Classical "rk4" is traditionally used in cases where an adequate
+      stepsize is known a-priori or if
       external forcing data are provided for fixed time steps only and
       frequent interpolation of external data needs to be avoided.
   
@@ -75,15 +85,6 @@ rkMethod(method = NULL, ...)
       for badly behaving systems if external and internal time steps are
       too different.
     
-    \item The Runge-Kutta solvers are primarily provided for didactic
-      reasons. For most practical cases, solvers of the Livermore family
-      (\code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
-      \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}) are
-      superior because of higher efficiency and faster implementation.
-      In addition to this, some of the Livermore solvers are also
-      suitable for stiff ODEs, differential algebraic equations (DAEs),
-      or partial differential equations (PDEs).
-      
   }
 }
    

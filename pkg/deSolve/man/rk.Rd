@@ -109,8 +109,10 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     constant naming one of the pre-defined methods or a call to function
     \code{\link{rkMethod}} specifying a user-defined method.  The most
     common methods are the fixed-step methods \code{"euler"},
-    \code{"rk2"}, \code{"rk4"} or the variable step methods
-    \code{"rk23bs"}, \code{"rk34f"}, \code{"rk45f"} or
+    \code{"rk2"}, fourth-order runge kutta \code{"rk4"},
+    or the variable step methods
+    \code{"rk23bs"}, \code{"rk34f"},
+    the fifth-order Cash-Karp Runge-Kutta method \code{"rk45ck"} or
     \code{"rk45dp7"}.
   }
   \item{maxsteps }{average maximal number of steps per output interval
