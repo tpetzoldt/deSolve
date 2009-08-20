@@ -109,12 +109,12 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     constant naming one of the pre-defined methods or a call to function
     \code{\link{rkMethod}} specifying a user-defined method.  The most
     common methods are the fixed-step methods \code{"euler"},
-    \code{"rk2"}, fourth-order runge kutta \code{"rk4"},
+     second and fourth-order Runge Kutta (\code{"rk2"}, \code{"rk4"}),
     or the variable step methods
-    \code{"rk23bs"}, \code{"rk34f"},
-    the fifth-order Cash-Karp Runge-Kutta method \code{"rk45ck"} or
-    \code{"rk45dp7"}.
-  }
+    Bogacki-Shampine \code{"rk23bs"}, Runge-Kutta-Fehlberg \code{"rk34f"},
+    the fifth-order Cash-Karp method \code{"rk45ck"} or
+    the fifth-order Dormand-Prince method with seven stages \code{"rk45dp7"}.
+  }  
   \item{maxsteps }{average maximal number of steps per output interval
     taken by the solver. This argument is defined such to ensure
     compatibility with the Livermore-solvers, but the maximum number of
@@ -177,22 +177,11 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 }
 
 \details{
-
-  The Runge-Kutta solvers are primarily provided for didactic reasons.
-  For most practical cases, solvers of the Livermore family (ODEPACK;
-  \code{\link{lsoda}}, \code{\link{lsode}}, \code{\link{lsodes}},
-  \code{\link{lsodar}}, \code{\link{vode}}, \code{\link{daspk}}) are
-  superior and more thoroughly tested; in most cases they are also
-  faster).
-
-  In addition to this, some of the Livermore solvers are also suitable
-  for stiff ODEs, differential algebraic equations (DAEs), or partial
-  differential equations (PDEs).
-
   Function \code{rk} is a generalized implementation that can be used to
-  evaluate different solvers of the Runge-Kutta family. A pre-defined
-  set of common method parameters is in function \code{\link{rkMethod}}
-  which also allows to supply user-defined Butcher tables.
+  evaluate different solvers of the Runge-Kutta family of explicit ODE
+  solvers. A pre-defined set of common method parameters is in function
+  \code{\link{rkMethod}} which also allows to supply user-defined
+  Butcher tables.
 
   The input parameters \code{rtol}, and \code{atol} determine the error
   control performed by the solver.  The solver will control the vector
@@ -211,10 +200,11 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \bold{R-function}, that must be called as: \code{yprime = func(t, y,
   parms)}.  \code{t} is the current time point in the integration,
   \code{y} is the current estimate of the variables in the ODE system.
+
   The return value of \code{func} should be a list, whose first element
-  is a vector containing the derivatives of y with respect to time, and
-  whose second element contains output variables that are required at
-  each point in time. Examples are given below.
+  is a vector containing the derivatives of \code{y} with respect to
+  time, and whose second element contains output variables that are
+  required at each point in time. Examples are given below.  
 }
 \value{
   A matrix of class \code{deSolve} with up to as many rows as elements
@@ -226,12 +216,10 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   has a names attribute, it will be used to label the columns of the
   output value.
 }
-
-\note{
+\note{  
   Arguments \code{rpar} and \code{ipar} are provided for compatibility
   with \code{lsoda}.
 }
-
 \references{
   Butcher, J. C. (1987) The numerical analysis of ordinary differential
   equations, Runge-Kutta and general linear methods, Wiley, Chichester
@@ -240,13 +228,22 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   Engeln-Muellges, G. and Reutter, F. (1996) Numerik Algorithmen:
   Entscheidungshilfe zur Auswahl und Nutzung. VDI Verlag, Duesseldorf.
 
+  Hindmarsh, Alan C. (1983) ODEPACK, A Systematized Collection of ODE
+  Solvers; in p.55--64 of Stepleman, R.W. et al.[ed.] (1983)
+  \emph{Scientific Computing}, North-Holland, Amsterdam.
+
   Press, W. H., Teukolsky, S. A., Vetterling, W. T. and Flannery,
   B. P. (2007) Numerical Recipes in C. Cambridge University Press.
 }
 
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 
-\seealso{
+\seealso{  
+  For most practical cases, solvers of the Livermore family (i.e. the
+  ODEPACK solvers, see below) are superior. Some of them are also
+  suitable for stiff ODEs, differential algebraic equations (DAEs), or
+  partial differential equations (PDEs).
+
   \itemize{
     \item \code{\link{rkMethod}} for a list of available Runge-Kutta
       parameter sets,

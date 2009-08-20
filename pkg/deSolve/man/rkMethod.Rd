@@ -53,12 +53,11 @@ rkMethod(method = NULL, ...)
   stepsize adaption strategy and interpolation methods. The table
   reflects the state at time of writing and it is of course possible
   that implementations change.
-
 }
 
 \note{  
   \itemize{
-    \item adaptive stepsize Runge-Kuttas are preferred if the solution
+    \item Adaptive stepsize Runge-Kuttas are preferred if the solution
       contains parts where it changes fast, and parts where nothing much
       happens. They will take small steps over bumpy ground and long steps
       over uninteresting terrain.
@@ -74,10 +73,10 @@ rkMethod(method = NULL, ...)
     \item Another good choice, assuring medium accuracy, is the Cash-Karp
       Runge-Kutta method, "rk45ck".
 
-    \item Classical "rk4" is traditionally used in cases where an adequate
-      stepsize is known a-priori or if
-      external forcing data are provided for fixed time steps only and
-      frequent interpolation of external data needs to be avoided.
+    \item Classical "rk4" is traditionally used in cases where an
+      adequate stepsize is known a-priori or if external forcing data
+      are provided for fixed time steps only and frequent interpolation
+      of external data needs to be avoided.
   
     \item Interpolation for other methods than "rk45dp7" (alias "ode45")
       is done Neville-Aitken polynomials only (5th order by default). This needs

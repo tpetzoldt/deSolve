@@ -1088,11 +1088,11 @@ void derivsc(int *neq, double *t, double *y, double *ydot,
   double *yout, int*ip)
 {
     if (ip[0] <2) error("nout should be at least 2");
-    ydot[0] = import - b*y[0]*y[1] + g*y[2]     ;
-    ydot[1] = c*y[0]*y[1]  - d*y[2]*y[1]        ;
-    ydot[2] = e*y[1]*y[2]  - f*y[2]             ;
+    ydot[0] = import - b*y[0]*y[1] + g*y[2];
+    ydot[1] =          c*y[0]*y[1] - d*y[2]*y[1];
+    ydot[2] =          e*y[1]*y[2] - f*y[2];
 
-    yout[0] = y[0]+y[1]+y[2];
+    yout[0] = y[0] + y[1] + y[2];
     yout[1] = import;
 }
 
@@ -1108,9 +1108,9 @@ forcings <- cbind(ftime,Sigimp)
 
 dyn.load("Forcing_lv.dll")
 out <- ode(y=xstart, times, func = "derivsc",
-   parms = parms, dllname = "Forcing_lv",initforc="forcc",
+   parms = parms, dllname = "Forcing_lv",initforc = "forcc",
    forcings=forcings, initfunc = "parmsc", nout = 2,
-   outnames = c("Sum","signal"),method=rkMethod("rk34f"))
+   outnames = c("Sum","signal"), method = rkMethod("rk34f"))
 dyn.unload("Forcing_lv.dll")
 \end{verbatim}
 
