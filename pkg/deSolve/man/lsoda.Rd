@@ -53,10 +53,10 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     dynamically loaded shared library.
 
     If \code{func} is an \R-function, it must be defined as:
-    \code{yprime = func(t, y, parms, ...)}.  \code{t} is the current
+     \code{func <- function(t, y, parms,...)}.  \code{t} is the current
     time point in the integration, \code{y} is the current estimate of
     the variables in the ODE system.  If the initial values \code{y} has
-    a names attribute, the names will be available inside \code{func}.
+    a \code{names} attribute, the names will be available inside \code{func}.
     \code{parms} is a vector or list of parameters; ... (optional) are
     any other arguments passed to the function.
 
@@ -105,9 +105,8 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     \code{"fullusr"}, \code{"bandusr"} or \code{"bandint"} - either
     full or banded and estimated internally or by user.
   }
-  \item{verbose }{a logical value that, when \code{TRUE}, triggers more
-    verbose output from the ODE solver.  Will output the settings of
-    vectors \bold{istate} and \bold{rstate} -- see details.
+  \item{verbose }{a logical value that, when \code{TRUE}, will
+    print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{if not \code{NULL}, then \code{lsoda} cannot integrate
     past \code{tcrit}. The Fortran routine \code{lsoda} overshoots its
@@ -128,8 +127,8 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{hini }{initial step size to be attempted; if 0, the initial step
     size is determined by the solver.
   }
-  \item{ynames }{if \code{FALSE}: names of state variables are not passed
-    to function \code{func} ; this may speed up the simulation especially
+  \item{ynames }{logical, if \code{FALSE}: names of state variables are not
+    passed to function \code{func}; this may speed up the simulation especially
     for large models.
   }
   \item{maxordn }{the maximum order to be allowed in case the method is
@@ -180,6 +179,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
+    These names will be used to label the output matrix.
   }
   \item{forcings }{only used if \file{dllname} is specified: a list with
     the forcing function data sets, each present as a two-columned matrix,
@@ -187,16 +187,16 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     [min(\code{times}), max(\code{times})] is done by taking the value at
     the closest data extreme.
 
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{initforc }{if not \code{NULL}, the name of the forcing function
     initialisation function, as provided in
     \file{dllname}. It MUST be present if \code{forcings} has been given a
     value.
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{fcontrol }{A list of control parameters for the forcing functions.
-    See "Details" of \link{vode} or vignette \code{compiledCode}.
+    See \link{forcings} or vignette \code{compiledCode}.
   }
   \item{... }{additional arguments passed to \code{func} and
     \code{jacfunc} allowing this to be a generic function.
@@ -392,20 +392,23 @@ diagnostics(outJ) # shows what lsoda did internally
   reduction of precision in order to get an answer.  It will write a
   warning if it does so.
 
+  The diagnostics of the integration can be printed to screen
+  by calling \code{\link{diagnostics}}. If \code{verbose} = \code{TRUE},
+  the diagnostics will written to the screen at the end of the integration.
+
+  See vignette("deSolve") for an explanation of each element in the vectors
+  containing the diagnostic properties and how to directly access them.
+
   \bold{Models} may be defined in compiled C or Fortran code, as well as
-  in R.  See package vignette \code{"compiledCode"} for details.
-  
+  in an R-function. See package vignette \code{"compiledCode"} for details.
+
+  More information about models defined in compiled code is in the package
+  vignette ("compiledCode"); information about linking forcing functions
+  to compiled code is in \link{forcings}.
+
   Examples in both C and Fortran are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
   
-  The output will have the attributes \bold{istate} and \bold{rstate},
-  two vectors with several
-  useful elements. Their values can be displayed using R-function
-  \code{attributes}, or by calling \code{\link{diagnostics}}
-
-  If \code{verbose} = TRUE, the settings of istate and rstate will be
-  written to the screen.
-  See vignette("deSolve") for an explanation of each element in these vectors.
 
     }
 \seealso{

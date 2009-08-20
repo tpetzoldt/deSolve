@@ -47,10 +47,10 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     values of the derivatives in the ODE system (the \emph{model
     definition}) at time t.
   
-    \code{func} must be defined as: \code{yprime = func(t, y,
-    parms,...)}.  \cr \code{t} is the current time point in the
+    \code{func} must be defined as:  \code{func <- function(t, y, parms,...)}.
+    \cr \code{t} is the current time point in the
     integration, \code{y} is the current estimate of the variables in
-    the ODE system.  If the initial values \code{y} has a names
+    the ODE system.  If the initial values \code{y} has a \code{names}
     attribute, the names will be available inside \code{func}, unless
     \code{ynames} is FALSE.  \code{parms} is a vector or list of
     parameters.  \code{...} (optional) are any other arguments passed to
@@ -78,14 +78,14 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     defininition) at time \code{t}, or a character string giving the
     name of a compiled function in a dynamically loaded shared library.
       
-    If \code{res} is a user-supplied R-function, it must be called as:
-    \code{F = func(t, y, dy, parms, ...)}.
+    If \code{res} is a user-supplied R-function, it must be defined as:
+    \code{res <- function(t, y, dy, parms, ...)}.
     
     Here \code{t} is the current time point in the integration, \code{y}
     is the current estimate of the variables in the ODE system,
-    \code{dy} are the corresponding rates of change.  If the initial
-    \code{y} or \code{dy} have a names attribute, the names will be
-    available inside \code{func}, unless \code{ynames} is \code{FALSE}.
+    \code{dy} are the corresponding derivatives.  If the initial
+    \code{y} or \code{dy} have a \code{names} attribute, the names will be
+    available inside \code{res}, unless \code{ynames} is \code{FALSE}.
     \code{parms} is a vector of parameters.
     
     The return value of \code{res} should be a list, whose first element
@@ -134,10 +134,11 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     parameter \code{cj}.  Thus it should be called as: \code{jacres = 
     func(t, y, dy, parms, cj, ...)}.  Here \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
-    variables in the ODE system, \eqn{y'} are the corresponding rates of
-    change and \code{cj} is a scalar, which is normally proportional to
-    the inverse of the stepsize. If the initial y or dy have a names
-    attribute, the names will be available inside jacres, unless
+    variables in the ODE system, \eqn{y'} are the corresponding derivatives
+    and \code{cj} is a scalar, which is normally proportional to
+    the inverse of the stepsize. If the initial \code{y} or \code{dy}
+    have a \code{names} attribute, the names will be available inside
+    \code{jacres}, unless
     \code{ynames} is \code{FALSE}. \code{parms} is a vector of
     parameters (which may have a names attribute).
     
@@ -146,7 +147,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     derivatives of \eqn{G_i} with respect to \eqn{y_j} and the scaled
     derivatives of \eqn{G_i} with respect to \eqn{dy_j}.
     
-    Ff the Jacobian is banded, \code{jacres} should return only the
+    If the Jacobian is banded, \code{jacres} should return only the
     nonzero bands of the Jacobian, rotated rowwise. See details for the
     calling sequence when \code{jacres} is a string.
   }
@@ -162,8 +163,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     case, the number of algebraic equations must be given (\code{nalg}).
     If \code{estini} = 2: \code{y} will be estimated from \code{dy}.
   }
-  \item{verbose }{if TRUE: full output to the screen, e.g. will output
-    the settings of vector \bold{istate} and \bold{rstate} - see details.
+  \item{verbose }{if TRUE: full output to the screen, e.g. will
+    print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{the Fortran routine \code{daspk} overshoots its targets
     (times points in the vector \code{times}), and interpolates values
@@ -183,8 +184,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   \item{hini }{initial step size to be attempted; if 0, the initial step
     size is determined by the solver
   }
-  \item{ynames }{if FALSE: names of state variables are not passed to
-    function \code{func} ; this may speed up the simulation especially
+  \item{ynames }{logical, if \code{FALSE}, names of state variables are not
+    passed to function \code{func}; this may speed up the simulation especially
     for large models.
   }
   \item{maxord }{the maximum order to be allowed. Reduce \code{maxord}
@@ -205,8 +206,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   }
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
-    subroutine definitions referred to in \code{func}/or \code{res} and
-    \code{jacfunc}.  See package vignette \code{"compiledCode"}.
+    subroutine definitions referred to in \code{res} and
+    \code{jacres}.  See package vignette \code{"compiledCode"}.
   }
   \item{initfunc }{if not \code{NULL}, the name of the initialisation function
     (which initialises values of parameters), as provided in
@@ -219,15 +220,15 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
-    specified by \code{func} and \code{jacfunc}.
+    specified by \code{res} and \code{jacres}.
   }
   \item{ipar }{only when \file{dllname} is specified: a vector with
     integer values passed to the dll-functions whose names are specified
-    by \code{func} and \code{jacfunc}.
+    by \code{res} and \code{jacres}.
   }
   \item{nout }{only used if \file{dllname} is specified and the model is
     defined in compiled code: the number of output variables calculated
-    in the compiled function \code{func}, present in the shared
+    in the compiled function \code{res}, present in the shared
     library. Note: it is not automatically checked whether this is
     indeed the number of output variables calculed in the dll - you have
     to perform this check in the code - See package vignette
@@ -235,7 +236,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   }
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
-    compiled function \code{func}, present in the shared library.
+    compiled function \code{res}, present in the shared library.
+    These names will be used to label the output matrix.
   }
   \item{forcings }{only used if \file{dllname} is specified: a list with
     the forcing function data sets, each present as a two-columned matrix,
@@ -243,16 +245,16 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     [min(\code{times}), max(\code{times})] is done by taking the value at
     the closest data extreme.
 
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{initforc }{if not \code{NULL}, the name of the forcing function
     initialisation function, as provided in
     \file{dllname}. It MUST be present if \code{forcings} has been given a
     value.
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{fcontrol }{A list of control parameters for the forcing functions.
-    See "Details" of \link{vode} or vignette \code{compiledCode}.
+    See \link{forcings} or vignette \code{compiledCode}.
   }
   \item{... }{additional arguments passed to \code{func},
     \code{jacfunc}, \code{res} and \code{jacres}, allowing this to be a
@@ -511,15 +513,22 @@ par(mfrow = opa)
   in Fortran are in the \file{dynload} subdirectory of the
   \code{deSolve} package directory.
 
-  The output will have the attributes \bold{istate} and \bold{rstate},
-  two vectors with several
-  useful elements. Their values can be displayed using R-function
-  \code{attributes}, or by calling \code{\link{diagnostics}}
+  The diagnostics of the integration can be printed to screen
+  by calling \code{\link{diagnostics}}. If \code{verbose} = \code{TRUE},
+  the diagnostics will written to the screen at the end of the integration.
 
-  If \code{verbose} = TRUE, the settings of istate and rstate will be
-  written to the screen.
-  See vignette("deSolve") for an explanation of each element in these vectors.
+  See vignette("deSolve") for an explanation of each element in the vectors
+  containing the diagnostic properties and how to directly access them.
 
+  \bold{Models} may be defined in compiled C or Fortran code, as well as
+  in an R-function. See package vignette \code{"compiledCode"} for details.
+
+  More information about models defined in compiled code is in the package
+  vignette ("compiledCode"); information about linking forcing functions
+  to compiled code is in \link{forcings}.
+
+  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  of the \code{deSolve} package directory.
 }
 \seealso{
   \itemize{

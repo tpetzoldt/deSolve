@@ -23,10 +23,10 @@
     function in a dynamically loaded shared library.
   
     If \code{func} is an \R-function, it must be defined as:
-    \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time
+     \code{func <- function(t, y, parms,...)}.  \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
     variables in the ODE system.  If the initial values \code{y} has a
-    names attribute, the names will be available inside \code{func}.
+    \code{names} attribute, the names will be available inside \code{func}.
     \code{parms} is a vector or list of parameters; ... (optional) are
     any other arguments passed to the function.
   

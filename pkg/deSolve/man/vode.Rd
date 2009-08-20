@@ -50,10 +50,10 @@
     dynamically loaded shared library.
   
     If \code{func} is an \R-function, it must be defined as:
-    \code{yprime = func(t, y, parms,...)}.  \code{t} is the current time
+     \code{func <- function(t, y, parms,...)}.  \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
     variables in the ODE system.  If the initial values \code{y} has a
-    names attribute, the names will be available inside \code{func}.
+    \code{names} attribute, the names will be available inside \code{func}.
     \code{parms} is a vector or list of parameters; ... (optional) are
     any other arguments passed to the function.
   
@@ -107,9 +107,8 @@
     \code{jactype} - provides more options than \code{jactype} - see
     details.
   }
-  \item{verbose }{if TRUE: full output to the screen, e.g. will output
-    the settings of vectors \bold{istate} and \bold{rstate} - see
-    details.
+  \item{verbose }{if TRUE: full output to the screen, e.g. will
+    print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{if not \code{NULL}, then \code{vode} cannot integrate
     past \code{tcrit}. The Fortran routine \code{dvode} overshoots its
@@ -127,10 +126,10 @@
     \code{times}, to avoid that the simulation possibly ignores
     short-term events. If 0, no maximal size is specified.
   }
-  \item{hini }{initial step size to be attempted; if 0, initial step
+  \item{hini }{initial step size to be attempted; if 0, the initial step
     size is determined by the solver.
   }
-  \item{ynames }{if \code{FALSE}: names of state variables are not
+  \item{ynames }{logical; if \code{FALSE}: names of state variables are not
     passed to function \code{func} ; this may speed up the simulation
     especially for multi-D models.
   }
@@ -179,6 +178,7 @@
   \item{outnames }{only used if \file{dllname} is specified and
     \code{nout} > 0: the names of output variables calculated in the
     compiled function \code{func}, present in the shared library.
+    These names will be used to label the output matrix.
   }
   \item{forcings }{only used if \file{dllname} is specified: a list with
     the forcing function data sets, each present as a two-columned matrix,
@@ -186,16 +186,16 @@
     [min(\code{times}), max(\code{times})] is done by taking the value at
     the closest data extreme.
 
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{initforc }{if not \code{NULL}, the name of the forcing function
     initialisation function, as provided in
     \file{dllname}. It MUST be present if \code{forcings} has been given a
     value.
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{fcontrol }{A list of control parameters for the forcing functions.
-    See "Details".
+    \link{forcings} or package vignette \code{"compiledCode"}
   }
   \item{... }{additional arguments passed to \code{func} and
     \code{jacfunc} allowing this to be a generic function.
@@ -401,59 +401,24 @@ lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
   precision exceeds the capabilities of the machine, vode will return an
   error code. See \code{\link{lsoda}} for details.
   
+
+  The diagnostics of the integration can be printed to screen
+  by calling \code{\link{diagnostics}}. If \code{verbose} = \code{TRUE},
+  the diagnostics will written to the screen at the end of the integration.
+
+  See vignette("deSolve") for an explanation of each element in the vectors
+  containing the diagnostic properties and how to directly access them.
+
   \bold{Models} may be defined in compiled C or Fortran code, as well as
   in an R-function. See package vignette \code{"compiledCode"} for details.
-  
-  
-  The output will have the attributes \bold{istate} and \bold{rstate},
-  two vectors with several
-  useful elements. Their values can be displayed using R-function
-  \code{attributes}, or by calling \code{\link{diagnostics}}
 
-  If \code{verbose} = TRUE, the settings of istate and rstate will be
-  written to the screen.
-  See vignette("deSolve") for an explanation of each element in these vectors.
+  More information about models defined in compiled code is in the package
+  vignette ("compiledCode"); information about linking forcing functions
+  to compiled code is in \link{forcings}.
 
+  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  of the \code{deSolve} package directory.
 
-  The \bold{fcontrol} argument is a list that can supply any of the following
-  components (conform the definitions in the \link{approx} function):
-  \describe{
-    \item{method }{specifies the interpolation method to be used.
-      Choices are "linear" or "constant",}
-    \item{rule }{an integer describing how interpolation is to take place
-      outside the interval [min(times), max(times)].
-      If \code{rule} is \code{1} then an error will be triggered and the
-      calculation will stop if \code{times} extends the interval of the
-      forcing function data set. If it is \code{2}, the *default*, the
-      value at the closest data extreme is used, a warning will be printed if
-      \code{verbose} is TRUE,
-
-      Note that the default differs from the \code{approx} default}
-    \item{f }{For method=\code{"constant"} a number between \code{0} and
-      \code{1} inclusive, indicating a compromise between left- and
-      right-continuous step functions. If \code{y0} and \code{y1} are the
-      values to the left and right of the point then the value is
-      \code{y0*(1-f)+y1*f} so that \code{f=0} is right-continuous and
-      \code{f=1} is left-continuous,
-      }
-    \item{ties }{Handling of tied \code{times} values. Either a function
-      with a single vector argument returning a single number result or the
-      string "ordered".
-
-      Note that the default is "ordered", hence the existence of ties will
-      NOT be investigated; in the \code{C} code this will mean that -if ties
-      exist, the first value will be used; if the dataset is not ordered,
-      then nonsense will be produced.
-
-      Alternative values for \code{ties} are \code{mean}, \code{min} etc
-      }
-   }
-   The defaults are:
-
-   \code{fcontrol=list(method="linear", rule = 2,  f = 0, ties = "ordered")}
-
-   Note that only ONE specification is allowed, even if there is more than
-   one forcing function data set.
 
 }
 \seealso{

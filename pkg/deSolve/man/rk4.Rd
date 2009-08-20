@@ -32,10 +32,10 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     dynamically loaded shared library.
 
     If \code{func} is an \R-function, it must be defined as:
-    \code{yprime = func(t, y, parms, ...)}.  \code{t} is the current
+     \code{func <- function(t, y, parms,...)}.  \code{t} is the current
     time point in the integration, \code{y} is the current estimate of
     the variables in the ODE system.  If the initial values \code{y} has
-    a names attribute, the names will be available inside \code{func}.
+    a \code{names} attribute, the names will be available inside \code{func}.
     \code{parms} is a vector or list of parameters; ... (optional) are
     any other arguments passed to the function.
 
@@ -47,7 +47,7 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
 
 	  If \code{func} is a string, then \code{dllname} must give the name
     of the shared library (without extension) which must be loaded
-    before \code{lsoda()} is called. See package vignette
+    before \code{rk4} is called. See package vignette
     \code{"compiledCode"} for more
     details.
   }
@@ -100,16 +100,16 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     [min(\code{times}), max(\code{times})] is done by taking the value at
     the closest data extreme.
 
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{initforc }{if not \code{NULL}, the name of the forcing function
     initialisation function, as provided in
     \file{dllname}. It MUST be present if \code{forcings} has been given a
     value.
-    See package vignette \code{"compiledCode"}.
+    See \link{forcings} or package vignette \code{"compiledCode"}.
   }
   \item{fcontrol }{A list of control parameters for the forcing functions.
-    See "Details" of \link{vode} or vignette \code{compiledCode}.
+    See \link{forcings} or vignette \code{compiledCode}.
   }
    \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.

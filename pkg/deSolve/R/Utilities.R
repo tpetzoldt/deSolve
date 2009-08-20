@@ -8,6 +8,10 @@ print.deSolve <- function(x, ...)
 ### ============================================================================
 
 plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
+
+#KS -> ThPe?: better position this below the sentence
+#         mf <- par(mfrow = mfrow)
+# and then use prod(par"mfrow")
     if (is.null(ask))
         ask <- prod(par("mfcol")) < length(which) && dev.interactive()
     t <- 1     # column with "times"
@@ -44,11 +48,13 @@ plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
         mf <- par(mfrow = mfrow)
     }
     ## interactively wait if there are remaining figures
+    ## KS-> ThPe: would put ask of first line here...
+#    if (is.null(ask))
+#        ask <- prod(par("mfrow")) < length(which) && dev.interactive()
     if (ask) {
         oask <- devAskNewPage(TRUE)
-	on.exit(devAskNewPage(oask))
+ 	      on.exit(devAskNewPage(oask))
     }
-
     Main <- is.null(dots$main)
 
     xxlab <- if (is.null(dots$xlab))  colnames(x)[t]  else dots$xlab
