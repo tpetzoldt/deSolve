@@ -115,7 +115,7 @@ checkDLL <- function (func,jacfunc,dllname,
         stop(paste("'initfunc' not loaded ",initfunc))
 
     # Easier to deal with NA in C-code
-    if (is.null(initfunc)) initfunc <- NA
+    if (is.null(initfunc)) MOdelInit <- NA
 
 
     ## copy value of func to funcname

@@ -1,16 +1,25 @@
 deSolve release 2.0
+KS->ThPe:
+ request to change the ask settings in the S3 plot method; see code in utilities.R
+
+KS added better checking of DLL functions (i.e. for uniqueness)
+
+KS added help file to explain forcings implementation in DLL - suggestion:
+also include here how to use forcings in pure R code (approxfun)
+
+KS->ThPe btw - what to do with approxfun?
+
 
 *** RECENT CHANGES ***
 KS: added the runge kutta 4(5) method of Cash-Karp. (request from Jeff Cash).
-
 KS: daspk now works with banded jacobians and func specified...
-
 KS: small change to plot.deSolve: variables can be addressed by their number
 plot(out, which = 1:7)
-
 KS: output variable creation is unefficient as it is done after the integration
 it may lead to strange results if globals are altered...
 This occurs in all codes, not just the lsodas. Solvable in runge kuttas:
+KS: make runge-kutta help file less negative (suggestion from Jeff Cash:
+  suggest to use RK23 for simple problems, rk45 for rough problems.
 
 #example code:
 
@@ -28,9 +37,7 @@ head(out)
 
 *** TO DO NOW ***
 
-- make runge-kutta help file less negative (suggestion from Jeff Cash:
-  suggest to use RK23 for simple problems, rk45 for rough problems.
-  
+
 - ?? implement delays (why? ddesolve implements a very simple runge-kutta)
 
 

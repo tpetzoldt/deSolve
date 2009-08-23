@@ -16,7 +16,7 @@
 \newcommand{\DLLmodels}{\textbf{\textsf{DLL models}}\xspace}
 
 \title{\proglang{R} Package \pkg{deSolve}, Writing Code in Compiled
-Language}
+Languages}
 
 \Plaintitle{R Package deSolve, Writing Code in Compiled Languages}
 
