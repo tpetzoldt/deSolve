@@ -1,0 +1,12 @@
+Package: daeSolve
+Version: 1.0
+Title: Solvers for differential algebraic equations (DAE) of index up to 3
+Author: Karline Soetaert <k.soetaert@nioo.knaw.nl>
+Maintainer: Karline Soetaert <k.soetaert@nioo.knaw.nl>
+Depends: R (>= 2.01), deSolve
+Description: Function that solves differential algebraic equations (DAE)
+             up to index of 3.
+             The function provide an interface to the FORTRAN functions mebdfi.
+License: GPL
+LazyData: yes
+
