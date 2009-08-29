@@ -38,7 +38,7 @@
   as part of a modeling package for differential equations, or for
   parameter estimation using any appropriate modeling tool for
   non-linear models in \R such as \code{\link{optim}},
-  \code{\link[nls]{nls}}, \code{\link{nlm}} or \code{\link[nlme]{nlme}}.
+  \code{\link{nls}}, \code{\link{nlm}} or \code{\link[nlme]{nlme}}.
   
 }
 \author{

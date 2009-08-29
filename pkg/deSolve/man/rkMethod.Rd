@@ -61,28 +61,33 @@ rkMethod(method = NULL, ...)
       contains parts where it changes fast, and parts where nothing much
       happens. They will take small steps over bumpy ground and long steps
       over uninteresting terrain.
-      
-    \item Among the \code{rk} solvers, "rk45dp7" (alias "ode45") is used
-      by default, because of its relatively high order (4), re-use of
-      the last intermediate steps (FSAL = first same as last) and
-      built-in polynomial interpolation (dense output).
 
-    \item Solver "rk23bs", that supports also FSAL, may be useful for
-      slightly stiff systems if demands on precision are low.
+    \item As a suggestion, one may use \code{"rk23"} (alias
+      \code{"ode23"}) for simple problems and \code{"rk45dp7"} (alias
+      \code{"ode45"}) for rough problems. The default solver is
+      \code{"rk45dp7"} (alias "ode45"), because of its relatively high
+      order (4), re-use of the last intermediate steps (FSAL = first
+      same as last) and built-in polynomial interpolation (dense
+      output).
+
+    \item Solver \code{"rk23bs"}, that supports also FSAL, may be useful for
+      slightly stiff systems if demands on precision are relatively low.
 
     \item Another good choice, assuring medium accuracy, is the Cash-Karp
-      Runge-Kutta method, "rk45ck".
+      Runge-Kutta method, \code{"rk45ck"}.
 
-    \item Classical "rk4" is traditionally used in cases where an
+    \item Classical \code{"rk4"} is traditionally used in cases where an
       adequate stepsize is known a-priori or if external forcing data
       are provided for fixed time steps only and frequent interpolation
       of external data needs to be avoided.
   
-    \item Interpolation for other methods than "rk45dp7" (alias "ode45")
-      is done Neville-Aitken polynomials only (5th order by default). This needs
-      at least 6 internal time steps and may lead to local inaccuracies
-      for badly behaving systems if external and internal time steps are
-      too different.
+    \item Method \code{"rk45dp7"} (alias \code{"ode45"}) contains an
+      efficient built-in interpolation scheme (dense output) based on
+      intermediate function evaluations. Interpolation for all other
+      methods is done with Neville-Aitken polynomials (5th order by
+      default) which needs at least 6 internal time steps. Local
+      interpolation inaccuracies can be minimized if external and
+      internal time steps are not too different.
     
   }
 }
@@ -131,7 +136,7 @@ rkMethod(method = NULL, ...)
     internal
     interpolation is switched off.  Note that this works only if time steps match
     exactly. This may not work as expected for all cases because of
-    floating point rounding errors (see R FAQ about ``Why doesn't R
+    floating point rounding errors (see \R FAQ about ``Why doesn't \R
     think these numbers are equal?'').
   }
 

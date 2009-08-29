@@ -18,7 +18,7 @@
   parameters is passed to the ODEs, so the solver may be used as part of
   a modeling package for ODEs, or for parameter estimation using any
   appropriate modeling tool for non-linear models in \R such as
-  \code{\link{optim}}, \code{\link[nls]{nls}}, \code{\link{nlm}} or
+  \code{\link{optim}}, \code{\link{nls}}, \code{\link{nlm}} or
   \code{\link[nlme]{nlme}}
 }
 \usage{
@@ -105,15 +105,19 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     to function \code{func} ; this may speed up the simulation especially
     for large models.
   }
+  
   \item{method }{the integrator to use. This can either be a string
     constant naming one of the pre-defined methods or a call to function
     \code{\link{rkMethod}} specifying a user-defined method.  The most
-    common methods are the fixed-step methods \code{"euler"},
-     second and fourth-order Runge Kutta (\code{"rk2"}, \code{"rk4"}),
-    or the variable step methods
-    Bogacki-Shampine \code{"rk23bs"}, Runge-Kutta-Fehlberg \code{"rk34f"},
-    the fifth-order Cash-Karp method \code{"rk45ck"} or
-    the fifth-order Dormand-Prince method with seven stages \code{"rk45dp7"}.
+    common methods are the fixed-step methods \code{"euler"}, second and
+    fourth-order Runge Kutta (\code{"rk2"}, \code{"rk4"}), or the
+    variable step methods Bogacki-Shampine \code{"rk23bs"},
+    Runge-Kutta-Fehlberg \code{"rk34f"}, the fifth-order Cash-Karp
+    method \code{"rk45ck"} or the fifth-order Dormand-Prince method with
+    seven stages \code{"rk45dp7"}.
+    As a suggestion, one may use \code{"rk23"} (alias \code{"ode23"}) for
+    simple problems and \code{"rk45dp7"} (alias \code{"ode45"}) for
+    rough problems.
   }  
   \item{maxsteps }{average maximal number of steps per output interval
     taken by the solver. This argument is defined such to ensure

@@ -60,7 +60,7 @@ lines(out2$time,out2$Mineralisation,col="blue")
 }
 \references{
 Soetaert, K. and P.M.J. Herman, 2009.
-A Practical Guide to Ecological Modelling. Using R as a Simulation Platform.
+A Practical Guide to Ecological Modelling. Using \R as a Simulation Platform.
 Springer, 372 pp.
 }
 \details{

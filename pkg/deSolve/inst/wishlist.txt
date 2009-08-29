@@ -1,14 +1,16 @@
 deSolve release 2.0
 KS->ThPe:
  request to change the ask settings in the S3 plot method; see code in utilities.R
+ThPe: done
 
 KS added better checking of DLL functions (i.e. for uniqueness)
+ThPe: thanks
 
 KS added help file to explain forcings implementation in DLL - suggestion:
 also include here how to use forcings in pure R code (approxfun)
 
 KS->ThPe btw - what to do with approxfun?
-
+ThPe: ???
 
 *** RECENT CHANGES ***
 KS: added the runge kutta 4(5) method of Cash-Karp. (request from Jeff Cash).
@@ -18,8 +20,6 @@ plot(out, which = 1:7)
 KS: output variable creation is unefficient as it is done after the integration
 it may lead to strange results if globals are altered...
 This occurs in all codes, not just the lsodas. Solvable in runge kuttas:
-KS: make runge-kutta help file less negative (suggestion from Jeff Cash:
-  suggest to use RK23 for simple problems, rk45 for rough problems.
 
 #example code:
 
@@ -34,6 +34,18 @@ out <- ode(y=1,func=model,parms=NULL,times=1:100)
 head(out)
 
 # end example code
+
+KS: make runge-kutta help file less negative (suggestion from Jeff Cash:
+  suggest to use RK23 for simple problems, rk45 for rough problems.
+
+ThPe: 
+  - done; Karline please check the formulations.
+  - I'm still a little unsecure with the
+  interpolation algorithm for methods other than rk45dp7 because 
+  Neville-Aitken can introduce local inaccuracy. "built-in" dense
+  output is possible for some additional methods, but this should remain
+  as a task for future versions.
+
 
 *** TO DO NOW ***
 
