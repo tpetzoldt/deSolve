@@ -184,6 +184,7 @@ SEXP call_mebdfi(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
   lrw =  INTEGER(Lrw)[0];
   rwork = (double *) R_alloc(lrw, sizeof(double));
   for (j = 0; j < lrw; j++) rwork[j] = 0.;
+  rwork[0] = DBL_EPSILON;
 
   mbnd  = (int *) R_alloc(4, sizeof(int));
   for (j = 0; j<4; j++) mbnd[j] = INTEGER(Mbnd)[j];

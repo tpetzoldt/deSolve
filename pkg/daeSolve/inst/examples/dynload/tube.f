@@ -17,27 +17,23 @@ c     This is revision
 c     $Id: water.F,v 1.2 2006/10/02 10:29:14 testset Exp $
 c
 c-----------------------------------------------------------------------
-      SUBROUTINE tubeinit(daeparms)
-
-      EXTERNAL daeparms
-      double precision parms(8)
-      common /myparms/ parms
-      
-        CALL daeparms(8,parms)
-
-      END SUBROUTINE
-      
-
       SUBROUTINE tuberes(X,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
-      IMPLICIT NONE
-      integer N, I,IPAR(*),IERR
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+      integer N
      	parameter(N=49)
-      DOUBLE PRECISION Y(N),DELTA(N),RPAR(*),YPRIME(N),CJ
+      DIMENSION Y(N),DELTA(N),IPAR(*),RPAR(*),YPRIME(N)
       double precision nu,g,rho,rcrit,length,k,d,b,pi,a,c,v,x
 c      
-      common /myparms/nu,g,rho,rcrit,length,k,d,b
-      parameter(pi    = 3.141592653589793238462643383d0 )
-
+      parameter(nu    = 1.31d-6,
+     +          g     = 9.8d0,
+     +          rho   = 1.0d3,
+     +          rcrit = 2.3d3,
+     +          length= 1.0d3,
+     +          k     = 2.0d-4,
+     +          d     = 1.0d0,
+     +          b     = 2.0d2,
+     +          pi    = 3.141592653589793238462643383d0 )            
+       
       a = pi*d**2/4d0
       c = b/(rho*g)
       v = rho*length/a
@@ -61,8 +57,7 @@ C
       end
 c-----------------------------------------------------------------------
       SUBROUTINE tubeF(NEQN,T,Y,DF,IPAR,RPAR,IERR)
-      IMPLICIT NONE
-      INTEGER NEQN , IERR
+      INTEGER NEQN
       DOUBLE PRECISION T,Y(NEQN),DF(NEQN),RPAR(*)
       integer nnodes,i,j,nj,ipar(*)
       parameter(nnodes=13)
@@ -72,9 +67,15 @@ c-----------------------------------------------------------------------
      +                 ein(nnodes),eout(nnodes),rghres(nnodes,nnodes)
       double precision rtla,r,that,that2,a,mu
       double precision nu,g,rho,rcrit,length,k,d,b,pi
-      common /myparms/nu,g,rho,rcrit,length,k,d,b
-
-      parameter(pi    = 3.141592653589793238462643383d0 )
+      parameter(nu    = 1.31d-6,
+     +          g     = 9.8d0,
+     +          rho   = 1.0d3,
+     +          rcrit = 2.3d3,
+     +          length= 1.0d3,
+     +          k     = 2.0d-4,
+     +          d     = 1.0d0,
+     +          b     = 2.0d2,
+     +          pi    = 3.141592653589793238462643383d0 )                  
 
       a = pi*d**2/4d0
       mu = nu*rho

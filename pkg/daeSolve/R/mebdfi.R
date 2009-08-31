@@ -81,7 +81,7 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   #  if (imp == 23) Jacobian should have empty banddown empty rows
   # similar as in vode+daspk only!    CHECK IT !
   if (imp == 23)
-    erow<-matrix(nc=n,nr=banddown,0)
+    erow<-matrix(data=0, nrow=banddown, ncol=n)
   else erow<-NULL
     
   if (is.null(banddown))

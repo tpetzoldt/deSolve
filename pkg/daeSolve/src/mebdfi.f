@@ -305,9 +305,9 @@ C     OF SPLITTING UP THE WORK ARRAYS WORK AND IWORK   *
 C     FOR USE INSIDE THE INTEGRATOR STIFF              *
 C     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C ks: declaration of variables
-      DOUBLE PRECISION UROUND, D1MACH, WORK, EPSJAC, T0, HO, Y0
+      DOUBLE PRECISION UROUND, WORK, EPSJAC, T0, HO, Y0
       DOUBLE PRECISION YPRIME, TOUT, TEND, RTOL, ATOL, RPAR
-	INTEGER IPAR, IERR
+	    INTEGER IPAR, IERR
 	 
 C     .. SCALAR ARGUMENTS ..
       INTEGER IDID,LIWORK,LOUT,LWORK,MF,N,MAXDER,ITOL
@@ -353,9 +353,10 @@ C KS: hard-coded LOUT = 0 (never used anymore...)
             I9 = I8 + N
             I10 = I9 + MBND(4)*N
 c            UROUND = DLAMCH('Epsilon')     DID NOT WORK...
-            UROUND = d1mach(3)
-
-            WORK(1) = UROUND
+c            UROUND = d1mach(3)
+c ks: uround now in work 1
+            UROUND = WORK(1)
+c ks: used to be like this...    WORK(1) = UROUND
             EPSJAC = DSQRT(WORK(1))
 
 c            IF (LWORK.LT.(I10+1)) THEN  KS: CHANGED THAT:
@@ -3423,225 +3424,4 @@ C
 
       RETURN
       END
-
-C----------------------------------------------------------------------------
-
-C KS: this function is used instead of DLAMCH....
-c This is the code that has gone into netlib as a replacement.
-      DOUBLE PRECISION FUNCTION D1MACH(I)
-      INTEGER I
-C
-C  DOUBLE-PRECISION MACHINE CONSTANTS
-C
-C  D1MACH( 1) = B**(EMIN-1), THE SMALLEST POSITIVE MAGNITUDE.
-C
-C  D1MACH( 2) = B**EMAX*(1 - B**(-T)), THE LARGEST MAGNITUDE.
-C
-C  D1MACH( 3) = B**(-T), THE SMALLEST RELATIVE SPACING.
-C
-C  D1MACH( 4) = B**(1-T), THE LARGEST RELATIVE SPACING.
-C
-C  D1MACH( 5) = LOG10(B)
-C
-C  TO ALTER THIS FUNCTION FOR A PARTICULAR ENVIRONMENT,
-C  THE DESIRED SET OF DATA STATEMENTS SHOULD BE ACTIVATED BY
-C  REMOVING THE C FROM COLUMN 1.
-C  ON RARE MACHINES A STATIC STATEMENT MAY NEED TO BE ADDED.
-C  (BUT PROBABLY MORE SYSTEMS PROHIBIT IT THAN REQUIRE IT.)
-C
-C  FOR IEEE-ARITHMETIC MACHINES (BINARY STANDARD), ONE OF THE FIRST
-C  TWO SETS OF CONSTANTS BELOW SHOULD BE APPROPRIATE.  IF YOU DO NOT
-C  KNOW WHICH SET TO USE, TRY BOTH AND SEE WHICH GIVES PLAUSIBLE
-C  VALUES.
-C
-C  WHERE POSSIBLE, DECIMAL, OCTAL OR HEXADECIMAL CONSTANTS ARE USED
-C  TO SPECIFY THE CONSTANTS EXACTLY.  SOMETIMES THIS REQUIRES USING
-C  EQUIVALENT INTEGER ARRAYS.  IF YOUR COMPILER USES HALF-WORD
-C  INTEGERS BY DEFAULT (SOMETIMES CALLED INTEGER*2), YOU MAY NEED TO
-C  CHANGE INTEGER TO INTEGER*4 OR OTHERWISE INSTRUCT YOUR COMPILER
-C  TO USE FULL-WORD INTEGERS IN THE NEXT 5 DECLARATIONS.
-C
-C  COMMENTS JUST BEFORE THE END STATEMENT (LINES STARTING WITH *)
-C  GIVE C SOURCE FOR D1MACH.
-C
-      INTEGER SMALL(2)
-      INTEGER LARGE(2)
-      INTEGER RIGHT(2)
-      INTEGER DIVER(2)
-      INTEGER LOG10(2)
-      INTEGER SC, CRAY1(38), J
-      COMMON /D9MACH/ CRAY1
-C/6S
-C/7S
-      COMMON/sizes/ SMALL, LARGE, RIGHT, DIVER, LOG10, SC
-C/
-      DOUBLE PRECISION DMACH(5)
-C
-      EQUIVALENCE (DMACH(1),SMALL(1))
-      EQUIVALENCE (DMACH(2),LARGE(1))
-      EQUIVALENCE (DMACH(3),RIGHT(1))
-      EQUIVALENCE (DMACH(4),DIVER(1))
-      EQUIVALENCE (DMACH(5),LOG10(1))
-      IF (SC .NE. 987) THEN
-         DMACH(1) = 1.D13
-         IF (      SMALL(1) .EQ. 1117925532
-     *       .AND. SMALL(2) .EQ. -448790528) THEN
-*           *** IEEE BIG ENDIAN ***
-            SMALL(1) = 1048576
-            SMALL(2) = 0
-            LARGE(1) = 2146435071
-            LARGE(2) = -1
-            RIGHT(1) = 1017118720
-            RIGHT(2) = 0
-            DIVER(1) = 1018167296
-            DIVER(2) = 0
-            LOG10(1) = 1070810131
-            LOG10(2) = 1352628735
-         ELSE IF ( SMALL(2) .EQ. 1117925532
-     *       .AND. SMALL(1) .EQ. -448790528) THEN
-*           *** IEEE LITTLE ENDIAN ***
-            SMALL(2) = 1048576
-            SMALL(1) = 0
-            LARGE(2) = 2146435071
-            LARGE(1) = -1
-            RIGHT(2) = 1017118720
-            RIGHT(1) = 0
-            DIVER(2) = 1018167296
-            DIVER(1) = 0
-            LOG10(2) = 1070810131
-            LOG10(1) = 1352628735
-         ELSE IF ( SMALL(1) .EQ. -2065213935
-     *       .AND. SMALL(2) .EQ. 10752) THEN
-*               *** VAX WITH D_FLOATING ***
-            SMALL(1) = 128
-            SMALL(2) = 0
-            LARGE(1) = -32769
-            LARGE(2) = -1
-            RIGHT(1) = 9344
-            RIGHT(2) = 0
-            DIVER(1) = 9472
-            DIVER(2) = 0
-            LOG10(1) = 546979738
-            LOG10(2) = -805796613
-         ELSE IF ( SMALL(1) .EQ. 1267827943
-     *       .AND. SMALL(2) .EQ. 704643072) THEN
-*               *** IBM MAINFRAME ***
-            SMALL(1) = 1048576
-            SMALL(2) = 0
-            LARGE(1) = 2147483647
-            LARGE(2) = -1
-            RIGHT(1) = 856686592
-            RIGHT(2) = 0
-            DIVER(1) = 873463808
-            DIVER(2) = 0
-            LOG10(1) = 1091781651
-            LOG10(2) = 1352628735
-         ELSE IF ( SMALL(1) .EQ. 1120022684
-     *       .AND. SMALL(2) .EQ. -448790528) THEN
-*           *** CONVEX C-1 ***
-            SMALL(1) = 1048576
-            SMALL(2) = 0
-            LARGE(1) = 2147483647
-            LARGE(2) = -1
-            RIGHT(1) = 1019215872
-            RIGHT(2) = 0
-            DIVER(1) = 1020264448
-            DIVER(2) = 0
-            LOG10(1) = 1072907283
-            LOG10(2) = 1352628735
-         ELSE IF ( SMALL(1) .EQ. 815547074
-     *       .AND. SMALL(2) .EQ. 58688) THEN
-*           *** VAX G-FLOATING ***
-            SMALL(1) = 16
-            SMALL(2) = 0
-            LARGE(1) = -32769
-            LARGE(2) = -1
-            RIGHT(1) = 15552
-            RIGHT(2) = 0
-            DIVER(1) = 15568
-            DIVER(2) = 0
-            LOG10(1) = 1142112243
-            LOG10(2) = 2046775455
-         ELSE
-            DMACH(2) = 1.D27 + 1
-            DMACH(3) = 1.D27
-            LARGE(2) = LARGE(2) - RIGHT(2)
-            IF (LARGE(2) .EQ. 64 .AND. SMALL(2) .EQ. 0) THEN
-               CRAY1(1) = 67291416
-               DO 10 J = 1, 20
- 10               CRAY1(J+1) = CRAY1(J) + CRAY1(J)
-               CRAY1(22) = CRAY1(21) + 321322
-               DO 20 J = 22, 37
- 20               CRAY1(J+1) = CRAY1(J) + CRAY1(J)
-               IF (CRAY1(38) .EQ. SMALL(1)) THEN
-*                  *** CRAY ***
-*                 SMALL(1) = 2332160919536140288
-                  SMALL(1) = 2332160
-                  SMALL(1) = 1000000*SMALL(1) + 919536
-                  SMALL(1) = 1000000*SMALL(1) + 140288
-                  SMALL(2) = 0
-*                 LARGE(1) = 6917247552664371199
-                  LARGE(1) = 6917247
-                  LARGE(1) = 1000000*LARGE(1) + 552664
-                  LARGE(1) = 1000000*LARGE(1) + 371199
-*                 LARGE(2) = 281474976710654
-                  LARGE(2) = 28147497
-                  LARGE(2) = 10000000*LARGE(2) + 6710654
-*                 RIGHT(1) = 4585649583081652224
-                  RIGHT(1) = 4585649
-                  RIGHT(1) = 1000000*RIGHT(1) + 583081
-                  RIGHT(1) = 1000000*RIGHT(1) + 652224
-                  RIGHT(2) = 0
-*                 DIVER(1) = 4585931058058362880
-                  DIVER(1) = 4585931
-                  DIVER(1) = 1000000*DIVER(1) + 058058
-                  DIVER(1) = 1000000*DIVER(1) + 362880
-                  DIVER(2) = 0
-*                 LOG10(1) = 4611574008272714703
-                  LOG10(1) = 4611574
-                  LOG10(1) = 1000000*LOG10(1) +   8272
-                  LOG10(1) = 1000000*LOG10(1) + 714703
-*                 LOG10(2) = 272234615232940
-                  LOG10(2) = 27223461
-                  LOG10(2) = 10000000*LOG10(2) + 5232940
-               ELSE
-                  WRITE(*,9000)
-                  STOP 779
-                  END IF
-            ELSE
-               WRITE(*,9000)
-               STOP 779
-               END IF
-            END IF
-         SC = 987
-         END IF
-C
-C  ***  ISSUE STOP 778 IF ALL DATA STATEMENTS ARE OBVIOUSLY WRONG...
-      IF (DMACH(4) .GE. 1.0D0) STOP 778
-*C/6S
-*C     IF (I .LT. 1  .OR.  I .GT. 5)
-*C    1   CALL SETERR(24HD1MACH - I OUT OF BOUNDS,24,1,2)
-*C/7S
-*      IF (I .LT. 1  .OR.  I .GT. 5)
-*     1   CALL SETERR('D1MACH - I OUT OF BOUNDS',24,1,2)
-*C/
-c      IF (I .LT. 1 .OR. I .GT. 5) THEN
-c         WRITE(*,*) 'D1MACH(I): I =',I,' is out of bounds.'
-c         STOP
-c         END IF
-      D1MACH = DMACH(I)
-      RETURN
-C/6S
-C9000 FORMAT(/46H Adjust D1MACH by uncommenting data statements/
-C    *30H appropriate for your machine.)
-C/7S
- 9000 FORMAT('Adjust D1MACH by uncommenting data statements',
-     *' appropriate for your machine.')
-C/
-C
-      END
-
-
-
-
 
