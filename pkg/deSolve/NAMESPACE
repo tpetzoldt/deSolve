@@ -9,3 +9,4 @@ export(DLLfunc, DLLres)
 
 S3method("print", "deSolve")
 S3method("plot", "deSolve")
+S3method("hist", "deSolve")

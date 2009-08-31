@@ -1,13 +1,15 @@
 \name{plot.deSolve}
 \alias{plot.deSolve}
+\alias{hist.deSolve}
 \title{
- Plot Method for deSolve Objects
+ Plot and Histogram Method for deSolve Objects
 }
 \description{
 Plot the output of numeric integration routines.
 }
 \usage{
 \method{plot}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
+\method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 }
 
 \arguments{
@@ -24,7 +26,7 @@ Plot the output of numeric integration routines.
     \code{\link{dev.interactive}}.}
   
   \item{\dots}{additional graphics arguments passed to
-    \code{\link{plot.default}}}
+    \code{\link{plot.default}} or \code{\link{hist}}}
 }
 
 \details{
@@ -67,6 +69,8 @@ plot(out, type = "l")
 ## User-specified axis labels
 plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", main = "Time Series") 
+
+hist(out, col="darkblue", breaks = 50)
 }
 
 \keyword{ hplot }
