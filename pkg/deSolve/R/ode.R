@@ -80,8 +80,8 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
     if (is.character(func))
       stop ("cannot run ode.1D with R-function specified in a DLL")
 
-    ii    <- as.vector(t(matrix(ncol=nspec,1:N)))   # from ordering per slice -> per spec
-    ij    <- as.vector(t(matrix(nrow=nspec,1:N)))   # from ordering per spec -> per slice
+    ii    <- as.vector(t(matrix(data=1:N,ncol=nspec)))   # from ordering per slice -> per spec
+    ij    <- as.vector(t(matrix(data=1:N,nrow=nspec)))   # from ordering per spec -> per slice
 
     bmod  <- function(time,state,pars,...)
       bmodel(time,state,pars,func,...)

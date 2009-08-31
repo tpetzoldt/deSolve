@@ -86,7 +86,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 
   #  if (miter == 4) Jacobian should have banddown empty rows-vode+daspk only!
   if (imp == 24)
-    erow<-matrix(nc=n,nr=banddown,0)
+    erow<-matrix(data=0,ncol=n,nrow=banddown)
   else erow<-NULL
     
   if (is.null(banddown))

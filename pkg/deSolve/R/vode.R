@@ -78,7 +78,7 @@ vode  <- function(y, times, func, parms, rtol=1e-6, atol=1e-8,
     
   ## if (miter == 4) Jacobian should have banddown empty rows-vode only!
   if (miter == 4 && banddown>0)
-    erow<-matrix(nc=n,nr=banddown,0) else erow<-NULL
+    erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
 
   Ynames <- attr(y,"names")
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
