@@ -2006,8 +2006,8 @@ C     .. DATA STATEMENTS ..
       character(len=150) msg
 
       DATA  ZERO/0.0D+0/
-C     ..
-
+C     ..     ks:added this
+      D1=0.d0
       DO 5 I=1,N
          AYI = DABS(Y(I,1))
          IF(ITOL.EQ.1) THEN
@@ -2250,9 +2250,15 @@ C     .. DATA STATEMENTS ..
       DATA  ZERO,ONE/0.0D+0,1.0D+0/
 C     ..
       character (len=180) MSG
+      pllfal = 0.d0
+      ffail = 0
+      frfail = 0.d0
+      lmp4 = 0
+      dup = 0.
 
  6000 TOLD = T
       KFLAG = 0
+
       IF (JSTART.GT.0) GO TO 60
       IF (JSTART.NE.0) GO TO 30
 C     ------------------------------------------------------------------
