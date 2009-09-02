@@ -7,6 +7,6 @@ Depends: R (>= 2.01), deSolve
 Description: Function that solves differential algebraic equations (DAE)
              up to index of 3.
              The function provide an interface to the FORTRAN functions mebdfi.
-License: GPL
+License: GPL (>= 2)
 LazyData: yes
 
