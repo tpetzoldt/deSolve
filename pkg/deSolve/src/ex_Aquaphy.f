@@ -168,14 +168,14 @@ c parameters
      &     dayLength
 
 c PAR is a forcing function here...
-	double precision PAR 
+      double precision PAR 
       common /myforcs/PAR 
-		  
+            
 c variables
       double precision ::                                                &                      
      &  DIN,PROTEIN,RESERVE,LMW,dLMW,dRESERVE,dPROTEIN,dDIN,             &
      &  PhytoC,PhytoN,NCratio,Chlorophyll,TotalN,ChlCratio,PartLMW,      &      
-     &  hourofday, Limfac,PhotoSynthesis,Exudation,MonodQuotum,          &
+     &  Limfac,PhotoSynthesis,Exudation,MonodQuotum,                     &
      &  ProteinSynthesis,Storage,Respiration,Catabolism
 
 c ------------------------------------------------------------------------
