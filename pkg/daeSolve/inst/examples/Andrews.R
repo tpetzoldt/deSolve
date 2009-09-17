@@ -167,3 +167,8 @@ MM <- mebdfi(y=yini, times=times, res=Andrews, parms=parameter,nind=ind,
 MM[nrow(MM),]
 diagnostics(MM)
 plot(MM)
+
+
+#M2 <- mebdfi(y=yini, times=times, res=Andrews, parms=parameter,nind=ind,
+#  atol=1e-1,rtol=1e-1)
+#diagnostics(M2)

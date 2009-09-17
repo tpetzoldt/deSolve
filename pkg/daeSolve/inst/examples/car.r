@@ -68,3 +68,4 @@ out   <- mebdfi(y=yini,dy=dyini,times,res=car,parms=pars, nind=nind,
 
 plot(out,which=1:4,type="l",lwd=2,ask=FALSE)
 
+diagnostics(out)

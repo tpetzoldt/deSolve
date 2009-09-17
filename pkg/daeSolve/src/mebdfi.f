@@ -4,7 +4,7 @@ C*********************************************************************
 
       SUBROUTINE mebdfi(N,T0,HO,Y0,YPRIME,TOUT,TEND,MF,IDID,LWORK,
      +     WORK,LIWORK,IWORK,MBND,MAXDER,ITOL,RTOL,ATOL,RPAR,IPAR,
-     +     pderv,resid,IERR)
+     +     pderv,resid,IERR) 
 
 
 c karline: LOUT removed, added npd to check bounds;
@@ -2250,8 +2250,10 @@ C     .. DATA STATEMENTS ..
       DATA  ZERO,ONE/0.0D+0,1.0D+0/
 C     ..
       character (len=180) MSG
+      
+CKS: added initialisation here...      
       pllfal = 0.d0
-      ffail = 0
+      ffail = 0.d0
       frfail = 0.d0
       lmp4 = 0
       dup = 0.
