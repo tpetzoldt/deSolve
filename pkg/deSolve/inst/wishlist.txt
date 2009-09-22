@@ -1,86 +1,20 @@
 deSolve release 2.0
-KS->ThPe:
- request to change the ask settings in the S3 plot method; see code in utilities.R
-ThPe: done
-
-KS added better checking of DLL functions (i.e. for uniqueness)
-ThPe: thanks
 
 KS added help file to explain forcings implementation in DLL - suggestion:
 also include here how to use forcings in pure R code (approxfun)
+DONE
 
-KS->ThPe btw - what to do with approxfun?
-ThPe: ???
+Added zvode, working with complex numbers; not thoroughly tested. Especially 
+working with DLL - to be tried. Vignette adapted.
 
-*** RECENT CHANGES ***
-KS: added the runge kutta 4(5) method of Cash-Karp. (request from Jeff Cash).
-KS: daspk now works with banded jacobians and func specified...
-KS: small change to plot.deSolve: variables can be addressed by their number
-plot(out, which = 1:7)
-KS: output variable creation is unefficient as it is done after the integration
-it may lead to strange results if globals are altered...
-This occurs in all codes, not just the lsodas. Solvable in runge kuttas:
-
-#example code:
-
-Global1 <- 1
-
-model <- function(t,state,parms) {
-  if (t > 10) Global1 <<- 100
-  return (list(c(0), gl =Global1))
-}
-
-out <- ode(y=1,func=model,parms=NULL,times=1:100)
-head(out)
-
-# end example code
-
-KS: make runge-kutta help file less negative (suggestion from Jeff Cash:
-  suggest to use RK23 for simple problems, rk45 for rough problems.
-
-ThPe: 
-  - done; Karline please check the formulations.
-  - I'm still a little unsecure with the
-  interpolation algorithm for methods other than rk45dp7 because 
-  Neville-Aitken can introduce local inaccuracy. "built-in" dense
-  output is possible for some additional methods, but this should remain
-  as a task for future versions.
-
-
-*** TO DO NOW ***
-
-
-- ?? implement delays (why? ddesolve implements a very simple runge-kutta)
-
-
-
-** done **
-- code + doc for temporal interpolation in C and Fortran
-- linear + constant interpolation
-- interpolation options in a list - avoids growth of arguments..
-  AND assure backward compatibility
-- explain forcing options in compiledCode vignette
-- Update vignette with diagnostics example
-- S3 classes for deSolve output  (deSolve = class of differential equation)
-- print and plot method for deSolve output (in file utilities.R)
-- improve diagnostics for all    (note: NO S3 classes needed...)
-- forcing functions for rk solvers
-- simple PI stepsize control (not really important for our testcases)
-- unscramble output names in case 1-D
-- plot.deSolve asks user after each page of plots (default 3 x 3)
-
-** in progress **
-- make help files more readable
-   * removed istate and rstate description from Rd files
-     -> now in a TABLE in vignette
-
+daeSolve is rather unstable...
 
 
 ** To do **
+
 - make possible to use banded solvers with compiled code (now only lsodes) KS
   KS->ThPe but lsodes is much more efficient than lsode (+- 20%
            however, there is the rwork problem....
-           what do you think?
   KS: low priority - VERY technical
 - more diagnostics for rk  - ThPe (low priority, who will need
 this...)

@@ -506,9 +506,78 @@ can solve \DLLmodels. They are:
 \end{itemize}
 
 For some of these solvers the interface is slightly different
-(e.g. \code{daspk}), while in others (\code{lsodar}, \code{lsodes})
+(e.g. \code{zvode, daspk}), while in others (\code{lsodar}, \code{lsodes})
 different functions can be defined.  How this is implemented in a
 compiled language is discussed next.
+
+\subsection{Complex numbers, function zvode}
+
+\code{zvode} solves ODEs that are composed of complex variables.
+
+The program below uses \code{zvode} to solve the following system of 
+2 ODEs:
+
+\begin{align*}
+ \frac{{dz}}{{dt}} &=  i \cdot z\\
+ \frac{{dw}}{{dt}} &= -i \cdot w \cdot w \cdot z\\
+\end{align*}
+where
+\begin{align*}
+w(0) = 1/2.1 \\
+z(0) = 1
+\end{align*}
+on the interval t = [0,2 $\pi$]
+
+The example is implemented in \proglang{FORTRAN}
+\footnote{this can be found in file "zvodedll.f", 
+in the dynload subdirectory of the package}:.
+
+\code{FEX} implements the function \code{func}
+\begin{verbatim}
+      SUBROUTINE FEX (NEQ, T, Y, YDOT, RPAR, IPAR)
+      INTEGER NEQ, IPAR(*)
+      DOUBLE COMPLEX Y(NEQ), YDOT(NEQ), RPAR(*), CMP
+      DOUBLE PRECISION T
+      character(len=100) msg
+
+c the imaginary unit i
+      CMP = DCMPLX(0.0D0,1.0D0)
+
+      YDOT(1) = CMP*Y(1)
+      YDOT(2) = -CMP*Y(2)*Y(2)*Y(1)
+
+      RETURN
+      END
+\end{verbatim}
+\code{JEX} implements the function \code{jacfunc}
+\begin{verbatim}
+      SUBROUTINE JEX (NEQ, T, Y, ML, MU, PD, NRPD, RPAR, IPAR)
+      INTEGER NEQ, ML, MU, NRPD, IPAR(*)
+      DOUBLE COMPLEX Y(NEQ), PD(NRPD,NEQ), RPAR(*), CMP
+      DOUBLE PRECISION T
+c the imaginary unit i
+      CMP = DCMPLX(0.0D0,1.0D0)
+
+      PD(2,3) = -2.0D0*CMP*Y(1)*Y(2)
+      PD(2,1) = -CMP*Y(2)*Y(2)
+      PD(1,1) = CMP
+      RETURN
+      END
+\end{verbatim}
+
+Assuming this code has been compiled and is in a DLL called "zvodedll.dll",
+this model is solved in R as follows: 
+
+\begin{verbatim}
+dyn.load("zvodedll.dll")
+outF <- zvode(func="fex", jacfunc = "jex", y=yini, parms=NULL, 
+          times=times, atol=1e-10, rtol=1e-10, dllname="zvodedll", 
+          initfunc = NULL)        
+\end{verbatim}
+
+Note that both \code{func} and \code{jacfunc} are written in small caps.
+
+Also, there is no initialiser function here (\code{initfunc=NULL}). 
 
 \subsection{DAE models, integrator daspk}
 
@@ -653,6 +722,21 @@ For code written in \proglang{FORTRAN}, the calling sequence for
       return
       end
 \end{verbatim}
+
+\subsection{jacvec, the Jacobian vector for integrator lsodes}
+
+Finally, in integration function \code{lsodes}, not the Jacobian
+matrix is specified, but a vector, one for each column of the
+Jacobian.  This function is specified via argument \code{jacvec}.
+
+In \proglang{FORTRAN}, the calling sequence for \code{jacvec} is:
+
+\begin{verbatim}
+SUBROUTINE JAC (NEQ, T, Y, J, IAN, JAN, PDJ, OUT, IP)
+DOUBLE PRECISION T, Y(*), IAN(*), JAN(*), PDJ(*), OUT(*)
+INTEGER NEQ, J, IP(*)
+\end{verbatim}
+
 
 \subsection{jacvec, the Jacobian vector for integrator lsodes}
 

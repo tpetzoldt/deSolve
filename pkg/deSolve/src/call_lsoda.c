@@ -245,7 +245,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
 
-
 /* pointers to functions derivs, jac, jacvec and root, passed to FORTRAN */
 
   if (isDll) 

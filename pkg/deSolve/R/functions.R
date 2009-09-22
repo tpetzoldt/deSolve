@@ -115,8 +115,7 @@ checkDLL <- function (func,jacfunc,dllname,
         stop(paste("'initfunc' not loaded ",initfunc))
 
     # Easier to deal with NA in C-code
-    if (is.null(initfunc)) MOdelInit <- NA
-
+    if (is.null(initfunc)) ModelInit <- NA
 
     ## copy value of func to funcname
     ## check to make sure it describes a function in a loaded dll
@@ -178,6 +177,7 @@ printtask <- function(itask,func,jacfunc) {
 ## =============================================================================
 ## Make Istate vector similar for all solvers.
 ## =============================================================================
+
 setIstate <- function(istate, iin, iout)
 {
   IstateOut <- rep(NA,21)

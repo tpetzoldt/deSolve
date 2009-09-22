@@ -533,6 +533,54 @@ matplot(out[,1], out[,2:3], type = "l", lwd = 2,
 \end{figure}
 \clearpage
 
+\section{integrating complex numbers, function zvode}
+
+Function \code{zvode} solves ODEs that are composed of complex variables.
+
+We use \code{zvode} to solve the following system of 
+2 ODEs:
+
+\begin{align*}
+ \frac{{dz}}{{dt}} &=  i \cdot z\\
+ \frac{{dw}}{{dt}} &= -i \cdot w \cdot w \cdot z\\
+\end{align*}
+where
+\begin{align*}
+w(0) = 1/2.1 \\
+z(0) = 1
+\end{align*}
+on the interval t = [0,2 $\pi$]
+
+<<>>=
+ZODE2 <- function(Time,State,Pars) {
+  with(as.list(State), {
+       df <- 1i * f
+       dg <- -1i*g*g*f
+       return(list(c(df,dg)))
+  })
+}
+
+yini    <- c(f=1+0i, g=1/2.1+0i)
+times   <- seq(0,2*pi,length=100)
+
+out     <- zvode(func=ZODE2, y=yini, parms=NULL, times=times,
+  atol=1e-10, rtol=1e-10)
+@
+The analytical solution is:
+\[
+f(t)= \exp (1i*t)
+\]
+and 
+\[
+g(t)=1/(f(t) + 1.1)
+\]
+The numerical solution, as produced by \code{zvode} matches the analytical
+solution:
+<<>>=
+analytical  <- cbind(f=exp(1i*times), g=1/(exp(1i*times)+1.1))
+tail(cbind(out[,2],analytical[,1]))
+@
+
 \section{Making good use of the integration options}
 
 The solvers from ODEPACK can be optimised if it is known whether the
@@ -758,6 +806,7 @@ e.g. \url{r-help@r-project.org}.
 \code{rk}                   & integrates ODEs, using Runge-Kutta methods (includes Runge-Kutta 4 and Euler as special cases)    \\ \hline
 \code{rk4}                  & integrates ODEs, using the classical Runge-Kutta 4th order method (special code with less options than \code{rk}) \\ \hline
 \code{euler}                & integrates ODEs, using Euler's method  (special code with less options than \code{rk}) \\ \hline
+\code{zvode}                & integrates ODEs composed of complex numbers, full, banded, stiff or nonstiff  \\ \hline
 \hline
 \end{tabular}
 \end{table*}
