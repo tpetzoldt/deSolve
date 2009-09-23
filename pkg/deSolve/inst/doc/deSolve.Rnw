@@ -65,7 +65,7 @@ initial value problems, R}
   \end{itemize}
 
   The implementation includes stiff integration routines based on the
-  ODEPACK Fortran codes \citep{Hindmarsh83}.  It also includes fixed
+  \pkg{ODEPACK} \proglang{FORTRAN} codes \citep{Hindmarsh83}.  It also includes fixed
   and adative time-step Runge-Kutta solvers and the Euler method
   \citep{Press92}.
 
@@ -533,7 +533,7 @@ matplot(out[,1], out[,2:3], type = "l", lwd = 2,
 \end{figure}
 \clearpage
 
-\section{integrating complex numbers, function zvode}
+\section{Integrating complex numbers, function zvode}
 
 Function \code{zvode} solves ODEs that are composed of complex variables.
 
@@ -549,22 +549,22 @@ where
 w(0) = 1/2.1 \\
 z(0) = 1
 \end{align*}
-on the interval t = [0,2 $\pi$]
+on the interval t = [0, 2 $\pi$]
 
 <<>>=
-ZODE2 <- function(Time,State,Pars) {
+ZODE2 <- function(Time, State, Pars) {
   with(as.list(State), {
        df <- 1i * f
        dg <- -1i*g*g*f
-       return(list(c(df,dg)))
+       return(list(c(df, dg)))
   })
 }
 
-yini    <- c(f=1+0i, g=1/2.1+0i)
-times   <- seq(0,2*pi,length=100)
+yini    <- c(f = 1+0i, g = 1/2.1+0i)
+times   <- seq(0, 2*pi, length = 100)
 
-out     <- zvode(func=ZODE2, y=yini, parms=NULL, times=times,
-  atol=1e-10, rtol=1e-10)
+out     <- zvode(func = ZODE2, y = yini, parms = NULL, times = times,
+  atol = 1e-10, rtol = 1e-10)
 @
 The analytical solution is:
 \[
@@ -576,14 +576,15 @@ g(t)=1/(f(t) + 1.1)
 \]
 The numerical solution, as produced by \code{zvode} matches the analytical
 solution:
+
 <<>>=
-analytical  <- cbind(f=exp(1i*times), g=1/(exp(1i*times)+1.1))
-tail(cbind(out[,2],analytical[,1]))
+analytical  <- cbind(f = exp(1i*times), g = 1/(exp(1i*times)+1.1))
+tail(cbind(out[,2], analytical[,1]))
 @
 
 \section{Making good use of the integration options}
 
-The solvers from ODEPACK can be optimised if it is known whether the
+The solvers from \pkg{ODEPACK} can be optimised if it is known whether the
 problem is stiff or non-stiff, or if the structure of the Jacobian is
 sparse. We repeat the example from \code{lsode} to show how we can
 make good use of these options.
@@ -682,7 +683,7 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 
 \subsection{Avoiding numerical errors}
 
-The solvers from ODEPACK should be first choice for any problem and
+The solvers from \pkg{ODEPACK} should be first choice for any problem and
 the the defaults of the control parameters are reasonable for many
 practical problems. However, there are cases where they may give
 dubious results.  Consider the following Lotka-Volterra type of model:
@@ -832,8 +833,8 @@ contents is displayed by function \code{diagnostics(out)}}
 5 & the method order last used (successfully)\\ \hline
 6 & the order of the method to be attempted on the next step\\ \hline
 7 & If return flag = -4,-5: the largest component in the error vector\\ \hline
-8 & the length of the real work array actually required. (FORTRAN code)\\ \hline
-9 & the length of the integer work array actually required. (FORTRAN code)\\ \hline
+8 & the length of the real work array actually required. (\proglang{FORTRAN} code)\\ \hline
+9 & the length of the integer work array actually required. (\proglang{FORTRAN} code)\\ \hline
 10 & the number of matrix LU decompositions so far\\ \hline
 11 & the number of nonlinear (Newton) iterations so far\\ \hline
 12 & the number of convergence failures of the solver so far\\ \hline

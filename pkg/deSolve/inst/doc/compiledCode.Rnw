@@ -526,7 +526,7 @@ where
 w(0) = 1/2.1 \\
 z(0) = 1
 \end{align*}
-on the interval t = [0,2 $\pi$]
+on the interval t = [0, 2 $\pi$]
 
 The example is implemented in \proglang{FORTRAN}
 \footnote{this can be found in file "zvodedll.f", 
@@ -570,14 +570,14 @@ this model is solved in R as follows:
 
 \begin{verbatim}
 dyn.load("zvodedll.dll")
-outF <- zvode(func="fex", jacfunc = "jex", y=yini, parms=NULL, 
-          times=times, atol=1e-10, rtol=1e-10, dllname="zvodedll", 
+outF <- zvode(func = "fex", jacfunc = "jex", y = yini, parms = NULL, 
+          times = times, atol = 1e-10, rtol = 1e-10, dllname = "zvodedll", 
           initfunc = NULL)        
 \end{verbatim}
 
 Note that both \code{func} and \code{jacfunc} are written in small caps.
 
-Also, there is no initialiser function here (\code{initfunc=NULL}). 
+Also, there is no initialiser function here (\code{initfunc = NULL}). 
 
 \subsection{DAE models, integrator daspk}
 
