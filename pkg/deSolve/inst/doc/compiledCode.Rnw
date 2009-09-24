@@ -514,7 +514,7 @@ compiled language is discussed next.
 
 \code{zvode} solves ODEs that are composed of complex variables.
 
-The program below uses \code{zvode} to solve the following system of 
+The program below uses \code{zvode} to solve the following system of
 2 ODEs:
 
 \begin{align*}
@@ -529,7 +529,7 @@ z(0) = 1
 on the interval t = [0, 2 $\pi$]
 
 The example is implemented in \proglang{FORTRAN}
-\footnote{this can be found in file "zvodedll.f", 
+\footnote{this can be found in file "zvodedll.f",
 in the dynload subdirectory of the package}:.
 
 \code{FEX} implements the function \code{func}
@@ -566,18 +566,20 @@ c the imaginary unit i
 \end{verbatim}
 
 Assuming this code has been compiled and is in a DLL called "zvodedll.dll",
-this model is solved in R as follows: 
+this model is solved in R as follows:
 
 \begin{verbatim}
 dyn.load("zvodedll.dll")
-outF <- zvode(func = "fex", jacfunc = "jex", y = yini, parms = NULL, 
-          times = times, atol = 1e-10, rtol = 1e-10, dllname = "zvodedll", 
-          initfunc = NULL)        
+outF <- zvode(func = "fex", jacfunc = "jex", y = yini, parms = NULL,
+          times = times, atol = 1e-10, rtol = 1e-10, dllname = "zvodedll",
+          initfunc = NULL)
 \end{verbatim}
 
-Note that both \code{func} and \code{jacfunc} are written in small caps.
+Note that in \proglang{R} names of \proglang{FORTRAN} DLLs functions
+(here \code{func} and \code{jacfunc}) have to be given have to given
+in lowercase letters.
 
-Also, there is no initialiser function here (\code{initfunc = NULL}). 
+Also, there is no initialiser function here (\code{initfunc = NULL}).
 
 \subsection{DAE models, integrator daspk}
 
