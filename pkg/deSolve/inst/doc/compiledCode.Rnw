@@ -575,9 +575,10 @@ outF <- zvode(func = "fex", jacfunc = "jex", y = yini, parms = NULL,
           initfunc = NULL)
 \end{verbatim}
 
-Note that in \proglang{R} names of \proglang{FORTRAN} DLLs functions
-(here \code{func} and \code{jacfunc}) have to be given have to given
-in lowercase letters.
+Note that in \proglang{R} names of \proglang{FORTRAN} DLL functions
+(e.g. for \code{func} and \code{jacfunc}) have to be given in
+lowercase letters, even if they are defined upper case in
+\proglang{FORTRAN}.
 
 Also, there is no initialiser function here (\code{initfunc = NULL}).
 
