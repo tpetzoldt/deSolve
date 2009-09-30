@@ -28,7 +28,7 @@
 mebdfi(y, times, func = NULL, parms, dy = NULL, res = NULL,
   nind=c(length(y),0,0), rtol = 1e-6, atol = 1e-8, jacfunc = NULL,
   jacres = NULL, jactype = "fullint", verbose = FALSE,
-  tcrit = NULL,  hini = 0, ynames = TRUE, maxord = 8, bandup = NULL,
+  tcrit = NULL,  hini = 0, ynames = TRUE, maxord = 7, bandup = NULL,
   banddown = NULL, maxsteps = 5000, dllname = NULL,
   initfunc = dllname, initpar = parms, rpar = NULL,
   ipar = NULL, nout = 0, outnames = NULL,
@@ -177,8 +177,8 @@ mebdfi(y, times, func = NULL, parms, dy = NULL, res = NULL,
     passed to function \code{func}; this may speed up the simulation especially
     for large models.
   }
-  \item{maxord }{the maximum order to be allowed, an integer between 2 and 8.
-    The default is \code{maxord} = 8, but values of 4-5 may be better for
+  \item{maxord }{the maximum order to be allowed, an integer between 2 and 7.
+    The default is \code{maxord} = 7, but values of 4-5 may be better for
     difficult problems; hihger order methods are more efficient but less stable.
   }
   \item{bandup }{number of non-zero bands above the diagonal, in case

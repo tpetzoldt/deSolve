@@ -1,6 +1,11 @@
 C--------------------------------------------------------------------
-C IDE of dimension 17 - describes motion of a simple
+C
+C  IDE of dimension 17 - describes motion of a simple
 C wheelset on a rail track 
+C
+C     This file is derived from the Test Set for IVP solvers
+C     http://www.dm.uniba.it/~testset/
+C
 C--------------------------------------------------------------------
       SUBROUTINE wheelres(X,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)

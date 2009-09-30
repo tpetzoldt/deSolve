@@ -313,11 +313,7 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   if (Nglobal > 0) nm <- c(nm, if (!is.null(Nmtot)) Nmtot else as.character((n +
           1):(n + Nglobal)))
 
-#  attr(out, "istate") <- istate
-#  attr(out, "rstate") <- rstate
   attr(out, "type") <- "daeSolve"
-#  class(out) <- c("deSolve","matrix")    # a differential equation
-#  dimnames(out) <- list(nm, NULL)
   if (verbose) diagnostics(out)
   t(out)
 }

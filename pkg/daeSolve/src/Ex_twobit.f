@@ -1,4 +1,11 @@
-c-----------------------------------------------------------------------
+C--------------------------------------------------------------------
+c       Two bit adding unit
+c        index 1 DAE of dimension 350
+c
+c     This file is derived from the Test Set for IVP solvers
+c     http://www.dm.uniba.it/~testset/
+c
+C--------------------------------------------------------------------c-----------------------------------------------------------------------
       SUBROUTINE twobres(t,Y,YPRIME,CJ,DF,IERR,RPAR,IPAR)
 	    INTEGER N
 	    parameter(N=350)

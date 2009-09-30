@@ -85,7 +85,7 @@ initial value problems, R}
 \SweaveOpts{keep.source=TRUE}
 
 <<preliminaries,echo=FALSE,results=hide>>=
-library("mebdfi")
+library("daeSolve")
 options(prompt = "> ")
 options(width=70)
 @
@@ -708,7 +708,7 @@ where this subroutine can be found (\code{dllname}).
 times <- seq(0,320,by=0.1)
 print(system.time(
 twobit <- mebdfi(y=yini,dy=yprime,times=times,res="twobres", nind=ind,
-          dllname="mebdfi", initfunc=NULL, parms=NULL,
+          dllname="daeSolve", initfunc=NULL, parms=NULL,
           hini=1e-4,atol=1e-4,rtol=1e-4,maxsteps=100000)
 ))
 @
@@ -754,7 +754,7 @@ is made:
 times <- seq(0,20,by=0.1)
 print(system.time(
 fekete <- mebdfi(y=yini,dy=yprime,times=times,res="fekres", nind=ind,
-          dllname="mebdfi", initfunc=NULL, parms=NULL,
+          dllname="daeSolve", initfunc=NULL, parms=NULL,
           hini=1e-8,atol=1e-8,rtol=1e-8,maxsteps=100000)
 ))
 @
@@ -805,7 +805,7 @@ nind   <- c(14,10,0)
 times  <- seq(0,0.1,by=0.001)
 Tol    <- 1e-6
 crank <- mebdfi(y=y,dy=yprime,times=times,res="crankres", nind=nind,
-          dllname="mebdfi",initfunc=NULL, parms=NULL,
+          dllname="daeSolve",initfunc=NULL, parms=NULL,
           hini=Tol*1e-2,atol=Tol,rtol=Tol,maxsteps=100000)
 @
 <<label=crank,include=FALSE>>=
@@ -854,7 +854,7 @@ The model is run for 17 hours:
 times <- seq(0,17.0*3600,by=10)
 print(system.time(
 water <- mebdfi(y=yini,dy=yprime,times=times,res="tuberes", nind=ind,
-          dllname="mebdfi",initfunc=NULL, parms=NULL,
+          dllname="daeSolve",initfunc=NULL, parms=NULL,
            atol=atol,rtol=rtol,maxsteps=100000)
 ))
 @
@@ -1174,7 +1174,7 @@ yprime <- c(0,0,0,0,0,-1.975258894011285,-1.0898297102811276e-03,
 ... and it is tested whether the initial conditions are consistent:
 <<>>=
 DLLres(res="wheelres",time=0.,y=yini,dy=yprime,parms= NULL,
-  initfunc=NULL,dllname="mebdfi")
+  initfunc=NULL,dllname="daeSolve")
 @
 The model tolerances are set, specifying larger values for the last two variables,
 and the model run:
@@ -1187,7 +1187,7 @@ rtol[16:17]  <- 1e10
 <<>>=
 times <- seq(0,4,by=0.001)
 wheel <- mebdfi(y=yini,dy=yprime,times=times,res="wheelres", nind=ind,
-          dllname="mebdfi",initfunc=NULL, parms=NULL,
+          dllname="daeSolve",initfunc=NULL, parms=NULL,
           hini=1e-15,atol=atol,rtol=rtol,maxsteps=100000)
 
 @
@@ -1233,7 +1233,7 @@ of Mathematics, University of Bari and INdAM, Research Unit of Bari, February
 \bibitem[daeSolve]{daeSolve}
 Karline Soetaert (2009). daeSolve: Solver for differential
   algebraic equations (DAE) of index up to 3. R package
-  version 1.0.
+  version 0.0.
   
 \bibitem[deSolve]{deSolve}
  Karline Soetaert, Thomas Petzoldt and R. Woodrow Setzer (2009). deSolve: General
@@ -1242,8 +1242,8 @@ Karline Soetaert (2009). daeSolve: Solver for differential
   R package version 1.5.
 
 \bibitem[bvpSolve]{bvpSolve}
-Karline Soetaert (2009). bvpSolve: Solvers for boundary value problems of ordinary
-  differential equations. R package version 1.1.
+Karline Soetaert and Jeff Cash (2009). bvpSolve: Solvers for boundary value 
+  problems of ordinary differential equations. R package version 1.1.
   
 \bibitem[rootSolve]{rootSolve}
 

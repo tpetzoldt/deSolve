@@ -1,3 +1,12 @@
+C--------------------------------------------------------------------
+c        Water tube system
+c        index 2 DAE of dimension 49
+C
+C     This file is derived from the Test Set for IVP solvers
+C     http://www.dm.uniba.it/~testset/
+C
+C--------------------------------------------------------------------
+
       SUBROUTINE tuberes(X,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       integer N

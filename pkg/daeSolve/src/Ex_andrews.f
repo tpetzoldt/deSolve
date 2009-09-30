@@ -1,4 +1,10 @@
-
+C--------------------------------------------------------------------
+c        Andrews squeezing mechanism (in index 3 formulation)
+c        index 3 DAE of dimension 27
+C
+C     This file is derived from the Test Set for IVP solvers
+C     http://www.dm.uniba.it/~testset/
+C
 c-----------------------------------------------------------------------
 
       SUBROUTINE andres(T,Y,YPRIME,CJ,DELTA,IERR,RPAR,IPAR)
