@@ -1,2 +1,6 @@
 useDynLib(daeSolve)
 export(mebdfi)
+
+S3method("print", "daeSolve")
+S3method("plot", "daeSolve")
+S3method("hist", "daeSolve")

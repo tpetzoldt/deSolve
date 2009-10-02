@@ -349,7 +349,7 @@ saveOutDAE <- function (out, y, dy, n, Nglobal, Nmtot, res, Res2,
   }
   attr(out,"istate") <- istate
   attr(out, "rstate") <- rstate
-  class(out) <- c("deSolve","matrix")    # a differential equation
+  class(out) <- c("daeSolve","matrix")    # a differential equation
   dimnames(out) <- list(nm,NULL)
   return ( out)
 }
