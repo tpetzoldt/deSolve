@@ -1,6 +1,7 @@
-/* file satres.c */
 #include <R.h>
-static double parms[14];
+static double parms[16];
+static double forc[1];
+
 #define Vc      parms[0] //Volume of central compartment (L)
 #define Vt      parms[1] //Volume of second compartment  (L)
 #define kd      parms[2] //1st order rate constant central <-> second
@@ -20,12 +21,21 @@ static double parms[14];
 #define Dose    parms[10] //dose (mg/kg/day)
 #define Doseint parms[11] //interval between doses (hours)
 #define Qd      parms[12] //Clearance (kd * Vc) central <-> 2nd cmpt (L/hr)
-#define TDose   parms[13] //actual dose (dose * BW) (mg/day)
+#define Qfil    parms[13] //rate of flow to filtrate compartment
+#define MaxTime parms[14] //Duration of simulation
+#define TDose   parms[15] //actual dose (dose * BW) (mg/day)
+
+#define TDoseRt forc[0]
 
 /* initializer */
 void initmod(void (* odeparms)(int *, double *)) {
-  int N = 14;
-  odeparms(&N, parms);
+	int N = 16;
+	odeparms(&N, parms);
+}
+
+void initforc(void (* odeforcs)(int *, double *)) {
+	int N = 1;
+	odeforcs(&N, forc);
 }
 
 /* Compartments are:
@@ -33,6 +43,8 @@ void initmod(void (* odeparms)(int *, double *)) {
    Tc for the second comparment
    Fc for the filtrate compartment
    Gt for the gut
+ Elim for total eliminated
+  AUC for AUC in the central compartment
 */
 
 #define Cn y[0]
@@ -40,12 +52,14 @@ void initmod(void (* odeparms)(int *, double *)) {
 #define Fc y[2]
 #define Gt y[3]
 #define Elim y[4]
+#define AUC y[5]
 
 #define Cn_dot ydot[0]
 #define Tc_dot ydot[1]
 #define Fc_dot ydot[2]
 #define Gt_dot ydot[3]
 #define Elim_dot ydot[4]
+#define AUC_dot ydot[5]
 
 #define MassBal yout[0]
 
@@ -58,8 +72,9 @@ void derivs (int *neq, double *t, double *y, double *ydot,
   Tc_dot = (Qd * free * Cn - Qd * Tc) / Vt;
   Fc_dot = (Vc * kfil * Cn * free - Vc * Tm * Fc/(KT + Fc) -
     Vc * kfil * Fc) / Vfil;
-  Gt_dot = -ka * Gt;
+  Gt_dot = -ka * Gt + TDoseRt;
   Elim_dot = Vc * kfil * Fc;
+  AUC_dot = Cn;
   /* Total amount in all compartments, for mass balance */
   MassBal = Cn * Vc + Tc * Vt + Fc * Vfil + Gt + Elim;
 }
