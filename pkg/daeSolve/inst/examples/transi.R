@@ -22,8 +22,8 @@ yini <- with(as.list(parameter), c(0,ub/(r2/r1+1),ub/(r2/r1+1),
        ub, ub/(r6/r5+1), ub/(r6/r5+1),ub,0))
        
 dyini <- with(as.list(parameter), c(51.338775,51.338775,
-     -yini[2]/(c2*r3), -24.9757667, -24.9757667, -10.00564453,
-     -10.00564453))
+     -yini[2]/(c2*r3), -24.9757667, -24.9757667, -83.333333333, 
+     -10.00564453, -10.00564453))
     
 transistor<- function(t,y,dy,pars) {
   delt <- rep(0,8)

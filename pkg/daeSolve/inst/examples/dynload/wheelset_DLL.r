@@ -62,7 +62,7 @@ max(abs(sol$Y-DAE_dll[nrow(DAE_dll),-1]))
 times <- seq(0,4,by=0.001)
 wheel <- mebdfi(y=yini,dy=yprime,times=times,res="wheelres", nind=ind,
           dllname="wheelset",initfunc=NULL, parms=NULL,
-          hini=1e-15,atol=atol,rtol=rtol,maxsteps=100000)
+          hini=1e-6,atol=atol,rtol=rtol,maxsteps=100000)
 
 plot(wheel,which=1:6,type="l",lwd=2)
 dyn.unload("wheelset.dll")

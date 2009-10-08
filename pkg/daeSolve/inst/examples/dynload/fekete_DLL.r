@@ -18,7 +18,7 @@
 #-------------------------------------------------------------------------------
 
 require(mebdfi)
-dyn.load("fekete.dll")
+#dyn.load("fekete.dll")
 
 # Initial conditions in a fortran function
 Init <- .Fortran("fekinit",N=as.integer(160),
@@ -62,5 +62,5 @@ fekete <- mebdfi(y=yini,dy=yprime,times=times,res="fekres", nind=ind,
 ))
 
 
-dyn.unload("fekete.dll")
+#dyn.unload("fekete.dll")
 plot(fekete,which=1:6,type="l",lwd=2)

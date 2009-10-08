@@ -96,7 +96,9 @@ mebdfi <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     stop("length of `nind' must be =3")
   if (sum(nind) != n)
     stop("sum of of `nind' must equal n, the number of equations")
-
+  if(length(dy) != length(y))
+    stop("dy and y should be equally long, and equal n, the number of equations")
+  
 ### model and Jacobian function
   Ynames  <- attr(y,"names")
   dYnames <- attr(dy,"names")

@@ -21,6 +21,7 @@
 #-------------------------------------------------------------------------------
 require(daeSolve)
 dyn.load("carc.dll")       # contains c-code...
+#dyn.load("car.dll")       # contains fortra-code...
 
 # initial conditions: state variables
 # parameters

@@ -41,7 +41,7 @@ print("DAE solved with mebdfi - using res, jac, DLL")
 print(system.time(
 DAE_dll <- mebdfi(y=yini,dy=yprime,times=times,res="twobres", nind=ind,
           dllname="twobit",  initfunc=NULL, parms=NULL,
-          hini=1e-4,atol=1e-5,rtol=1e-5,maxsteps=100000)
+          hini=1e-5,atol=1e-5,rtol=1e-5,maxsteps=100000)
 ))
 
 # The "correct" solution, a fortran function

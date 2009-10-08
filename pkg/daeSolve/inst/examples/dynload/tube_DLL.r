@@ -56,7 +56,7 @@ times <- seq(0,17.0*3600,by=10)
 tuber <- mebdfi(y=yini,dy=yprime,times=times,res="tuberes", nind=ind,
           dllname="tube",initfunc=NULL, parms=NULL,
            atol=atol,rtol=rtol,jactype="fullint",maxsteps=100000)
-dyn.unload("tube.dll")
+#dyn.unload("tube.dll")
 plot(tuber,type="l",lwd=2)
 plot(tuber,which=4,type="l",lwd=2,xlim=c(10000,60000),ylim=c(0.000145,0.000185))
 
