@@ -1,4 +1,3 @@
-
 ###############################################################################
 # Implements the lv test model, as given in Forcing_lv.c
 # A model in C-code and comprising a forcing function
@@ -49,7 +48,7 @@ Sigimp <- approx(signal$times, signal$import, xout=ftime,rule = 2)$y
 forcings <- cbind(ftime,Sigimp)
 
 ## Start values for steady state
-xstart<-y <- c(S = 1, P = 1, C = 1)
+xstart <- y <- c(S = 1, P = 1, C = 1)
 
 print(system.time(
 out <-  ode(y = y, times, func = "derivsc",

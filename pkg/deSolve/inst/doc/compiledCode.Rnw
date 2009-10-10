@@ -142,7 +142,7 @@ Here are some rules of thumb when it is worthwhile or not to switch to
   implement the model in a compiled language.
 \end{itemize}
 
-Starting from deSolve version 1.4, it is now also possible to use
+Starting from \pkg{deSolve} version 1.4, it is now also possible to use
 \emph{forcing functions} in compiled code. These forcing functions are
 automatically updated by the integrators. See last chapter.
 
@@ -528,11 +528,11 @@ z(0) = 1
 \end{align*}
 on the interval t = [0, 2 $\pi$]
 
-The example is implemented in \proglang{FORTRAN}
+The example is implemented in \proglang{FORTRAN}%
 \footnote{this can be found in file "zvodedll.f",
-in the dynload subdirectory of the package}:.
+in the dynload subdirectory of the package},
+\code{FEX} implements the function \code{func}:
 
-\code{FEX} implements the function \code{func}
 \begin{verbatim}
       SUBROUTINE FEX (NEQ, T, Y, YDOT, RPAR, IPAR)
       INTEGER NEQ, IPAR(*)
@@ -776,7 +776,7 @@ compiled code returns what it should.
 
 We test whether the ccl4 model, which is part of \code{deSolve}
 package, returns the proper rates of changes.  (Note: see
-example(ccl4model) for a more comprehensive implementation)
+\code{example(ccl4model)} for a more comprehensive implementation)
 
 <<>>=
 ## Parameter values and initial conditions

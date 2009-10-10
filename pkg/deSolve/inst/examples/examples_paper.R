@@ -57,14 +57,14 @@ print(system.time(
 
 print(system.time(
   for (i in 1:nrun)
-    out     <- as.data.frame(lsodes(func= LVmod0D, y=yini,
-                           parms=pars, times=times))
+    out     <- as.data.frame(lsodes(func = LVmod0D, y = yini,
+                           parms=pars, times = times))
 )/nrun)
-  
 
-matplot(out$time,out[,2:3],type="l",xlab="time",ylab="Conc",
-        main="Lotka-Volterra",lwd=2)
-legend("topright",c("prey", "predator"),col=1:2, lty=1:2)
+
+matplot(out$time, out[,2:3], type = "l", xlab = "time", ylab = "Conc",
+        main = "Lotka-Volterra", lwd = 2)
+legend("topright", c("prey", "predator"), col =1:2, lty = 1:2)
 
 #===============================================================================
 # section 3.2 - predator-prey model with stopping criterium.
@@ -231,7 +231,7 @@ mtext(side=3,outer=TRUE,cex=1.25,"Lotka-Volterra Prey concentration on 2-D grid"
 #par(opar)
 #dev.off()
 
-                
+
 ## DAE example
 Res_DAE <- function (t, y, yprime, pars, K) {
   with (as.list(c(y, yprime, pars)), {
@@ -274,7 +274,6 @@ for (i in 2:5) {
 }
 
 mtext(outer=TRUE, side=3, "DAE chemical model",cex=1.25)
-
 
 #===============================================================================
 # section 4 - Model implementation in a compiled language
