@@ -2,7 +2,7 @@
 #include <string.h>
 #include "deSolve.h"
 
-/* definition of the calls to the fortran functions - in file opkdmain.f
+/* definition of the calls to the FORTRAN functions - in file opkdmain.f
 and in file dvode.f**/
 
 void F77_NAME(dlsoda)(void (*)(int *, double *, double *, double *, double *, int *),
@@ -57,7 +57,7 @@ static void forc_lsoda (int *neq, double *t, double *y,
   derfun(neq, t, y, ydot, yout, iout);
 }
 
-/* interface between fortran function call and R function 
+/* interface between FORTRAN function call and R function
    Fortran code calls lsoda_derivs(N, t, y, ydot, yout, iout) 
    R code called as odesolve_deriv_func(time, y) and returns ydot 
    Note: passing of parameter values and "..." is done in R-function lsodx*/
@@ -80,7 +80,7 @@ static void lsoda_derivs (int *neq, double *t, double *y,
 }
 
 /* only if lsodar: 
-   interface between fortran call to root and corresponding R function */
+   interface between FORTRAN call to root and corresponding R function */
 
 static void lsoda_root (int *neq, double *t, double *y, int *ng, double *gout)
 {
@@ -97,7 +97,7 @@ static void lsoda_root (int *neq, double *t, double *y, int *ng, double *gout)
   my_unprotect(2);
 }
 
-/* interface between fortran call to jacobian and R function */
+/* interface between FORTRAN call to jacobian and R function */
 
 static void lsoda_jac (int *neq, double *t, double *y, int *ml,
 		    int *mu, double *pd, int *nrowpd, double *yout, int *iout)
@@ -117,7 +117,7 @@ static void lsoda_jac (int *neq, double *t, double *y, int *ml,
 }
 
 /* only if lsodes: 
-   interface between fortran call to jacvec and corresponding R function */
+   interface between FORTRAN call to jacvec and corresponding R function */
 
 static void lsoda_jacvec (int *neq, double *t, double *y, int *j,
 		    int *ian, int *jan, double *pdj, double *yout, int *iout)
@@ -248,7 +248,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 /* pointers to functions derivs, jac, jacvec and root, passed to FORTRAN */
 
   if (isDll) 
-    { /* DLL address passed to fortran */
+    { /* DLL address passed to FORTRAN */
       derivs = (deriv_func *) R_ExternalPtrAddr(func);  
       /* no need to communicate with R - but output variables set here */
       if (isOut) {dy = (double *) R_alloc(neq, sizeof(double));
@@ -260,7 +260,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
         derivs = (deriv_func *) forc_lsoda;
       }
     } else {
-      /* interface function between fortran and R passed to Fortran*/ 
+      /* interface function between FORTRAN and R passed to FORTRAN */
       derivs = (deriv_func *) lsoda_derivs; 
       /* needed to communicate with R */
       odesolve_deriv_func = func;

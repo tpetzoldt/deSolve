@@ -12,7 +12,7 @@
   using a combination of backward differentiation formula (BDF) and a
   direct linear system solution method (dense or banded).
   
-  The \R function \code{daspk} provides an interface to the Fortran DAE
+  The \R function \code{daspk} provides an interface to the FORTRAN DAE
   solver of the same name, written by Linda R. Petzold, Peter N. Brown,
   Alan C. Hindmarsh and Clement W. Ulrich.
     
@@ -119,7 +119,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
-    matrix elements by columns (the way \R and Fortran store matrices).
+    matrix elements by columns (the way \R and FORTRAN store matrices).
     
     If the Jacobian is banded, \code{jacfunc} should return a matrix
     containing only the nonzero bands of the Jacobian, rotated
@@ -166,7 +166,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   \item{verbose }{if TRUE: full output to the screen, e.g. will
     print the \code{diagnostiscs} of the integration - see details.
   }
-  \item{tcrit }{the Fortran routine \code{daspk} overshoots its targets
+  \item{tcrit }{the FORTRAN routine \code{daspk} overshoots its targets
     (times points in the vector \code{times}), and interpolates values
     for the desired time points.  If there is a time beyond which
     integration should not proceed (perhaps because of a singularity),
@@ -216,7 +216,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
-    blocks (fortran) or global variables (C, C++).
+    blocks (FORTRAN) or global variables (C, C++).
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
@@ -268,7 +268,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   returned in the next elements of the return from \code{func} or
   \code{res}, plus an additional column (the first) for the time value.
   There will be one row for each element in \code{times} unless the
-  Fortran routine `daspk' returns with an unrecoverable error.  If
+  FORTRAN routine `daspk' returns with an unrecoverable error.  If
   \code{y} has a names attribute, it will be used to label the columns
   of the output value.
       
@@ -507,10 +507,10 @@ par(mfrow = opa)
   precision exceeds the capabilities of the machine, daspk will return
   an error code. See \code{\link{lsoda}} for details.
   
-  \bold{res and jacres} may be defined in compiled C or Fortran code, as
+  \bold{res and jacres} may be defined in compiled C or FORTRAN code, as
   well as in an R-function. See package vignette \code{"compiledCode"}
   for details.  Examples
-  in Fortran are in the \file{dynload} subdirectory of the
+  in FORTRAN are in the \file{dynload} subdirectory of the
   \code{deSolve} package directory.
 
   The diagnostics of the integration can be printed to screen
@@ -520,14 +520,14 @@ par(mfrow = opa)
   See vignette("deSolve") for an explanation of each element in the vectors
   containing the diagnostic properties and how to directly access them.
 
-  \bold{Models} may be defined in compiled C or Fortran code, as well as
+  \bold{Models} may be defined in compiled C or FORTRAN code, as well as
   in an R-function. See package vignette \code{"compiledCode"} for details.
 
   More information about models defined in compiled code is in the package
   vignette ("compiledCode"); information about linking forcing functions
   to compiled code is in \link{forcings}.
 
-  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  Examples in both C and FORTRAN are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
 }
 \seealso{

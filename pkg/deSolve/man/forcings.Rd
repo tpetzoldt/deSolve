@@ -4,7 +4,7 @@
   Passing forcing functions to models written in R or compiled code.
 }
 \description{
-  Models may be defined in compiled C or Fortran code, as well as
+  Models may be defined in compiled C or FORTRAN code, as well as
   in an R-function.
                                    
   If a model uses "external variables" (or "forcing variables"), their value
@@ -13,7 +13,7 @@
   If the models are defined in R-code, then forcing function interpolation 
   is most efficiently done using \R's function \code{approxfun}. 
   
-  If the models are defined in compiled C or Fortran code, it is possible to
+  If the models are defined in compiled C or FORTRAN code, it is possible to
   use \code{deSolve}s forcing function update algorithm. This is the
   compiled-code equivalent of \code{approxfun} or \code{approx}, 
 }

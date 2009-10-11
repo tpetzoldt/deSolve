@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------
-# The chemical model example of daspk, implemented as a dll
-# before trying this code, the fortran programme has to be compiled
+# The chemical model example of daspk, implemented as a DLL
+# before trying this code, the FORTRAN program has to be compiled
 # this can be done in R:
 # system("R CMD SHLIB daspkfor.f")
 # do make sure that this file is in the working directory...
@@ -97,7 +97,8 @@ print(system.time(
 print("ODE solved with daspk - using res, jacres, DLL")
 print(system.time(
   ODE_dll2<- as.data.frame(daspk(y = y, dy = dy, times = times, res = "resfor",
-    jacres = "resjacfor", dllname = "daspkfor", parms = pars, atol = 1e-10, rtol = 1e-10, nout = 1))
+    jacres = "resjacfor", dllname = "daspkfor", parms = pars, atol = 1e-10,
+    rtol = 1e-10, nout = 1))
 ))
 
 max(abs(ODE_R-ODE_dll))

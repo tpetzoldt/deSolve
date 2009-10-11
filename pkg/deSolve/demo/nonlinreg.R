@@ -1,4 +1,6 @@
 ### Another nonlinear regression example (from Jim Lindsey)
+##  Note: this requires the gnlm package, see
+###       http://www.commanster.eu/rcode.html
 
 if (require(gnlm, quietly=TRUE)) {
   t <- 1:10
@@ -11,7 +13,7 @@ if (require(gnlm, quietly=TRUE)) {
 
   ## regression formula defined by differential equation
   dfn <- function(t, y, p) list(-p*y)
-  fn2 <- ~lsoda(1, c(0,t), dfn, p)[2:11,2]
+  fn2 <- ~lsoda(1, c(0, t), dfn, p)[2:11,2]
   print(finterp(fn1)(0.1))
   print(finterp(fn2)(0.1))
   print(gnlr(y, dist="gamma", mu=fn2, pmu=0.2, pshape=0))

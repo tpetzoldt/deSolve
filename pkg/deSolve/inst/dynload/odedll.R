@@ -2,7 +2,7 @@
 # Implements the test model, as given in the vode code.
 # Demonstrates several ways to write models, and estimates the time required
 #   user  system elapsed
-# before trying this code, the fortran, and c programs have to be compiled
+# before trying this code, the FORTRAN, and C programs have to be compiled
 # this can be done in R:
 # system("R CMD SHLIB odec.c")
 # system("R CMD SHLIB odefor.f")

@@ -68,7 +68,7 @@
   }
 }
 \details{
-This function is meant to help developing fortran or C models that are to be used
+This function is meant to help developing FORTRAN or C models that are to be used
 to solve ordinary differential equations (ODE) in
 packages \code{deSolve} and/or \code{rootSolve}.
 }

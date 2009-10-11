@@ -73,7 +73,7 @@
   \item{var }{the ordinary output variables of the function}
 }
 \details{
-This function is meant to help developing fortran or C models that are to be
+This function is meant to help developing FORTRAN or C models that are to be
 used to solve differential algebraic equations (DAE) in
 package \code{deSolve}.
 }

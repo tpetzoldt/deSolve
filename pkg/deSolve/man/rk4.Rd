@@ -72,7 +72,7 @@ rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
-    blocks (fortran) or global variables (C, C++).
+    blocks (FORTRAN) or global variables (C, C++).
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "deSolve.h"
 
-/* definition of the call to the fortran function ddaspk - in file ddaspk.f*/                              
+/* definition of the call to the FORTRAN function ddaspk - in file ddaspk.f*/
 void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*,
                                double *, int*, double *, int*),
 		     int *, double *, double *, double *, double *, 
@@ -29,7 +29,7 @@ static void daspk_psol (int *neq, double *t, double *y, double *yprime,
 /* not yet implemented */
 }
 
-/* interface between fortran function call and R function  */
+/* interface between FORTRAN function call and R function  */
 
 static void daspk_res (double *t, double *y, double *yprime, double *cj, 
                        double *delta, int *ires, double *yout, int *iout)
@@ -74,7 +74,7 @@ static void daspk_out (int *nout, double *t, double *y,
   my_unprotect(2);
 }      
 
-/* interface between fortran call to jacobian and R function */
+/* interface between FORTRAN call to jacobian and R function */
 
 static void daspk_jac (double *t, double *y, double *yprime, 
                        double *pd,  double *cj, double *RPAR, int *IPAR)
@@ -234,7 +234,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
 
  /* pointers to functions res, psol and jac, passed to the FORTRAN subroutine */
 
-  if (isDll == 1)  {       /* DLL address passed to fortran */
+  if (isDll == 1)  {       /* DLL address passed to FORTRAN */
       Resfun = (res_func *) R_ExternalPtrAddr(res);
       /* no need to communicate with R - but output variables set here */            
       delta = (double *) R_alloc(n_eq, sizeof(double));
@@ -246,7 +246,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP res, SEXP parms,
       }
 
     } else {
-      /* interface function between fortran and R passed to Fortran*/     
+      /* interface function between FORTRAN and R passed to FORTRAN */
       Resfun = (res_func *) daspk_res;
       /* needed to communicate with R */      
       daspk_res_func = res; 

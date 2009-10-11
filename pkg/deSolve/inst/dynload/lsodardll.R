@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------------
-# The first example of lsodar, implemented as a fortran dll
+# The first example of lsodar, implemented as a FORTRAN DLL
 # before trying this code, the fortran program has to be compiled
 # this can be done in R:
 # system("R CMD SHLIB lsodarfor.f")

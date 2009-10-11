@@ -9,7 +9,7 @@
   Solving initial value problems for stiff or non-stiff systems of
   first-order ordinary differential equations (ODEs).
   
-  The \R function \code{lsoda} provides an interface to the Fortran ODE
+  The \R function \code{lsoda} provides an interface to the FORTRAN ODE
   solver of the same name, written by Linda R. Petzold and Alan
   C. Hindmarsh.
   
@@ -95,7 +95,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
-    matrix elements by columns (the way \R and Fortran store matrices).
+    matrix elements by columns (the way \R and FORTRAN store matrices).
     
     If the Jacobian is banded, \code{jacfunc} should return a matrix
     containing only the nonzero bands of the Jacobian, rotated
@@ -109,7 +109,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{if not \code{NULL}, then \code{lsoda} cannot integrate
-    past \code{tcrit}. The Fortran routine \code{lsoda} overshoots its
+    past \code{tcrit}. The FORTRAN routine \code{lsoda} overshoots its
     targets (times points in the vector \code{times}), and interpolates
     values for the desired time points.  If there is a time beyond which
     integration should not proceed (perhaps because of a singularity),
@@ -158,7 +158,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
-    blocks (fortran) or global variables (C, C++).
+    blocks (FORTRAN) or global variables (C, C++).
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
@@ -207,7 +207,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the Fortran routine `lsoda'
+  for each element in \code{times} unless the FORTRAN routine `lsoda'
   returns with an unrecoverable error. If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
     
@@ -345,7 +345,7 @@ diagnostics(outJ) # shows what lsoda did internally
   Netlib: \url{http://www.netlib.org}
 }
 \details{
-  All the hard work is done by the Fortran subroutine \code{lsoda},
+  All the hard work is done by the FORTRAN subroutine \code{lsoda},
   whose documentation should be consulted for details (it is included as
   comments in the source file \file{src/opkdmain.f}). The implementation
   is based on the 12 November 2003 version of lsoda, from Netlib.
@@ -387,7 +387,7 @@ diagnostics(outJ) # shows what lsoda did internally
   where multiplication of two vectors is element-by-element.
 
   If the request for precision exceeds the capabilities of the machine,
-  the Fortran subroutine lsoda will return an error code; under some
+  the FORTRAN subroutine lsoda will return an error code; under some
   circumstances, the \R function \code{lsoda} will attempt a reasonable
   reduction of precision in order to get an answer.  It will write a
   warning if it does so.
@@ -399,14 +399,14 @@ diagnostics(outJ) # shows what lsoda did internally
   See vignette("deSolve") for an explanation of each element in the vectors
   containing the diagnostic properties and how to directly access them.
 
-  \bold{Models} may be defined in compiled C or Fortran code, as well as
+  \bold{Models} may be defined in compiled C or FORTRAN code, as well as
   in an R-function. See package vignette \code{"compiledCode"} for details.
 
   More information about models defined in compiled code is in the package
   vignette ("compiledCode"); information about linking forcing functions
   to compiled code is in \link{forcings}.
 
-  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  Examples in both C and FORTRAN are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
   
 

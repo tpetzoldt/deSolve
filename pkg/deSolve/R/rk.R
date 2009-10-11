@@ -34,6 +34,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
         warning("Large number of nknots does not make sense.")
     } else if (nknots < 2) {
       cat("\nMethod without or with disabled interpolation\n")
+      nknots <- 1 # must be strictly positive
     } else {
       trange <- diff(range(times))
       ## ensure that we have at least nknots + 2 data points; + 0.5 for safety)

@@ -1,13 +1,12 @@
 pa <- par (ask=FALSE)
 
 ##=====================================================
-##=====================================================
 ## a predator and its prey diffusing on a flat surface
 ## in concentric circles
 ## 1-D model with using cylindrical coordinates
 ## Lotka-Volterra type biology
 ##=====================================================
-##=====================================================
+
 
 ## ================
 ## Model equations
@@ -20,13 +19,13 @@ lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
 
     ## Fluxes due to diffusion
     ## at internal and external boundaries: zero gradient
-    FluxPrey <- -Da * diff(c(PREY[1],PREY,PREY[N]))/dri
-    FluxPred <- -Da * diff(c(PRED[1],PRED,PRED[N]))/dri
+    FluxPrey <- -Da * diff(c(PREY[1], PREY, PREY[N]))/dri
+    FluxPred <- -Da * diff(c(PRED[1], PRED, PRED[N]))/dri
 
     ## Biology: Lotka-Volterra model
-    Ingestion     <- rIng * PREY*PRED
-    GrowthPrey    <- rGrow* PREY*(1-PREY/cap)
-    MortPredator  <- rMort* PRED
+    Ingestion     <- rIng  * PREY*PRED
+    GrowthPrey    <- rGrow * PREY*(1-PREY/cap)
+    MortPredator  <- rMort * PRED
 
     ## Rate of change = Flux gradient + Biology
     dPREY    <- -diff(ri * FluxPrey)/rr/dr   +
@@ -34,7 +33,7 @@ lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
     dPRED    <- -diff(ri * FluxPred)/rr/dr   +
                 Ingestion*assEff -MortPredator
 
-    return (list(c(dPREY,dPRED)))
+    return (list(c(dPREY, dPRED)))
   })
 }
 
@@ -44,19 +43,19 @@ lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
 
 ## model parameters:
 
-R  <- 20                        # total radius of surface, m
-N  <- 100                       # 100 concentric circles
-dr <- R/N                       # thickness of each layer
-r  <- seq(dr/2,by = dr,len = N) # distance of center to mid-layer
-ri <- seq(0,by = dr,len = N+1)  # distance to layer interface
-dri <- dr                       # dispersion distances
+R  <- 20                          # total radius of surface, m
+N  <- 100                         # 100 concentric circles
+dr <- R/N                         # thickness of each layer
+r  <- seq(dr/2, by = dr, len = N) # distance of center to mid-layer
+ri <- seq(0, by = dr, len = N+1)  # distance to layer interface
+dri <- dr                         # dispersion distances
 
-parms <- c(Da     = 0.05,       # m2/d, dispersion coefficient
-           rIng   = 0.2,        # /day, rate of ingestion
-           rGrow  = 1.0,        # /day, growth rate of prey
-           rMort  = 0.2 ,       # /day, mortality rate of pred
-           assEff = 0.5,        # -, assimilation efficiency
-           cap    = 10)         # density, carrying capacity
+parms <- c(Da     = 0.05,         # m2/d, dispersion coefficient
+           rIng   = 0.2,          # /day, rate of ingestion
+           rGrow  = 1.0,          # /day, growth rate of prey
+           rMort  = 0.2 ,         # /day, mortality rate of pred
+           assEff = 0.5,          # -, assimilation efficiency
+           cap    = 10)           # density, carrying capacity
 
 ## Initial conditions: both present in central circle (box 1) only
 state    <- rep(0, 2*N)
@@ -85,51 +84,46 @@ diagnostics(out)
 # plot results
 ylim <- range(out[,-1])
 for (i in seq(1, length(times), by = 1))   {
-   matplot(r,matrix(nr = N, nc = 2, out[i, -1]),
+   matplot(r, matrix(nr = N, nc = 2, out[i, -1]),
    main=paste("1-D L-V, day",times[i]), type="l", lwd=2,
-   col = c("blue","red"), xlab = "x", ylab = "y", ylim = ylim)
-   legend("topright",c("Prey","Predator"),col= c("blue","red"), lwd=2)
+   col = c("blue", "red"), xlab = "x", ylab = "y", ylim = ylim)
+   legend("topright", c("Prey", "Predator"), col= c("blue", "red"), lwd=2)
 }
 
 
-
-## ============================================================
 ## ============================================================
 ## A Lotka-Volterra predator-prey model with predator and prey
 ## dispersing in 2 dimensions
 ## ============================================================
-## ============================================================
 
 
-lvmod2D <- function (time, state, pars, N, Da, dx)
-{
+lvmod2D <- function (time, state, pars, N, Da, dx) {
   NN <- N*N
-  Prey <- matrix(nr = N,nc = N,state[1:NN])
-  Pred <- matrix(nr = N,nc = N,state[(NN+1):(2*NN)])
+  Prey <- matrix(nr = N, nc = N, state[1:NN])
+  Pred <- matrix(nr = N, nc = N, state[(NN+1):(2*NN)])
 
-  with (as.list(pars),
-  {
+  with (as.list(pars), {
     ## Biology
     dPrey   <- rGrow* Prey *(1- Prey/K) - rIng* Prey *Pred
     dPred   <- rIng* Prey *Pred*assEff -rMort* Pred
 
-    zero <- rep(0,N)
+    zero <- rep(0, N)
 
     ## 1. Fluxes in x-direction; zero fluxes near boundaries
-    FluxPrey <- -Da * rbind(zero,(Prey[2:N,]-Prey[1:(N-1),]), zero)/dx
-    FluxPred <- -Da * rbind(zero,(Pred[2:N,]-Pred[1:(N-1),]), zero)/dx
+    FluxPrey <- -Da * rbind(zero, (Prey[2:N, ]-Prey[1:(N-1),]), zero)/dx
+    FluxPred <- -Da * rbind(zero, (Pred[2:N, ]-Pred[1:(N-1),]), zero)/dx
 
     ## Add flux gradient to rate of change
     dPrey    <- dPrey - (FluxPrey[2:(N+1),]-FluxPrey[1:N,])/dx
     dPred    <- dPred - (FluxPred[2:(N+1),]-FluxPred[1:N,])/dx
 
     ## 2. Fluxes in y-direction; zero fluxes near boundaries
-    FluxPrey <- -Da * cbind(zero,(Prey[,2:N]-Prey[,1:(N-1)]), zero)/dx
-    FluxPred <- -Da * cbind(zero,(Pred[,2:N]-Pred[,1:(N-1)]), zero)/dx
+    FluxPrey <- -Da * cbind(zero, (Prey[, 2:N]-Prey[,1:(N-1)]), zero)/dx
+    FluxPred <- -Da * cbind(zero, (Pred[,2:N]-Pred[,1:(N-1)]), zero)/dx
 
     ## Add flux gradient to rate of change
-    dPrey    <- dPrey - (FluxPrey[,2:(N+1)]-FluxPrey[,1:N])/dx
-    dPred    <- dPred - (FluxPred[,2:(N+1)]-FluxPred[,1:N])/dx
+    dPrey    <- dPrey - (FluxPrey[, 2:(N+1)]-FluxPrey[, 1:N])/dx
+    dPred    <- dPred - (FluxPred[, 2:(N+1)]-FluxPred[, 1:N])/dx
 
     return (list(c(as.vector(dPrey), as.vector(dPred))))
  })
@@ -143,7 +137,7 @@ lvmod2D <- function (time, state, pars, N, Da, dx)
 
 pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
              rGrow  = 1.0,    # /day, growth rate of prey
-             rMort  = 0.2 ,   # /day, mortality rate of predator
+             rMort  = 0.2,    # /day, mortality rate of predator
              assEff = 0.5,    # -, assimilation efficiency
              K      = 5  )    # mmol/m3, carrying capacity
 
@@ -167,10 +161,10 @@ out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
 ## plot results
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                           "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-zlim <- range(out[,2:(NN+1)])
+zlim <- range(out[, 2:(NN+1)])
 for (i in seq(1, length(times), by = 10))
    filled.contour(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
-   main=paste("2-D L-V, day",times[i]),
+   main=paste("2-D L-V, day", times[i]),
    color = Col, xlab = "x", ylab = "y", zlim = zlim)
 
 

@@ -9,7 +9,7 @@
 
   \deqn{dy/dt = f(t,y)}
     
-  The \R function \code{vode} provides an interface to the Fortran ODE
+  The \R function \code{vode} provides an interface to the FORTRAN ODE
   solver of the same name, written by Peter N. Brown, Alan C. Hindmarsh
   and George D. Byrne.
     
@@ -92,7 +92,7 @@
     If the Jacobian is a full matrix, \code{jacfunc} should return a
     matrix dydot/dy, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
-    matrix elements by columns (the way \R and Fortran store matrices).
+    matrix elements by columns (the way \R and FORTRAN store matrices).
 
     If the Jacobian is banded, \code{jacfunc} should return a matrix
     containing only the nonzero bands of the Jacobian, rotated
@@ -111,7 +111,7 @@
     print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{if not \code{NULL}, then \code{vode} cannot integrate
-    past \code{tcrit}. The Fortran routine \code{dvode} overshoots its
+    past \code{tcrit}. The FORTRAN routine \code{dvode} overshoots its
     targets (times points in the vector \code{times}), and interpolates
     values for the desired time points.  If there is a time beyond which
     integration should not proceed (perhaps because of a singularity),
@@ -158,7 +158,7 @@
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
-    blocks (fortran) or global variables (C, C++).
+    blocks (FORTRAN) or global variables (C, C++).
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
@@ -206,7 +206,7 @@
   in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the Fortran routine `lsoda'
+  for each element in \code{times} unless the FORTRAN routine `lsoda'
   returns with an unrecoverable error. If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
 }
@@ -242,7 +242,7 @@ plot(out[,"x"], out[,"y"], type = "l", main = "Lorenz butterfly",
 
 ## =======================================================================
 ## ex. 2
-## SCOC model, in fortran  - to see the FORTRAN code:
+## SCOC model, in FORTRAN  - to see the FORTRAN code:
 ## browseURL(paste(system.file(package="deSolve"),"/dynload/scoc.f",sep=""))
 ## example from Soetaert and Herman, 2009, chapter 3. (simplified)
 ## =======================================================================
@@ -409,14 +409,14 @@ lines(out3$time,out3$Depo,type="l",col="orange",lty=2)
   See vignette("deSolve") for an explanation of each element in the vectors
   containing the diagnostic properties and how to directly access them.
 
-  \bold{Models} may be defined in compiled C or Fortran code, as well as
+  \bold{Models} may be defined in compiled C or FORTRAN code, as well as
   in an R-function. See package vignette \code{"compiledCode"} for details.
 
   More information about models defined in compiled code is in the package
   vignette ("compiledCode"); information about linking forcing functions
   to compiled code is in \link{forcings}.
 
-  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  Examples in both C and FORTRAN are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
 
 

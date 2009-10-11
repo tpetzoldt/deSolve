@@ -8,7 +8,7 @@ SEXP cvode_deriv_func;
 SEXP cvode_jac_func;
 SEXP vode_envir;
                            
-/* definition of the call to the fortran function dvode - in file zvode.f*/
+/* definition of the call to the FORTRAN function dvode - in file zvode.f*/
 void F77_NAME(zvode)(void (*)(int *, double *, Rcomplex *, Rcomplex *,
                               Rcomplex *, int *),
 		     int *, Rcomplex *, double *, double *,
@@ -18,7 +18,7 @@ void F77_NAME(zvode)(void (*)(int *, double *, Rcomplex *, Rcomplex *,
 			            int *, Rcomplex *, int *, Rcomplex*, int*),
 		     int *, Rcomplex *, int *);
 
-/* interface between fortran function call and R function 
+/* interface between FORTRAN function call and R function
    Fortran code calls cvode_derivs(N, t, y, ydot, yout, iout) 
    R code called as cvode_deriv_func(time, y) and returns ydot 
    Note: passing of parameter values and "..." is done in R-function zvode*/
@@ -40,7 +40,7 @@ static void cvode_derivs (int *neq, double *t, Rcomplex *y,
   my_unprotect(2);      
 }
 
-/* interface between fortran call to jacobian and R function */
+/* interface between FORTRAN call to jacobian and R function */
 
 static void cvode_jac (int *neq, double *t, Rcomplex *y, int *ml,
 		    int *mu, Rcomplex *pd, int *nrowpd, Rcomplex *yout, int *iout)
@@ -169,7 +169,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
 /* pointers to functions derivs and jac, passed to the FORTRAN subroutine */
 
   if (isDll==1) 
-    {/* DLL address passed to fortran */
+    {/* DLL address passed to FORTRAN */
       derivs = (cderiv_func *) R_ExternalPtrAddr(func);
       /* no need to communicate with R - but output variables set here */      
       if (isOut) {dy = (Rcomplex *) R_alloc(neq, sizeof(Rcomplex));
@@ -182,7 +182,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP func, SEXP parms, SEXP rtol,
       }
 
     } else {  
-      /* interface function between fortran and R passed to Fortran*/     
+      /* interface function between FORTRAN and R passed to FORTRAN*/
       derivs = (cderiv_func *) cvode_derivs;  
       /* needed to communicate with R */
       cvode_deriv_func = func; 

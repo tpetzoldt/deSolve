@@ -1,5 +1,5 @@
 /* compile within R with system("R CMD SHLIB Forcing_lv.c") */
-/* Example adapted from lsoda help file */
+
 #include <R.h>
 
 static double parms[6];
@@ -29,12 +29,12 @@ void forcc(void (* odeforcs)(int *, double *))
 }
 
 /* derivative function */
-void derivsc(int *neq, double *t, double *y, double *ydot, double *yout, int*ip)
+void derivsc(int *neq, double *t, double *y, double *ydot, double *yout, int *ip)
 {
     if (ip[0] <2) error("nout should be at least 2");
-    ydot[0] = import - b*y[0]*y[1] + g*y[2]     ;
-    ydot[1] = c*y[0]*y[1]  - d*y[2]*y[1]        ;
-    ydot[2] = e*y[1]*y[2]  - f*y[2]             ;
+    ydot[0] = import - b*y[0]*y[1] + g*y[2];
+    ydot[1] =          c*y[0]*y[1] - d*y[2]*y[1];
+    ydot[2] =          e*y[1]*y[2] - f*y[2];
 
     yout[0] = y[0]+y[1]+y[2];
     yout[1] = import;

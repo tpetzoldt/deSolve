@@ -8,7 +8,7 @@
   differential equations (ODE) in the form: \deqn{dy/dt = f(t,y)} and
   where the Jacobian matrix df/dy has an arbitrary sparse structure.
   
-  The \R function \code{lsodes} provides an interface to the Fortran ODE
+  The \R function \code{lsodes} provides an interface to the FORTRAN ODE
   solver of the same name, written by Alan C. Hindmarsh and Andrew
   H. Sherman.
 
@@ -99,7 +99,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     print the \code{diagnostiscs} of the integration - see details.
   }
   \item{tcrit }{if not \code{NULL}, then \code{lsodes} cannot integrate
-    past \code{tcrit}. The Fortran routine \code{lsodes} overshoots its
+    past \code{tcrit}. The FORTRAN routine \code{lsodes} overshoots its
     targets (times points in the vector \code{times}), and interpolates
     values for the desired time points.  If there is a time beyond which
     integration should not proceed (perhaps because of a singularity),
@@ -154,7 +154,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   \item{initpar }{only when \file{dllname} is specified and an
     initialisation function \code{initfunc} is in the dll: the
     parameters passed to the initialiser, to initialise the common
-    blocks (fortran) or global variables (C, C++).
+    blocks (FORTRAN) or global variables (C, C++).
   }
   \item{rpar }{only when \file{dllname} is specified: a vector with
     double precision values passed to the dll-functions whose names are
@@ -203,7 +203,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   in \code{times} and as many columns as elements in \code{y} plus the number of "global"
   values returned in the next elements of the return from \code{func},
   plus and additional column for the time value.  There will be a row
-  for each element in \code{times} unless the Fortran routine `lsoda'
+  for each element in \code{times} unless the FORTRAN routine `lsoda'
   returns with an unrecoverable error. If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
 }
@@ -386,7 +386,7 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
 }
 \details{
 
-  The work is done by the Fortran subroutine \code{lsodes}, whose
+  The work is done by the FORTRAN subroutine \code{lsodes}, whose
   documentation should be consulted for details (it is included as
   comments in the source file \file{src/opkdmain.f}). The implementation
   is based on the November, 2003 version of lsodes, from Netlib.
@@ -431,14 +431,14 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
   See vignette("deSolve") for an explanation of each element in the vectors
   containing the diagnostic properties and how to directly access them.
 
-  \bold{Models} may be defined in compiled C or Fortran code, as well as
+  \bold{Models} may be defined in compiled C or FORTRAN code, as well as
   in an R-function. See package vignette \code{"compiledCode"} for details.
 
   More information about models defined in compiled code is in the package
   vignette ("compiledCode"); information about linking forcing functions
   to compiled code is in \link{forcings}.
 
-  Examples in both C and Fortran are in the \file{dynload} subdirectory
+  Examples in both C and FORTRAN are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
 }
 \seealso{

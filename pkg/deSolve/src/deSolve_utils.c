@@ -8,7 +8,7 @@
 /*==================================================
 some functions for keeping track of how many SEXPs
 are PROTECTed, and UNPROTECTing them in the
-case of a fortran stop.
+case of a FORTRAN stop.
 ==================================================*/
  
 long int N_Protected;
