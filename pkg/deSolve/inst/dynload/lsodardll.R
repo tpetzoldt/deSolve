@@ -33,7 +33,8 @@ parms <- c(aa = -.04, bb = 1.e4, cc= 3.e7)
 out   <- lsodar(y = y, times = times, fun = Fun, rootfun = rootFun,
            rtol = 1e-4, atol = c(1e-6, 1e-10, 1e-6), parms = parms)
 
-dyn.load("lsodarfor.dll")
+dyn.load(paste("lsodarfor", .Platform$dynlib.ext, sep = ""))
+
 out2   <- lsodar(y = y, times = times, fun = "modfor", rootfun = "myroot",
             dllname = "lsodarfor", rtol = 1e-4, atol = c(1e-6, 1e-10, 1e-6),
             parms = parms, nroot = 2, nout = 1)

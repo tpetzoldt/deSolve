@@ -10,7 +10,7 @@
 
 library(deSolve)
 
-dyn.load("Forcing_lv.dll")
+dyn.load(paste("Forcing_lv", .Platform$dynlib.ext, sep = ""))
 
 
 #===============================================================================
@@ -76,4 +76,4 @@ plot(out$P, out$C,     type = "l", xlab = "producer", ylab = "consumer")
 par(mfrow = mf)
 tail(out)
 
-dyn.unload("Forcing_lv.dll")
+dyn.unload(paste("Forcing_lv", .Platform$dynlib.ext, sep = ""))

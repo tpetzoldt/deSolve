@@ -37,7 +37,7 @@ parameters <- c(maxPhotoSynt   = 0.125,      # mol C/mol C/hr
 
 # This is how to compile it;
 #system("R CMD SHLIB AquaphyForcing.f")
-dyn.load("AquaphyForcing.dll")
+dyn.load(paste("AquaphyForcing", .Platform$dynlib.ext, sep = ""))
 
 ## =======================
 ## The initial conditions

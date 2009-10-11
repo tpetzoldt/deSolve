@@ -86,7 +86,7 @@ legend("bottomright", lty = c(1, NA), pch = c(NA, 1),
   col = c("black", "red"), legend = c("ODE", "ODE+JAC"))
 
 # same, now using DLL
-dyn.load("daspkfor.dll")
+dyn.load(paste("daspkfor", .Platform$dynlib.ext, sep = ""))
 
 print("ODE solved with daspk - using res, no jac, DLL")
 print(system.time(

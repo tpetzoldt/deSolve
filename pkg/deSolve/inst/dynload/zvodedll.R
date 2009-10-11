@@ -72,7 +72,7 @@ tail(cbind(out2[, 2], analytical[, 1]))
 
 # compiled within R with: system("R CMD SHLIB zvodedll.f")
 
-dyn.load("zvodedll.dll")
+dyn.load(paste("zvodedll", .Platform$dynlib.ext, sep = ""))
 print("FORTRAN DLL passed to zvode")
 print(system.time(
   outF <- zvode(func = "fex", jacfunc = "jex", y = yini, parms = NULL,

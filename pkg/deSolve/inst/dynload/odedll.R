@@ -20,8 +20,8 @@ k3 <- 3e7
 parms <- c(k1 = k1, k2 = k2, k3 = k3)   # parameters
 
 Y     <- c(1.0, 0.0, 0.0)               # initial conditions
-times <- c(0, 0.4*10^(0:11) )          # output times
-RTOL  <- 1.e-4                        # tolerances, lower for second var
+times <- c(0, 0.4*10^(0:11) )           # output times
+RTOL  <- 1.e-4                          # tolerances, lower for second var
 ATOL  <- c(1.e-8, 1.e-14, 1.e-6)
 
 MF    <- 21                  # stiff, full Jacobian, specified as function
@@ -35,7 +35,7 @@ require(deSolve)
 # the model equations: #
 #----------------------#
 
-model<-function(t, Y, parameters){#
+model<-function(t, Y, parameters){
   with (as.list(parameters), {
     dy1 <- -k1*Y[1] + k2*Y[2]*Y[3]
     dy3 <- k3*Y[2]*Y[2]
@@ -97,7 +97,7 @@ model <- function(t, Y, parameters) {
   dy1 <-  -k1*Y[1] + k2*Y[2]*Y[3]
   dy3 <- k3*Y[2]*Y[2]
   dy2 <- -dy1 - dy3
-  list(c(dy1, dy2, dy3))          # the output, packed as a list
+  list(c(dy1, dy2, dy3))
 }
 
 #----------------------#
@@ -143,7 +143,9 @@ print(system.time(
 #------------------------------------------------------------
 # compiled within R with: system("R CMD SHLIB odefor.f")
 
-dyn.load("odefor.dll")
+
+dyn.load(paste("odefor", .Platform$dynlib.ext, sep = ""))
+
 print("Fortran dll passed to vode")
 print(system.time(
   for(i in 1:100)
@@ -184,7 +186,8 @@ print(system.time(
 #------------------------------------------------------------
 # compiled within R with: system("R CMD SHLIB odec.c")
 #system("R CMD SHLIB odec.c")
-dlll<-dyn.load("odec.dll")
+
+dyn.load(paste("odec", .Platform$dynlib.ext, sep = ""))
 
 print("C dll passed to vode")
 print(system.time(
@@ -199,7 +202,8 @@ print(system.time(
 # DLL TEST 3. Fortran code in odefor.f; DLL passed to R-functions func and jac
 #------------------------------------------------------------
 
-dyn.load("odefor.dll")
+dyn.load(paste("odefor", .Platform$dynlib.ext, sep = ""))
+
 #----------------------#
 # DEFINING the model:  #
 #----------------------#
@@ -236,7 +240,7 @@ print(system.time(
 # DLL TEST 4. C code in odefor.c; DLL passed to R-functions func and jac
 #------------------------------------------------------------
 
-dyn.load("odec.dll")
+dyn.load(paste("odec", .Platform$dynlib.ext, sep = ""))
 #----------------------#
 # DEFINING the model:  #
 #----------------------#
@@ -273,7 +277,7 @@ print(system.time(
 # NO initialiser
 #------------------------------------------------------------
 
-dyn.load("odefor2.dll")
+dyn.load(paste("odefor2", .Platform$dynlib.ext, sep = ""))
 #----------------------#
 # DEFINING the model:  #
 #----------------------#
