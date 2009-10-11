@@ -152,10 +152,6 @@ print(system.time(
               ynames = FALSE, nout = 3, rpar = runif(5))
 )/100)
 
-#outF <- vode(Y, times, "derivsfor", parms = parms, rtol = RTOL, atol = ATOL, mf = MF, jacfunc = "jacfor",
-#dllname = "vodefor", verbose = TRUE, ynames = FALSE, nout = 3)        #       )
-#print(outF)
-
 
 #------------------------------------------------------------
 # and now lsoda
@@ -169,9 +165,6 @@ print(system.time(
               ynames = FALSE, nout = 3)
 )/100)
 
-#outL <- lsoda(Y, times, "derivsfor", parms = parms, rtol = RTOL, atol = ATOL, mf = MF, jacfunc = "jacfor",
-#              dllname = "odefor", verbose = TRUE, ynames = FALSE, nout = 3)        #       )
-#print(outL)
 
 #------------------------------------------------------------
 # and now lsode
@@ -185,9 +178,6 @@ print(system.time(
               ynames = FALSE, nout = 3)
 )/100)
 
-#outL <- lsoda(Y, times, "derivsfor", parms = parms, rtol = RTOL, atol = ATOL, mf = MF, jacfunc = "jacfor",
-#              dllname = "odefor", verbose = TRUE, ynames = FALSE, nout = 3)        #       )
-#print(outL)
 
 #------------------------------------------------------------
 # DLL TEST 2. C code in odec.c; DLL passed to vode
@@ -204,9 +194,6 @@ print(system.time(
               ynames = FALSE, nout = 3)
 )/100)
 
-#outC <- vode(Y, times, "derivsc", parms = parms, rtol = RTOL, atol = ATOL, mf = MF, jacfunc = "jacc",
-#dllname = "odec", verbose = TRUE, nout = 3, dlltype = "C")        #       )
-#print(outC)
 
 #------------------------------------------------------------
 # DLL TEST 3. Fortran code in odefor.f; DLL passed to R-functions func and jac
@@ -241,7 +228,7 @@ print(system.time(
   for (i in 1:10)
     outDLL <- lsode(Y, times, moddll, parms = parms, dllname = "odefor",
       initfunc = "odefor", rtol = RTOL, atol = ATOL, mf = MF, jacfunc = jacdll,
-      verbose = FALSE, ynames = FALSE )        #       )
+      verbose = FALSE, ynames = FALSE )
 )/10)
 
 
@@ -277,7 +264,7 @@ print(system.time(
   for (i in 1:10)
     outDLLC <- vode(Y, times, moddll, parms = parms, dllname = "odec",
       rtol = RTOL, atol = ATOL, mf = MF, jacfunc = jacdll, verbose = FALSE,
-      ynames = FALSE )        #       )
+      ynames = FALSE )
 )/10)
 
 
