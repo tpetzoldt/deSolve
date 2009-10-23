@@ -74,7 +74,12 @@ static void lsoda_derivs (int *neq, double *t, double *y,
   PROTECT(R_fcall = lang3(odesolve_deriv_func,Time,Y));   incr_N_Protect();
   PROTECT(ans = eval(R_fcall, odesolve_envir));           incr_N_Protect();
 
-  for (i = 0; i < *neq; i++)   ydot[i] = REAL(VECTOR_ELT(ans,0))[i];
+  //for (i = 0; i < *neq; i++)   ydot[i] = REAL(VECTOR_ELT(ans,0))[i];
+  for (i = 0; i < *neq; i++)   {
+    ydot[i] = REAL(VECTOR_ELT(ans,0))[i];
+    if (! R_FINITE(ydot[i])) 
+      error("NA, NaN or infinite value detected in derivative function");
+  }
 
   my_unprotect(2);
 }
