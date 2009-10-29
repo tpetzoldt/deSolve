@@ -511,7 +511,7 @@ print (system.time(
 MM <- mebdfi(y=yini, times=times, res=Andrews, parms=parameter, nind=ind,
   atol=1e-8,rtol=1e-8)
 ))
-#diagnostics(MM)
+diagnostics(MM)
 @
 Finally, output is plotted:
 <<label=andrews,include=FALSE>>=
