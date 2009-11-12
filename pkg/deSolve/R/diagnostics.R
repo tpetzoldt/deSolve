@@ -153,6 +153,6 @@ diagnostics.deSolve <- function(obj, Full = FALSE, ...) {
 }
 
 diagnostics.default <- function(obj, ...)
-  cat("No diagnostics defined for class '", class(obj), "'\n")
+  warning("No diagnostics available for class '", class(obj), "'")
 
 diagnostics <- function(obj, ...) UseMethod("diagnostics")
