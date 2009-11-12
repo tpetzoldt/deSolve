@@ -1,20 +1,26 @@
 \name{diagnostics}
 \alias{diagnostics}
+\alias{diagnostics.deSolve}
+\alias{diagnostics.default}
 \title{Print Diagnostic Characteristics of ODE and DAE Solvers}
 \description{
   Prints several diagnostics of the simulation to the screen, e.g.
-  number of steps taken, the last step size,...
+  number of steps taken, the last step size, ...
 }
 \usage{
-diagnostics(obj, Full = FALSE)
+diagnostics(obj, ...)
+\method{diagnostics}{deSolve}(obj, Full = FALSE, ...)
 }
 \arguments{
-  \item{obj }{is the output matrix as produced by one of the
+  \item{obj}{is the output matrix as produced by one of the
     integration routines.
   }
-  \item{Full }{when \code{TRUE} then all messages will be printed, including
+  \item{Full}{when \code{TRUE} then all messages will be printed, including
     the ones that are not relevant for the solver. If \code{FALSE}, then only
-    the relevant messages will be printed
+    the relevant messages will be printed.
+  }
+  \item{...}{optional arguments allowing to extend \code{diagnostics}
+    as a generic function.
   }
 }
 \value{
@@ -45,7 +51,7 @@ chaos <- function(t, state, parameters) {
 state <- c(x = 1, y = 1, z = 1)
 times <- seq(0, 50, 0.01)
 out   <- vode(state, times, chaos, 0)
-pairs(out,pch=".")
+pairs(out, pch=".")
 diagnostics(out)
 }
 \keyword{ utilities }
