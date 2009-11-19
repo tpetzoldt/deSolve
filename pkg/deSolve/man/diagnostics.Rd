@@ -28,10 +28,11 @@ diagnostics(obj, ...)
 \seealso{
 
   \code{\link{diagnostics.deSolve}} for diagnostics of differential
-  equaton solvers,
+  equaton solvers.
 
-  \code{\link[bvpSolve:diagnostics]{diagnostics.bvpSolve}} for
-  diagnostics of boundary value problem solvers.
+%% enable this when bvpSolve is on CRAN
+%  \code{\link[bvpSolve:diagnostics]{diagnostics.bvpSolve}} for
+%  diagnostics of boundary value problem solvers.
   
 }
 
