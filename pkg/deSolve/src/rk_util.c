@@ -133,9 +133,9 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     /*------------------------------------------------------------------------*/
     /*   Function is a DLL function                                           */
     /*------------------------------------------------------------------------*/
-    deriv_func *cderivs;
+    C_deriv_func_type *cderivs;
     if (isForcing) updatedeforc(&t); 
-    cderivs = (deriv_func *) R_ExternalPtrAddr(Func);
+    cderivs = (C_deriv_func_type *) R_ExternalPtrAddr(Func);
     cderivs(&neq, &t, y, ytmp, yout, ipar);
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = ytmp[i];
