@@ -225,7 +225,7 @@ matplot(o1[,1], o1[,-1], type="l", xlab="Time", main="State Variables")
 matplot(o1[,1], o2[,-1], type="p", pch=16, add=TRUE)
 matplot(o0[,1], o1[,-1]-o0[,-1], type="l", lty="solid", xlab="Time",
   main="Difference: rk45dp7 - lsoda")
-matplot(o1[,1], o2[,-1]-o0[,-1], type="l", lty="dashed", xlab="Time",
+matplot(o1[,1], o2[,-1]-o1[,-1], type="l", lty="dashed", xlab="Time",
   main="difference: Neville-Aitken - Dense Output")
 abline(h=0, col="grey")
 

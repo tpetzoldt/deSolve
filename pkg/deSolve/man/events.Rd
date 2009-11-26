@@ -19,17 +19,17 @@
    \code{events} should be a list that contains one
    of the following:
   \enumerate{
-  \item{func }{an R-function or the name of a function in compiled code that 
-    specifies the event}
-  \item{data }{a data.frame that specifies the variables, times, values and
-    types of the events}
-  \item{time }{when events are specified by a function: the times at which 
-    the events take place}
-  \item{root }{when events are specified by a function and triggered by a root,
-    this logical should be set equal to \code{TRUE}}
-  \item{ties }{If events, as specified by a data.frame are "ordered", set to 
+  \item{func: }{an R-function or the name of a function in compiled code that 
+    specifies the event,}
+  \item{data: }{a data.frame that specifies the variables, times, values and
+    types of the events,}
+  \item{time: }{when events are specified by a function: the times at which 
+    the events take place,}
+  \item{root: }{when events are specified by a function and triggered by a root,
+    this logical should be set equal to \code{TRUE},}
+  \item{ties: }{if events, as specified by a data.frame are "ordered", set to 
     "ordered", the default is "notordered". This will save some computational 
-    time}
+    time.}
   }
   
   If specified by an \code{R-function} (argument \code{events$func}), 
@@ -70,8 +70,8 @@
     \item{time }{the time at which the event is to take place; the solvers will
       check if the time is embraced by the simulation time}
     \item{value }{the value, magnitude of the event}
-    \item{method }{which event is to take place; should be one of ("replace",
-      "add","multiply"); also allowed is to specify the number 
+    \item{method }{which event is to take place; should be one of ("replace", 
+      "add", "multiply"); also allowed is to specify the number 
       (1=replace, 2=add, 3=multiply)
     }
   }
