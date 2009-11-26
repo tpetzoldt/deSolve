@@ -13,14 +13,14 @@ void rk_auto(
 	     int nknots, int interpolate, int maxsteps,
 	     int nt,
 	     // int*
-	     int* iiknots, int* iit, int* iit_ext, int* iit_tot, 
+	     int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
        // int arrays
        int* istate,  int* ipar,
 	     // double
 	     double t, double tmax, double hmin, double hmax, 
        double alpha, double beta,
        // double*
-       double* ddt, 
+       double* _dt, double* _errold,
        // double arrays
 	     double* tt,
        double* y0, double* y1, double* y2, double* dy1, double* dy2,
@@ -34,24 +34,15 @@ void rk_auto(
 	     SEXP Func, SEXP Parms, SEXP Rho
   ) {
 
-  int i = 0, j = 0, j1 = 0, k = 0, accept = 0, one = 1;
-  int iknots = *iiknots, it = *iit, it_ext = *iit_ext, it_tot = *iit_tot;
-  double err, errold = 0, dtnew, t_ext;
-  double dt = *ddt;
-
-  //t = tt[0];
-  //tmax = fmax(tt[nt], tcrit);
-  //dt = fmin(hmax, hini);
-  //hmax = fmin(hmax, tmax - t);
+  int i = 0, j = 0, j1 = 0, k = 0, accept = FALSE, one = 1;
+  int iknots = *_iknots, it = *_it, it_ext = *_it_ext, it_tot = *_it_tot;
+  double err, dtnew, t_ext;
+  double dt = *_dt, errold = *_errold;
 
 
   /*------------------------------------------------------------------------*/
   /* Main Loop                                                              */
   /*------------------------------------------------------------------------*/
-  //it     = 1; /* step counter; zero element is initial state   */
-  //it_ext = 0; /* counter for external time step (dense output) */
-  //it_tot = 0; /* total number of time steps                    */
-
   do { 
     /******  save former results of last step if the method allows this
             (first same as last)                                       ******/
@@ -131,7 +122,7 @@ void rk_auto(
       /* case A) "Dense Output": built-in polynomial interpolation          */
       /* available for certain rk formulae, e.g. for rk45dp7                */
       /*--------------------------------------------------------------------*/
-	if (dd) { /* i.e. if dd is not Zero */
+	    if (dd) { /* i.e. if dd is not Zero */
         denspar(FF, y0, y1, dt, dd, neq, stage, rr);
         t_ext = tt[it_ext];
         while (t_ext <= t + dt) {
@@ -149,25 +140,25 @@ void rk_auto(
         /* without dense output                                               */
         /*--------------------------------------------------------------------*/
         } else {
-          /* (1) collect number "nknots" of knots in advanve */
+          /* (1) collect number "nknots" of knots in advance */
           yknots[iknots] = t + dt;   /* time is first column */
           for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y2[i];
           if (iknots < (nknots - 1)) {
             iknots++;
           } else {
-	   /* (2) do polynomial interpolation */
-           t_ext = tt[it_ext];
-           while (t_ext <= t + dt) {
-            neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
-            /* (3) store outputs */
-            if (it_ext < nt) {
-              yout[it_ext] = t_ext;
-              for (i = 0; i < neq; i++)
-                yout[it_ext + nt * (1 + i)] = tmp[i];
+	         /* (2) do polynomial interpolation */
+            t_ext = tt[it_ext];
+            while (t_ext <= t + dt) {
+              neville(yknots, &yknots[nknots], t_ext, tmp, nknots, neq);
+              /* (3) store outputs */
+              if (it_ext < nt) {
+                yout[it_ext] = t_ext;
+                for (i = 0; i < neq; i++)
+                  yout[it_ext + nt * (1 + i)] = tmp[i];
+              }
+              if(it_ext < nt) t_ext = tt[++it_ext]; else break;
             }
-            if(it_ext < nt) t_ext = tt[++it_ext]; else break;
-           }
-           shiftBuffer(yknots, nknots, neq + 1);
+            shiftBuffer(yknots, nknots, neq + 1);
           }
         }
       } else {
@@ -181,12 +172,11 @@ void rk_auto(
         while (t_ext <= t + dt) {
           if (it_ext < nt) {
             yout[it_ext] = t_ext;
-            if (it < nt) {
-              /* all time steps */
-              yout[it_ext] = t_ext;
-              /* only matching time steps */
-              if (t_ext == t + dt)
-                for (i = 0; i < neq; i++) yout[it_ext + nt * (1 + i)] = y2[i];
+            /* all time steps */
+            yout[it_ext] = t_ext;
+            /* only matching time steps */
+            if (t_ext == t + dt) {
+              for (i = 0; i < neq; i++) yout[it_ext + nt * (1 + i)] = y2[i];
             }
           }
           if(it_ext < nt) t_ext = tt[++it_ext]; else break;
@@ -212,6 +202,6 @@ void rk_auto(
   } while (t < tmax); /* end of rk main loop */
   
   // return reference values the simple way, fix this later
-  *iiknots = iknots; *iit = it; *iit_ext = it_ext; *iit_tot = it_tot;
-  *ddt = dtnew;
+  *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
+  *_dt = dtnew; *_errold = errold;
 }

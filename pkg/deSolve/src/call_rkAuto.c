@@ -22,7 +22,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP  R_yout;
   double *y0,  *y1,  *y2,  *dy1,  *dy2, *out, *yout;
 
-  double t, dt, tmax;
+  double errold = 0.0, t, dt, tmax;
 
   SEXP R_FSAL, Alpha, Beta;
   int fsal = FALSE;       /* assume no FSAL */
@@ -71,8 +71,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_D = getListElement(Method, "d")); incr_N_Protect();
   if (length(R_D)) dd = REAL(R_D);
 
-  double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
-  double  beta  = 0;      //0.4/qerr;
+  double  qerr = REAL(getListElement(Method, "Qerr"))[0];
+  double  beta = 0;      //0.4/qerr;
 
   PROTECT(Beta = getListElement(Method, "beta")); incr_N_Protect();
   if (length(Beta)) beta = REAL(Beta)[0];
@@ -154,7 +154,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_nknots = getListElement(Method, "nknots")); incr_N_Protect();
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
 
-  if (nknots < 2) {nknots=1; interpolate = FALSE;}
+  if (nknots < 2) {nknots = 1; interpolate = FALSE;}
   
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
@@ -218,31 +218,31 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   // the ordinary way
     rk_auto(
          // int
-         fsal,  neq,  stage,
-         isDll,  isForcing,  verbose,
-         nknots,  interpolate, maxsteps, 
+         fsal, neq, stage,
+         isDll, isForcing, verbose,
+         nknots, interpolate, maxsteps, 
   	     nt,
   	     // int*
   	     &iknots, &it, &it_ext, &it_tot,
          //  arrays
          istate, ipar,
   	     // double
-  	     t,  tmax, hmin, hmax,  alpha,  beta,
+  	     t, tmax, hmin, hmax, alpha, beta,
   	     // double*
-  	     &dt,
+  	     &dt, &errold,
          // double arrays
   	     tt,
-         y0,  y1,  y2,  dy1,  dy2,
-         f,  y,  Fj,  tmp, 
-         FF,  rr,
+         y0, y1, y2, dy1, dy2,
+         f, y, Fj, tmp, 
+         FF, rr,
   	     A,
-  	     out,  bb1,  bb2,  cc,  dd,
-  	     atol,  rtol,
+  	     out, bb1, bb2, cc, dd,
+  	     atol, rtol,
   	     yknots,  yout,
   	     // SEXPs
   	     Func, Parms, Rho
     );
-  } else {
+  } else {  
      // one call per time stept (or event)
      for (int j = 0; j < nt - 1; j++) {
        /* 
@@ -262,27 +262,27 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
        //Rprintf("\ndt=%g", dt);
        rk_auto(
            // int
-           fsal,  neq,  stage,
-           isDll,  isForcing,  verbose,
-           nknots,  interpolate, maxsteps, 
+           fsal, neq, stage,
+           isDll, isForcing, verbose,
+           nknots, interpolate, maxsteps, 
     	     nt,
     	     // int*
     	     &iknots, &it, &it_ext, &it_tot,
            //  arrays
            istate, ipar,
     	     // double
-    	     t,  tmax, hmin, hmax,  alpha,  beta,
+    	     t,  tmax, hmin, hmax, alpha, beta,
     	     // double*
-  	       &dt,
+  	       &dt, &errold,
            // double arrays
     	     tt,
-           y0,  y1,  y2,  dy1,  dy2,
-           f,  y,  Fj,  tmp, 
-           FF,  rr,
+           y0, y1, y2, dy1, dy2,
+           f, y, Fj, tmp, 
+           FF, rr,
     	     A,
-    	     out,  bb1,  bb2,  cc,  dd,
-    	     atol,  rtol,
-    	     yknots,  yout,
+    	     out, bb1, bb2, cc, dd,
+    	     atol, rtol,
+    	     yknots, yout,
     	     // SEXPs
     	     Func, Parms, Rho
       );
@@ -308,7 +308,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
   /* release R resources */
-  //if (verbose) 
+  if (verbose) 
     Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d\n", 
       it, it_ext, it_tot);
   unprotect_all();
