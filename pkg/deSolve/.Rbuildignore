@@ -4,3 +4,4 @@ inst/doc/.*[.]d
 inst/doc/.*[.]o
 inst/doc/.*[.]rc
 work
+todo.txt

@@ -15,7 +15,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   bandup = NULL, banddown = NULL, maxsteps = 5000,
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL, 
   ipar=NULL, nout=0, outnames=NULL, forcings=NULL,
-  initforc = NULL, fcontrol=NULL, events=NULL, ...)   {
+  initforc = NULL, fcontrol = NULL, events = NULL, ...)   {
 
 ### check input
   hmax <- checkInput (y, times, func, rtol, atol,
@@ -99,11 +99,11 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          jacfunc(time,state,parms,...)
        }
        if (! is.null(events$Type))
-        if (events$Type == 2)
-         Eventfunc <- function(time,state) {
-           attr(state,"names") <- Ynames
-           events$func(time,state,parms,...) 
-         }
+         if (events$Type == 2)
+           Eventfunc <- function(time,state) {
+             attr(state,"names") <- Ynames
+             events$func(time,state,parms,...) 
+           }
        
     } else {                            # no ynames...
        Func    <- function(time,state)
@@ -116,9 +116,9 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
          jacfunc(time,state,parms,...)
 
        if (! is.null(events$Type))
-        if (events$Type == 2)
-         Eventfunc <- function(time,state)  
-           events$func(time,state,parms,...) 
+          if (events$Type == 2)
+            Eventfunc <- function(time,state)  
+              events$func(time,state,parms,...) 
     }
         
     ## Check function and return the number of output variables +name

@@ -6,7 +6,7 @@
 #include "rk_util.h"
 
 SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
-  SEXP Parms, SEXP Nout, SEXP Rho,
+  SEXP Parms, SEXP eventfunc, SEXP elist, SEXP Nout, SEXP Rho,
   SEXP Tcrit, SEXP Verbose, SEXP Hini, SEXP Rpar, SEXP Ipar,
 		  SEXP Method, SEXP Maxsteps, SEXP Flist) {
 

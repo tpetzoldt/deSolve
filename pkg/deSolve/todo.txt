@@ -1,0 +1,23 @@
+ToDo:
+
+Events
+======
+- ODEPACK-solvers: done
+- rk-Solvers: work in progress
+
+
+NaN warnings and termination of R 
+=================================
+- KS does not see how this can be resolved
+
+
+Delay differential equations 
+============================
+- The implementation in ddesolve is not very robust...
+
+
+Runge-Kutta interpolation
+=========================
+- work in progress (ThPe)
+  - "no interpolation" mode for rkAuto
+  - to be impelemted for rkFixed

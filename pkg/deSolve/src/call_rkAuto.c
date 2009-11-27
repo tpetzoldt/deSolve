@@ -8,7 +8,7 @@
 #include "rk_auto.h"
 
 SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
-  SEXP Parms, SEXP Nout, SEXP Rho,
+  SEXP Parms, SEXP eventfunc, SEXP elist, SEXP Nout, SEXP Rho,
   SEXP Rtol, SEXP Atol, SEXP Tcrit, SEXP Verbose,
   SEXP Hmin, SEXP Hmax, SEXP Hini, SEXP Rpar, SEXP Ipar,
   SEXP Method, SEXP Maxsteps, SEXP Flist) {
@@ -29,7 +29,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int interpolate = TRUE; /* polynomial interpolation is done by default */
 
   int i = 0, j=0, it=0, it_tot = 0, it_ext = 0, nt = 0, neq = 0;
-  int isForcing;
+  int isForcing, isEvent;
 
   /*------------------------------------------------------------------------*/
   /* Processing of Arguments                                                */
@@ -177,7 +177,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   initParms(Initfunc, Parms);
   isForcing = initForcings(Flist);
-
+  isEvent = initEvents(elist, eventfunc);
+  if (isEvent) interpolate = FALSE;
   /*------------------------------------------------------------------------*/
   /* Initialization of Integration Loop                                     */
   /*------------------------------------------------------------------------*/
@@ -232,6 +233,20 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
        //tmax = fmax(tt[j + 1], tcrit); // handle fcrit correctly !!! fmin??
        tmax = fmin(tt[j + 1], tcrit);
        dt = tmax - t;
+       
+       // in lsoda:
+       //tin = REAL(times)[it];
+       //tout = REAL(times)[it+1];
+       //if (isEvent) { 
+       //  rwork[0] = tout;
+       //  updateevent(&tin, xytmp, &istate);
+       //}
+       if (isEvent) {
+         // thpe: don't think that *I* need rwork here
+         // note that istate is already a pointer here, so no &istate
+         updateevent(&t, y0, istate); // ThPe doesn't understand istate here
+       }
+       
        if (verbose) Rprintf("\n %d th time interval = %g ... %g", j, t, tmax);
        rk_auto(
            fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
