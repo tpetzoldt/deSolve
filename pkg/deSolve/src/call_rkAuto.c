@@ -5,8 +5,6 @@
 
 #include "rk_util.h"
 
-#include "rk_auto.h"
-
 SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP Parms, SEXP eventfunc, SEXP elist, SEXP Nout, SEXP Rho,
   SEXP Rtol, SEXP Atol, SEXP Tcrit, SEXP Verbose,
@@ -175,6 +173,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
+  //initglobals(nt); //todo: make this compatible
+  PROTECT(Time = NEW_NUMERIC(1));                 incr_N_Protect();
+  PROTECT(Y = allocVector(REALSXP,(neq)));        incr_N_Protect(); 
+  
   initParms(Initfunc, Parms);
   isForcing = initForcings(Flist);
   isEvent = initEvents(elist, eventfunc);
@@ -216,15 +218,15 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (interpolate) {
   /* integrate over the whole time step and interpolate internally */
     rk_auto(
-         fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
-         maxsteps, nt,
-  	     &iknots, &it, &it_ext, &it_tot,
-         istate, ipar,
-  	     t, tmax, hmin, hmax, alpha, beta,
-  	     &dt, &errold,
-  	     tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
-  	     out, bb1, bb2, cc, dd, atol, rtol, yknots,  yout,
-  	     Func, Parms, Rho
+      fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
+      maxsteps, nt,
+      &iknots, &it, &it_ext, &it_tot,
+      istate, ipar,
+      t, tmax, hmin, hmax, alpha, beta,
+      &dt, &errold,
+      tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
+      out, bb1, bb2, cc, dd, atol, rtol, yknots,  yout,
+      Func, Parms, Rho
     );
   } else {  
      /* integrate separately between external time steps; do not interpolate */
@@ -246,18 +248,17 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
          // note that istate is already a pointer here, so no &istate
          updateevent(&t, y0, istate); // ThPe doesn't understand istate here
        }
-       
        if (verbose) Rprintf("\n %d th time interval = %g ... %g", j, t, tmax);
        rk_auto(
-           fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
-           maxsteps, nt,
-    	     &iknots, &it, &it_ext, &it_tot,
-           istate, ipar,
-    	     t,  tmax, hmin, hmax, alpha, beta,
-  	       &dt, &errold,
-    	     tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
-    	     out, bb1, bb2, cc, dd, atol, rtol, yknots, yout,
-    	     Func, Parms, Rho
+          fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
+          maxsteps, nt,
+          &iknots, &it, &it_ext, &it_tot,
+          istate, ipar,
+          t,  tmax, hmin, hmax, alpha, beta,
+          &dt, &errold,
+          tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
+          out, bb1, bb2, cc, dd, atol, rtol, yknots, yout,
+          Func, Parms, Rho
       );
       /* in this mode, internal interpolation is skipped,
          so we can simply store the results at the end of each call */

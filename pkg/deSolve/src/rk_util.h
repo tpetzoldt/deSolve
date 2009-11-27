@@ -20,6 +20,8 @@
 
 #include "deSolve.h"
 
+#include "rk_auto.h"
+
 void R_test_call(DllInfo *info);
 
 void R_unload_test_call(DllInfo *info);

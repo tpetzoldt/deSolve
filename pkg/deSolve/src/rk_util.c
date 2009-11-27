@@ -160,11 +160,11 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     if (j < 0) {
       int elt = 1, ii = 0, l;
       for (i = 0; i < nout; i++)  {
-	l = LENGTH(VECTOR_ELT(Val, elt));
+        l = LENGTH(VECTOR_ELT(Val, elt));
         //Rprintf("len=%d \n", l);
         if (ii == l) {
-	    ii = 0; elt++;
-	}
+	        ii = 0; elt++;
+	      }
         yout[i] = REAL(VECTOR_ELT(Val, elt))[ii];
         ii++;
       }

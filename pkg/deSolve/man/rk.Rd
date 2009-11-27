@@ -177,6 +177,10 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
   \item{events }{A list that specifies events, i.e. when the value of a 
     state variable is suddenly changed. See \link{events} for more information.
+    Not also that if events are specified, then polynomial interpolation
+    is switched off and integration takes place from one external time step 
+    to the next, with an internal step size less than or equal the difference
+    of two adjacent points of \code{times}.
   }
   \item{... }{additional arguments passed to \code{func} allowing this
     to be a generic function.
