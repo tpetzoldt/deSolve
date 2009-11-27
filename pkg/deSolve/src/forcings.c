@@ -131,10 +131,7 @@ static void C_event_func (int *n, double *t, double *y)
 {
   int i;
   SEXP R_fcall, ans;
-  
-  //added by thpe: initialize Y; BTW: it is not necessary that Y is global
-  PROTECT(Y = allocVector(REALSXP, *n)); incr_N_Protect();
-  REAL(Time)[0] = *t;
+                              REAL(Time)[0] = *t;
   for (i = 0; i < *n; i++)  REAL(Y)[i] = y[i];
 
   PROTECT(R_fcall = lang3(R_event_func,Time,Y));   incr_N_Protect();
@@ -142,8 +139,7 @@ static void C_event_func (int *n, double *t, double *y)
 
   for (i = 0; i < *n; i++)   y[i] = REAL(ans)[i];
 
-  //my_unprotect(2);
-  my_unprotect(3); // increased to 3 by thpe
+  my_unprotect(2);
 }
 
 
@@ -152,9 +148,7 @@ event_func_type  *event_func;
     
 int initEvents(SEXP elist, SEXP eventfunc) {
 
-    // ThPe: Time is global!
-    //SEXP Time, SVar, Value, Method, Type, Root;
-    SEXP SVar, Value, Method, Type, Root;
+    SEXP Time, SVar, Value, Method, Type, Root;
     int i, j, isEvent = 0;
 
     Time = getListElement(elist,"Time");
