@@ -212,80 +212,42 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   it_ext = 0; /* counter for external time step (dense output) */
   it_tot = 0; /* total number of time steps                    */
   
-  // new code !!!
-
   if (interpolate) {
-  // the ordinary way
+  /* integrate over the whole time step and interpolate internally */
     rk_auto(
-         // int
-         fsal, neq, stage,
-         isDll, isForcing, verbose,
-         nknots, interpolate, maxsteps, 
-  	     nt,
-  	     // int*
+         fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
+         maxsteps, nt,
   	     &iknots, &it, &it_ext, &it_tot,
-         //  arrays
          istate, ipar,
-  	     // double
   	     t, tmax, hmin, hmax, alpha, beta,
-  	     // double*
   	     &dt, &errold,
-         // double arrays
-  	     tt,
-         y0, y1, y2, dy1, dy2,
-         f, y, Fj, tmp, 
-         FF, rr,
-  	     A,
-  	     out, bb1, bb2, cc, dd,
-  	     atol, rtol,
-  	     yknots,  yout,
-  	     // SEXPs
+  	     tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
+  	     out, bb1, bb2, cc, dd, atol, rtol, yknots,  yout,
   	     Func, Parms, Rho
     );
   } else {  
-     // one call per time stept (or event)
+     /* integrate separately between external time steps; do not interpolate */
      for (int j = 0; j < nt - 1; j++) {
-       /* 
-         ToDo:
-           - respect stepping of events (if available)
-             ? with or without combined interpolation?? --> without
-           - re-use last step size as hmin   --> solved
-       
-       */
-     
-       // Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d\n", 
-       //  it, it_ext, it_tot);
        t = tt[j];
        //tmax = fmax(tt[j + 1], tcrit); // handle fcrit correctly !!! fmin??
        tmax = fmin(tt[j + 1], tcrit);
-       //Rprintf("\n %d th time interval = %g ... %g", j, t, tmax);
-       //Rprintf("\ndt=%g", dt);
+       dt = tmax - t;
+       if (verbose) Rprintf("\n %d th time interval = %g ... %g", j, t, tmax);
        rk_auto(
-           // int
-           fsal, neq, stage,
-           isDll, isForcing, verbose,
-           nknots, interpolate, maxsteps, 
-    	     nt,
-    	     // int*
+           fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
+           maxsteps, nt,
     	     &iknots, &it, &it_ext, &it_tot,
-           //  arrays
            istate, ipar,
-    	     // double
     	     t,  tmax, hmin, hmax, alpha, beta,
-    	     // double*
   	       &dt, &errold,
-           // double arrays
-    	     tt,
-           y0, y1, y2, dy1, dy2,
-           f, y, Fj, tmp, 
-           FF, rr,
-    	     A,
-    	     out, bb1, bb2, cc, dd,
-    	     atol, rtol,
-    	     yknots, yout,
-    	     // SEXPs
+    	     tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
+    	     out, bb1, bb2, cc, dd, atol, rtol, yknots, yout,
     	     Func, Parms, Rho
       );
+      /* in this mode, internal interpolation is skipped,
+         so we can simply store the results at the end of each call */
+      yout[j + 1] = tmax;
+      for (i = 0; i < neq; i++) yout[j + 1 + nt * (1 + i)] = y2[i];
     }
   }
 

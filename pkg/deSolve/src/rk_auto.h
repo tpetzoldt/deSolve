@@ -7,30 +7,25 @@
 //#include "rk_util.h"
 
 void rk_auto(
-       // int
+       /* integers */
 	     int fsal, int neq, int stage,
 	     int isDll, int isForcing, int verbose,
-	     int nknots, int interpolate, int maxsteps,
-	     int nt,
-	     // int*
+	     int nknots, int interpolate, int maxsteps, int nt,
+       /* int pointers */
 	     int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
-       // int arrays
        int* istate,  int* ipar,
-	     // double
+       /* double */
 	     double t, double tmax, double hmin, double hmax, 
        double alpha, double beta,
-       // double*
+       /* double pointers */
        double* _dt, double* _errold,
-       // double arrays
-	     double* tt,
-       double* y0, double* y1, double* y2, double* dy1, double* dy2,
+       /* arrays */
+	     double* tt, double* y0, double* y1, double* y2, double* dy1, double* dy2,
        double* f, double* y, double* Fj, double* tmp,
-       double* FF, double* rr,
-	     double* A, 
-	     double* out, double* bb1, double* bb2, double* cc, double* dd, 
-	     double* atol, double* rtol,
-	     double* yknots, double* yout,
-	     // SEXPs
+       double* FF, double* rr, double* A, double* out, 
+       double* bb1, double* bb2, double* cc, double* dd, 
+	     double* atol, double* rtol, double* yknots, double* yout,
+	     /* SEXPs */
 	     SEXP Func, SEXP Parms, SEXP Rho
   ) {
 
@@ -163,24 +158,9 @@ void rk_auto(
         }
       } else {
         /*--------------------------------------------------------------------*/
-        /* Case C) no interpolation at all (for testing purposes)             */
-        /* Note that this works only if time steps match exactly              */
-        /* i.e. not in all cases because of floating point inaccuracy         */
-        /* but that's the price for "no interpolation"                        */
+        /* Case C) no interpolation at all (for step to step integration);    */
+        /*         results are stored after the call                          */
         /*--------------------------------------------------------------------*/
-        t_ext = tt[it_ext];
-        while (t_ext <= t + dt) {
-          if (it_ext < nt) {
-            yout[it_ext] = t_ext;
-            /* all time steps */
-            yout[it_ext] = t_ext;
-            /* only matching time steps */
-            if (t_ext == t + dt) {
-              for (i = 0; i < neq; i++) yout[it_ext + nt * (1 + i)] = y2[i];
-            }
-          }
-          if(it_ext < nt) t_ext = tt[++it_ext]; else break;
-        }
       }
       /*--------------------------------------------------------------------*/
       /* next time step                                                     */
@@ -201,7 +181,7 @@ void rk_auto(
     }
   } while (t < tmax); /* end of rk main loop */
   
-  // return reference values the simple way, fix this later
+  /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
   *_dt = dtnew; *_errold = errold;
 }
