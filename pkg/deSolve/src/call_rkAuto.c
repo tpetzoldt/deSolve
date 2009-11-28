@@ -198,7 +198,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   iknots++;
 
   t = tt[0];
-  tmax = fmin(tt[nt], tcrit);
+  tmax = fmax(tt[nt], tcrit);
   dt   = fmin(hmax, hini);
   hmax = fmin(hmax, tmax - t);
 
