@@ -148,7 +148,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  //initglobals(nt); //todo: make this compatible
+  /* initglobals(nt); // todo: make this compatible */
   PROTECT(Time = NEW_NUMERIC(1));                 incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(neq)));        incr_N_Protect(); 
   
@@ -170,12 +170,11 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   iknots++;
 
   t = tt[0];                   
-  tmax = fmax(tt[nt], tcrit);
+  tmax = fmin(tt[nt], tcrit);
 
   /* Initialization of work arrays (to be on the safe side, remove this later) */
   for (i = 0; i < neq; i++)  {
     y1[i] = 0;
-    //y2[i] = 0;
     Fj[i] = 0;
     for (j= 0; j < stage; j++)  {
       FF[i + j * neq] = 0;
@@ -227,8 +226,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       for (i = 0; i < neq; i++) yout[j + 1 + nt * (1 + i)] = y1[i];
     }
   }
-  
-  // .................
   
   /*====================================================================*/
   /* call derivs again to get global outputs                          */

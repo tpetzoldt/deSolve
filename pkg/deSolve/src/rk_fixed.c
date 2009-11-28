@@ -30,10 +30,8 @@ void rk_fixed(
 
   int i = 0, j = 0, one = 1;
   int iknots = *_iknots, it = *_it, it_ext = *_it_ext, it_tot = *_it_tot;
-  //double dtnew, 
   double t_ext;
   double dt = *_dt;
-
 
   /*------------------------------------------------------------------------*/
   /* Main Loop                                                              */
@@ -41,8 +39,7 @@ void rk_fixed(
   do {
     /* select time step (possibly irregular) */
     if (hini > 0.0)
-      //dt = hini;
-      dt = fmin(hini, tmax - t); // adjust dt for step-by-step-mode
+      dt = fmin(hini, tmax - t); /* adjust dt for step-by-step-mode */
     else
       dt = tt[it] - tt[it-1];
 
@@ -58,7 +55,8 @@ void rk_fixed(
         tmp[i] = Fj[i] + y0[i];
       }
       /******  Compute Derivatives ******/
-      derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, ipar, isDll, isForcing);
+      derivs(Func, t + dt * cc[j], tmp, Parms, Rho, FF, out, j, neq, 
+        ipar, isDll, isForcing);
     }
 
     /*====================================================================*/
@@ -103,7 +101,7 @@ void rk_fixed(
       }
     } else {
       /*--------------------------------------------------------------------*/
-      /* No interpolation mode(for step to step integration);    */
+      /* No interpolation mode(for step to step integration);               */
       /*         results are stored after the call                          */
       /*--------------------------------------------------------------------*/ 
     }

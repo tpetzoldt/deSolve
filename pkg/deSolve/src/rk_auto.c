@@ -85,26 +85,26 @@ void rk_auto(
     
     err = maxerr(y1, y2, atol, rtol, neq);
     dtnew = dt;
-    //accept = TRUE;
     if (err == 0) {  /* use max scale if all tolerances are zero */
-      dtnew = fmin(dt * 10, hmax);
-      errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
+      dtnew  = fmin(dt * 10, hmax);
+      errold = fmax(err, 1e-4); /* 1e-4 taken from Press et al. */
       accept = TRUE;
     } else if (err < 1.0) {
-      //dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr));
-      // increase step size only if last one was accepted
-      if (accept) dtnew = fmin(hmax, dt * 0.9 * pow(err, -alpha) * pow(errold, beta));
-      errold = fmax(err, 1e-4); // 1e-4 taken from Press et al.
+      /* increase step size only if last one was accepted */
+      if (accept) 
+        /* dtnew = fmin(hmax, dt * 0.9 * pow(err, -1.0/qerr)); */
+        dtnew = fmin(hmax, dt * 0.9 * pow(err, -alpha) * pow(errold, beta));
+      errold = fmax(err, 1e-4); /* 1e-4 taken from Press et al. */
       accept = TRUE;
     } else if (err > 1.0) {
       accept = FALSE;
-      //dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2);
+      /* dtnew = dt * fmax(0.9 * pow(err, -1.0/qerr), 0.2); */
       dtnew = dt * fmax(0.9 * pow(err, -alpha), 0.2);
     }
 
     if (dtnew < hmin) {
-      accept=TRUE;
-      if (verbose) Rprintf("warning, h < Hmin\n"); // remove this later ...
+      accept = TRUE;
+      if (verbose) Rprintf("warning, h < Hmin\n");
       istate[0] = -2;
       dtnew = hmin;
     }
@@ -182,6 +182,6 @@ void rk_auto(
   } while (t < tmax); /* end of rk main loop */
   
   /* return reference values */
-  *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
-  *_dt = dtnew; *_errold = errold;
+  *_iknots = iknots; *_it = it; *_it_ext = it_ext; 
+  *_it_tot = it_tot; *_dt = dtnew; *_errold = errold;
 }

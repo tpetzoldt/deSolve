@@ -19,8 +19,7 @@ void incr_N_Protect(void) { N_Protected++; }
 
 void unprotect_all(void) { UNPROTECT((int) N_Protected); }
 
-void my_unprotect(int n)
-{
+void my_unprotect(int n) {
     UNPROTECT(n);
     N_Protected -= n;
 }
@@ -65,39 +64,30 @@ note: forcing initialisation function is in forcings.c
 =======================================================*/
 
 void initParms(SEXP Initfunc, SEXP Parms) {
-  
   if (Initfunc == NA_STRING) return;
-  if (inherits(Initfunc, "NativeSymbol"))  {
+  if (inherits(Initfunc, "NativeSymbol")) {
     init_func_type *initializer;
-
-    PROTECT(de_gparms = Parms);     incr_N_Protect();
+    PROTECT(de_gparms = Parms); incr_N_Protect();
     initializer = (init_func_type *) R_ExternalPtrAddr(Initfunc);
     initializer(Initdeparms);
   }
-
 }
 
 
-void Initdeparms(int *N, double *parms)
-{
+void Initdeparms(int *N, double *parms) {
   int i, Nparms;
-
   Nparms = LENGTH(de_gparms);
-  if ((*N) != Nparms)
-    {
-      warning("Number of parameters passed to solver, %i; number in DLL, %i\n",Nparms, *N);
-      PROBLEM "Confusion over the length of parms"
-
-      ERROR;
-    } 
-  else
-    {
-      for (i = 0; i < *N; i++) parms[i] = REAL(de_gparms)[i];
-    }
+  if ((*N) != Nparms) {
+    warning("Number of parameters passed to solver, %i; number in DLL, %i\n",
+      Nparms, *N);
+    PROBLEM "Confusion over the length of parms"
+    ERROR;
+  } else {
+    for (i = 0; i < *N; i++) parms[i] = REAL(de_gparms)[i];
+  }
 }
   
-SEXP get_deSolve_gparms(void)
-{
+SEXP get_deSolve_gparms(void) {
   return de_gparms;
 }
 
@@ -110,12 +100,10 @@ void returnearly (int Print) {
   int j, k;
   if (Print) 
     warning("Returning early. Results are accurate, as far as they go\n");
-
-	PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2)));incr_N_Protect();
-
+    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); incr_N_Protect();
   for (k = 0; k < it+2; k++)
-	  for (j = 0; j < ntot+1; j++)
-	   REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
+    for (j = 0; j < ntot+1; j++)
+      REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
 }   
 
 /* add ISTATE and RSTATE */
@@ -123,12 +111,12 @@ void terminate(int istate, int ilen, int ioffset, int rlen, int roffset) {
 
   int k;
   
-  PROTECT(ISTATE = allocVector(INTSXP, ilen));incr_N_Protect();
-  for (k = 0; k < ilen-1 ;k++) INTEGER(ISTATE)[k+1] = iwork[k +ioffset];
+  PROTECT(ISTATE = allocVector(INTSXP, ilen)); incr_N_Protect();
+  for (k = 0; k < ilen-1; k++) INTEGER(ISTATE)[k+1] = iwork[k +ioffset];
   INTEGER(ISTATE)[0] = istate;  
         
-  PROTECT(RWORK = allocVector(REALSXP, rlen));incr_N_Protect();
-  for (k = 0;k<rlen;k++) REAL(RWORK)[k] = rwork[k+roffset];
+  PROTECT(RWORK = allocVector(REALSXP, rlen)); incr_N_Protect();
+  for (k = 0; k < rlen; k++) REAL(RWORK)[k] = rwork[k+roffset];
   if (istate > 0) {
     setAttrib(YOUT, install("istate"), ISTATE);
     setAttrib(YOUT, install("rstate"), RWORK);
@@ -143,17 +131,15 @@ void terminate(int istate, int ilen, int ioffset, int rlen, int roffset) {
  extracting elements from a list
 ===================================================*/
 
-SEXP getListElement(SEXP list, const char *str)
-{
+SEXP getListElement(SEXP list, const char *str) {
   SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
   int i;
-
   for (i = 0; i < length(list); i++)
-	 if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
-	    elmt = VECTOR_ELT(list, i);
-	    break;
-	 }
-   return elmt;
+    if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+      elmt = VECTOR_ELT(list, i);
+      break;
+    }
+  return elmt;
 }
 
 /*==================================================
@@ -170,75 +156,65 @@ SEXP getListElement(SEXP list, const char *str)
 void initOut(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
 
   int j;
-  nout   = INTEGER(nOut)[0];    /* number of output variables */
-  if (isDll)                    /* function is a dll */
-  {
-   if (nout > 0) isOut = 1;
-   ntot  = neq + nout;          /* length of yout */
-   lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
-   lipar = 3 + LENGTH(Ipar);    /* length of ipar */
-
-  } else                              /* function is not a dll */
-  {
-   isOut = 0;
-   ntot = neq;
-   lipar = 1;
-   lrpar = 1;
+  nout = INTEGER(nOut)[0];       /* number of output variables */
+  if (isDll) {                   /* function is a dll */
+    if (nout > 0) isOut = 1;
+    ntot  = neq + nout;          /* length of yout */
+    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
+    lipar = 3 + LENGTH(Ipar);    /* length of ipar */
+  } else {                       /* function is not a dll */
+    isOut = 0;
+    ntot = neq;
+    lipar = 1;
+    lrpar = 1;
   }
-
-   out   = (double *) R_alloc(lrpar, sizeof(double));
-   ipar  = (int *)    R_alloc(lipar, sizeof(int));
-
-   if (isDll ==1)
-   {
+  out  = (double*) R_alloc(lrpar, sizeof(double));
+  ipar = (int*)    R_alloc(lipar, sizeof(int));
+  if (isDll ==1) {
     ipar[0] = nout;              /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
+
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
-    for (j = 0; j < LENGTH(Ipar);j++) ipar[j+3] = INTEGER(Ipar)[j];
+    for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
 
     /* first nout elements of rpar reserved for output variables
-      other elements are set in R-function lsodx via argument *rpar* */
+       other elements are set in R-function lsodx via argument *rpar* */
     for (j = 0; j < nout; j++)        out[j] = 0.;
-    for (j = 0; j < LENGTH(Rpar);j++) out[nout+j] = REAL(Rpar)[j];
+    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
    }
-
 }
 
-/* if a dae: output always done in C-code ... */
-
+/* if a DAE: output always done in C-code ... */
 void initOutdae(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
-
   int j;
-/* initialise output when a dae ... */   /*  output always done here in C-code (<-> lsode, vode)... */
+  /* initialise output when a dae ... */   
+  /*  output always done here in C-code (<-> lsode, vode)... */
 
   nout  = INTEGER(nOut)[0];
   ntot  = n_eq+nout;
-  if (isDll==1)  /* function is a dll */
-  {
-   lrpar = nout + LENGTH(Rpar);       /* length of rpar */
-   lipar = 3    + LENGTH(Ipar);       /* length of ipar */
-
-  } else                              /* function is not a dll */
-  {
-   lipar = 3;
-   lrpar = nout;
+  if (isDll == 1) {                /* function is a dll */
+    lrpar = nout + LENGTH(Rpar);   /* length of rpar */
+    lipar = 3    + LENGTH(Ipar);   /* length of ipar */
+  } else {                         /* function is not a dll */
+    lipar = 3;
+    lrpar = nout;
   }
-   out   = (double *) R_alloc(lrpar, sizeof(double));
-   ipar  = (int *)    R_alloc(lipar, sizeof(int));
+  out   = (double*) R_alloc(lrpar, sizeof(double));
+  ipar  = (int*)    R_alloc(lipar, sizeof(int));
 
-   if (isDll ==1)
-   {
-    ipar[0] = nout;          /* first 3 elements of ipar are special */
+  if (isDll == 1) {
+    ipar[0] = nout;                /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
+
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
-    for (j = 0; j < LENGTH(Ipar);j++) ipar[j+3] = INTEGER(Ipar)[j];
+    for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
 
     /* first nout elements of rpar reserved for output variables
-      other elements are set in R-function lsodx via argument *rpar* */
-    for (j = 0; j < nout;        j++) out[j] = 0.;
-    for (j = 0; j < LENGTH(Rpar);j++) out[nout+j] = REAL(Rpar)[j];
+       other elements are set in R-function lsodx via argument *rpar* */
+    for (j = 0; j < nout;         j++) out[j] = 0.;
+    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
    }
 }
 /*==================================================
@@ -250,21 +226,21 @@ void sparsity1D (SEXP Type, int* iwork, int neq, int liw) {
     nspec = INTEGER(Type)[1]; /* number of components*/
     nx    = INTEGER(Type)[2]; /* dimension x*/
 
-    ij     = 31+neq;
+    ij    = 31 + neq;
     iwork[30] = 1;
     k = 1;
-    for( i = 0; i<nspec; i++) {
-      for( j = 0; j<nx; j++) {
+    for( i = 0; i < nspec; i++) {
+      for( j = 0; j < nx; j++) {
         if (ij > liw-4)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
-                    iwork[ij++] = k;
-        if (j<nx-1) iwork[ij++] = k+1 ;
-        if (j>0)    iwork[ij++] = k-1 ;
+        iwork[ij++] = k;
+        if (j < nx-1) iwork[ij++] = k+1 ;
+        if (j > 0)    iwork[ij++] = k-1 ;
 
-        for(l = 0; l<nspec;l++)
+        for(l = 0; l < nspec; l++)
           if (l != i) iwork[ij++] = l*nx+j+1;
 
         iwork[30+k] = ij-30-neq;
-        k=k+1;
+        k = k+1;
       }
     }
     iwork[ij] = 0;
@@ -282,35 +258,35 @@ void sparsity2D (SEXP Type, int* iwork, int neq, int liw) {
     bndx  = INTEGER(Type)[4]; /* cyclic boundary x*/
     bndy  = INTEGER(Type)[5]; /* cyclic boundary y*/
     Nt    = nx*ny;
-    ij     = 31+neq;
+    ij    = 31 + neq;
     iwork[30] = 1;
     m = 1;
-    for( i = 0; i<nspec; i++) {
-       isp = i*Nt;
-       for( j = 0; j<nx; j++) {
-         for( k = 0; k<ny; k++) {
-           if (ij > liw-4)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
-                              iwork[ij++] = m;
-           if (k<ny-1)        iwork[ij++] = m+1;
+    for( i = 0; i < nspec; i++) {
+      isp = i*Nt;
+      for( j = 0; j < nx; j++) {
+        for( k = 0; k < ny; k++) {
+          if (ij > liw-4)  
+            error("not enough memory allocated in iwork - increase liw %i ",liw);
+          iwork[ij++] = m;
+          if (k < ny-1)     iwork[ij++] = m+1;
+          if (j < nx-1)     iwork[ij++] = m+ny;
+          if (j > 0)        iwork[ij++] = m-ny;
+          if (k > 0)        iwork[ij++] = m-1;
+          if (bndx == 1) {
+            if (j == 0)     iwork[ij++] = isp+(nx-1)*ny+k+1;
+            if (j == nx-1)  iwork[ij++] = isp+k+1;
+          }
+          if (bndy == 1) {
+            if (k == 0)    iwork[ij++] = isp+(j+1)*ny;
+            if (k == ny-1) iwork[ij++] = isp + j*ny +1;
+          }
+          for(l = 0; l < nspec; l++)
+            if (l != i)    iwork[ij++] = l*Nt+j*ny+k+1;
 
-           if (j<nx-1)        iwork[ij++] = m+ny;
-           if (j >0)          iwork[ij++] = m-ny;
-           if (k >0)          iwork[ij++] = m-1;
-           if (bndx == 1) {
-               if (j == 0)      iwork[ij++] = isp+(nx-1)*ny+k+1;
-               if (j == nx-1)   iwork[ij++] = isp+k+1;
-           }
-           if (bndy == 1) {
-               if (k == 0)      iwork[ij++] = isp+(j+1)*ny;
-               if (k == ny-1)   iwork[ij++] = isp + j*ny +1;
-           }
-           for(l = 0; l<nspec;l++)
-               if (l != i)      iwork[ij++] = l*Nt+j*ny+k+1;
-
-           iwork[30+m] = ij-30-neq;
-           m = m+1;
-           }
+          iwork[30+m] = ij-30-neq;
+          m = m+1;
         }
+      }
     }
 }
 
@@ -330,27 +306,27 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
     ij     = 31+neq;
     iwork[30] = 1;
     m = 1;
-    for( i = 0; i<nspec; i++) {
+    for( i = 0; i < nspec; i++) {
       isp = i*Nt;
-      for( j = 0; j<nx; j++) {
-        for( k = 0; k<ny; k++) {
-           for( ll = 0; ll<nz; ll++) {
-              if (ij > liw-4)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
-                                 iwork[ij++] = m;
-              if (ll<nz-1)       iwork[ij++] = m+1;
-              if (k<ny-1)        iwork[ij++] = m+nz;
-              if (j<nx-1)        iwork[ij++] = m+ny*nz;
+      for( j = 0; j < nx; j++) {
+        for( k = 0; k < ny; k++) {
+          for( ll = 0; ll < nz; ll++) {
+            if (ij > liw-4)  
+              error ("not enough memory allocated in iwork - increase liw %i ", liw);
+            iwork[ij++] = m;
+            if (ll < nz-1)  iwork[ij++] = m+1;
+            if (k < ny-1)   iwork[ij++] = m+nz;
+            if (j < nx-1)   iwork[ij++] = m+ny*nz;
 
-              if (j >0)          iwork[ij++] = m-ny*nz;
-              if (k >0)          iwork[ij++] = m-nz;
-              if (ll >0)         iwork[ij++] = m-1;
-              for(l = 0; l<nspec;l++)
-                if (l != i)       iwork[ij++] = l*Nt+j*ny*nz+k*nz+ll+1;
-
-              iwork[30+m] = ij-30-neq;
-              m = m+1;
-            }
-         }
+            if (j > 0)      iwork[ij++] = m-ny*nz;
+            if (k > 0)      iwork[ij++] = m-nz;
+            if (ll > 0)     iwork[ij++] = m-1;
+            for(l = 0; l < nspec; l++)
+              if (l != i) iwork[ij++] = l*Nt+j*ny*nz+k*nz+ll+1;
+            iwork[30+m] = ij-30-neq;
+            m = m+1;
+          }
+        }
       }
     }
 }
