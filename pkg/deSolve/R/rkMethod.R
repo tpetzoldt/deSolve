@@ -164,7 +164,7 @@ rkMethod <- function(method = NULL, ...) {
         varstep = TRUE,
         FSAL    = FALSE,
         A  = matrix(
-         c(rep(0,12),  
+         c(rep(0,12),
          2/27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          1/36, 1/12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          1/24, 0, 1/8, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -181,10 +181,9 @@ rkMethod <- function(method = NULL, ...) {
         b1 = c(41/840, 0,0,0,0, 34/105, 9/35, 9/35, 9/280, 9/280, 41/840, 0, 0),
         b2 = c(0, 0, 0, 0, 0, 34/105, 9/35, 9/35, 9/280, 9/280, 0, 41/840, 41/840),
         c  = c(0, 2./27., 1/9, 1/6, 5/12, 0.5, 5/6, 1/6, 2/3, 1/3, 1, 0, 1),
-        d  = c(-41/840, 0,0,0,0,0,0,0,0,0, -41/840, 41/840, 41/840),
         stage = 7,
         Qerr  = 8
-    ) 
+    )
   )
   ## look if the method is known; ode23 and ode45 are used as synonyms
   knownMethods <- c(lapply(methods,"[[", "ID"), "ode23", "ode45")
