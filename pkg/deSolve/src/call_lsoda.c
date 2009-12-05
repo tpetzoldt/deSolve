@@ -376,6 +376,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
           tEvent=tin;
           updateevent(&tin, xytmp, &istate);
           istate = 1;
+          repcount = 0;
         } else{
 	       istate = -20;  repcount = 50;
 	      } 
