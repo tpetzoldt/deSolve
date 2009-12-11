@@ -256,7 +256,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	   else C_out(&nout,&tin,xytmp,xdytmp,out);
 	      for (j = 0; j < nout; j++)
 	       REAL(YOUT)[j + n_eq + 1] = out[j]; 
-               }
+    }
                
 /*                     ####   main time loop   ####                           */    
                

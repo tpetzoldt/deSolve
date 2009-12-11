@@ -7,10 +7,6 @@
 SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
 SEXP Time, Y, YPRIME , Rin;
 
-/*============================================================================
-  global C variables 
-============================================================================*/
-/* time loop, number of equations, work arrays */
 int    it, n_eq; 
 int    *iwork;   
 double *rwork;
