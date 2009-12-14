@@ -292,7 +292,6 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, ...) {
       on.exit(devAskNewPage(oask))
     }
     
-    
     Main <-  if (is.null(dots$main)) var else rep(dots$main, length.out =np)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))

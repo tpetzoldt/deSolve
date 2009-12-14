@@ -17,17 +17,17 @@ ballode<- function(t,y,parms) {
 # event triggered when the ball hits the ground (height =0)
 root <- function(t,y,parms) y[1]
 
-# bouncing - NOTE: y[1] slightly > 0
+# bouncing  
 event <- function(t,y,parms) {
- y[1]<- 1e-18
- y[2]<- -0.9*y[2]
+  y[1] <- 0 
+  y[2] <- -0.9*y[2]
  return(y)
 }
 
 #-----------------------------
 # initial values and times
 #-----------------------------
-yini  <- c(height=1e-18,v=20)
+yini  <- c(height=0,v=20)
 times <- seq(0,20,0.01)
 
 #-----------------------------
