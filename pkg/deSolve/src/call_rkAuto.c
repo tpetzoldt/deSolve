@@ -265,13 +265,14 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* call derivs again to get global outputs                            */
   /* j = -1 suppresses unnecessary internal copying                     */
   /*====================================================================*/
-
-  for (int j = 0; j < nt; j++) {
-    t = yout[j];
-    for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
-    for (i = 0; i < nout; i++) {
-      yout[j + nt * (1 + neq + i)] = out[i];
+  if (nout > 0) {
+    for (int j = 0; j < nt; j++) {
+      t = yout[j];
+      for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
+      derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
+      for (i = 0; i < nout; i++) {
+        yout[j + nt * (1 + neq + i)] = out[i];
+      }
     }
   }
   /* attach essential internal information (codes are compatible to lsoda) */

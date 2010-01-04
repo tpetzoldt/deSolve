@@ -50,7 +50,7 @@ ToDo: 1. Thomas, it should be relatively simple to add "lags" also to the runge-
 Events
 ======
 - ODEPACK-solvers: done
-ToDo: - rk-Solvers: work in progress
+- rk-Solvers: done
 
 
 NaN warnings and termination of R 
@@ -60,9 +60,8 @@ ToDo: - KS does not see how this can be resolved
 
 Runge-Kutta interpolation
 =========================
-- work in progress (ThPe)
-  - "no interpolation" mode for rkAuto
-  - to be implemented for rkFixed
+  - "no interpolation" mode for rkAuto: done
+  
 
 mebdfi
 ======

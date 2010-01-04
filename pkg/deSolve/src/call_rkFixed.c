@@ -252,21 +252,16 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* call derivs again to get global outputs                          */
   /*====================================================================*/
   /* j = -1 suppresses unnecessary internal copying */
-  /* ks-> thpe: here you do too much work if nout == 0; I would 
-   embrace it with the following statement:
-  if(nout > 0) { */
-
-  for (int j = 0; j < nt; j++) {
-    t = yout[j];
-    for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
-    for (i = 0; i < nout; i++) {
-      yout[j + nt * (1 + neq + i)] = out[i];
+  if(nout > 0) {
+    for (int j = 0; j < nt; j++) {
+      t = yout[j];
+      for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
+      derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
+      for (i = 0; i < nout; i++) {
+        yout[j + nt * (1 + neq + i)] = out[i];
+      }
     }
   }
-  /* ks-> ThPe
-  }
-  end if(nout>0) */
 
   /* attach essential internal information (codes are compatible to lsoda) */
   /* ToDo: respect function evaluations due to global outputs */
