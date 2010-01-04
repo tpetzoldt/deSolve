@@ -9,7 +9,8 @@ Maintainer: R. Woodrow Setzer <setzer.woodrow@epa.gov>
 Depends: R (>= 2.6.0)
 Description: Functions that solve initial value problems of a system of
              first-order ordinary differential equations (ODE), of partial
-             differential equations (PDE) and of differential algebraic equations (DAE).
+             differential equations (PDE), of differential algebraic equations 
+             (DAE), and of delay differential equations.
              The functions provide an interface to the FORTRAN functions lsoda,
              lsodar, lsode, lsodes of the ODEPACK collection,
              to the FORTRAN functions dvode and daspk and a C-implementation of

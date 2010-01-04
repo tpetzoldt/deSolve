@@ -1,7 +1,7 @@
 ## =============================================================================
 ## A bouncing ball; ode with event location
 ## =============================================================================
-
+require(deSolve)
 #-----------------------------
 # the model function
 #-----------------------------
@@ -36,6 +36,8 @@ times <- seq(0,20,0.01)
 out   <- lsodar(times=times, y=yini, func = ballode, parms=NULL,
   events=list(func = event, root = TRUE), rootfun = root)
 
+out2   <- lsode(times=times, y=yini, func = ballode, parms=NULL,
+  events=list(func = event, root = TRUE), rootfun = root, verbose=TRUE)
 #-----------------------------
 # display, plot results
 #-----------------------------

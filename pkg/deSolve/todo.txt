@@ -1,26 +1,75 @@
-ToDo:
+TODOs:
 
-Events
-======
-- ODEPACK-solvers: done
-- rk-Solvers: done
+Woody: fix Compiler "warning"
+Karline: delay differential equations in compiled code + improved interval location
+Thomas: add "timelags" to runge-kuttas
 
 
-NaN warnings and termination of R 
-=================================
-- KS does not see how this can be resolved
+Done:
+
+Miscellaneous
+=============
+KS: updated vignette with - events, delay differential equations.
+
+Roots
+=====
+The fact that lsodar was the only solver with root finding, has been a nuisance
+for a long time. It means one is forced to use lsoda, whereas in practice I 
+usually use lsode or vode.
+
+***** NEW *****
+KS added root finding to lsode.
+
+NOTE: the solver is still called "lsode" which is not entirely compatible with
+  lsoda/lsodar... 
+*******
+
+ToDo: Thomas, it should be possible to add "root finding" also to the runge-kuttas.
+You have the dense output/polynomial interpolation now; only need to add a
+rootfinder (bisectioning). But is a lot of work....
+
 
 
 Delay differential equations 
 ============================
 - The implementation in ddesolve is not very robust...
 
+***** NEW ******
+  ... but it is often done this way (so I, KS, recently learnt)
+so : KS -> added timelags, in ALL solvers but the runge-kuttas and zvode...
+        -> added a new solver, called dede, to solve delay differential equations
+        -> checked with matlab implementation - ok, R can do what matlab can,
+           but the interface is somewhat simpler.
+
+NOTE: name "dede" in order to avoid conflict with "dde" from ddesolve; suggestions?
+*****
+ToDo: 1. Thomas, it should be relatively simple to add "lags" also to the runge-kuttas.
+      2. Karline: delay differential equations in compiled code (pfft)
+      3. Karline: improved interpolation (finding interval)...
+      
+Events
+======
+- ODEPACK-solvers: done
+ToDo: - rk-Solvers: work in progress
+
+
+NaN warnings and termination of R 
+=================================
+ToDo: - KS does not see how this can be resolved
+
 
 Runge-Kutta interpolation
 =========================
-  - "no interpolation" mode for rkAuto: done
-
+- work in progress (ThPe)
+  - "no interpolation" mode for rkAuto
+  - to be implemented for rkFixed
 
 mebdfi
 ======
-- To be added (ks)
+ToDo: - To be added (ks) 
+
+******
+ KS: still in doubt whether deSolve is the correct place - it 
+is a very complex solver. 
+******
+

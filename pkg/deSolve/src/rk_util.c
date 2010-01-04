@@ -79,7 +79,7 @@ void blas_matprod1(double *x, int nrx, int ncx,
 }
 
 
-/* -- Simple Matrix Multiplikation ------------------------------------------ */
+/* -- Simple Matrix Multiplication ------------------------------------------ */
 void matprod(int m, int n, int o, double* a, double* b, double* c) {
   int i, j, k;
   for (i = 0; i < m; i++) {

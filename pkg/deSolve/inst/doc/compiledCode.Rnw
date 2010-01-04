@@ -688,11 +688,12 @@ For code written in \proglang{FORTRAN}, the \code{jacres} must be as:
         end
 \end{verbatim}
 
-\subsection{The root function from integrator lsodar}
+\subsection{The root function from integrators lsodar and lsode}
 
 \code{lsodar} is an extended version of integrator \code{lsoda} that
 includes a root finding function. This function is spedified via
-argument \code{rootfunc}.
+argument \code{rootfunc}.  From deSolve version 1.7, \code{lsode}
+has been extended with root finding capabilities.
 
 Here is how to program such a function in a lower-level language.  For
 code written in \proglang{C}, the calling sequence for \code{rootfunc}
