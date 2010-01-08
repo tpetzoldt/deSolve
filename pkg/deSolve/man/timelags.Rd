@@ -111,13 +111,14 @@ plot(yout, type="l", lwd=2)
 # the derivative function
 #-----------------------------
 predprey <- function(t,y,parms) {
-	if (t < 0)
-		lag <- c(80,30)
+  tlag <- t-1
+	if (tlag < 0)
+		ylag <- c(80,30)
 	else 
-		lag <- lagvalue(t - 1)  # returns a vector
+		ylag <- lagvalue(tlag)  # returns a vector
   
   dy1 <- a * y[1]* (1 - y[1]/m) + b * y[1]*y[2]
-  dy2 <- c * y[2] + d* lag[1]*lag[2]
+  dy2 <- c * y[2] + d* ylag[1]*ylag[2]
 	list(c(dy1, dy2))
 }
 
@@ -132,7 +133,7 @@ a = 0.25; b = -0.01; c = -1 ; d = 0.01; m = 200
 #-----------------------------
 
 yinit <- c(y1=80, y2=30)
-times <- seq(-1,100,by=0.01)
+times <- seq(0,100,by=0.01)
 
 #-----------------------------
 # solve the model  
@@ -148,6 +149,48 @@ plot(yout, type="l", lwd=2, main = "Predator-prey model", mfrow=c(2,2))
 plot(yout[,2],yout[,3], xlab="y1", ylab="y2", type="l", lwd=2)
 
 diagnostics(yout)
+
+## =============================================================================
+##
+## A neutral delay differential equation (lagged derivative)   
+##  y't=-y'(t-1), y(t) t<0 = 1/t
+##
+## =============================================================================
+
+#-----------------------------
+# the derivative function
+#-----------------------------
+derivs <- function(t,y,parms) {
+  
+  tlag <- t-1
+	
+  if (tlag < 0)
+		dylag <- -1
+	else
+		dylag <- lagderiv(tlag)
+	
+	list(c(dy=-dylag),dylag=dylag)
+}
+
+#-----------------------------
+# initial values and times
+#-----------------------------
+
+yinit <- 0
+times <- seq(0,4,0.001)
+
+#-----------------------------
+# solve the model  
+#-----------------------------
+
+yout <- dede(y=yinit, times=times, func=derivs, parms=NULL)
+
+#-----------------------------
+# display, plot results
+#-----------------------------
+
+plot(yout, type="l", lwd=2)
+
 }
 
 \keyword{utilities}
