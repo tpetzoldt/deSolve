@@ -104,8 +104,7 @@ double maxerr(double *y0, double *y1, double *y2, double *Atol, double *Rtol, in
     /* assume y2 is used to estimate next y-value */
     scal  = Atol[i] + fmax(fabs(y0[i]), fabs(y2[i])) * Rtol[i];
     delta = fabs(y2[i] - y1[i]);
-    if (scal > 0)
-      serr = serr + pow(delta/scal, 2.0);
+    if (scal > 0) serr += pow(delta/scal, 2.0);
   }
   return(sqrt(serr/n)); /* Euclidean norm */
 }
