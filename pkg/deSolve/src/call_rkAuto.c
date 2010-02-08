@@ -229,7 +229,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       t, tmax, hmin, hmax, alpha, beta,
       &dt, &errold,
       tt, y0, y1, y2, dy1, dy2, f, y, Fj, tmp, FF, rr, A,
-      out, bb1, bb2, cc, dd, atol, rtol, yknots,  yout,
+      out, bb1, bb2, cc, dd, atol, rtol, yknots, yout,
       Func, Parms, Rho
     );
   } else {  

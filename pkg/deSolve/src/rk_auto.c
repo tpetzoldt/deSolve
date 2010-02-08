@@ -83,7 +83,8 @@ void rk_auto(
     /*      stepsize adjustment                                           */
     /*====================================================================*/
     
-    err = maxerr(y1, y2, atol, rtol, neq);
+    //err = maxerr(y1, y2, atol, rtol, neq);
+    err = maxerr2(y0, y1, y2, atol, rtol, neq);
     dtnew = dt;
     if (err == 0) {  /* use max scale if all tolerances are zero */
       dtnew  = fmin(dt * 10, hmax);
@@ -117,12 +118,12 @@ void rk_auto(
       /* case A) "Dense Output": built-in polynomial interpolation          */
       /* available for certain rk formulae, e.g. for rk45dp7                */
       /*--------------------------------------------------------------------*/
-/* ks->ThPe 
- this is confusing: you use y0 and y1 for dense output; y2 for interpolation?
- should it not be y1?  
-*/
+      
+      /* ks -> ThPe 
+        this is confusing: you use y0 and y1 for dense output; y2 for interpolation?
+        should it not be y1? */
 
-	    if (dd) { /* i.e. if dd is not Zero */
+      if (dd) { /* i.e. if dd is not Zero */
         denspar(FF, y0, y1, dt, dd, neq, stage, rr);
         t_ext = tt[it_ext];
         while (t_ext <= t + dt) {

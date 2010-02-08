@@ -101,16 +101,28 @@ double maxdiff(double *x, double *y, int n) {
 double maxerr(double *y1, double *y2, double* Atol, double* Rtol, int n) {
   double err = 0, serr = 0, scal, delta;
   for (int i = 0; i < n; i++) {
-    scal  = Atol[i] +  fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; /* min?? */
+    scal  = Atol[i] + fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; /* min?? */
     delta = fabs(y2[i] - y1[i]);
     /* there are also other too */
     if (scal > 0) {
       err   = fmax(err, delta / scal);
-      serr  = err + pow(delta/scal, 2.0);
+      serr  = serr + pow(delta/scal, 2.0); // corrected serr
     }
   }
-  err = sqrt(serr); /* euclidean norm */
+  err = sqrt(serr); /* Euclidean norm */
   return(err);
+}
+
+double maxerr2(double *y0, double *y1, double *y2, double* Atol, double* Rtol, int n) {
+  double  serr = 0, scal, delta;
+  for (int i = 0; i < n; i++) {
+    /* assume y2 is used to estimate next y-value */
+    scal  = Atol[i] + fmax(fabs(y0[i]), fabs(y2[i])) * Rtol[i];
+    delta = fabs(y2[i] - y1[i]);
+    if (scal > 0)
+      serr  = serr + pow(delta/scal, 2.0);
+  }
+  return(sqrt(serr/n)); /* Euclidean norm */
 }
 
 /*==========================================================================*/

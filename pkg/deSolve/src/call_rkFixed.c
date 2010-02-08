@@ -249,9 +249,10 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   }
   
   /*====================================================================*/
-  /* call derivs again to get global outputs                          */
+  /* call derivs again to get global outputs                            */
+  /* j = -1 suppresses unnecessary internal copying                     */
   /*====================================================================*/
-  /* j = -1 suppresses unnecessary internal copying */
+
   if(nout > 0) {
     for (int j = 0; j < nt; j++) {
       t = yout[j];
