@@ -16,8 +16,8 @@ rkMethod(method = NULL, ...)
   \item{method }{a string constant naming one of the pre-defined methods
     of the Runge-Kutta family of solvers.  The most common methods are
     the fixed-step methods \code{"euler"}, \code{"rk2"}, \code{"rk4"} or
-    the variable step methods \code{"rk23bs"} (alias \code{"ode23"}) or
-    \code{"rk45dp7"} (alias \code{"ode45"}).
+    the variable step methods \code{"rk23bs"} (alias \code{"ode23"}),
+    \code{"rk45dp7"} (alias \code{"ode45"}) or \code{"rk78f"}.
   }
 
   \item{\dots }{specification of a user-defined solver, see \emph{Value}
@@ -45,7 +45,9 @@ rkMethod(method = NULL, ...)
     "rk45e"            \tab | \tab Runge-Kutta-England, order 4(5)\cr
     "rk45dp6"          \tab | \tab Dormand-Prince, order 4(5), local order 6\cr
     "rk45dp7", "ode45" \tab | \tab Dormand-Prince 4(5), local order 7 \cr
-                       \tab | \tab (also known as \bold{dopri5}, MATLAB: \bold{ode45}, Octave: \bold{ode45, pair=0})\cr
+                       \tab | \tab (also known as \bold{dopri5}, MATLAB:
+		         \bold{ode45}, Octave: \bold{ode45, pair=0})\cr
+    "rk78f"            \tab | \tab Runge-Kutta-Fehlberg, order 7(8)\cr		       
   }
   
   Note that this table is based on the Runge-Kutta coefficients only,
@@ -88,7 +90,6 @@ rkMethod(method = NULL, ...)
       default) which needs at least 6 internal time steps. Local
       interpolation inaccuracies can be minimized if external and
       internal time steps are not too different.
-    
   }
 }
    
@@ -110,12 +111,10 @@ rkMethod(method = NULL, ...)
     \code{A} must be a vector for fixed step methods where only the
     subdiagonal values are different from zero.
   }
-  \item{b1}{weighting coefficients for averaging the function
-    evaluations of method 1.
+  \item{b1}{coefficients of the lower order Runge-Kutta pair.
   }
-  \item{b2}{weighting coefficients for averaging the function
-    evaluations of method 2 (optional, for embedded methods that allow
-    variable time step).
+  \item{b2}{coefficients of the higher order Runge-Kutta pair
+    (optional, for embedded methods that allow variable time step).
   }
   \item{c}{coefficients for calculating the intermediate time steps.}
   

@@ -98,21 +98,6 @@ double maxdiff(double *x, double *y, int n) {
   return(d);
 }
 
-double maxerrXX(double *y0, double *y1, double *y2, double* Atol, double* Rtol, int n) {
-  double err = 0, serr = 0, scal, delta;
-  for (int i = 0; i < n; i++) {
-    scal  = Atol[i] + fmax(fabs(y1[i]), fabs(y2[i])) * Rtol[i]; /* min?? */
-    delta = fabs(y2[i] - y1[i]);
-    /* there are also other too */
-    if (scal > 0) {
-      err   = fmax(err, delta / scal);
-      serr  = serr + pow(delta/scal, 2.0); // corrected serr
-    }
-  }
-  err = sqrt(serr); /* Euclidean norm */
-  return(err);
-}
-
 double maxerr(double *y0, double *y1, double *y2, double *Atol, double *Rtol, int n) {
   double  serr = 0, scal, delta;
   for (int i = 0; i < n; i++) {
@@ -194,7 +179,7 @@ void denspar(double *FF, double *y0, double *y1, double dt, double *d,
   int neq, int stage, double *r) {
   double ydiff, bspl;
   int i, j;
-  for (i=0; i< neq; i++) {
+  for (i = 0; i < neq; i++) {
    r[i]           = y0[i];
    ydiff          = y1[i] - y0[i];
    r[i + neq]     = ydiff;
@@ -202,7 +187,7 @@ void denspar(double *FF, double *y0, double *y1, double dt, double *d,
    r[i + 2 * neq] = bspl;
    r[i + 3 * neq] = ydiff - dt * FF[i + (stage - 1) * neq] - bspl;
    r[i + 4 * neq] = 0;
-   for (j=0; j < stage; j++)
+   for (j = 0; j < stage; j++)
      r[i + 4 * neq] = r[i + 4 * neq] + d[j] * FF[i + j * neq];
      r[i + 4 * neq] = r[i + 4 * neq] * dt;
   }
