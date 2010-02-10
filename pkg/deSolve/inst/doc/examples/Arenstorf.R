@@ -1,6 +1,6 @@
 ## =============================================================================
 ##
-## Arenstorff orbit
+## Arenstorf orbit
 ## Standard test problem for nonstiff solvers.
 ##
 ## closed trajectory for 3-body problem; two of mass mu and (1-mu)
@@ -17,17 +17,14 @@ library(deSolve)
 # the model function
 #-----------------------------
 
-Arenstorff <- function(t,y,parms) {
-
-  D1 <- ((y[1]+mu)^2+y[2]^2)^(3/2)
-  D2 <- ((y[1]-(1-mu))^2+y[2]^2)^(3/2)
-
+Arenstorf <- function(t, y, parms) {
+  D1 <- ((y[1] + mu)^2 + y[2]^2)^(3/2)
+  D2 <- ((y[1] - (1 - mu))^2 + y[2]^2)^(3/2)
   dy1 <- y[3]
   dy2 <- y[4]
-  dy3 <- y[1] + 2*y[4]-(1-mu)*(y[1]+mu)/D1 -mu*(y[1]-(1-mu))/D2
-  dy4 <- y[2] - 2*y[3]-(1-mu)*y[2]/D1 - mu*y[2]/D2
-
-  list(c(dy1,dy2,dy3,dy4))
+  dy3 <- y[1] + 2*y[4] - (1 - mu)*(y[1] + mu)/D1 - mu*(y[1] - (1 - mu))/D2
+  dy4 <- y[2] - 2*y[3] - (1 - mu)*y[2]/D1 - mu*y[2]/D2
+  list(c(dy1, dy2, dy3, dy4))
 }
 
 #-----------------------------
@@ -35,76 +32,75 @@ Arenstorff <- function(t,y,parms) {
 #-----------------------------
 mu  <- 0.012277471
 
-yini  <- c(x=0.994, y=0, dx=0, dy=-2.00158510637908252240537862224)
+yini  <- c(x = 0.994, y = 0, dx = 0, dy = -2.00158510637908252240537862224)
 
-times <- c(seq(from = 0, to = 17, by = 2),
-  17.0652165601579625588917206249)
+times <- c(seq(from = 0, to = 17, by = 2), 17.0652165601579625588917206249)
 
 #-----------------------------
 # solve the model
 #-----------------------------
 # first for making a graph
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("rk78f", beta=0.02), rtol=1e-10, atol=1e-10)
+out <- ode(times = seq(0, 50, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("rk78f", beta = 0.02), rtol = 1e-10, atol = 1e-10)
 })  
-plot(out[,c("x","y")], type="l", lwd=2, main="Arenstorff")
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "Arenstorf")
 
 ### ////////////////////////////////////////////////////////////////////////////
 ### BEGIN: A few examples for testing; remove this later in the package
 
-par(mfrow=c(2,3))
+par(mfrow = c(2, 3))
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = "lsoda", rtol=1e-15, atol=1e-15)
+out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = "lsoda", rtol = 1e-15, atol = 1e-15)
 })  
-plot(out[,c("x","y")], type="l", lwd=2, main="lsoda 1e-15")
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "lsoda 1e-15")
 
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("ode45"), rtol=1e-16, atol=1e-16)
-plot(out[,c("x","y")], type="l", lwd=2, main="ode45 1e-16")
+out <- ode(times = seq(0,100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("rk45f",
+    b2 = c(25/216, 	0, 	1408/2565, 	2197/4104, 	-1/5, 	0),
+    b1 = c(16/135, 	0, 	6656/12825, 	28561/56430, 	-9/50, 	2/55)
+  ), rtol = 1e-16, atol = 1e-16)
 })
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk45f 1e-16")
 
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("rk78f"), rtol=1e-16, atol=1e-16)
-plot(out[,c("x","y")], type="l", lwd=2, main="rk78f 1e-16")
+out <- ode(times = seq(0,100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("ode45"), rtol = 1e-16, atol = 1e-16)
 })
-
-
-system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("rk78f"), rtol=1e-17, atol=1e-17)
-plot(out[,c("x","y")], type="l", lwd=2, main="rk78f 1e-17")
-})
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "ode45 1e-16")
 
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("rk45ck"), rtol=1e-16, atol=1e-16)
-plot(out[,c("x","y")], type="l", lwd=2, main="rk45ck 1e-16")
+out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("rk78f"), rtol = 1e-16, atol = 1e-16)
 })
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk78f 1e-16")
 
 system.time({
-out <- ode(times=seq(0,100,0.1), y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("rk45ck",    
-            b2 = c(37/378, 0, 250/621, 125/594, 0, 512/1771),
-            b1 = c(2825/27648, 0, 18575/48384, 13525/55296, 277/14336, 1/4)), 
-            rtol=1e-16, atol=1e-16)
-plot(out[,c("x","y")], type="l", lwd=2, main="rk45ck swap 1e-16")
+out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("rk78f"), rtol = 1e-17, atol = 1e-17)
 })
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk78f 1e-17")
+
+system.time({
+out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("rk45ck"), rtol = 1e-16, atol = 1e-16)
+})
+plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk45ck 1e-16")
+
 
 ### END Testing Area
 ### \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 # then for comparison with DOPRI
 # (smaller tol than 1e-6 lead to numerical problems and very long time)
-out <- rk(times=times, y=yini, func = Arenstorff, parms=NULL ,
-  method = rkMethod("ode45"), rtol=1e-16, atol=1e-16)
+out <- rk(times = times, y = yini, func = Arenstorf, parms = NULL,
+  method = rkMethod("ode45"), rtol = 1e-16, atol = 1e-16)
 diagnostics(out)
 
-options(digits=10)
-out[,c("time", "x", "y")]
+options(digits = 10)
+out[, c("time", "x", "y")]
 
 # this is what DOPRI5 generates with atol=rtol=1e-7:
 # X =  0.00    Y =  0.9940000000E+00  0.0000000000E+00    NSTEP =   0
