@@ -256,7 +256,6 @@ have the advantage, that their columns can be accessed by name, rather
 than by number. For instance, \code{out$X} will take the outputted
 values of state variable \code{X}, and so on.
 
-%ThPe: these are not concentrations; simply call them states
 
 <<>>=
 require(deSolve)
@@ -273,7 +272,6 @@ writing a figure heading (\code{mtext}).  First the X concentration
 versus time is plotted, then the Y concentration versus time, and
 finally Y versus X and Z versus X.
 
-%ThPe: concentrations? states!
 
 <<label=ode,include=FALSE>>=
 par(mfrow=c(2,2), oma=c(0,0,3,0))

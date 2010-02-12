@@ -60,23 +60,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
   
-  /* ks-> ThPe: here you might consider the following code,
-  where nout  , ipar and out are global variables, defined in deSolve.h
-        ntot = neq+nout
-  if you use that, delete the statement above:
-    int  nout     = INTEGER(Nout)[0]; 
-   
-  START REPLACEMENT...
-           
-  if (inherits(derivfunc, "NativeSymbol")) {
-   isDll = 1;
-  } else {
-   isDll = 0;
-  }
-  
-  initOutC(isDll, neq, Nout, Rpar, Ipar);
-
-  */
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
@@ -120,7 +103,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
-  /* ks-> ThPe: end of replacement code: */
 
   /*------------------------------------------------------------------------*/
   /* Allocation of Workspace                                                */
@@ -140,9 +122,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int nknots = 6;  /* 6 = 5th order polynomials by default*/
   int iknots = 0;  /* counter for knots buffer */
   double *yknots;
-
-  /* ks-> thpe: here you protect before you extract - this is not done in 
-    forcings.c - should it be done also there ???*/
 
   PROTECT(R_nknots = getListElement(Method, "nknots")); incr_N_Protect();
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
@@ -169,7 +148,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  /* initglobals(nt); // todo: make this compatible */
   PROTECT(Time = NEW_NUMERIC(1));                 incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(neq)));        incr_N_Protect(); 
   
@@ -265,7 +243,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   }
 
   /* attach essential internal information (codes are compatible to lsoda) */
-  /* ToDo: respect function evaluations due to global outputs */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
   /* release R resources */

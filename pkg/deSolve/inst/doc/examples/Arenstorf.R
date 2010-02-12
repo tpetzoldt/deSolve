@@ -6,8 +6,8 @@
 ## closed trajectory for 3-body problem; two of mass mu and (1-mu)
 ## and a third body of negigible mass, moving in the same plane
 ## Hairer et al., 2000
-## 
-## compared with DOPRI.f  
+##
+## compared with DOPRI.f
 ##
 ## =============================================================================
 
@@ -43,58 +43,11 @@ times <- c(seq(from = 0, to = 17, by = 2), 17.0652165601579625588917206249)
 system.time({
 out <- ode(times = seq(0, 50, 0.1), y = yini, func = Arenstorf, parms = NULL,
   method = rkMethod("rk78f", beta = 0.02), rtol = 1e-10, atol = 1e-10)
-})  
+})
 plot(out[, c("x", "y")], type = "l", lwd = 2, main = "Arenstorf")
 
-### ////////////////////////////////////////////////////////////////////////////
-### BEGIN: A few examples for testing; remove this later in the package
-
-par(mfrow = c(2, 3))
-system.time({
-out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = "lsoda", rtol = 1e-15, atol = 1e-15)
-})  
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "lsoda 1e-15")
-
-system.time({
-out <- ode(times = seq(0,100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("rk45f",
-    b2 = c(25/216, 	0, 	1408/2565, 	2197/4104, 	-1/5, 	0),
-    b1 = c(16/135, 	0, 	6656/12825, 	28561/56430, 	-9/50, 	2/55)
-  ), rtol = 1e-16, atol = 1e-16)
-})
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk45f 1e-16")
-
-system.time({
-out <- ode(times = seq(0,100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("ode45"), rtol = 1e-16, atol = 1e-16)
-})
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "ode45 1e-16")
-
-system.time({
-out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("rk78f"), rtol = 1e-16, atol = 1e-16)
-})
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk78f 1e-16")
-
-system.time({
-out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("rk78f"), rtol = 1e-17, atol = 1e-17)
-})
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk78f 1e-17")
-
-system.time({
-out <- ode(times = seq(0, 100, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("rk45ck"), rtol = 1e-16, atol = 1e-16)
-})
-plot(out[, c("x", "y")], type = "l", lwd = 2, main = "rk45ck 1e-16")
-
-
-### END Testing Area
-### \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
 # then for comparison with DOPRI
-# (smaller tol than 1e-6 lead to numerical problems and very long time)
+# (smaller tol than 1e-16 result in numerical problems and very long time)
 out <- rk(times = times, y = yini, func = Arenstorf, parms = NULL,
   method = rkMethod("ode45"), rtol = 1e-16, atol = 1e-16)
 diagnostics(out)

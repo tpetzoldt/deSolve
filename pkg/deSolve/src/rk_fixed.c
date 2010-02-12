@@ -82,8 +82,6 @@ void rk_fixed(
       /* (1) collect number "nknots" of knots in advanve */
       yknots[iknots] = t + dt;   /* time in first column */
       for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y1[i];
-      /* KS->ThPe what if output times are before iknots = nknots-1??
-         is there no update of yout then??*/
       if (iknots < (nknots - 1)) {
         iknots++;
       } else {

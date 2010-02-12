@@ -177,7 +177,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  /* initglobals(nt); //todo: make this compatible */
   PROTECT(Time = NEW_NUMERIC(1));                 incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(neq)));        incr_N_Protect(); 
   
@@ -276,7 +275,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
   /* attach essential internal information (codes are compatible to lsoda) */
-  /* ToDo: respect function evaluations due to global outputs              */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr);
 
   /* release R resources */
