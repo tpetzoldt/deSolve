@@ -86,10 +86,7 @@ rkMethod(method = NULL, ...)
     \item Method \code{"rk45dp7"} (alias \code{"ode45"}) contains an
       efficient built-in interpolation scheme (dense output) based on
       intermediate function evaluations. Interpolation for all other
-      methods is done with Neville-Aitken polynomials (5th order by
-      default) which needs at least 6 internal time steps. Local
-      interpolation inaccuracies can be minimized if external and
-      internal time steps are not too different.
+      methods is disabled by default (see \code{nknots} below).
   }
 }
    
@@ -130,12 +127,16 @@ rkMethod(method = NULL, ...)
     time-step adjustment.
   }
 
-  \item{nknots}{integer value specifying the order of interpolation polynomials
-    for methods without dense output (default = 5th order). If \code{nknots} < 2
-    internal interpolation is switched off and integration is performed step by step
-    between external time steps. This avoids local interpolation errors but may 
-    slow down the algorithm a little bit, depending on the specific properties of 
-    the problem.
+  \item{nknots}{integer value specifying the order of interpolation
+    polynomials for methods without dense output.  If \code{nknots} < 2
+    (the deffault) then internal interpolation is switched off and
+    integration is performed step by step between external time steps.
+
+    If \code{nknots} is between 3 and 8, Neville-Aitken polynomials
+    are used, which need at least \code{nknots + 1} internal time steps.
+    Local interpolation may speed up integration but can lead to local
+    errors higher than the tolerance, especially if external and
+    internal time steps are very different.
   }
 
   \item{alpha}{optional tuning parameter for stepsize

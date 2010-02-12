@@ -25,14 +25,17 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     ## Check interpolation order
     if (is.null(method$nknots)) {
-      method$nknots <- 5L # fifth order polynomials by default
+      ## starting from deSolve >= 1.7 
+      ## polynomial interpolation is disabled by default
+      ## methods either use dense output or stop at external time steps
+      method$nknots <- 0L 
     } else {
       method$nknots <- as.integer(ceiling(method$nknots))
     }
     nknots <- method$nknots
-    if (nknots > 8) {
+    if (nknots > 8L) {
         warning("Large number of nknots does not make sense.")
-    } else if (nknots < 2) {
+    } else if (nknots < 2L) {
       # cat("\nMethod without or with disabled interpolation\n")
       method$nknots <- 0L
     } else {
