@@ -30,10 +30,8 @@ Arenstorf <- function(t, y, parms) {
 #-----------------------------
 # parameters, initial values and times
 #-----------------------------
-mu  <- 0.012277471
-
+mu    <- 0.012277471
 yini  <- c(x = 0.994, y = 0, dx = 0, dy = -2.00158510637908252240537862224)
-
 times <- c(seq(from = 0, to = 17, by = 2), 17.0652165601579625588917206249)
 
 #-----------------------------
@@ -42,7 +40,7 @@ times <- c(seq(from = 0, to = 17, by = 2), 17.0652165601579625588917206249)
 # first for making a graph
 system.time({
 out <- ode(times = seq(0, 50, 0.1), y = yini, func = Arenstorf, parms = NULL,
-  method = rkMethod("rk78f", beta = 0.02), rtol = 1e-10, atol = 1e-10)
+  method = rkMethod("ode45"), rtol = 1e-10, atol = 1e-10)
 })
 plot(out[, c("x", "y")], type = "l", lwd = 2, main = "Arenstorf")
 
