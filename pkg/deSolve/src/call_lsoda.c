@@ -15,7 +15,7 @@
    a DLL and the integrator, in case there are forcing functions.
    
    Two integrators can locate the root of a function: lsodar and lsode 
-   (the latter by merging part of the FORTRAN codes lsodar and lsode, KS).
+   (the latter by merging part of the FORTRAN codes lsodar and lsode, by KS).
    C_root_func provides the interface between the R root function and the 
    FORTRAN code.
   

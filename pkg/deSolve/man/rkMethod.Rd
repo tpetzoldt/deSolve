@@ -129,7 +129,7 @@ rkMethod(method = NULL, ...)
 
   \item{nknots}{integer value specifying the order of interpolation
     polynomials for methods without dense output.  If \code{nknots} < 2
-    (the deffault) then internal interpolation is switched off and
+    (the default) then internal interpolation is switched off and
     integration is performed step by step between external time steps.
 
     If \code{nknots} is between 3 and 8, Neville-Aitken polynomials

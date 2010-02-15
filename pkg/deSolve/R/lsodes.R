@@ -261,7 +261,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 ### print to screen...
   if (verbose)   {
-    printtask(itask,func,jacvec)       #KS:check
+    printtask(itask,func,jacvec)      
     printM("\n--------------------")
     printM("Integration method")
     printM("--------------------\n")
@@ -296,7 +296,6 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   storage.mode(y) <- storage.mode(times) <- "double"
   IN <-3
 
-## KSKS time lags...
   lags <- checklags(lags) 
 
   out <- .Call("call_lsoda",y,times,Func,initpar,

@@ -33,8 +33,7 @@ to the integration routines */
    
    Each time-step, it is tested whether an event occurs ("updateevent")  
 
-   to do: ks -> ThPe: should the SEXPs be "protected" when calling getListElement?
-   
+ 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 int    finit = 0;
