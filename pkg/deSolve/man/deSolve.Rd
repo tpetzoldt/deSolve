@@ -32,7 +32,7 @@
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
     Version: \tab 1.7\cr
-    Date:    \tab 2010-01-01\cr
+    Date:    \tab 2010-02-16\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
@@ -109,7 +109,6 @@ example(ode.2D)
 example(dede)
 
 ## run demos
-demo("rk_solvers") # comparison of lsoda with Runge-Kutta-Type Solvers
 demo("odedim")     # partial differential equations
 demo("CCL4model")  # a model fitting example (this will take some time)
 
