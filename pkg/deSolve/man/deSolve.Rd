@@ -53,7 +53,11 @@
   R. Woodrow Setzer (Maintainer)
 }
 \references{
-%% to be filled out later
+Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer (2010).
+  Solving Differential Equations in R: Package deSolve
+  Journal of Statistical Software, 33(9), 1--29.
+  \url{http://www.jstatsoft.org/v33/i09/}
+
 Alan C. Hindmarsh, 1983. ODEPACK, A Systematized Collection of ODE Solvers, in
 Scientific Computing, R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam,
 pp. 55-64.

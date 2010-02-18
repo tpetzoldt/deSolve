@@ -55,7 +55,7 @@ initial value problems, R}
 \Plainauthor{Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer}
 
 \Abstract{
-  \R package \ds \citep{deSolve}, the successor of \proglang{R}
+  \R package \ds \citep{deSolve_jss},\citep{deSolve} the successor of \proglang{R}
   package \pkg{odesolve} is a package to solve initial value problems (IVP) of:
 
   \begin{itemize}
@@ -305,7 +305,7 @@ functions.  Moreover, for each integration routine, several options
 are available to optimise performance.
 
 Thus it should be possible to find, for one particular problem, the
-most efficient solver.  See \citep{deSolve} for more information about
+most efficient solver.  See \citep{deSolve_jss} for more information about
 when to use which solver in \pkg{deSolve}. For most cases, the default
 solver, \code{ode} and using the default settings will do.  Table 1
 gives a short overview of the available methods.

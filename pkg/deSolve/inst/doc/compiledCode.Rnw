@@ -47,7 +47,7 @@ performance, FORTRAN, C}
 \Plainauthor{Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer}
 
 \Abstract{This document describes how to use the \pkg{deSolve} package
-\citep{deSolve} to solve models that are written in \proglang{FORTRAN} or
+\citep{deSolve_jss}  to solve models that are written in \proglang{FORTRAN} or
 \proglang{C}.}
 
 %% The address of (at least) one author should be given
