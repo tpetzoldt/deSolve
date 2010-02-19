@@ -91,7 +91,7 @@ options(width=70)
 
 \section{Introduction}
 
-\pkg{deSolve} \citep{deSolve}, the successor of \proglang{R} package
+\pkg{deSolve} \citep{deSolve,deSolve_jss}, the successor of \proglang{R} package
 \pkg{odesolve} \citep{Setzer01} is a package to solve ordinary
 differential equations (ODE), differential algebraic equations (DAE)
 and partial differential equations (PDE).

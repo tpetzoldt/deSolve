@@ -55,7 +55,7 @@ initial value problems, R}
 \Plainauthor{Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer}
 
 \Abstract{
-  \R package \ds \citep{deSolve_jss},\citep{deSolve} the successor of \proglang{R}
+  \R package \ds \citep{deSolve_jss,deSolve} the successor of \proglang{R}
   package \pkg{odesolve} is a package to solve initial value problems (IVP) of:
 
   \begin{itemize}
