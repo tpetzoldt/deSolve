@@ -5,7 +5,7 @@
 /* Parts inspired by Press et al., 2002, 2007;                              */
 /*   see vignette for full references                                       */
 /*==========================================================================*/
-
+/* Karline: added rejected steps                                            */
 #include "rk_util.h"
 
 void rk_auto(
@@ -14,10 +14,10 @@ void rk_auto(
        int isDll, int isForcing, int verbose,
        int nknots, int interpolate, int maxsteps, int nt,
        /* int pointers */
-       int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
-       int* istate,  int* ipar,
+       int* _iknots, int* _it, int* _it_ext, int* _it_tot, int* _it_rej,
+       int* istate,  int* ipar, int dm,
        /* double */
-        double t, double tmax, double hmin, double hmax, 
+       double t, double tmax, double hmin, double hmax, 
        double alpha, double beta,
        /* double pointers */
        double* _dt, double* _errold,
@@ -29,9 +29,10 @@ void rk_auto(
        double* atol, double* rtol, double* yknots, double* yout,
        /* SEXPs */
        SEXP Func, SEXP Parms, SEXP Rho
-  ) {
+  ) 
+{
 
-  int i = 0, j = 0, j1 = 0, k = 0, accept = FALSE, one = 1;
+  int i = 0, j = 0, j1 = 0, k = 0, accept = FALSE, nreject = *_it_rej, one = 1; 
   int iknots = *_iknots, it = *_it, it_ext = *_it_ext, it_tot = *_it_tot;
   double err, dtnew, t_ext;
   double dt = *_dt, errold = *_errold;
@@ -45,6 +46,7 @@ void rk_auto(
   do { 
     /******  save former results of last step if the method allows this
             (first same as last)                                       ******/
+    /* Karline: improve by saving "accepted" FF, use this when rejected */
     if (fsal && accept){
       j1 = 1;
       for (i = 0; i < neq; i++) FF[i] = FF[i + neq * (stage - 1)];
@@ -101,6 +103,7 @@ void rk_auto(
       errold = fmax(err, 1e-4); /* 1e-4 taken from Press et al. */
       accept = TRUE;
     } else if (err > 1.0) {
+      nreject++;    /* count total number of rejected steps */
       accept = FALSE;
       dtnew = dt * fmax(safe * pow(err, -alpha), minscale);
     }
@@ -133,11 +136,34 @@ void rk_auto(
           }
           if(it_ext < nt) t_ext = tt[++it_ext]; else break;
         }
+
+        /*--------------------------------------------------------------------*/
+        /* case A2) Special dense output: the Cash-Karp method                */
+        /*--------------------------------------------------------------------*/
+      } else if (dm == 1)  {   /* dense method 1 = Cash-Karp */
+        derivs(Func, t + dt, y2, Parms, Rho, dy2, out, 0, neq, 
+               ipar, isDll, isForcing);
+        
+        t_ext = tt[it_ext];
+
+        while (t_ext <= t + dt) {
+          densoutck(t, t_ext, dt, y0, FF, dy2, tmp, neq);
+          /* store outputs */
+          if (it_ext < nt) {
+            yout[it_ext] = t_ext;
+            for (i = 0; i < neq; i++)
+              yout[it_ext + nt * (1 + i)] = tmp[i];
+          }
+          if(it_ext < nt) t_ext = tt[++it_ext]; else break;
+       }
+       /* fsal trick... */
+       for (i = 0; i < neq; i++) FF[i + neq * (stage - 1)] = dy2[i] ;
+
         /*--------------------------------------------------------------------*/
         /* case B) "Neville-Aitken-Interpolation" for integrators             */
         /* without dense output                                               */
         /*--------------------------------------------------------------------*/
-        } else {
+      } else {
           /* (1) collect number "nknots" of knots in advance */
           yknots[iknots] = t + dt;   /* time is first column */
           for (i = 0; i < neq; i++) yknots[iknots + nknots * (1 + i)] = y2[i];
@@ -185,6 +211,6 @@ void rk_auto(
   } while (t < tmax); /* end of rk main loop */
   
   /* return reference values */
-  *_iknots = iknots; *_it = it; *_it_ext = it_ext; 
+  *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_rej = nreject;
   *_it_tot = it_tot; *_dt = dtnew; *_errold = errold;
 }

@@ -44,6 +44,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       ## for methods without built-in dense output
 
       if ((is.null(method$d) &                             # has no "dense output"?
+           is.null(method$td)&                             # td: dense output type KS->ThPe
         (hmax > 1.0/(nknots + 2.5) * trange))) {           # time steps too large?
         hini <- hmax <- 1.0/(nknots + 2.5) * trange
         if (hmin < hini) hmin <- hini
@@ -128,7 +129,9 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     varstep <- method$varstep
     vrb <- FALSE # TRUE would force internal debugging output of the C code
 
-    if (varstep) {  # methods with variable step size
+    if (varstep) {  # methods with variable step size  
+      ## ks->thPe: to avoid error
+      if (!is.null(method$td)) method$td <- as.integer(method$td) 
       if (is.null(hini)) hini <- hmax
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func, Initfunc, parms, Eventfunc, events,
@@ -151,7 +154,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     ## saving results
     out <- saveOutrk(out, y, n, Nglobal, Nmtot,
-                     iin = c(1,12,13,15), iout = c(1:3, 18))
+                     iin = c(1,12:15), iout = c(1:3,13, 18))
 
     attr(out, "type") <- "rk"
     if (verbose) diagnostics(out)

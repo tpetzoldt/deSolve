@@ -7,9 +7,38 @@ Karline: delay differential equations in compiled code +
 
 Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
-Karline+Thomas: dense output for cash-karp / add dopri 8(5,3 )?
+Karline+Thomas:  add dopri 8(5,3 ) - fortran??
 
 NaN warnings and termination of R 
 =================================
 ToDo: - KS does not see how this can be resolved
 
+
+
+Changes version 1.8 Karline:
+
+Runge-kuttas: 
+1. extra output: number of failed steps (see also 2)
+
+2. number of function evaluations + 1 for initial condition, 
+  and account for failed steps if dense output (1st step always "rejected").
+  Note: by keeping a copy of the last accepted step, a new ftion evaluation
+  may not be necessary in case the step was rejected
+  -> but take into account first step (it=1): where accept is always FALSE, 
+  yet a copy does not exist.
+
+    if (fsal && accept){
+      j1 = 1;
+      for (i = 0; i < neq; i++) FF[i] = FF[i + neq * (stage - 1)];
+      for (i = 0; i < neq; i++) Fcopy[i] = FF[i];
+
+    else if (fsal && it >1 ){
+      j1 = 0;
+      for (i = 0; i < neq; i++) FF[i] = Fcopy[i];
+    } else {
+      j1 = 0;
+    }
+
+3. dense output for cash-karp
+
+4. dopri8(7) added 

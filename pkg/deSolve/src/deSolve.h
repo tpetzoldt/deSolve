@@ -40,6 +40,9 @@ int iEvent, nEvent, typeevent, rootevent;
 double *timeevent, *valueevent;
 int *svarevent, *methodevent;
 
+/* time delays */
+int interpolMethod;  /* for time-delays : 1 = hermite; 2=dense */
+
 /*============================================================================
  type definitions for C functions
 ============================================================================*/
@@ -71,6 +74,8 @@ extern SEXP R_psol_func;
 
 extern SEXP de_gparms;
 SEXP getListElement(SEXP list, const char* str);
+
+SEXP getTimestep();
 
 /*============================================================================ 
   C- utilities, functions 
@@ -126,21 +131,24 @@ double Hermite (double t0, double t1, double y0, double y1, double dy0,
 double dHermite(double t0, double t1, double y0, double y1, double dy0,
                 double dy1, double t);
 
-int initLags(SEXP elag);
+int initLags(SEXP elag, int solver, int nroot);
 
 /* history vectors  */
-void inithist(int max, int maxlags);
+void inithist(int max, int maxlags, int solver, int nroot);
 
+void updatehistini(double t, double *y, double *dY);
 void updatehist(double t, double *y, double *dy);
 
 int nexthist(int i);
+double interpolate(int i, int k, double t0, double t1, double t, 
+  double *Yh, int nq); 
 
 /*==========================================
   Global variables
 ==========================================*/
 
 int indexhist, indexlag, endreached, starthist;
-double *histvar, *histdvar, *histtime;
-int    *lagindex;
-int    histsize;
-int    initialisehist;
+double *histvar, *histdvar, *histtime, *histhh;
+int    *histord;
+int    histsize, offset;
+int    initialisehist, lyh, lhh, lo;

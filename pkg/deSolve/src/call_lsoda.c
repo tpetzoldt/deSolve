@@ -243,8 +243,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   mflag = INTEGER(verbose)[0];
  
   nroot  = INTEGER(nRoot)[0];   /* number of roots (lsodar, lsode) */
-  solver = INTEGER(Solver)[0];  /* 1=lsoda,2=lsode,3=lsodeS,4=lsodar,5=vode,6=lsoder */
-
+  solver = INTEGER(Solver)[0];  /* 1=lsoda,2=lsode,3=lsodeS,4=lsodar,5=vode,
+                                  6=lsoder */
   
   /* is function a dll ?*/
   if (inherits(derivfunc, "NativeSymbol")) {
@@ -252,7 +252,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   } else {
    isDll = 0;
   }
-
 
   /* initialise output ... */
   initOutC(isDll, n_eq, nOut, Rpar, Ipar);
@@ -297,7 +296,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc);
-  islag = initLags(elag);
+  islag = initLags(elag, solver, nroot);
   
 /* pointers to functions deriv_func, jac_func, jac_vec, root_func, passed to FORTRAN */
   if (nout > 0 || islag == 1) {
@@ -305,8 +304,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
      for (j = 0; j < n_eq; j++) dy[j] = 0.; 
   }
 
-  if (isDll) 
-    { /* DLL address passed to FORTRAN */
+  if (isDll) {
+     /* DLL address passed to FORTRAN */
       deriv_func = (C_deriv_func_type *) R_ExternalPtrAddr(derivfunc);  
       /* no need to communicate with R - but output variables set here */
 	  
@@ -315,35 +314,29 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
         DLL_deriv_func = deriv_func;
         deriv_func = (C_deriv_func_type *) C_deriv_func_forc;
       }
-    } else {
+  } else {
       /* interface function between FORTRAN and C/R passed to FORTRAN */
       deriv_func = (C_deriv_func_type *) C_deriv_func; 
       /* needed to communicate with R */
       R_deriv_func = derivfunc;
       R_envir = rho;
-    }
+  }
 
-  if (!isNull(jacfunc) && solver !=3)  /* lsodes uses jac_vec */
-    {
-      if (isDll)
-	    {
-	     jac_func = (C_jac_func_type *) R_ExternalPtrAddr(jacfunc);
-	    } else  {
-	     R_jac_func = jacfunc;
-	     jac_func = C_jac_func;
-	    }
-    }
-
-  if (!isNull(jacfunc) && solver ==3)   /*lsodes*/
-    {
-      if (isDll)
-	    {
-	     jac_vec = (C_jac_vec_type *) R_ExternalPtrAddr(jacfunc);
-	    } else  {
+  if (!isNull(jacfunc) && solver !=3) { /* lsodes uses jac_vec */
+    if (isDll)
+      jac_func = (C_jac_func_type *) R_ExternalPtrAddr(jacfunc);
+	  else  {
+	    R_jac_func = jacfunc;
+	    jac_func = C_jac_func;
+	  }
+  }  else if (!isNull(jacfunc) && solver ==3) {  /*lsodes*/
+    if (isDll)
+      jac_vec = (C_jac_vec_type *) R_ExternalPtrAddr(jacfunc);
+	  else  {
 	     R_jac_vec = jacfunc;
 	     jac_vec = C_jac_vec;
-	    }
-    }
+	  }
+  }
 
   if ((solver == 4 || solver == 6) && nroot > 0)        /* lsodar, lsoder */
   { jroot = (int *) R_alloc(nroot, sizeof(int));
@@ -381,13 +374,12 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if (ss >0 || is > 0) iopt = 1; /* non-standard input */
 
 /*                      #### initial time step ####                           */    
-
   tin = REAL(times)[0];
   REAL(YOUT)[0] = tin;
   for (j = 0; j < n_eq; j++) REAL(YOUT)[j+1] = REAL(y)[j];
   if (islag == 1) {
     C_deriv_func (&n_eq, &tin, xytmp, dy, out, ipar);
-    updatehist(tin, xytmp, dy);
+    updatehistini(tin, xytmp, dy);
   }
   if (nout>0)   {
     tin = REAL(times)[0];
@@ -407,10 +399,12 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       updateevent(&tin, xytmp, &istate);
     }
     repcount = 0;
-    do
-	{  /* error control */
-	    if (islag)       rwork[0] = tout;
- 	    if (istate == -2) {
+    do 	{
+      if (islag)       
+        rwork[0] = tout;
+ 	   
+      /* error control */
+	    if (istate == -2) {
 	      for (j = 0; j < lrtol; j++) Rtol[j] *= 10.0;
 	      for (j = 0; j < latol; j++) Atol[j] *= 10.0;
 	      warning("Excessive precision requested.  `rtol' and `atol' have been scaled upwards by the factor %g\n",10.0);

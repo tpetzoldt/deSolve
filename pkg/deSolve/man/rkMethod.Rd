@@ -216,7 +216,7 @@ o0 <- ode(x, times, func, parms, method = "lsoda")
 o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"))
 ## disable dense-output interpolation
 ## and fall back to Neville-Aitken polynomials
-o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL))
+o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL, nknots=5))
 
 ## show differences between methods
 par(mfrow=c(3,1))
@@ -244,6 +244,13 @@ ode(x, times, func, parms,
     Qerr    = 1
   )
 )
+
+## compare method diagnostics
+times  <- seq(0, 200, length = 10)
+o1 <- ode(x, times, func, parms, method = rkMethod("rk45ck"))
+o1b <- ode(x, times, func, parms, method = rkMethod("rk78dp"))
+diagnostics(o1)
+diagnostics(o1b)
 
 }
 

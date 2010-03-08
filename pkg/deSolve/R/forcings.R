@@ -247,7 +247,6 @@ checkevents <- function (events, times, vars, dllname, root=FALSE) {
 ### Check timelags data set 
 ### ============================================================================
 
-
 checklags <- function (lags) {
   if (!is.null(lags)) {
     lags$islag = as.integer(1)
@@ -256,6 +255,9 @@ checklags <- function (lags) {
     if (lags$mxhist <1)
       lags$mxhist <- 1e4 
     lags$mxhist<-as.integer(lags$mxhist)   
+    if (is.null(lags$interpol))   # 1= hermitian, 2 = higher order interpolation
+       lags$interpol <- 1
+    lags$interpol<-as.integer(lags$interpol)   
   } else 
     lags$islag=as.integer(0)
   return(lags)

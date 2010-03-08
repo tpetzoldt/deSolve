@@ -152,7 +152,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*
     attach essential internal information (codes are compatible to lsoda)
   */
-  setIstate(R_yout, R_istate, istate, it, 1, 0, 1);
+  setIstate(R_yout, R_istate, istate, it, 1, 0, 1, 0);
 
   /* release R resources */
   unprotect_all();

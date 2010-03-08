@@ -1,3 +1,13 @@
+
+timestep <- function (prev=TRUE) {
+  out <- .Call("getTimestep", PACKAGE = "deSolve")
+  if (prev) 
+    return(out[1])
+  else
+    return(out[2])
+}
+
+
 ## ========================================================================
 ## Check solver input - livermore solvers and rk
 ## ========================================================================

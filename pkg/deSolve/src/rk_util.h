@@ -2,7 +2,7 @@
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
 /* Definitions and Utilities needed by Runge-Kutta Solvers                  */
 /*==========================================================================*/
-
+/* Karline: added rejected steps */
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
@@ -49,12 +49,15 @@ void denspar(double *FF, double *y0, double *y1, double dt, double *d,
 
 void densout(double *r, double t0, double t, double dt, double* res, int neq);
 
+void densoutck(double t0, double t, double dt, double * y0,   
+  double* FF, double* dy, double* res, int neq);
+
 void neville(double *xx, double *y, double tnew, double *ynew, int n, int ksig);
 
 void shiftBuffer (double *x, int n, int k);
 
 void setIstate(SEXP R_yout, SEXP R_istate, int *istate,
-  int it_tot, int stage, int fsal, int qerr);
+  int it_tot, int stage, int fsal, int qerr, int nrej);
   
 /*==========================================================================*/
 /* core functions (main loop) for solvers with variable / fixed step size   */
@@ -66,8 +69,8 @@ void rk_auto(
   int isDll, int isForcing, int verbose,
   int nknots, int interpolate, int maxsteps, int nt,
   /* int pointers */
-  int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
-  int* istate,  int* ipar,
+  int* _iknots, int* _it, int* _it_ext, int* _it_tot, int *_it_rej,
+  int* istate,  int* ipar, int dm, 
   /* double */
   double t, double tmax, double hmin, double hmax, 
   double alpha, double beta,
@@ -90,7 +93,7 @@ void rk_fixed(
   int isDll, int isForcing, int verbose,
   int nknots, int interpolate, int maxsteps, int nt,
   /* int pointers */
-  int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
+  int* _iknots, int* _it, int* _it_ext, int* _it_tot,  
   int* istate,  int* ipar,
   /* double */
   double t, double tmax, double hini,
