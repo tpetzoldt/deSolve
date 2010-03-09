@@ -12,10 +12,10 @@ void rk_auto(
        /* integers */
        int fsal, int neq, int stage,
        int isDll, int isForcing, int verbose,
-       int nknots, int interpolate, int maxsteps, int nt,
+       int nknots, int interpolate, int densetype, int maxsteps, int nt,
        /* int pointers */
        int* _iknots, int* _it, int* _it_ext, int* _it_tot, int* _it_rej,
-       int* istate,  int* ipar, int dm,
+       int* istate,  int* ipar,
        /* double */
        double t, double tmax, double hmin, double hmax, 
        double alpha, double beta,
@@ -120,10 +120,10 @@ void rk_auto(
     if (accept) {
       if (interpolate) {
       /*--------------------------------------------------------------------*/
-      /* case A) "Dense Output": built-in polynomial interpolation          */
+      /* case A1) "dense output type 1": built-in polynomial interpolation          */
       /* available for certain rk formulae, e.g. for rk45dp7                */
       /*--------------------------------------------------------------------*/
-      if (dd) { /* i.e. if dd is not Zero */
+      if (densetype == 1) {
         denspar(FF, y0, y2, dt, dd, neq, stage, rr);
         t_ext = tt[it_ext];
         while (t_ext <= t + dt) {
@@ -138,9 +138,9 @@ void rk_auto(
         }
 
         /*--------------------------------------------------------------------*/
-        /* case A2) Special dense output: the Cash-Karp method                */
+        /* case A2) dense output type 2: the Cash-Karp method                */
         /*--------------------------------------------------------------------*/
-      } else if (dm == 1)  {   /* dense method 1 = Cash-Karp */
+      } else if (densetype == 2)  {   /* dense output method 2 = Cash-Karp */
         derivs(Func, t + dt, y2, Parms, Rho, dy2, out, 0, neq, 
                ipar, isDll, isForcing);
         
@@ -156,7 +156,7 @@ void rk_auto(
           }
           if(it_ext < nt) t_ext = tt[++it_ext]; else break;
        }
-       /* fsal trick... */
+       /* fsal trick for Cash-Karp */
        for (i = 0; i < neq; i++) FF[i + neq * (stage - 1)] = dy2[i] ;
 
         /*--------------------------------------------------------------------*/

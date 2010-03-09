@@ -22,6 +22,14 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (is.character(method)) method <- rkMethod(method)
     if (is.null(tcrit)) tcrit <- max(times)
 
+    ## make this an integer to avoid error
+    if (!is.null(method$densetype)) method$densetype <- as.integer(method$densetype)
+
+    if (!(method$densetype %in% c(1, 2))) {
+        warning("Unknown value of densetype; set to NULL")
+        method$densetype <- NULL
+    }
+
     ## Check interpolation order
     if (is.null(method$nknots)) {
       ## starting from deSolve >= 1.7
@@ -43,8 +51,11 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       ## to allow 3rd order polynomial interpolation
       ## for methods without built-in dense output
 
+      ## ThPe: ToDo: use only densetype for this check
+      ##       announce this!!! because it is incompatible
+      ##       with former versions and the help files
       if ((is.null(method$d) &                             # has no "dense output"?
-           is.null(method$td)&                             # td: dense output type KS->ThPe
+           is.null(method$densetype) &                     # densetype: dense output type
         (hmax > 1.0/(nknots + 2.5) * trange))) {           # time steps too large?
         hini <- hmax <- 1.0/(nknots + 2.5) * trange
         if (hmin < hini) hmin <- hini
@@ -129,9 +140,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     varstep <- method$varstep
     vrb <- FALSE # TRUE would force internal debugging output of the C code
 
-    if (varstep) {  # methods with variable step size  
-      ## ks->thPe: to avoid error
-      if (!is.null(method$td)) method$td <- as.integer(method$td) 
+    if (varstep) {  # methods with variable step size
       if (is.null(hini)) hini <- hmax
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func, Initfunc, parms, Eventfunc, events,

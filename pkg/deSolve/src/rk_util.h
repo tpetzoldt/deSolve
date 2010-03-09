@@ -67,10 +67,10 @@ void rk_auto(
   /* integers */
   int fsal, int neq, int stage,
   int isDll, int isForcing, int verbose,
-  int nknots, int interpolate, int maxsteps, int nt,
+  int nknots, int interpolate, int densetype, int maxsteps, int nt,
   /* int pointers */
   int* _iknots, int* _it, int* _it_ext, int* _it_tot, int *_it_rej,
-  int* istate,  int* ipar, int dm, 
+  int* istate,  int* ipar,
   /* double */
   double t, double tmax, double hmin, double hmax, 
   double alpha, double beta,

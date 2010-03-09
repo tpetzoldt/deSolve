@@ -2,7 +2,7 @@
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
 /* General RK Solver for methods with fixed step size                       */
 /*==========================================================================*/
-/* karline: changed call to setIstate */
+
 #include "rk_util.h"
 
 SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,

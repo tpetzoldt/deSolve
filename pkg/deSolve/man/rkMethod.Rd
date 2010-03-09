@@ -48,13 +48,24 @@ rkMethod(method = NULL, ...)
                        \tab | \tab (also known as \bold{dopri5}, MATLAB:
 		         \bold{ode45}, Octave: \bold{ode45, pair=0})\cr
     "rk78f"            \tab | \tab Runge-Kutta-Fehlberg, order 7(8)\cr		       
+    "rk78dp"           \tab | \tab Dormand-Prince, order 7(8)\cr
   }
   
   Note that this table is based on the Runge-Kutta coefficients only,
   but the algorithms differ also in their implementation, in their
-  stepsize adaption strategy and interpolation methods. The table
-  reflects the state at time of writing and it is of course possible
+  stepsize adaption strategy and interpolation methods. 
+
+  The table reflects the state at time of writing and it is of course possible
   that implementations change.
+  
+  Methods \code{"rk45dp7"} (alias \code{"ode45"}) and \code{"rk45ck"} contain
+  specific and efficient built-in interpolation schemes (dense output).
+
+  As an alternative, Neville-Aitken polynomials can be used to interpolate between
+  time steps. This is available for all methods and may be useful to speed
+  up computation if no dense-output formula is available. Note however, that 
+  this can introduce considerable local error; it is disabled by default 
+  (see \code{nknots} below).
 }
 
 \note{  
@@ -85,8 +96,7 @@ rkMethod(method = NULL, ...)
   
     \item Method \code{"rk45dp7"} (alias \code{"ode45"}) contains an
       efficient built-in interpolation scheme (dense output) based on
-      intermediate function evaluations. Interpolation for all other
-      methods is disabled by default (see \code{nknots} below).
+      intermediate function evaluations.
   }
 }
    
@@ -214,8 +224,9 @@ ode(x, times, func, parms, method = "ode45")
 
 o0 <- ode(x, times, func, parms, method = "lsoda")
 o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"))
+
 ## disable dense-output interpolation
-## and fall back to Neville-Aitken polynomials
+## and use Neville-Aitken polynomials only
 o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL, nknots=5))
 
 ## show differences between methods
@@ -228,7 +239,7 @@ matplot(o1[,1], o2[,-1]-o1[,-1], type="l", lty="dashed", xlab="Time",
   main="difference: Neville-Aitken - Dense Output")
 abline(h=0, col="grey")
 
-## disable interpolation 
+## disable interpolation completely
 ## and integrate explicitly between external time steps
 o3 <- ode(x, times, func, parms, 
   method = rkMethod("rk45dp7", d = NULL, nknots = 0))
