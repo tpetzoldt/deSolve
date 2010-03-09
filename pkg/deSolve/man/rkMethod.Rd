@@ -130,6 +130,12 @@ rkMethod(method = NULL, ...)
     available for method \code{rk45dp7} (Dormand-Prince).
   }
   
+  \item{densetype}{optional integer value specifying the dense output formula;
+    currently \code{densetype = 1} for \code{rk45dp7} (Dormand-Prince)
+    and \code{densetype = 2} for \code{rk45ck} (Cash-Karp). Undefined values
+    (e.g., \code{densetype = NULL}) disable dense output.
+  }
+  
   \item{stage}{number of function evaluations needed (corresponds to
     number of rows in A).
   }
@@ -227,7 +233,8 @@ o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"))
 
 ## disable dense-output interpolation
 ## and use Neville-Aitken polynomials only
-o2 <- ode(x, times, func, parms, method = rkMethod("rk45dp7", d = NULL, nknots=5))
+o2 <- ode(x, times, func, parms, 
+  method = rkMethod("rk45dp7", densetype = NULL, nknots=5))
 
 ## show differences between methods
 par(mfrow=c(3,1))
@@ -242,7 +249,7 @@ abline(h=0, col="grey")
 ## disable interpolation completely
 ## and integrate explicitly between external time steps
 o3 <- ode(x, times, func, parms, 
-  method = rkMethod("rk45dp7", d = NULL, nknots = 0))
+  method = rkMethod("rk45dp7", densetype = NULL, nknots = 0))
 
 ## define and use a new rk method
 ode(x, times, func, parms, 

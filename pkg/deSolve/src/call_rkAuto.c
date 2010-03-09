@@ -163,7 +163,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
 
   if (nknots < 2) {nknots = 1; interpolate = FALSE;}
-  if (dd || densetype > 0) interpolate = TRUE;
+  //if (dd || densetype > 0) interpolate = TRUE;
+  if (densetype > 0) interpolate = TRUE;
   
   yknots = (double*) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 

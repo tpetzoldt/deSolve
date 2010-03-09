@@ -284,8 +284,8 @@ rkMethod <- function(method = NULL, ...) {
     if (!is.null(out$b2))
       if (sl$b2 != stage)
         stop("Wrong rkMethod, length of b2 must be empty or equal to stage")
-    if (!is.null(out$d))
-      if (sl$d != stage)
+    if (!is.null(out[["d"]])) # exact argument matching!
+      if (sl[["d"]] != stage)
         stop("Wrong rkMethod, length of d must be empty or equal to stage")
     class(out) <- c("list", "rkMethod")
   }

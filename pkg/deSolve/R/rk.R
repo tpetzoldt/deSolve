@@ -22,12 +22,15 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (is.character(method)) method <- rkMethod(method)
     if (is.null(tcrit)) tcrit <- max(times)
 
-    ## make this an integer to avoid error
-    if (!is.null(method$densetype)) method$densetype <- as.integer(method$densetype)
-
-    if (!(method$densetype %in% c(1, 2))) {
+    ## ToDo: check for nonsense-combinations of densetype and d
+    
+    if (!is.null(method$densetype)) {
+      ## make this an integer to avoid errors on the C level
+      method$densetype <- as.integer(method$densetype)
+      if (!(method$densetype %in% c(1L, 2L))) {
         warning("Unknown value of densetype; set to NULL")
         method$densetype <- NULL
+      }
     }
 
     ## Check interpolation order
