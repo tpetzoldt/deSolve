@@ -70,7 +70,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_D = getListElement(Method, "d")); incr_N_Protect();
   if (length(R_D)) dd = REAL(R_D);
 
-/* dense output Cash-Karp: densetype = 1 */
+  /* dense output Cash-Karp: densetype = 2 */
   int densetype = 0;
   PROTECT(R_densetype = getListElement(Method, "densetype")); incr_N_Protect();
   if (length(R_densetype)) densetype = INTEGER(R_densetype)[0];
@@ -95,6 +95,14 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(Xstart = AS_NUMERIC(Xstart)); incr_N_Protect();
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
+  /*------------------------------------------------------------------------*/
+  /* rwork (for compatibility with lsoda)                                   */
+  /* !!! testing code !!!                                                   */
+  /*------------------------------------------------------------------------*/
+
+  // 11 should be enough, but lsodx use 20 as minimum; created in R
+  rwork = (double *)R_alloc(20, sizeof(double)); 
+  for (i = 0; i < 20; i++) rwork[i] = 0;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -288,6 +296,10 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr, it_rej);
   /* KS -> ThPe for Cash-Karp, different...*/
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
+  
+  // experimental
+  // invalidate work array 'rwork'
+  rwork = NULL;
 
   /* release R resources */
   if (verbose) 

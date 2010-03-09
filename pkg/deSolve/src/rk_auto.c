@@ -43,7 +43,13 @@ void rk_auto(
   /*------------------------------------------------------------------------*/
   /* Main Loop                                                              */
   /*------------------------------------------------------------------------*/
-  do { 
+  do {
+    // ThPe -> KS: how should actual resp. former time step be handled
+    // - in the first call
+    // - for rejected steps?
+    rwork[10] = rwork[11];     // experimental, check this
+    rwork[11] = dt;            // experimental, check this 
+
     /******  save former results of last step if the method allows this
             (first same as last)                                       ******/
     /* Karline: improve by saving "accepted" FF, use this when rejected */
@@ -209,7 +215,7 @@ void rk_auto(
       break;
     }
   } while (t < tmax); /* end of rk main loop */
-  
+
   /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_rej = nreject;
   *_it_tot = it_tot; *_dt = dtnew; *_errold = errold;

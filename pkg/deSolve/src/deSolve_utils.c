@@ -94,18 +94,17 @@ SEXP get_deSolve_gparms(void) {
 /*=========================================================================== 
   C-equivalent of R-function timestep: gets the past and new time step
   =========================================================================== */
-SEXP getTimestep()
-{
-	SEXP value;
-  PROTECT(value=NEW_NUMERIC(2));
-  if (rwork ==NULL ) {
+SEXP getTimestep() {
+  SEXP value;
+  PROTECT(value = NEW_NUMERIC(2));
+  if (rwork == NULL) {
     for (int i = 0; i < 2; i++) 
       NUMERIC_POINTER(value)[i] = 1.;
   } else
     for (int i = 0; i < 2; i++) 
-      NUMERIC_POINTER(value)[i] = rwork[i+10];
-	UNPROTECT(1);
-	return(value);
+      NUMERIC_POINTER(value)[i] = rwork[i +  10];
+  UNPROTECT(1);
+  return(value);
 }
   
 /*============================ ======================
