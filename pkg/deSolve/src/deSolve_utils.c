@@ -19,6 +19,10 @@ void incr_N_Protect(void) { N_Protected++; }
 
 void unprotect_all(void) { UNPROTECT((int) N_Protected); }
 
+long int get_N_Protected(void) {return N_Protected; }
+
+void set_N_Protected(long int n) {N_Protected = n; }
+
 void my_unprotect(int n) {
     UNPROTECT(n);
     N_Protected -= n;

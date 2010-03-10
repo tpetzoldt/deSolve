@@ -3,7 +3,7 @@
 /* General RK Solver for methods with adaptive step size                    */
 /*==========================================================================*/
 /* Karline: call to rk_auto, setIstate: + number of rejected steps it_rej  
-   dense output Cash-Karp : R_TD, td=1 : dense output method 1...           */
+   dense output Cash-Karp : R_TD, densetype=2 : dense output method 2...           */
 #include "rk_util.h"
 
 SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
@@ -13,7 +13,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP Method, SEXP Maxsteps, SEXP Flist) {
 
   /**  Initialization **/
+  // experimental
+  long int old_N_Protect = get_N_Protected();
+  // end experimental
   init_N_Protect();
+
 
   double *tt = NULL, *xs = NULL;
 
@@ -101,8 +105,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
 
   // 11 should be enough, but lsodx use 20 as minimum; created in R
-  rwork = (double *)R_alloc(20, sizeof(double)); 
-  for (i = 0; i < 20; i++) rwork[i] = 0;
+  //rwork = (double *)R_alloc(20, sizeof(double)); 
+  //for (i = 0; i < 20; i++) rwork[i] = 0;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -306,5 +310,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d it_rej %d\n", 
       it, it_ext, it_tot, it_rej);
   unprotect_all();
+  //experimental
+  set_N_Protected(old_N_Protect);
+  // end experimental
   return(R_yout);
 }
