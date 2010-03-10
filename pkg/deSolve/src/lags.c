@@ -166,21 +166,21 @@ int nexthist(int i) {
   =========================================================================== */
 
 /* first time: just store y, dy and t */
-void updatehistini(double t, double *y, double *dY){
+void updatehistini(double t, double *y, double *dY, double *rwork, int *iwork){
   int intpol;
 
   intpol = interpolMethod;
   interpolMethod = 1; 
-  updatehist(t,y,dY);
+  updatehist(t,y,dY, rwork, iwork);
   interpolMethod = intpol; 
   if (interpolMethod ==2){ 
     histord[0] = 0;
-    histhh[0] = rwork[10];    
+    histhh[0] = timesteps[0];    
   }  
 }
 
 
-void updatehist(double t, double *y, double *dY) {
+void updatehist(double t, double *y, double *dY, double *rwork, int *iwork) {
   int j, ii;
 
   indexhist = nexthist(indexhist);

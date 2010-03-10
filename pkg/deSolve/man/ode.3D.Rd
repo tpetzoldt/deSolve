@@ -9,7 +9,7 @@
   that have been converted to ODEs by numerical differencing.
 }
 
-\usage{ode.3D(y, times, func, parms, nspec = NULL, dimens,
+\usage{ode.3D(y, times, func, parms, nspec = NULL, dimens, names = NULL,
    ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -43,6 +43,8 @@
   \item{nspec }{the number of \bold{species} (components) in the model.}
   \item{dimens}{3-valued vector with the number of \bold{boxes} in three
     dimensions in the model. 
+  }
+  \item{names }{the names of the components; used for plotting.
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }

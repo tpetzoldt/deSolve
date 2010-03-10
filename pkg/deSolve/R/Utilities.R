@@ -163,7 +163,7 @@ plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 
 
 ### ============================================================================
- select1dvar <- function (which,var) {
+select1dvar <- function (which,var) {
 
     if (!is.numeric(which)) {
         ln <- length(which)

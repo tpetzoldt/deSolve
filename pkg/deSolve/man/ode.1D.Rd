@@ -7,7 +7,7 @@
   that have been converted to ODEs by numerical differencing.
 }
 \usage{ode.1D(y, times, func, parms, nspec = NULL, dimens = NULL, 
-       method = "lsode", ...)
+       method = "lsode", names = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -48,6 +48,8 @@
   }
   \item{method }{the integrator to use, one of \code{"vode"},
     \code{"lsode"}, \code{"lsoda"}, \code{"lsodar"}, \code{"lsodes"}.
+  }
+  \item{names }{the names of the components; used for plotting.
   }
   \item{... }{additional arguments passed to the integrator.}
 }
@@ -148,13 +150,15 @@ times  <- seq(0, 200, by = 1)   # output wanted at these time intervals
 ## 1. Default: banded reformulation
 print(system.time(
   out    <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
-                   nspec = 2, N = N, rr = r, ri = ri, dr = dr, dri = dri)
+                   nspec = 2, names = c("PREY","PRED"),
+                   N = N, rr = r, ri = ri, dr = dr, dri = dri)
 ))
 
 ## 2. Using sparse method
 print(system.time(
   out2   <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
-                   nspec = 2, N = N, rr = r, ri = ri, dr = dr, dri = dri,
+                   nspec = 2, names = c("PREY","PRED"), 
+                   N = N, rr = r, ri = ri, dr = dr, dri = dri,
                    method = "lsodes")
 ))
 
@@ -169,6 +173,11 @@ PREY   <- out[,2:(N  +1)]
 filled.contour(x = times, y = r, PREY, color = topo.colors,
                xlab = "time, days", ylab = "Distance, m",
                main = "Prey density")
+# similar:
+image(out, which = "PREY", grid=r, xlab = "time, days", 
+      ylab = "Distance, m", main = "Prey density")
+
+image(out2, grid=r)
 
 ## =======================================================================
 ## Example 2.
@@ -219,7 +228,8 @@ times     <- seq(0, 20, by = 0.1)
 
 ## running the model
 ##  step 1  : model spinup
-out       <- ode.1D(y = state, times, O2BOD, parms = NULL, nspec = 2)
+out       <- ode.1D(y = state, times, O2BOD, parms = NULL, 
+  nspec = 2, names=c("BOD","O2"))
 
 ## ================
 ## Plotting output
@@ -231,6 +241,9 @@ color = topo.colors
 filled.contour(x = times, y = x, O2, color = color, nlevels = 50,
                xlab = "time, days", ylab = "Distance from river, m",
                main = "Oxygen")
+               
+## or quicker plotting:
+image(out, grid=x,  xlab = "time, days", ylab = "Distance from river, m")               
 }
 \details{
 

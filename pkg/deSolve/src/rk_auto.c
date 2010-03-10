@@ -47,8 +47,11 @@ void rk_auto(
     // ThPe -> KS: how should actual resp. former time step be handled
     // - in the first call
     // - for rejected steps?
-    //rwork[10] = rwork[11];     // experimental, check this
-    //rwork[11] = dt;            // experimental, check this 
+    // Ks -> ThPe; first step: use 0; rejected steps ignored. at end:
+    // put=1.
+    
+    timesteps[0] = timesteps[1];     // experimental, check this
+    timesteps[1] = dt;               // experimental, check this 
 
     /******  save former results of last step if the method allows this
             (first same as last)                                       ******/

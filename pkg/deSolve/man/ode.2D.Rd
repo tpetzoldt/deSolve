@@ -10,7 +10,7 @@
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
-  cyclicBnd = NULL, ...)}
+  names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -47,6 +47,8 @@
   \item{cyclicBnd }{if not \code{NULL} then a number or a 2-valued vector
     with the dimensions where a cyclic boundary is used - \code{1}: x-dimension,
     \code{2}: y-dimension; see details.
+  }
+  \item{names }{the names of the components; used for plotting.
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }
@@ -148,17 +150,23 @@ yini[cc] <- yini[NN+cc] <- 1
 ## solve model (5000 state variables...
 times   <- seq(0, 50, by = 1)
 out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
-              dimens = c(N, N), N = N, dx = dx, Da = Da, lrw = 5000000)
+              dimens = c(N, N), names = c("Prey","Pred"),
+              N = N, dx = dx, Da = Da, lrw = 5000000)
 
 ## plot results
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                           "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 
 \dontrun{
-
 for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
-   col = Col(100), xlab = "x", ylab = "y", zlim = range(out[,2:(NN+1)]))
+   col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
+
+image(out, xlab = "x", ylab = "y")
+
+# similar:
+image(out, xlab = "x", ylab = "y")
+
 }
 
 ## =======================================================================

@@ -101,12 +101,12 @@ SEXP get_deSolve_gparms(void) {
 SEXP getTimestep() {
   SEXP value;
   PROTECT(value = NEW_NUMERIC(2));
-  if (rwork == NULL) {
+  if (timesteps == NULL) {         /* integration not yet started... */
     for (int i = 0; i < 2; i++) 
       NUMERIC_POINTER(value)[i] = 1.;
   } else
     for (int i = 0; i < 2; i++) 
-      NUMERIC_POINTER(value)[i] = rwork[i +  10];
+      NUMERIC_POINTER(value)[i] = timesteps[i];
   UNPROTECT(1);
   return(value);
 }
@@ -127,7 +127,8 @@ void returnearly (int Print) {
 }   
 
 /* add ISTATE and RSTATE */
-void terminate(int istate, int ilen, int ioffset, int rlen, int roffset) {
+void terminate(int istate, int * iwork, int ilen, int ioffset, 
+  double * rwork, int rlen, int roffset) {
 
   int k;
   
@@ -146,8 +147,8 @@ void terminate(int istate, int ilen, int ioffset, int rlen, int roffset) {
     setAttrib(YOUT2, install("rstate"), RWORK);
   }
   /* timestep = 1 - for use in getTimestep */
-  rwork[roffset] = 1;
-  rwork[1+roffset] = 1;
+  timesteps[0] = 1;
+  timesteps[1] = 1;
 }
 
 /*==================================================

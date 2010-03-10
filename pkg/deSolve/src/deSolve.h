@@ -8,8 +8,6 @@ SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
 SEXP Time, Y, YPRIME , Rin;
 
 int    it, n_eq; 
-int    *iwork;   
-double *rwork;
 
 /* use in daspk */
 long int mu;
@@ -19,6 +17,7 @@ long int nrowpd;
 /* output in DLL globals */
 int nout, ntot, isOut, lrpar, lipar, *ipar;
 double *out;
+double *timesteps;
 
 /* forcings  */
 long int nforc;  /* the number of forcings */
@@ -87,7 +86,7 @@ void set_N_Protected(long int);
 void unprotect_all(void);
 void my_unprotect(int);
 void returnearly (int);
-void terminate(int, int, int, int, int);
+void terminate(int, int*, int, int, double *, int, int);
 
 /* declarations for initialisations */
 void initParms(SEXP Initfunc, SEXP Parms);
@@ -138,15 +137,15 @@ int initLags(SEXP elag, int solver, int nroot);
 /* history vectors  */
 void inithist(int max, int maxlags, int solver, int nroot);
 
-void updatehistini(double t, double *y, double *dY);
-void updatehist(double t, double *y, double *dy);
+void updatehistini(double t, double *y, double *dY, double *rwork, int *iwork);
+void updatehist(double t, double *y, double *dy, double *rwork, int *iwork);
 
 int nexthist(int i);
 double interpolate(int i, int k, double t0, double t1, double t, 
   double *Yh, int nq); 
 
 /*==========================================
-  Global variables
+  Global variables for history arrays
 ==========================================*/
 
 int indexhist, indexlag, endreached, starthist;

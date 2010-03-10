@@ -14,7 +14,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /**  Initialization **/
   // experimental
-  long int old_N_Protect = get_N_Protected();
+   long int old_N_Protect = get_N_Protected();
   // end experimental
   init_N_Protect();
 
@@ -100,13 +100,11 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
   /*------------------------------------------------------------------------*/
-  /* rwork (for compatibility with lsoda)                                   */
+  /* timesteps (for compatibility with lsoda)                                   */
   /* !!! testing code !!!                                                   */
   /*------------------------------------------------------------------------*/
-
-  // 11 should be enough, but lsodx use 20 as minimum; created in R
-  //rwork = (double *)R_alloc(20, sizeof(double)); 
-  //for (i = 0; i < 20; i++) rwork[i] = 0;
+   timesteps = (double *)R_alloc(2, sizeof(double)); 
+     for (i = 0; i < 2; i++) timesteps[i] = 0;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -302,8 +300,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
   
   // experimental
-  // invalidate work array 'rwork'
-  rwork = NULL;
+  // invalidate work array 'timesteps'
+    timesteps = NULL;
 
   /* release R resources */
   if (verbose) 
@@ -311,7 +309,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       it, it_ext, it_tot, it_rej);
   unprotect_all();
   //experimental
-  set_N_Protected(old_N_Protect);
+   set_N_Protected(old_N_Protect);
   // end experimental
   return(R_yout);
 }

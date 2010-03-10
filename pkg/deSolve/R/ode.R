@@ -42,8 +42,8 @@ ode    <- function (y, times, func, parms,
 
 ### ============================================================================
 
-ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
-                       method= "lsode", ...)   {
+ode.1D    <- function (y, times, func, parms, nspec = NULL, 
+                       dimens = NULL, method= "lsode", names = NULL, ...)   {
 # check input
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
     stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
@@ -55,6 +55,9 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
     out <- ode.band(y, times, func, parms, nspec = nspec, method = method, ...)
     return(out)
   }
+
+  if (! is.null(names) && length(names) != nspec)
+    stop("length of 'names' should equal 'nspec'")
 
   N     <- length(y)
   if (is.null(nspec)  )
@@ -108,6 +111,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
   if (is.null(dimens)) dimens <- N/nspec
   attr (out,"dimens") <- dimens
   attr (out,"nspec") <- nspec
+  attr(out,"ynames") <- names
 
   return(out)
 }
@@ -115,7 +119,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL, dimens = NULL,
 ### ============================================================================
 
 ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
-   cyclicBnd = NULL, ...)  {
+   names = NULL, cyclicBnd = NULL, ...)  {
 
  # check input
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
@@ -133,6 +137,8 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
     nspec = N/prod(dimens) else
   if (nspec*prod(dimens) != N)
     stop ("cannot run ode.2D: dimens[1]*dimens[2]*nspec is not equal to number of state variables")
+  if (! is.null(names) && length(names) != nspec)
+    stop("length of 'names' should equal 'nspec'")
 
   Bnd <- c(0,0)
   if (! is.null(cyclicBnd)) {
@@ -146,14 +152,16 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
 
   attr (out,"dimens") <- dimens
-  attr (out,"nspec") <- nspec
+  attr (out,"nspec")  <- nspec
+  attr (out,"ynames") <- names
 
   return(out)
 }
 
 ### ============================================================================
 
-ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, ...){
+ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, 
+  names = NULL, ...){
  # check input
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
     stop ("cannot run ode.3D with jacfunc specified - remove jacfunc from call list")
@@ -170,6 +178,8 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, ...){
     nspec = N/prod(dimens) else
   if (nspec*prod(dimens) != N)
     stop ("cannot run ode.3D: dimens[1]*dimens[2]*dimens[3]*nspec is not equal to number of state variables")
+  if (! is.null(names) && length(names) != nspec)
+    stop("length of 'names' should equal 'nspec'")
 
   Bnd <- c(0,0,0)    #  cyclicBnd not included
 
@@ -177,7 +187,8 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, ...){
    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="3D",
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
   attr (out,"dimens") <- dimens
-  attr (out,"nspec") <- nspec
+  attr (out,"nspec")  <- nspec
+  attr (out,"ynames") <- names
 
   return(out)
 }

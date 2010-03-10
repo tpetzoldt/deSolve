@@ -221,6 +221,9 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   double *xytmp, tin, tout, *Atol, *Rtol, *dy=NULL, ss;
   int itol, itask, istate, iopt, jt, mflag,  is;
   int nroot, *jroot=NULL, isroot,  isDll, type;
+  
+  int    *iwork;   
+  double *rwork;
 
   /* pointers to functions passed to FORTRAN */
   C_deriv_func_type *deriv_func;
@@ -275,6 +278,10 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   rwork = (double *) R_alloc(lrw, sizeof(double));
      for (j=0; j<length(rWork); j++) rwork[j] = REAL(rWork)[j];
 
+/* a global variable*/  
+  timesteps = (double *) R_alloc(2, sizeof(double));
+     for (j=0; j<2; j++) timesteps[j] = 0.;
+  
 /* if a 1-D or 2-D special-purpose problem (lsodes)
    iwork will contain the sparsity structure */
 
@@ -379,7 +386,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   for (j = 0; j < n_eq; j++) REAL(YOUT)[j+1] = REAL(y)[j];
   if (islag == 1) {
     C_deriv_func (&n_eq, &tin, xytmp, dy, out, ipar);
-    updatehistini(tin, xytmp, dy);
+    updatehistini(tin, xytmp, dy, rwork, iwork);
   }
   if (nout>0)   {
     tin = REAL(times)[0];
@@ -438,6 +445,9 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 			   &lrw, iwork, &liw, jac_func, &jt, root_func, &nroot, jroot, 
          out, ipar);
       }
+      /* in case size of timesteps is called for */
+      timesteps [0] = rwork[10];
+      timesteps [1] = rwork[11];
     
 	    if (istate == -1)  {
         warning("an excessive amount of work (> maxsteps ) was done, but integration was not successful - increase maxsteps");
@@ -463,7 +473,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       }
     if (islag == 1) {
       C_deriv_func (&n_eq, &tin, xytmp, dy, out, ipar);
-      updatehist(tin, xytmp, dy);    
+      updatehist(tin, xytmp, dy, rwork, iwork);    
       repcount = 0;
     }
 	    repcount ++;
@@ -502,7 +512,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 
   /*                   ####   returning output   ####                           */    
-  terminate(istate,23,0,5,10);    /* istate, iwork, rwork */
+  terminate(istate,iwork, 23,0, rwork, 5,10);    /* istate, iwork, rwork */
   
   if (istate == -20) INTEGER(ISTATE)[0] = 3; 	  
 
