@@ -48,7 +48,11 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* timesteps (for compatibility with lsoda)                               */
   /* !!! testing code !!!                                                   */
   /*------------------------------------------------------------------------*/
-  timesteps = (double *)R_alloc(2, sizeof(double)); 
+  double *saved_ts, *my_ts;
+
+  saved_ts  = timesteps;
+  my_ts     = (double *)R_alloc(2, sizeof(double));
+  timesteps = my_ts;
   for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
@@ -157,12 +161,14 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* call derivs again to get global outputs                                */
   /*------------------------------------------------------------------------*/
-  for (int j = 0; j < nt; j++) {
-    t = yout[j];
-    for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
-    derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
-    for (i = 0; i < nout; i++) {
-      yout[j + nt * (1 + neq + i)] = out[i];
+  if(nout > 0) {
+    for (int j = 0; j < nt; j++) {
+      t = yout[j];
+      for (i = 0; i < neq; i++) tmp[i] = yout[j + nt * (1 + i)];
+      derivs(Func, t, tmp, Parms, Rho, FF, out, -1, neq, ipar, isDll, isForcing);
+      for (i = 0; i < nout; i++) {
+        yout[j + nt * (1 + neq + i)] = out[i];
+      }
     }
   }
   /*
@@ -170,6 +176,13 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   */
   setIstate(R_yout, R_istate, istate, it, 1, 0, 1, 0);
 
+  // for testing; if setting the pointer works, then returned timestep
+  // should never be -99
+  for (i = 0; i < 2; i++) timesteps[i] = -99; 
+
+  // reset timesteps pointer to saved state
+  timesteps = saved_ts;
+  
   /* release R resources */
   unprotect_all();
   //experimental
