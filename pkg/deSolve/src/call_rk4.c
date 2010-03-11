@@ -11,6 +11,10 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	      SEXP Rpar, SEXP Ipar, SEXP Flist) {
 
   /*  Initialization */
+  /**  Initialization **/
+  // experimental
+  long int old_N_Protect = get_N_Protected();
+  // end experimental
   init_N_Protect();
 
   double *tt = NULL, *xs = NULL;
@@ -42,6 +46,13 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   int nout    = INTEGER(Nout)[0]; /* n of global outputs if func is in a DLL */
   int verbose = INTEGER(Verbose)[0];
+
+  /*------------------------------------------------------------------------*/
+  /* timesteps (for compatibility with lsoda)                               */
+  /* !!! testing code !!!                                                   */
+  /*------------------------------------------------------------------------*/
+  timesteps = (double *)R_alloc(2, sizeof(double)); 
+  for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -138,6 +149,10 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   for (it = 0; it < nt - 1; it++) {
     t = tt[it];
     dt = tt[it + 1] - t;
+
+    timesteps[0] = timesteps[1];     // experimental, check this
+    timesteps[1] = dt;               // experimental, check this  
+  
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
     derivs(Func, t, y0, Parms, Rho, f1, out, 0, neq, ipar, isDll, isForcing);
@@ -189,5 +204,8 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /* Release R Resources */
   unprotect_all();
+  //experimental
+  set_N_Protected(old_N_Protect);
+  // end experimental
   return(R_yout);
 }

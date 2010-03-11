@@ -43,6 +43,9 @@ void rk_fixed(
     else
       dt = tt[it] - tt[it-1];
 
+    timesteps[0] = timesteps[1];     // experimental, check this
+    timesteps[1] = dt;               // experimental, check this  
+
     /******  Prepare Coefficients from Butcher table ******/
     /* NOTE: must be given as subdiagonal here, not matrix !!!  */
     for (j = 0; j < stage; j++) {

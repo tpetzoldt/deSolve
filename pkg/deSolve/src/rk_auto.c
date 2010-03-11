@@ -49,8 +49,8 @@ void rk_auto(
     // - for rejected steps?
     // Ks -> ThPe; first step: use 0; rejected steps ignored. at end:
     // put=1.
-    
-    timesteps[0] = timesteps[1];     // experimental, check this
+
+    if (accept) timesteps[0] = timesteps[1];  // check
     timesteps[1] = dt;               // experimental, check this 
 
     /******  save former results of last step if the method allows this

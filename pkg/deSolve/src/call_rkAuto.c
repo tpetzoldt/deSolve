@@ -14,7 +14,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /**  Initialization **/
   // experimental
-   long int old_N_Protect = get_N_Protected();
+  long int old_N_Protect = get_N_Protected();
   // end experimental
   init_N_Protect();
 
@@ -103,8 +103,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* timesteps (for compatibility with lsoda)                                   */
   /* !!! testing code !!!                                                   */
   /*------------------------------------------------------------------------*/
-   timesteps = (double *)R_alloc(2, sizeof(double)); 
-     for (i = 0; i < 2; i++) timesteps[i] = 0;
+  timesteps = (double *)R_alloc(2, sizeof(double)); 
+  for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -300,8 +300,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
   
   // experimental
-  // invalidate work array 'timesteps'
-    timesteps = NULL;
+  // set default value for timesteps
+  for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /* release R resources */
   if (verbose) 
