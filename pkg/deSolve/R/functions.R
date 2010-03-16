@@ -1,7 +1,7 @@
 
-timestep <- function (prev=TRUE) {
+timestep <- function (prev = TRUE) {
   out <- .Call("getTimestep", PACKAGE = "deSolve")
-  if (prev) 
+  if (prev)
     return(out[1])
   else
     return(out[2])
@@ -13,7 +13,7 @@ timestep <- function (prev=TRUE) {
 ## ========================================================================
 
 checkInput <- function(y, times, func, rtol, atol,
-  jacfunc, tcrit, hmin, hmax, hini, dllname, jacname="jacfunc")
+  jacfunc, tcrit, hmin, hmax, hini, dllname, jacname = "jacfunc")
 {
   if (!is.numeric(y))     stop("`y' must be numeric")
   n <- length(y)
@@ -88,8 +88,8 @@ checkFunc<- function (Func2, times, y, rho) {
 ## Check event function calls
 ## ========================================================================
 
-checkEventFunc<- function (Func, times, y, rho) { 
-    ## Call func once 
+checkEventFunc<- function (Func, times, y, rho) {
+    ## Call func once
     tmp <- eval(Func(times[1], y), rho)
 
     if (length(tmp) != length(y))
@@ -105,7 +105,7 @@ checkEventFunc<- function (Func, times, y, rho) {
 ## Check ode function call - euler and rk solvers
 ## ========================================================================
 
-checkFuncEuler<- function (Func,times,y,parms,rho,Nstates) {
+checkFuncEuler<- function (Func, times, y, parms, rho, Nstates) {
       ## Call func once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
       tmp <- eval(Func(times[1], y, parms), rho)
@@ -121,7 +121,7 @@ checkFuncEuler<- function (Func,times,y,parms,rho,Nstates) {
       Nglobal <- if (length(tmp) > 1)
           length(unlist(tmp[-1]))  else 0
       Nmtot <- attr(unlist(tmp[-1]),"names")
-   return(list(Nglobal = Nglobal, Nmtot=Nmtot))
+   return(list(Nglobal = Nglobal, Nmtot = Nmtot))
 
 }
 
@@ -221,11 +221,11 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   iin, iout, nr = 4) {
   istate <- attr(out,"istate")
   istate <- setIstate(istate,iin,iout)
-  
+
   Rstate <- attr(out, "rstate")
   rstate <- rep(NA,5)
   rstate[1:nr] <- Rstate[1:nr]
-  
+
   nm <- c("time",
           if (!is.null(attr(y, "names"))) names(y) else as.character(1:n))
   if (Nglobal > 0) {
