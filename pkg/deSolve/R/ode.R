@@ -12,7 +12,8 @@
 
 ode    <- function (y, times, func, parms,
                     method= c("lsoda","lsode","lsodes","lsodar","vode","daspk",
-                              "euler", "rk4", "ode23", "ode45"),
+                              "euler", "rk4", "ode23", "ode45", 
+                              "bdf", "impAdams", "expAdams"),
                     ...)  {
   if (is.null(method)) method <- "lsoda"
   if (is.list(method)) {
@@ -34,7 +35,10 @@ ode    <- function (y, times, func, parms,
       euler = rk(y, times, func, parms, method = "euler",  ...),
       rk4   = rk(y, times, func, parms, method = "rk4", ...),
       ode23 = rk(y, times, func, parms, method = "ode23", ...),
-      ode45 = rk(y, times, func, parms, method = "ode45", ...)
+      ode45 = rk(y, times, func, parms, method = "ode45", ...),
+      bdf  = lsode(y, times, func, parms, mf = 22, ...),
+      expAdams = lsode(y, times, func, parms, mf = 10, ...), 
+      impAdams = lsode(y, times, func, parms, mf = 13, ...)
     )
 
   return(out)

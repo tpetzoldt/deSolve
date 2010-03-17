@@ -145,7 +145,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   double *xytmp,  *xdytmp, tin, tout, *Atol, *Rtol;
   double *delta=NULL, cj;
   int    *Info,  ninfo, idid, mflag, ires;
-  int    *iwork;   
+  int    *iwork, it, ntot= 0, nout;   
   double *rwork;
   
 
@@ -169,8 +169,6 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   mflag = INTEGER(verbose)[0];        
 
   ninfo=LENGTH(info);
-  ml = INTEGER(bd)[0]; 
-  mu = INTEGER(bu)[0]; 
   nrowpd = INTEGER(nRowpd)[0];  
   maxit = INTEGER(maxIt)[0];
   
@@ -181,7 +179,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
    isDll = 0;
   }
 
-  initOutC(isDll, n_eq, nOut, Rpar, Ipar); 
+  initOutC(isDll, &nout, &ntot, n_eq, nOut, Rpar, Ipar); 
 
   /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));
@@ -214,7 +212,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   /**************************************************************************/
   /****** Initialization of globals, Parameters and Forcings (DLLs)    ******/
   /**************************************************************************/
-  initdaeglobals(nt);
+  initdaeglobals(nt, ntot);
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
   islag = initLags(elag, 0, 0);
@@ -373,7 +371,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 /*                    ####  an error occurred   ####                          */                     
     if (repcount > maxit || tin < tout || idid <= 0) {
      idid = 0;
-     returnearly(1);
+     returnearly(1, it, ntot);
     	break;
     }
   }    /* end main time loop */

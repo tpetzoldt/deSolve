@@ -104,10 +104,10 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   int    i, j, k, nt, latol, lrtol, lrw, liw, lzw;
   double tin, tout, *Atol, *Rtol, ss;
-  int    neq, itol, itask, istate, iopt, jt, mflag, nout, 
+  int    neq, itol, itask, istate, iopt, jt, mflag, 
          is, isDll, isForcing;
   Rcomplex  *xytmp, *dy = NULL, *zwork;
-  int    *iwork;   
+  int    *iwork, it, ntot, nout;   
   double *rwork;  
   C_zderiv_func_type *zderiv_func;
   C_zjac_func_type   *zjac_func = NULL;
@@ -142,7 +142,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
 /* initialise output for Complex variables ... */
-  initOutComplex(isDll, neq, nOut, Rpar, Ipar);
+  initOutComplex(isDll, &nout, &ntot, neq, nOut, Rpar, Ipar);
 
 /* copies of all variables that will be changed in the FORTRAN subroutine */
  

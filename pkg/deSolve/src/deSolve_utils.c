@@ -48,13 +48,13 @@ SEXP de_gparms;
 SEXP initialisation functions
 =======================================================*/
 
-void initglobals(int nt) {
+void initglobals(int nt, int ntot) {
   PROTECT(Time = NEW_NUMERIC(1));                  incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(n_eq)));        incr_N_Protect();
   PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));  incr_N_Protect();
 }
 
-void initdaeglobals(int nt) {
+void initdaeglobals(int nt, int ntot) {
   PROTECT(Time = NEW_NUMERIC(1));                    incr_N_Protect();
   PROTECT(Rin  = NEW_NUMERIC(2));                    incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,n_eq));            incr_N_Protect();
@@ -116,7 +116,7 @@ SEXP getTimestep() {
 ===================================================*/
 
 /* an error occurred - save output in YOUT2 */
-void returnearly (int Print) {
+void returnearly (int Print, int it, int ntot) {
   int j, k;
   if (Print) 
     warning("Returning early. Results are accurate, as far as they go\n");
@@ -146,9 +146,9 @@ void terminate(int istate, int * iwork, int ilen, int ioffset,
     setAttrib(YOUT2, install("istate"), ISTATE);
     setAttrib(YOUT2, install("rstate"), RWORK);
   }
-  /* timestep = 1 - for use in getTimestep */
-  timesteps[0] = 1;
-  timesteps[1] = 1;
+  /* timestep = 0 - for use in getTimestep */
+  timesteps[0] = 0;
+  timesteps[1] = 0;
 }
 
 /*==================================================
@@ -179,25 +179,25 @@ SEXP getListElement(SEXP list, const char *str) {
 
 /* Initialise output - output variables calculated in R-code ... */
 
-void initOutR(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
+void initOutR(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
 
-  int j;
-  nout = INTEGER(nOut)[0];       /* number of output variables */
+  int j, lrpar, lipar;
+  *nout = INTEGER(nOut)[0];       /* number of output variables */
   if (isDll) {                   /* function is a dll */
-    if (nout > 0) isOut = 1;
-    ntot  = neq + nout;          /* length of yout */
-    lrpar = nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
+    if (*nout > 0) isOut = 1;
+    *ntot  = neq + *nout;          /* length of yout */
+    lrpar = *nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
     lipar = 3 + LENGTH(Ipar);    /* length of ipar */
   } else {                       /* function is not a dll */
     isOut = 0;
-    ntot = neq;
+    *ntot = neq;
     lipar = 1;
     lrpar = 1;
   }
   out  = (double*) R_alloc(lrpar, sizeof(double));
   ipar = (int*)    R_alloc(lipar, sizeof(int));
   if (isDll ==1) {
-    ipar[0] = nout;              /* first 3 elements of ipar are special */
+    ipar[0] = *nout;              /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
 
@@ -206,33 +206,33 @@ void initOutR(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
 
     /* first nout elements of rpar reserved for output variables
        other elements are set in R-function lsodx via argument *rpar* */
-    for (j = 0; j < nout; j++)        out[j] = 0.;
-    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
+    for (j = 0; j < *nout; j++)        out[j] = 0.;
+    for (j = 0; j < LENGTH(Rpar); j++) out[*nout+j] = REAL(Rpar)[j];
    }
 }
 
 /* Initialise output - output variables calculated in C-code ... */
 
-void initOutC(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
-  int j;
+void initOutC(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
+  int j, lrpar, lipar;
   /* initialise output when a dae ... */   
   /*  output always done here in C-code (<-> lsode, vode)... */
 
-  nout  = INTEGER(nOut)[0];
-  ntot  = n_eq+nout;
+  *nout  = INTEGER(nOut)[0];
+  *ntot  = n_eq+*nout;
   
   if (isDll == 1) {                /* function is a dll */
-    lrpar = nout + LENGTH(Rpar);   /* length of rpar */
+    lrpar = *nout + LENGTH(Rpar);   /* length of rpar */
     lipar = 3    + LENGTH(Ipar);   /* length of ipar */
   } else {                         /* function is not a dll */
     lipar = 3;
-    lrpar = nout;
+    lrpar = *nout;
   }
   out   = (double*) R_alloc(lrpar, sizeof(double));
   ipar  = (int*)    R_alloc(lipar, sizeof(int));
 
   if (isDll == 1) {
-    ipar[0] = nout;                /* first 3 elements of ipar are special */
+    ipar[0] = *nout;                /* first 3 elements of ipar are special */
     ipar[1] = lrpar;
     ipar[2] = lipar;
 
@@ -241,8 +241,8 @@ void initOutC(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar) {
 
     /* first nout elements of rpar reserved for output variables
        other elements are set in R-function lsodx via argument *rpar* */
-    for (j = 0; j < nout;         j++) out[j] = 0.;
-    for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
+    for (j = 0; j < *nout;         j++) out[j] = 0.;
+    for (j = 0; j < LENGTH(Rpar); j++) out[*nout+j] = REAL(Rpar)[j];
    }
 }
 /*==================================================

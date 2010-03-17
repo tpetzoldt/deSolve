@@ -2,22 +2,22 @@
 #include <Rdefines.h>
 
 /*============================================================================
-  global R variables 
+  global R variables      it,
 ============================================================================*/
+double *timesteps;
+
+
 SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
 SEXP Time, Y, YPRIME , Rin;
 
-int    it, n_eq; 
+int     n_eq; 
 
 /* use in daspk */
-long int mu;
-long int ml;
 long int nrowpd;
 
 /* output in DLL globals */
-int nout, ntot, isOut, lrpar, lipar, *ipar;
+int  isOut, *ipar;
 double *out;
-double *timesteps;
 
 /* forcings  */
 long int nforc;  /* the number of forcings */
@@ -85,23 +85,23 @@ long int get_N_Protected(void);
 void set_N_Protected(long int);
 void unprotect_all(void);
 void my_unprotect(int);
-void returnearly (int);
+void returnearly (int, int, int);
 void terminate(int, int*, int, int, double *, int, int);
 
 /* declarations for initialisations */
 void initParms(SEXP Initfunc, SEXP Parms);
 void Initdeparms(int*, double*);
 void Initdeforc(int*, double*);
-void initOutR(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
-void initOutC(int isDll, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
+void initOutR(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
+void initOutC(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SEXP Ipar);
 
 /* sparsity of Jacobian */
 void sparsity1D(SEXP Type, int* iwork, int neq, int liw);
 void sparsity2D(SEXP Type, int* iwork, int neq, int liw);
 void sparsity3D(SEXP Type, int* iwork, int neq, int liw);
 
-void initglobals(int);
-void initdaeglobals(int);
+void initglobals(int, int);
+void initdaeglobals(int, int);
 
 /* the forcings and event functions */
 void updatedeforc(double*);

@@ -222,7 +222,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   int itol, itask, istate, iopt, jt, mflag,  is;
   int nroot, *jroot=NULL, isroot,  isDll, type;
   
-  int    *iwork;   
+  int    *iwork, it, ntot, nout;   
   double *rwork;
 
   /* pointers to functions passed to FORTRAN */
@@ -257,7 +257,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
   /* initialise output ... */
-  initOutC(isDll, n_eq, nOut, Rpar, Ipar);
+  initOutC(isDll, &nout, &ntot, n_eq, nOut, Rpar, Ipar);
 
   /* copies of variables that will be changed in the FORTRAN subroutine */
 
@@ -297,7 +297,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
 /* initialise global R-variables...  */
-  initglobals (nt);
+  initglobals (nt, ntot);
   
 /* Initialization of Parameters and Forcings (DLL functions)  */
   initParms(initfunc, parms);
@@ -501,9 +501,9 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /*                    ####  an error occurred   ####                          */    
    if (istate < 0 || tin < tout) {
 	  if (istate != -20) 
-      returnearly (1);
+      returnearly (1, it, ntot);
     else 
-      returnearly (0);  /* stop because a root was found */
+      returnearly (0, it, ntot);  /* stop because a root was found */
     break;
     }
   }     /* end main time loop */

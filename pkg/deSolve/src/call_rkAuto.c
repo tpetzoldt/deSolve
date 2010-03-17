@@ -301,7 +301,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   
   // experimental
   // set default value for timesteps
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
+  for (i = 0; i < 2; i++) timesteps[i] = 0;
 
   /* release R resources */
   if (verbose) 

@@ -10,7 +10,7 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
   SEXP   yout;
 
   double *ytmp, *dy, tin, *delta, cj;
-  int    ny, j,  type, ires, isDll, isForcing;
+  int    ny, j,  type, ires, isDll, isForcing, nout=0, ntot=0;
   
   C_deriv_func_type *derivs;
   C_res_func_type *res;
@@ -28,7 +28,7 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
   }
 
 /* initialise output, parameters, forcings ... */
-  initOutR(isDll, ny, nOut, Rpar, Ipar);
+  initOutR(isDll,  &nout, &ntot, ny, nOut, Rpar, Ipar);
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
 

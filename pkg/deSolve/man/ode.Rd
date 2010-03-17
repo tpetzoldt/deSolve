@@ -9,7 +9,8 @@ around the implemented ODE solvers}
 
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
-           "euler", "rk4", "ode23", "ode45"), ...)
+           "euler", "rk4", "ode23", "ode45", 
+           "bdf", "impAdams", "expAdams"), ...)
 
 \method{print}{deSolve}(x, \dots)
 }
@@ -46,11 +47,14 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"compiledCode"} for more details.
   }
   \item{parms }{parameters passed to \code{func}.}
-  \item{method }{the integrator to use, either a string (\code{"lsoda"},
+  \item{method }{the integrator to use, either a *function* that performs 
+    integration, or a list of class \code{rkMethod}, or a *string* 
+    (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"}, \code{"lsodar"}, \code{"vode"},
-    \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"} or
-    \code{"ode45"}) or a function that performs integration, or a list
-    of class \code{rkMethod}.
+    \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"},
+    \code{"ode45"}, \code{"bdf"}, \code{"expAdams"}, or  \code{"impAdams"}).
+    The latter three are the backward differentiation formula, the explicit
+    Adams and the implicit Adams method respectively (see details).
     The default integrator used is \link{lsoda}
   }
    \item{x }{an object of class \code{deSolve}, as returned by the
@@ -81,6 +85,20 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   See the selected integrator for the additional options.
   
   The default integrator used is \link{lsoda}
+  
+  The option \code{method ="bdf"} provdes a handle to the backward 
+  differentiation formula (it is equal to using \code{method = lsode}). 
+  It is best suited to solve stiff (systems of) equations.
+  
+  \code{method = "expAdams"} triggers the explicit Adams method; 
+  (equal to \code{method = lsode, mf = 10}. It is often the best choice
+  for solving non-stiff (systems of) equations.  
+  
+  \code{method = "impAdams"} uses the implicit Adams method (equal to 
+  \code{method = lsode, mf = 13}
+
+  For very stiff systems, \code{method ="daspk"} may outperform 
+  \code{method ="bdf"}  
 }
 
 \seealso{
