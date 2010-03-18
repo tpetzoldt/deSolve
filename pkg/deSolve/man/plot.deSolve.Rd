@@ -12,7 +12,7 @@ Plot the output of numeric integration routines.
 \method{plot}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
-  add.contour = FALSE, grid = NULL, ...)  
+  add.contour = FALSE, grid = NULL, xtype="image", ...)  
 }
 
 \arguments{
@@ -30,6 +30,9 @@ Plot the output of numeric integration routines.
   
   \item{add.contour }{if \code{TRUE}, will add contours to the image plot. }
 
+  \item{xtype }{the name of the plotting function to use, one of "image", 
+    "filled.contour", "persp".}
+
   \item{grid }{only for \code{image} plots: the 1-D grid as a vector (output 
     generated with \code{ode.1D}, or the x- and y-grid, as a \code{list} for 
     output generated with \code{ode.2D}. }
@@ -42,6 +45,9 @@ Plot the output of numeric integration routines.
   The number of panels per page is automatically determined up to 3 x 3
   (\code{par(mfrow=c(3, 3))}). This default can be overwritten by
   specifying user-defined settings for \code{mfrow} or \code{mfcol}.
+  Set \code{mfrow} equal to \code{NULL} to avoid the plotting function to 
+  change user-defined \code{mfrow} or \code{mfcol} settings.
+  
 
   Other graphical parameters can be passed as well. Parameters
   \code{xlab} and \code{ylab} are vectorized, so it is possible to
@@ -52,6 +58,9 @@ Plot the output of numeric integration routines.
   image with \code{times} as x- and \code{the grid} as y-axis will be created.
   in second case, an x-y plot will be created, for all times. Unless 
   \code{ask=FALSE}, the user will be asked to confirm page changes. 
+  For images, it is possible to pass an argument \code{xtype} which can
+  take the values "image" (default), "filled.contour" or "persp", in order
+  to use the respective plotting method.
 }
 
 \seealso{
@@ -87,6 +96,20 @@ plot(out, type = "l")
 ## User-specified axis labels
 plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", main = "Time Series") 
+
+## Set user-defined mfrow
+pm <- par (mfrow=c(2,2))
+## "mfrow=NULL" keeps user-defined mfrow
+plot(out, which = c("prey1","pred2"), mfrow=NULL, type="l", lwd=2)
+
+plot(out[,"prey1"], out[,"pred1"], xlab="prey1", 
+  ylab="pred1", type="l",lwd=2)
+plot(out[,"prey2"], out[,"pred2"], xlab="prey2", 
+  ylab="pred2", type="l",lwd=2)
+
+# restore 
+par ("mfrow"=pm)
+
 
 hist(out, col="darkblue", breaks = 50)
 
@@ -134,6 +157,13 @@ times <- seq(0, 200, by = 1)   # output wanted at these time intervals
 out   <- ode.1D(state, times, Aphid, parms = 0, nspec = 1)
 
 image(out, grid = Distance, main="Aphid model", ylab="distance, m")
+
+image(out, grid = Distance, main="Aphid model", ylab="distance, m", 
+  xtype="persp", border=NA, theta=30)
+\dontrun{
+  plot(out,ask=FALSE,mfrow=c(1,1))
+}
+
 }
 
 \keyword{ hplot }

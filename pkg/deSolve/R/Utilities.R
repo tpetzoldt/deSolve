@@ -103,15 +103,15 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 ### ============================================================================
 
 image.deSolve <- function (x, which = NULL, ask = NULL,
-  add.contour = FALSE, grid=NULL, ...) {
+  add.contour = FALSE, grid=NULL, xtype="image", ...) {
 
     dimens <- attributes(x)$dimens
     if (is.null(dimens))
       stop("cannot make an image from deSolve output which is 0-dimensional")
     else if (length(dimens) ==1)  # 1-D
-      plot.ode1D(x, which, ask, add.contour, grid, ...)
+      plot.ode1D(x, which, ask, add.contour, grid, xtype=xtype, ...)
     else if (length(dimens) ==2)  # 2-D
-      plot.ode2D(x, which, ask, add.contour, grid, ...)
+      plot.ode2D(x, which, ask, add.contour, grid, xtype=xtype, ...)
     else
       stop("cannot make an image from deSolve output with more than 2 dimensions")
 }
@@ -186,10 +186,31 @@ select1dvar <- function (which,var) {
   return(Select)
  }
 
+### ============================================================================
+# to drape a color over a persp plot.
+### ============================================================================
+
+
+drapecol <- function (A, col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), NAcol = "white") 
+{
+    nr <- nrow(A)
+    nc <- ncol(A)
+    ncol <- length(col)
+    AA <- 0.25 * (A[1:(nr - 1), 1:(nc - 1)] + A[1:(nr - 1), 2:nc] + 
+        A[2:nr, 1:(nc - 1)] + A[2:nr, 2:nc])
+    Ar <- range(AA, na.rm = TRUE)
+    rn <- Ar[2] - Ar[1]
+    ifelse(rn != 0, drape <- col[1 + trunc((AA - Ar[1])/rn * 
+        (ncol - 1))], drape <- rep(col[1], ncol))
+    drape[is.na(drape)] <- NAcol
+    return(drape)
+}
+
 
 ### ============================================================================
 
-plot.ode1D <- function (x, which, ask, add.contour, grid, ...) {
+plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
 
 # if x is vector, check if there are enough columns ...
     nspec <- attributes(x)$nspec
@@ -226,9 +247,19 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, ...) {
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
     yylab <- if (is.null(dots$ylab))  ""   else dots$ylab
-    dots$col <- if (is.null(dots$col))
+    if (xtype=="persp")
+      dotscol <- dots$col 
+
+    else if (xtype == "filled.contour")
+    dots$color.palette <- if (is.null(dots$color.palette)) 
+      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
+    else
+    dots$col <- if (is.null(dots$col)) 
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
+
+    dotslim <- dots$zlim
 
     ## allow individual xlab and ylab (vectorized)
     xxlab <- rep(xxlab, length.out = np)
@@ -245,14 +276,29 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, ...) {
         List <- alist(z=out,x=times)
         if (! is.null(grid)) List$y = grid
 
-        do.call("image", c(List, dots))
+        if (xtype=="persp") {
+           if(is.null(dotscol))  
+             dots$col <- drapecol(out,
+               colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
+           else
+              dots$col<-drapecol(out,dotscol)
+          if (is.null(dotslim)) 
+            if (diff(range(out)) == 0) dots$zlim = c(0,1)
+          else
+            dots$zlim = dotslim          
+        
+        }
+        do.call(xtype, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
     }
 }
 
 ### ============================================================================
 
-plot.ode2D <- function (x, which, ask, add.contour, grid, ...) {
+plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image", 
+   ...) {
+
 
 # if x is vector, check if there are enough columns ...
     nspec <- attributes(x)$nspec
@@ -292,9 +338,20 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, ...) {
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
     yylab <- if (is.null(dots$ylab))  ""   else dots$ylab
-    dots$col <- if (is.null(dots$col))
+
+    if (xtype=="persp")
+      dotscol <- dots$col 
+
+    else if (xtype == "filled.contour")
+    dots$color.palette <- if (is.null(dots$color.palette)) 
+      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
+    else
+    dots$col <- if (is.null(dots$col)) 
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
+
+    dotslim <- dots$zlim
 
     ## allow individual xlab and ylab (vectorized)
     xxlab <- rep(xxlab, length.out = np)
@@ -315,7 +372,20 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, ...) {
           List$y <- grid$y
         }
 
-        do.call("image", c(List, dots))
+        if (xtype=="persp") {
+           if(is.null(dotscol))  
+             dots$col <- drapecol(out,
+               colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
+           else
+              dots$col<-drapecol(out,dotscol)
+          if (is.null(dotslim)) 
+            if (diff(range(out)) == 0) dots$zlim = c(0,1)
+          else
+            dots$zlim = dotslim          
+        
+        }
+        do.call(xtype, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
      }
      mtext(outer=TRUE, side=3,paste("time ",x[nt,1]), cex=1.5, line=-1.5)
