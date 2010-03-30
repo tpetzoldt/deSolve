@@ -11,11 +11,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 		SEXP Rpar, SEXP Ipar, SEXP Flist) {
 
   /* Initialization */
-  /**  Initialization **/
-  // experimental
-  long int old_N_Protect = get_N_Protected();
-  // end experimental
-  init_N_Protect();
+  long int old_N_Protect = save_N_Protected();
 
   double *tt = NULL, *xs = NULL;
   double *tmp, *FF, *out;
@@ -184,9 +180,6 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   timesteps = saved_ts;
   
   /* release R resources */
-  unprotect_all();
-  //experimental
-  set_N_Protected(old_N_Protect);
-  // end experimental
+  restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

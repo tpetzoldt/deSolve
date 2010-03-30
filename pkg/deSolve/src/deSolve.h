@@ -81,8 +81,8 @@ SEXP getTimestep();
 ============================================================================*/
 void init_N_Protect(void);
 void incr_N_Protect(void);
-long int get_N_Protected(void);
-void set_N_Protected(long int);
+long int save_N_Protected(void);
+void restore_N_Protected(long int);
 void unprotect_all(void);
 void my_unprotect(int);
 void returnearly (int, int, int);

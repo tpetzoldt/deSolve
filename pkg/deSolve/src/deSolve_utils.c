@@ -19,9 +19,16 @@ void incr_N_Protect(void) { N_Protected++; }
 
 void unprotect_all(void) { UNPROTECT((int) N_Protected); }
 
-long int get_N_Protected(void) {return N_Protected; }
+long int save_N_Protected(void) {
+  int saved_N = N_Protected;
+  init_N_Protect();
+  return saved_N; 
+}
 
-void set_N_Protected(long int n) {N_Protected = n; }
+void restore_N_Protected(long int n) {
+  unprotect_all();
+  N_Protected = n; 
+}
 
 void my_unprotect(int n) {
     UNPROTECT(n);
@@ -103,7 +110,7 @@ SEXP getTimestep() {
   PROTECT(value = NEW_NUMERIC(2));
   if (timesteps == NULL) {         /* integration not yet started... */
     for (int i = 0; i < 2; i++) 
-      NUMERIC_POINTER(value)[i] = 1.;
+      NUMERIC_POINTER(value)[i] = 0.; // ThPe -> KS: changed from 1. to 0.
   } else
     for (int i = 0; i < 2; i++) 
       NUMERIC_POINTER(value)[i] = timesteps[i];

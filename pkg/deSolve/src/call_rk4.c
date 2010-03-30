@@ -11,11 +11,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	      SEXP Rpar, SEXP Ipar, SEXP Flist) {
 
   /*  Initialization */
-  /**  Initialization **/
-  // experimental
-  long int old_N_Protect = get_N_Protected();
-  // end experimental
-  init_N_Protect();
+  long int old_N_Protect = save_N_Protected();
 
   double *tt = NULL, *xs = NULL;
   double *tmp, *FF, *out;
@@ -202,10 +198,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* Attach essential internal information (codes are compatible to lsoda) */
   setIstate(R_yout, R_istate, istate, it, 4, 0, 4, 0);
 
-  /* Release R Resources */
-  unprotect_all();
-  //experimental
-  set_N_Protected(old_N_Protect);
-  // end experimental
+  /* release R resources */
+  restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

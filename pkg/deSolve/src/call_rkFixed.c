@@ -11,10 +11,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 		  SEXP Method, SEXP Maxsteps, SEXP Flist) {
 
   /**  Initialization **/
-  // experimental
-  long int old_N_Protect = get_N_Protected();
-  // end experimental
-  init_N_Protect();
+  long int old_N_Protect = save_N_Protected();
 
   double *tt = NULL, *xs = NULL;
 
@@ -264,9 +261,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     Rprintf("Number of time steps it = %d, it_ext = %d, it_tot = %d\n", it, it_ext, it_tot);
     Rprintf("Maxsteps %d\n", maxsteps);
   }
-  unprotect_all();
-  //experimental
-  set_N_Protected(old_N_Protect);
-  // end experimental
+  /* release R resources */
+  restore_N_Protected(old_N_Protect);
   return(R_yout);
 }
