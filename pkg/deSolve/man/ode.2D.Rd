@@ -10,6 +10,7 @@
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
+  method= c("lsodes","euler", "rk4", "ode23", "ode45", "expAdams"),
   names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -49,6 +50,17 @@
     \code{2}: y-dimension; see details.
   }
   \item{names }{the names of the components; used for plotting.
+  }
+  \item{method }{the integrator. Use \code{"lsodes"} if the model is very stiff;
+     "impAdams" may be best suited for mildly stiff problems; 
+     \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
+     efficient for non-stiff problems. Also allowed is to pass an integrator
+     \code{function}. Use one of the other runge-kutta methods via 
+     \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
+     trigger the cash-karp of order 4(5).
+     
+     If  \code{"lsodes"} is used, then also the size of the work array should
+     be specified (\code{lrw}) (see \link{lsodes}).
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }
@@ -147,11 +159,11 @@ yini    <- rep(0, 2*N*N)
 cc      <- c((NN/2):(NN/2+1)+N/2, (NN/2):(NN/2+1)-N/2)
 yini[cc] <- yini[NN+cc] <- 1
 
-## solve model (5000 state variables...
+## solve model (5000 state variables...  use Cash-Karp runge-kutta method
 times   <- seq(0, 50, by = 1)
 out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
               dimens = c(N, N), names = c("Prey","Pred"),
-              N = N, dx = dx, Da = Da, lrw = 5000000)
+              N = N, dx = dx, Da = Da, , method=rkMethod("rk45ck"))
 
 ## plot results
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
@@ -161,8 +173,6 @@ Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
 for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
-
-image(out, xlab = "x", ylab = "y")
 
 # similar:
 image(out, xlab = "x", ylab = "y")
@@ -209,6 +219,9 @@ diffusion2D <- function(t,Y,par)
   nx  <- 50
   ny  <- 100
   y  <- matrix(nr=nx,nc=ny,1.)
+
+  # model most efficiently solved with lsodes - need to specify lrw
+
   print(system.time(
   ST3 <- ode.2D(y, times=1:100, func=diffusion2D, parms=NULL,
                 dimens=c(nx,ny), verbose=TRUE,
@@ -229,12 +242,13 @@ diffusion2D <- function(t,Y,par)
   This is the method of choice for 2-dimensional models, that are only
   subjected to transport between adjacent layers.
 
-  Based on the dimension of the problem, the method first calculates the
+  Based on the dimension of the problem, and if \code{lsodes} is used as 
+  the integrator, the method first calculates the
   sparsity pattern of the Jacobian, under the assumption that transport
   is only occurring between adjacent layers. Then \code{lsodes} is
   called to solve the problem.
   
-  As \code{lsodes} is used to integrate, it will probably be necessary
+  If \code{lsodes} is used to integrate, it will probably be necessary
   to specify the length of the real work array, \code{lrw}.
 
   Although a reasonable guess of \code{lrw} is made, it is likely that
@@ -252,6 +266,9 @@ diffusion2D <- function(t,Y,par)
   for both x- and y-direction. The default is no cyclic boundaries.
 
   See \code{lsodes} for the additional options.
+  
+  If the model is not stiff, then it is more efficient to use one of the 
+  explicit integration routines
 }
 \seealso{
   \itemize{

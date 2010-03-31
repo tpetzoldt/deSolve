@@ -333,7 +333,10 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
       on.exit(devAskNewPage(oask))
     }
 
-    Main <-  if (is.null(dots$main)) var else rep(dots$main, length.out =np)
+#    Main <-  if (is.null(dots$main)) var else rep(dots$main, length.out =np)
+    N <- np * nrow(x)
+    Main <-  if (is.null(dots$main)) rep(var,length.out=N) else rep(dots$main, 
+      length.out =N)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
@@ -354,17 +357,19 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
     dotslim <- dots$zlim
 
     ## allow individual xlab and ylab (vectorized)
-    xxlab <- rep(xxlab, length.out = np)
-    yylab <- rep(yylab, length.out = np)
+    xxlab <- rep(xxlab, length.out = N)
+    yylab <- rep(yylab, length.out = N)
 
+    ii <- 0
     for (nt in 1:nrow(x)) {
       for (i in which) {
-        dots$main <- Main[i]
+        ii <- ii+1
+        dots$main <- Main[ii]
         istart <- (i-1)*proddim + 1
         out <- x[nt,(istart+1):(istart+prod(dimens))]
         dim(out) <- dimens
-        dots$xlab <- xxlab[i]
-        dots$ylab <- yylab[i]
+        dots$xlab <- xxlab[ii]
+        dots$ylab <- yylab[ii]
 
         List <- alist(z=out)
         if (! is.null(grid)) {
@@ -388,7 +393,8 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
         do.call(xtype, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
      }
-     mtext(outer=TRUE, side=3,paste("time ",x[nt,1]), cex=1.5, line=-1.5)
+     if (sum(par("mfrow") - c(1,1))==0)
+       mtext(outer=TRUE, side=3,paste("time ",x[nt,1]), cex=1.5, line=-1.5)
 
    }
 }

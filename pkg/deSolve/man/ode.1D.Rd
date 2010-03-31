@@ -7,7 +7,9 @@
   that have been converted to ODEs by numerical differencing.
 }
 \usage{ode.1D(y, times, func, parms, nspec = NULL, dimens = NULL, 
-       method = "lsode", names = NULL, ...)
+   method= c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
+   "euler", "rk4", "ode23", "ode45", "bdf", "impAdams", "expAdams"),
+   names = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -46,8 +48,14 @@
   \item{dimens}{the number of *boxes* in the model. If NULL, then
     \code{nspec} should be specified.
   }
-  \item{method }{the integrator to use, one of \code{"vode"},
-    \code{"lsode"}, \code{"lsoda"}, \code{"lsodar"}, \code{"lsodes"}.
+  \item{method }{the integrator. Use \code{"vode", "lsode", "lsoda", 
+     "lsodar", "daspk"}, or \code{"lsodes"} if the model is very stiff;
+     "impAdams" may be best suited for mildly stiff problems; 
+     \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
+     efficient for non-stiff problems. Also allowed is to pass an integrator
+     \code{function}. Use one of the other runge-kutta methods via 
+     \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
+     trigger the cash-karp of order 4(5).
   }
   \item{names }{the names of the components; used for plotting.
   }

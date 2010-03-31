@@ -345,7 +345,6 @@ for (i in 1:n) {
 filled.contour(y, color.palette = terrain.colors)
 
 ## =======================================================================
-## Example 3:
 ##   jacfunc need not be estimated exactly
 ##   a crude approximation, with a smaller bandwidth will do.
 ##   Here the half-bandwidth 1 is used, whereas the true

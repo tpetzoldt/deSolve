@@ -10,7 +10,7 @@ around the implemented ODE solvers}
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45", 
-           "bdf", "impAdams", "expAdams"), ...)
+           "bdf", "bdf_d", "impAdams", "expAdams", "impAdams_d"), ...)
 
 \method{print}{deSolve}(x, \dots)
 }
@@ -52,7 +52,8 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"}, \code{"lsodar"}, \code{"vode"},
     \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"},
-    \code{"ode45"}, \code{"bdf"}, \code{"expAdams"}, or  \code{"impAdams"}).
+    \code{"ode45"}, \code{"bdf"}, \code{"bdf_d"}, \code{"expAdams"}, 
+    or \code{"impAdams"}).
     The latter three are the backward differentiation formula, the explicit
     Adams and the implicit Adams method respectively (see details).
     The default integrator used is \link{lsoda}
@@ -87,15 +88,29 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   The default integrator used is \link{lsoda}
   
   The option \code{method ="bdf"} provdes a handle to the backward 
-  differentiation formula (it is equal to using \code{method = lsode}). 
+  differentiation formula (it is equal to using \code{method = "lsode"}). 
   It is best suited to solve stiff (systems of) equations.
   
-  \code{method = "expAdams"} triggers the explicit Adams method; 
-  (equal to \code{method = lsode, mf = 10}. It is often the best choice
-  for solving non-stiff (systems of) equations.  
+  The option \code{method ="bdf_d"} selects the backward 
+  differentiation formula that uses Jacobi-Newton iteration (neglecting the 
+  off-diagonal elements of the Jacobian (it is equal to using 
+  \code{method = "lsode", mf = 23}). 
+  It is best suited to solve stiff (systems of) equations.
+
+  \code{method = "expAdams"} triggers the Adams method that uses functional
+  iteration (no jacobian used); 
+  (equal to \code{method = "lsode", mf = 10}. It is often the best 
+  choice for solving non-stiff (systems of) equations. (note: when functional
+  iteration is used, the method is often said to be eplicit, although it is  
+  in fact implicit)
   
-  \code{method = "impAdams"} uses the implicit Adams method (equal to 
-  \code{method = lsode, mf = 13}
+  \code{method = "impAdams"} selects the implicit Adams method that uses Newton-
+  Raphson iteration (equal to \code{method = "lsode", mf = 12}
+
+  \code{method = "impAdams_d"} selects the implicit Adams method that uses Jacobi-
+  Newton iteration, i.e. neglecting all off-diagonal elements (equal to 
+  \code{method = "lsode", mf = 13}
+
 
   For very stiff systems, \code{method ="daspk"} may outperform 
   \code{method ="bdf"}  

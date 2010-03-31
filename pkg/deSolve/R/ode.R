@@ -13,7 +13,7 @@
 ode    <- function (y, times, func, parms,
                     method= c("lsoda","lsode","lsodes","lsodar","vode","daspk",
                               "euler", "rk4", "ode23", "ode45", 
-                              "bdf", "impAdams", "expAdams"),
+                              "bdf", "bdf_d", "impAdams", "expAdams", "impAdams_d"),
                     ...)  {
   if (is.null(method)) method <- "lsoda"
   if (is.list(method)) {
@@ -37,8 +37,10 @@ ode    <- function (y, times, func, parms,
       ode23 = rk(y, times, func, parms, method = "ode23", ...),
       ode45 = rk(y, times, func, parms, method = "ode45", ...),
       bdf  = lsode(y, times, func, parms, mf = 22, ...),
+      bdf_d = lsode(y, times, func, parms, mf = 23, ...),
       expAdams = lsode(y, times, func, parms, mf = 10, ...), 
-      impAdams = lsode(y, times, func, parms, mf = 13, ...)
+      impAdams = lsode(y, times, func, parms, mf = 12, ...),
+      impAdams_d = lsode(y, times, func, parms, mf = 13, ...)
     )
 
   return(out)
@@ -47,18 +49,22 @@ ode    <- function (y, times, func, parms,
 ### ============================================================================
 
 ode.1D    <- function (y, times, func, parms, nspec = NULL, 
-                       dimens = NULL, method= "lsode", names = NULL, ...)   {
+                       dimens = NULL, method= c("lsoda","lsode",
+                              "lsodes","lsodar","vode","daspk",
+                              "euler", "rk4", "ode23", "ode45", 
+                              "bdf", "impAdams", "expAdams"), 
+                              names = NULL, ...)   {
 # check input
+  if (is.character(method)) method <- match.arg(method)
+
+  if (is.null(method)) method <- "lsoda"
+  
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
     stop ("cannot run ode.1D with jacfunc specified - remove jacfunc from call list")
 
   if (is.null(nspec) && is.null(dimens))
     stop ("cannot run ode.1D: nspec OR dimens should be specified")
 
-  if (nspec == 1 & method != "lsodes") {
-    out <- ode.band(y, times, func, parms, nspec = nspec, method = method, ...)
-    return(out)
-  }
 
   if (! is.null(names) && length(names) != nspec)
     stop("length of 'names' should equal 'nspec'")
@@ -69,12 +75,46 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
   if (N%%nspec !=0    )
     stop ("cannot run ode.1D: nspec is not an integer fraction of number of state variables")
 
-# if lsodes is used
+# Use ode.band if implicit method with nspec=1
+  if (is.character(method))
+    if( nspec == 1 & method %in% c("lsoda","lsode","lsodar","vode","daspk")) {
+      out <- ode.band(y, times, func, parms, nspec = nspec, method = method, ...)
+      return(out)
+    }
+
+# Use lsodes
   if (is.character(func) || method=="lsodes") {
-    if ( method != "lsodes") warning("ode.1D: R-function specified in a DLL-> integrating with lsodes")
+    if ( method != "lsodes") 
+      warning("ode.1D: R-function specified in a DLL-> integrating with lsodes")
     if (is.null(dimens) ) dimens    <- N/nspec
     out <- lsodes(y=y,times=times,func=func,parms,sparsetype="1D",nnz=c(nspec,dimens),...)
 
+# a Runge-Kutta or Euler
+  } else if (is.list(method)) {
+    #  is() should work from R 2.7 on ...
+    #   if (!is(method, "rkMethod"))
+    if (!"rkMethod" %in% class(method))
+      stop("'method' should be given as string or as a list of class 'rkMethod'")
+    out <- rk(y, times, func, parms, method = method, ...)
+
+# a function
+  } else if (is.function(method))
+    out <- method(y, times, func, parms,...)
+
+# an explicit method...
+    else if (method  %in% c("euler", "rk4", "ode23", "ode45", "expAdams")) {
+     if (method == "euler")
+      out <- euler(y=y,times=times,func=func,parms, ...)
+     else if (method == "rk4")
+      out <- rk(y, times, func, parms, method = "rk4", ...)
+     else if (method == "ode23")
+      out <- rk(y, times, func, parms, method = "ode23", ...)
+     else if (method == "ode45")
+      out <- rk(y, times, func, parms, method = "ode45", ...)
+     else if (method == "expAdams")
+      out <- lsode(y, times, func, parms, mf = 10, ...)
+  
+# an implicit method that needs restructuring...
   } else {
     NL <-names(y)
 
@@ -98,9 +138,12 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
     if (method == "vode")
       out <- vode(y[ii], times, func=bmod, parms=parms, bandup=nspec,
                   banddown=nspec, jactype="bandint", ...)
-    else if (method == "lsode")
+    else if (method == "lsode" || method == "bdf")
       out <- lsode(y[ii], times, func=bmod, parms=parms, bandup=nspec,
                    banddown=nspec, jactype="bandint", ...)
+    else if (method == "impAdams")
+      out <- lsode(y[ii], times, func=bmod, parms=parms, bandup=nspec,
+                   banddown=nspec, mf = 15, ...)
     else if (method == "lsoda")
       out <- lsoda(y[ii], times, func=bmod, parms=parms, bandup=nspec,
                    banddown=nspec, jactype="bandint", ...)
@@ -108,7 +151,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
       out <- lsodar(y[ii], times, func=bmod, parms=parms, bandup=nspec,
                    banddown=nspec, jactype="bandint", ...)
     else
-      stop ("cannot run ode.1D: method should be one of vode, lsoda, lsodar, lsode")
+      stop ("cannot run ode.1D: not a valid 'method'")
       out[,(ii+1)] <- out[,2:(N+1)]
       if (! is.null(NL)) colnames(out)[2:(N+1)]<- NL
   }
@@ -123,9 +166,13 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
 ### ============================================================================
 
 ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
+   method= c("lsodes","euler", "rk4", "ode23", "ode45", "expAdams"), 
    names = NULL, cyclicBnd = NULL, ...)  {
 
  # check input
+  if (is.character(method)) method <- match.arg(method)
+ 
+  if (is.null(method)) method <- "lsodes"
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
     stop ("cannot run ode.2D with jacfunc specified - remove jacfunc from call list")
   if (is.null(dimens))
@@ -151,10 +198,37 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
     Bnd[cyclicBnd[cyclicBnd>0]]<-1
   }
 
-  # use lsodes - note:expects rev(dimens)...
+# use lsodes - note:expects rev(dimens)...
+  if (is.character(func) || method=="lsodes") {
+    if ( method != "lsodes") 
+      warning("ode.2D: R-function specified in a DLL-> integrating with lsodes")
    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="2D",
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
+# a runge kutta
+  } else  if (is.list(method)) {
+    if (!"rkMethod" %in% class(method))
+      stop("'method' should be given as string or as a list of class 'rkMethod'")
+    out <- rk(y, times, func, parms, method = method, ...)
+# a function
+  } else if (is.function(method))
+    out <- method(y, times, func, parms,...)
 
+# an explicit method
+    else if (method  %in% c("euler", "rk4", "ode23", "ode45", "expAdams")) {
+     if (method == "euler")
+      out <- euler(y=y,times=times,func=func,parms, ...)
+     else if (method == "rk4")
+      out <- rk(y, times, func, parms, method = "rk4", ...)
+     else if (method == "ode23")
+      out <- rk(y, times, func, parms, method = "ode23", ...)
+     else if (method == "ode45")
+      out <- rk(y, times, func, parms, method = "ode45", ...)
+     else if (method == "expAdams")
+      out <- lsode(y, times, func, parms, mf = 10, ...)
+  } else {
+      stop ("cannot run ode.2D: not a valid 'method'")
+  }
+  
   attr (out,"dimens") <- dimens
   attr (out,"nspec")  <- nspec
   attr (out,"ynames") <- names
@@ -165,8 +239,11 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
 ### ============================================================================
 
 ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, 
+  method= c("lsodes","euler", "rk4", "ode23", "ode45", "expAdams"), 
   names = NULL, ...){
  # check input
+  if (is.character(method)) method <- match.arg(method)
+  if (is.null(method)) method <- "lsodes"
   if (any(!is.na(pmatch(names(list(...)), "jacfunc"))))
     stop ("cannot run ode.3D with jacfunc specified - remove jacfunc from call list")
   if (is.null(dimens))
@@ -187,9 +264,39 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens,
 
   Bnd <- c(0,0,0)    #  cyclicBnd not included
 
-  # use lsodes - note:expects rev(dimens)...
-   out <- lsodes(y=y, times=times, func=func, parms, sparsetype="3D",
+# use lsodes - note:expects rev(dimens)...
+  if (is.character(func) || method=="lsodes") {
+    if ( method != "lsodes") 
+      warning("ode.3D: R-function specified in a DLL-> integrating with lsodes")
+    out <- lsodes(y=y, times=times, func=func, parms, sparsetype="3D",
           nnz=c(nspec,rev(dimens), rev(Bnd)), ...)
+
+# a runge-kutta
+  } else if (is.list(method)) {
+    if (!"rkMethod" %in% class(method))
+      stop("'method' should be given as string or as a list of class 'rkMethod'")
+    out <- rk(y, times, func, parms, method = method, ...)
+
+# another function
+  } else if (is.function(method))
+    out <- method(y, times, func, parms,...)
+
+# an explicit method
+   else if (method  %in% c("euler", "rk4", "ode23", "ode45", "expAdams")) {
+    if (method == "euler")
+      out <- euler(y=y,times=times,func=func,parms, ...)
+    else if (method == "rk4")
+      out <- rk(y, times, func, parms, method = "rk4", ...)
+    else if (method == "ode23")
+      out <- rk(y, times, func, parms, method = "ode23", ...)
+    else if (method == "ode45")
+      out <- rk(y, times, func, parms, method = "ode45", ...)
+    else if (method == "expAdams")
+      out <- lsode(y, times, func, parms, mf = 10, ...)
+  } else {
+      stop ("cannot run ode.3D: not a valid 'method'")
+  }
+
   attr (out,"dimens") <- dimens
   attr (out,"nspec")  <- nspec
   attr (out,"ynames") <- names

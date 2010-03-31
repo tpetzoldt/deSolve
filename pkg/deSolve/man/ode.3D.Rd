@@ -9,8 +9,9 @@
   that have been converted to ODEs by numerical differencing.
 }
 
-\usage{ode.3D(y, times, func, parms, nspec = NULL, dimens, names = NULL,
-   ...)}
+\usage{ode.3D(y, times, func, parms, nspec = NULL, dimens, 
+   method = c("lsodes", "euler", "rk4", "ode23", "ode45", "expAdams"),
+  names = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -45,6 +46,14 @@
     dimensions in the model. 
   }
   \item{names }{the names of the components; used for plotting.
+  }
+  \item{method }{the integrator. Use \code{"lsodes"} if the model is very stiff;
+     "impAdams" may be best suited for mildly stiff problems; 
+     \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
+     efficient for non-stiff problems. Also allowed is to pass an integrator
+     \code{function}. Use one of the other runge-kutta methods via 
+     \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
+     trigger the cash-karp of order 4(5).
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }
@@ -129,6 +138,7 @@ diffusion3D <- function(t,Y,par)
   n  <- 10
   y  <- array(dim=c(n,n,n),data=10.)
 
+  # use lsodes, the default (for n>20, runge-kutta more efficient)
   print(system.time(
   RES <- ode.3D(y, func=diffusion3D, parms=NULL, dimens=c(n,n,n),
                  times=1:20, lrw=120000, atol=1e-10,
