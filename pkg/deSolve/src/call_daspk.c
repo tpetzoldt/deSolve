@@ -159,9 +159,12 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
 
+  lock_solver(); /* prevent nested call of solvers that have global variables */
+
 /*                      #### initialisation ####                              */    
 
-  init_N_Protect();
+  //init_N_Protect();
+  long int old_N_Protect = save_N_Protected();  
 
   ny   = LENGTH(y);  
   n_eq = ny;                          /* n_eq is a global variable */
@@ -370,8 +373,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
                
 /*                    ####  an error occurred   ####                          */                     
     if (repcount > maxit || tin < tout || idid <= 0) {
-     idid = 0;
-     returnearly(1, it, ntot);
+      idid = 0;
+      returnearly(1, it, ntot);
     	break;
     }
   }    /* end main time loop */
@@ -380,7 +383,10 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   terminate(idid, iwork, 23, 0, rwork, 3, 1);
   REAL(RWORK)[0] = rwork[6];
     
-  unprotect_all();
+  //unprotect_all();
+  restore_N_Protected(old_N_Protect);  
+  unlock_solver();
+  
   if (idid > 0)
     return(YOUT);
   else

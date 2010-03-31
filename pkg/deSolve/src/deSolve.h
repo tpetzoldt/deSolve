@@ -6,11 +6,11 @@
 ============================================================================*/
 double *timesteps;
 
-
 SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
 SEXP Time, Y, YPRIME , Rin;
 
 int     n_eq; 
+
 
 /* use in daspk */
 long int nrowpd;
@@ -85,6 +85,10 @@ long int save_N_Protected(void);
 void restore_N_Protected(long int);
 void unprotect_all(void);
 void my_unprotect(int);
+
+void lock_solver(void);
+void unlock_solver(void);
+
 void returnearly (int, int, int);
 void terminate(int, int*, int, int, double *, int, int);
 

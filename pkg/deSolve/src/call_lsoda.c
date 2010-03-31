@@ -235,6 +235,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
 
+  lock_solver(); /* prevent nested call of solvers that have global variables */
+
 /*                      #### initialisation ####                              */    
   //init_N_Protect();  // ThPe: replaced by following line
   long int old_N_Protect = save_N_Protected();
@@ -530,6 +532,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /*                       ####   termination   ####                            */    
   //unprotect_all(); // ThPe: replaced by following line
   restore_N_Protected(old_N_Protect);
+  unlock_solver();
+
   if (istate > 0)
     return(YOUT);
   else

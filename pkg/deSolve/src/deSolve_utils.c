@@ -11,7 +11,10 @@ are PROTECTed, and UNPROTECTing them in the
 case of a FORTRAN stop.
 ==================================================*/
  
-long int N_Protected;
+long int N_Protected = 0; //initialize this with zero at the first time
+
+int solver_locked = 0; /* prevent nested calls of odepack solvers */
+
 
 void init_N_Protect(void) { N_Protected = 0; }
 
@@ -34,6 +37,18 @@ void my_unprotect(int n) {
     UNPROTECT(n);
     N_Protected -= n;
 }
+
+void lock_solver(void) {
+  if (solver_locked) {
+    /* important: unlock for the next call *after* error */
+    solver_locked = 0; 
+    error("The used combination of solvers cannot be nested.\n");
+  }
+  solver_locked = 1;
+}
+
+void unlock_solver(void) {solver_locked = 0;}
+
 
 /* Globals :*/
 SEXP R_deriv_func;

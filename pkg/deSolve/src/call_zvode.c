@@ -116,9 +116,12 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
 
+  lock_solver(); /* prevent nested call of solvers that have global variables */
+
 /*                      #### initialisation ####                              */    
 
-  init_N_Protect();
+  //init_N_Protect();
+  long int old_N_Protect = save_N_Protected();  
 
   jt = INTEGER(jT)[0];        
   neq = LENGTH(y);
@@ -300,7 +303,11 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 /*                   ####   returning output   ####                           */    
   terminate(istate, iwork, 23, 0, rwork, 4, 10);      
-  unprotect_all();
+  
+  unlock_solver();
+  //unprotect_all();
+  restore_N_Protected(old_N_Protect);
+  
   if (istate > 0)
     return(YOUT);
   else

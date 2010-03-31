@@ -10,8 +10,7 @@ func1 <- function(t,y,p) {
    }
    #AA <- ode(y=5,times=c(0.15, 0.4), p=NULL, func=ff, method="euler")
    AA <- ode(y=5,times=c(0.15, 0.4, 0.77), p=NULL, func=ff, method="lsoda")
-
-  list(-0.1*y)
+   list(-0.1*y)
 }
 out <- rk(y=8,times=sort(sample(1:20, 5)), p=NULL,func=func1, method="euler")
 ## can be called repeatedly without problems
