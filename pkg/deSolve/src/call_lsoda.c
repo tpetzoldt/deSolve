@@ -236,7 +236,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /******************************************************************************/
 
 /*                      #### initialisation ####                              */    
-  init_N_Protect();
+  //init_N_Protect();  // ThPe: replaced by following line
+  long int old_N_Protect = save_N_Protected();
 
   jt  = INTEGER(jT)[0];         /* method flag */
   n_eq = LENGTH(y);             /* number of equations */ 
@@ -527,7 +528,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
 /*                       ####   termination   ####                            */    
-  unprotect_all();
+  //unprotect_all(); // ThPe: replaced by following line
+  restore_N_Protected(old_N_Protect);
   if (istate > 0)
     return(YOUT);
   else
