@@ -98,10 +98,10 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   It is best suited to solve stiff (systems of) equations.
 
   \code{method = "expAdams"} triggers the Adams method that uses functional
-  iteration (no jacobian used); 
+  iteration (no Jacobian used); 
   (equal to \code{method = "lsode", mf = 10}. It is often the best 
   choice for solving non-stiff (systems of) equations. (note: when functional
-  iteration is used, the method is often said to be eplicit, although it is  
+  iteration is used, the method is often said to be explicit, although it is  
   in fact implicit)
   
   \code{method = "impAdams"} selects the implicit Adams method that uses Newton-

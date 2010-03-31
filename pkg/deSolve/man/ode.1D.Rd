@@ -53,7 +53,7 @@
      "impAdams" may be best suited for mildly stiff problems; 
      \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
      efficient for non-stiff problems. Also allowed is to pass an integrator
-     \code{function}. Use one of the other runge-kutta methods via 
+     \code{function}. Use one of the other Runge-Kutta methods via 
      \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
      trigger the cash-karp of order 4(5).
   }

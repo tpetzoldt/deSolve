@@ -10,7 +10,7 @@
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
-  method= c("lsodes","euler", "rk4", "ode23", "ode45", "expAdams"),
+  method= c("lsodes", "euler", "rk4", "ode23", "ode45", "expAdams"),
   names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -52,12 +52,12 @@
   \item{names }{the names of the components; used for plotting.
   }
   \item{method }{the integrator. Use \code{"lsodes"} if the model is very stiff;
-     "impAdams" may be best suited for mildly stiff problems; 
+     \code{"impAdams"} may be best suited for mildly stiff problems; 
      \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
      efficient for non-stiff problems. Also allowed is to pass an integrator
-     \code{function}. Use one of the other runge-kutta methods via 
+     \code{function}. Use one of the other Runge-Kutta methods via 
      \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
-     trigger the cash-karp of order 4(5).
+     trigger the Cash-Karp method of order 4(5).
      
      If  \code{"lsodes"} is used, then also the size of the work array should
      be specified (\code{lrw}) (see \link{lsodes}).
@@ -159,11 +159,11 @@ yini    <- rep(0, 2*N*N)
 cc      <- c((NN/2):(NN/2+1)+N/2, (NN/2):(NN/2+1)-N/2)
 yini[cc] <- yini[NN+cc] <- 1
 
-## solve model (5000 state variables...  use Cash-Karp runge-kutta method
+## solve model (5000 state variables...  use Cash-Karp Runge-Kutta method
 times   <- seq(0, 50, by = 1)
 out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
               dimens = c(N, N), names = c("Prey","Pred"),
-              N = N, dx = dx, Da = Da, , method=rkMethod("rk45ck"))
+              N = N, dx = dx, Da = Da, , method = rkMethod("rk45ck"))
 
 ## plot results
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
