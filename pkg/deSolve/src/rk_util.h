@@ -125,7 +125,7 @@ void rk_implicit(double * alfa, int *index,
        /* arrays */
        double* tt, double* y0, double* y1, double* dy1, 
        double* f, double* y, double* Fj, 
-       double* tmp, double* tmp2,  double *tmp3,
+       double* tmp, double* tmp2, double *tmp3,
        double* FF, double* rr, double* A, double* out, 
        double* bb1, double* cc, 
        double* yknots, double* yout,

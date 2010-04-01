@@ -59,13 +59,25 @@ euler <- function(y, times, func, parms, verbose = FALSE, ynames = TRUE,
     }
 
     ## the CALL to the integrator
-    out <- .Call("call_euler", as.double(y), as.double(times),
-        Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
-        as.double(rpar), as.integer(ipar), flist, PACKAGE="deSolve")
+    if (!(".transpose_out" %in% ls())) { ## experimental!!! remove this !!!
+        out <- .Call("call_euler", as.double(y), as.double(times),
+                     Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
+                     as.double(rpar), as.integer(ipar), flist, PACKAGE="deSolve")
 
     ## saving results
-    out <- saveOutrk(out, y, n, Nglobal, Nmtot,
-                     iin = c(1, 12, 13, 15), iout=c(1:3, 18))
+        out <- saveOutrk(out, y, n, Nglobal, Nmtot,
+                         iin = c(1, 12, 13, 15), iout=c(1:3, 18))
+    } else {
+    ## testing code !!!
+        out <- .Call("call_euler_t", as.double(y), as.double(times),
+                     Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
+                     as.double(rpar), as.integer(ipar), flist, PACKAGE="deSolve")
+
+    ## saving results
+        out <- saveOutrk(out, y, n, Nglobal, Nmtot,
+                     iin = c(1, 12, 13, 15), iout=c(1:3, 18), transpose=TRUE)
+
+    }
     if (verbose) diagnostics(out)
     attr(out, "type")   <- "rk"
     out

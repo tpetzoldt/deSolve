@@ -129,10 +129,10 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /* ks */
   alpha =  (double *) R_alloc(neq * stage * neq * stage, sizeof(double));
-  index = (int *) R_alloc(neq * stage, sizeof(int));
-  tmp   =  (double *) R_alloc(neq*stage, sizeof(double));
-  tmp2  =  (double *) R_alloc(neq*stage, sizeof(double));
-  tmp3  =  (double *) R_alloc(neq*stage, sizeof(double));
+  index =  (int *)    R_alloc(neq * stage, sizeof(int));
+  tmp   =  (double *) R_alloc(neq * stage, sizeof(double));
+  tmp2  =  (double *) R_alloc(neq * stage, sizeof(double));
+  tmp3  =  (double *) R_alloc(neq * stage, sizeof(double));
 
 
   /* matrix for polynomial interpolation */

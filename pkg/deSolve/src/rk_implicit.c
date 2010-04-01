@@ -4,16 +4,16 @@
 
 #include "rk_util.h"
 void F77_NAME(dgefa)(double*, int*, int*, int*, int*);
-void F77_NAME(dgesl)(double*, int*, int*, int *, double*, int*);
-/*void lu_solve(double, int, int, double);
-
+void F77_NAME(dgesl)(double*, int*, int*, int*, double*, int*);
+/* 
+void lu_solve(double, int, int, double);
 void kfunc(int, int, double, double, double, double, double, double, 
       double, SEXP, SEXP, SEXP, double, double, double, int, int, int);
 void dkfunc(int, int, double, double, double, double, double, double, double, 
       SEXP, SEXP, SEXP, double, double, double, double, int, int, int, double);
 */      
-/* lower upper decomposition - no error checking */
 
+/* lower upper decomposition - no error checking */
 void lu_solve(double *alfa, int n, int *index, double *bet) {
   int info;
 
@@ -26,7 +26,7 @@ void lu_solve(double *alfa, int n, int *index, double *bet) {
 }
 
 /* function that returns -k + dt*derivs(t+c[i]*dt, y+sum(a[i,)*k 
- this is the function whose roots should be found in the implicit method */
+   this is the function whose roots should be found in the implicit method */
 
 void kfunc(int stage, int neq, double t, double dt,
    double *FF, double *Fj, double *A, double *cc, double *y0 , 
@@ -36,25 +36,25 @@ void kfunc(int stage, int neq, double t, double dt,
    int i, j, k;  
     /******  Prepare Coefficients from Butcher table ******/
    for (j = 0; j < stage; j++) {
-     for(i = 0; i < neq; i++) Fj[i] = 0.;
-       for (k =0; k < stage; k++) { // implicit part
-         for(i = 0; i < neq; i++)
-           Fj[i] = Fj[i] + A[j + stage * k] * FF[i + neq * k] * dt;
-       }
-       for (int i = 0; i < neq; i++) {
-         tmp[i] = Fj[i] + y0[i];
-       }
-       /******  Compute Derivatives ******/
-       /* pass option to avoid unnecessary copying in derivs note:tmp2 rather than FF*/
-       derivs(Func, t + dt * cc[j], tmp, Parms, Rho, tmp2, out, j, neq, 
-                ipar, isDll, isForcing);
+     for (i = 0; i < neq; i++) Fj[i] = 0.;
+     for (k =0; k < stage; k++) { // implicit part
+       for(i = 0; i < neq; i++)
+         Fj[i] = Fj[i] + A[j + stage * k] * FF[i + neq * k] * dt;
+     }
+     for (int i = 0; i < neq; i++) {
+       tmp[i] = Fj[i] + y0[i];
+     }
+     /******  Compute Derivatives ******/
+     /* pass option to avoid unnecessary copying in derivs note:tmp2 rather than FF */
+     derivs(Func, t + dt * cc[j], tmp, Parms, Rho, tmp2, out, j, neq, 
+              ipar, isDll, isForcing);
    }
    for (i = 0; i< neq*stage;i++)
-     tmp[i] = FF[i]-tmp2[i];       // tmp should be = 0 at root
+     tmp[i] = FF[i] - tmp2[i];       // tmp should be = 0 at root
 }
 
-/* function that returns the Jacobian of kfunc; df[i,j] shold contain:
- dkfunc_i/dFFj CHECK */
+/* function that returns the Jacobian of kfunc; df[i,j] should contain:
+   dkfunc_i/dFFj CHECK */
 void dkfunc(int stage, int neq, double t, double dt,
    double *FF, double *Fj, double *A, double *cc, double *y0, 
    SEXP Func, SEXP Parms, SEXP Rho, double *tmp, double *tmp2, double *tmp3, 
@@ -69,21 +69,19 @@ void dkfunc(int stage, int neq, double t, double dt,
    kfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
          tmp2, tmp3, out, ipar, isDll, isForcing);
      
-   for (i = 0; i< nroot; i++) {
+   for (i = 0; i < nroot; i++) {
      d1 = FF[i];                      // copy
-     d2 = fmax(1e-8, FF[i]*1e-8);     // perturb
+     d2 = fmax(1e-8, FF[i] * 1e-8);     // perturb
      FF[i] = FF[i] + d2;
      kfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
         tmp, tmp3, out, ipar, isDll, isForcing);
-     for (j = 0; j< nroot; j++) 
-       df[nroot*i+j] = (tmp[j]-tmp2[j])/d2;   //df[j,i] j,i=1:nroot
+     for (j = 0; j < nroot; j++) 
+       df[nroot * i + j] = (tmp[j] - tmp2[j])/d2;   //df[j,i] j,i=1:nroot
      FF[i] = d1;                      // restore
    } 
 }
 
-
-/* ks: check if tmp3 necessary ...*/
-
+/* ks: check if tmp3 necessary ... */
 void rk_implicit( double * alfa,  // neq*stage * neq*stage
        int *index,                // neq*stage 
        /* integers */
@@ -108,14 +106,13 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
        SEXP Func, SEXP Parms, SEXP Rho
   ) 
 {
-
   int i = 0, one = 1; 
   int iknots = *_iknots, it = *_it, it_ext = *_it_ext, it_tot = *_it_tot;
   double t_ext;
   double dt = *_dt;
-  int iter, maxit=100;
+  int iter, maxit = 100;
   double errf, errx;
-  int nroot = neq*stage;
+  int nroot = neq * stage;
 
   /*------------------------------------------------------------------------*/
   /* Main Loop                                                              */
@@ -127,32 +124,29 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
     else
       dt = tt[it] - tt[it-1];
 
-    timesteps[0] = timesteps[1];     // experimental, check this
-    timesteps[1] = dt;               // experimental, check this  
+    timesteps[0] = timesteps[1];
+    timesteps[1] = dt;
    
-   // Newton-Raphson steps
-   for (iter =0; iter < maxit; iter++) {
-   /* function value and jacobian*/ 
-     kfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
+    // Newton-Raphson steps
+    for (iter = 0; iter < maxit; iter++) {
+      /* function value and Jacobian*/ 
+      kfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
         tmp, tmp2, out, ipar, isDll, isForcing);
-     errf = 0.;   
-     for ( i = 0; i < nroot; i++) 
-       errf = errf+fabs(tmp[i]);
-     if (errf < 1e-8) 
-       break; 
-     dkfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
+      errf = 0.;   
+      for ( i = 0; i < nroot; i++) errf = errf + fabs(tmp[i]);
+      if (errf < 1e-8) break; 
+      dkfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
         tmp, tmp2, tmp3, out, ipar, isDll, isForcing, alfa);
 
-     lu_solve (alfa, nroot, index, tmp);
-     errx = 0;
-     for ( i = 0; i < nroot; i++) {
-       errx = errx+fabs(tmp[i]);
-       FF[i] = FF[i]-tmp[i];
-     }  
-   //  Rprintf("iter %i errf %g errx %g\n",iter, errf, errx);
-     if (errx < 1e-8) break; 
-   }
-
+      lu_solve (alfa, nroot, index, tmp);
+      errx = 0;
+      for (i = 0; i < nroot; i++) {
+        errx = errx + fabs(tmp[i]);
+        FF[i] = FF[i] - tmp[i];
+      }  
+      //  Rprintf("iter %i errf %g errx %g\n",iter, errf, errx);
+      if (errx < 1e-8) break; 
+    }
 
     /*====================================================================*/
     /* Estimation of new values                                           */

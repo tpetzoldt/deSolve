@@ -245,7 +245,7 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
 ## Output cleanup  - for the Runge-Kutta solvers
 ## =============================================================================
 
-saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout)  {
+saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout, transpose=FALSE)  {
 
   ## Names for the outputs
   nm <- c("time",
@@ -266,6 +266,9 @@ saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout)  {
   attr(out,"istate") <- istate
 
   class(out) <- c("deSolve","matrix")    # a differential equation
-  return(out)
+  if (transpose)
+    return(t(out))
+  else
+    return(out)
 }
 
