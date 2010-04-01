@@ -134,6 +134,7 @@ checkDLL <- function (func,jacfunc,dllname,
 
     if (sum(duplicated (c(func,initfunc,jacfunc))) >0)
       stop("func, initfunc, or jacfunc cannot be the same")
+    ModelInit <- NA
     if (! is.null(initfunc))  # to allow absence of initfunc
       if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran"))  {

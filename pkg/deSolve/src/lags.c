@@ -29,7 +29,7 @@
    more/less efficient than straightforward findHistInt2...
    
    
-   to do: vanishing time delays...    
+   to do: make lags callable from external C/Fortran function 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 /*=========================================================================== 
@@ -426,18 +426,19 @@ SEXP getLagDeriv(SEXP T, SEXP nr)
 	return(value);
 }
 
+
 /* ============================================================================
   Interrogate the lag settings as in an R-list   
    ==========================================================================*/
 
 int initLags(SEXP elag, int solver, int nroot) {
 
-  SEXP Mxhist, Islag, Interpol;       
+  SEXP Mxhist, Islag, Interpol ;       
   int mxhist, islag;
     
   Islag = getListElement(elag, "islag");
   islag = INTEGER(Islag)[0];
-
+    
   if (islag ==1) { 
    Mxhist = getListElement(elag, "mxhist");
    mxhist = INTEGER(Mxhist)[0];
@@ -450,6 +451,10 @@ int initLags(SEXP elag, int solver, int nroot) {
     mxhist = 0;
     interpolMethod = 1;
   }  
-
   return(islag);
 }
+/* =========================================================================== */
+
+
+
+

@@ -142,8 +142,19 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     nsteps  <- min(.Machine$integer.max, maxsteps * length(times))
     varstep <- method$varstep
     vrb <- FALSE # TRUE would force internal debugging output of the C code
-
-    if (varstep) {  # methods with variable step size
+    ## KS-> ThPe : testing
+    implicit <- method$implicit
+    if (is.null(implicit)) implicit <- 0
+    if (implicit) {
+      if (is.null(hini)) hini <- 0
+      out <- .Call("call_rkImplicit", as.double(y), as.double(times),
+        Func, Initfunc, parms, Eventfunc, events,
+        as.integer(Nglobal), rho,
+        as.double(tcrit), as.integer(vrb),
+        as.double(hini), as.double(rpar), as.integer(ipar), method,
+        as.integer(nsteps), flist)
+    
+    } else if (varstep) {  # methods with variable step size
       if (is.null(hini)) hini <- hmax
       out <- .Call("call_rkAuto", as.double(y), as.double(times),
         Func, Initfunc, parms, Eventfunc, events,

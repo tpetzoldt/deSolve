@@ -381,7 +381,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 #       }else print("uses Krylov iterative method")
 #    }
 
-  lags <- checklags(lags) 
+  lags <- checklags(lags,dllname) 
   if (lags$islag == 1) {
     info[3] = 1        # one step and return
     maxIt <- maxsteps  # maxsteps per iteration...

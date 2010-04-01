@@ -265,7 +265,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   IN <-2
   if (!is.null(rootfunc)) IN <- 6  
 
-  lags <- checklags(lags) 
+  lags <- checklags(lags, dllname) 
 
   ## end time lags...
   out <- .Call("call_lsoda",y,times,Func,initpar,

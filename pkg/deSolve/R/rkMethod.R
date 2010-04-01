@@ -243,6 +243,91 @@ rkMethod <- function(method = NULL, ...) {
         c  = c(0, 2./27., 1/9, 1/6, 5/12, 0.5, 5/6, 1/6, 2/3, 1/3, 1, 0, 1),
         stage = 13,
         Qerr  = 7
+    ),
+
+    ## KS -> ThPe: these are implicit methods 
+
+    ## Radau order 3
+    irk3r = list(ID = "irk3r",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c(5/12, -1/12,
+             3/4, 1/4),
+             nrow=2, ncol=2, byrow = TRUE),
+      b1 = c(3/4, 1/4) ,
+      c = c(1/3, 1/4),
+      stage = 2,
+      Qerr = 3
+    ),
+    
+    ## Radau IIA order 5
+    irk5r = list(ID = "irk5r",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c((88-7*sqrt(6))/360, (296-169*sqrt(6))/1800,(-2+3*sqrt(6))/225,
+             (296+169*sqrt(6))/1800, (88+7*sqrt(6))/360,(-2-3*sqrt(6))/225,
+             (16-sqrt(6))/36, (16+sqrt(6))/36,1/9),
+             nrow=3, ncol=3, byrow = TRUE),
+      b1 = c((16-sqrt(6))/36,(16+sqrt(6))/36, 1/9), 
+      c = c(0.4-sqrt(6)/10, 0.4+sqrt(6)/10, 1),
+      stage = 3,
+      Qerr = 6
+    ),
+
+    ## Hammer - Hollingsworth coefficients , order 4
+    irk4hh = list(ID = "irk4hh",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c(1/4, 1/4-sqrt(3)/6,
+             1/4+sqrt(3)/6, 1/4),
+             nrow=2, ncol=2, byrow = TRUE),
+      b1 = c(1/2, 1/2), 
+      c = c(0.5-sqrt(3)/6, 0.5+sqrt(3)/6),
+      stage = 2,
+      Qerr = 4
+    ),
+
+    ## Kuntzmann and Butcher order 6
+    irk6kb = list(ID = "irk6kb",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c(5/36, 2/9-sqrt(15)/15, 5/36 - sqrt(15)/30,
+             5/36+sqrt(15)/24,2/9,5/36-sqrt(15)/24,
+             5/36+sqrt(15)/30,2/9+sqrt(15)/15,5/36),
+             nrow=3, ncol=3, byrow = TRUE),
+      b1 = c(5/18, 4/9, 5/18), 
+      c = c(1/2-sqrt(15)/10, 1/2, 1/2+sqrt(15)/10),
+      stage = 3,
+      Qerr = 6
+    ),
+
+    ## Lobatto order 4
+    irk4l = list(ID = "irk4l",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c(0,  0,  0,
+                   1/4,1/4,0,
+                   0,  1,  0),
+                   nrow=3, ncol=3, byrow = TRUE),
+      b1 = c(1/6, 2/3, 1/6) ,
+      c  = c(0,   1/2, 1),
+      stage = 3,
+      Qerr = 4
+    ),
+
+    ## Lobatto order 6
+    irk6l = list(ID = "irk6l",
+      varstep = FALSE,
+      implicit = TRUE,
+      A = matrix(c(0,0,0,0,
+             (5+sqrt(5))/60,  1/6,   (15-7*sqrt(5))/60,0,
+              (5-sqrt(5))/60, (15+7*sqrt(5))/60,1/6,   0,
+              1/6,(5-sqrt(5))/12, (5+sqrt(5))/12   ,   0),
+              nrow=4, ncol=4, byrow = TRUE),
+      b1 = c(1/12, 5/12, 5/12, 1/12) ,
+      c = c(0,(5-sqrt(5))/10,(5+sqrt(5))/10,1),
+      stage = 4,
+      Qerr = 6
     )
   )
   ## look if the method is known; ode23 and ode45 are used as synonyms

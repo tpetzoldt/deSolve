@@ -296,7 +296,7 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   storage.mode(y) <- storage.mode(times) <- "double"
   IN <-3
 
-  lags <- checklags(lags) 
+  lags <- checklags(lags, dllname) 
 
   out <- .Call("call_lsoda",y,times,Func,initpar,
                rtol, atol, rho, tcrit, JacFunc, ModelInit, Eventfunc,

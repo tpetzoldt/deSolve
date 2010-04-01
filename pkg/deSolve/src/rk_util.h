@@ -108,4 +108,27 @@ void rk_fixed(
   /* SEXPs */
   SEXP Func, SEXP Parms, SEXP Rho
 );
+
  
+void rk_implicit(double * alfa, int *index, 
+       /* integers */
+       int fsal, int neq, int stage,
+       int isDll, int isForcing, int verbose,
+       int nknots, int interpolate, int maxsteps, int nt,
+       /* int pointers */
+       int* _iknots, int* _it, int* _it_ext, int* _it_tot, 
+       int* istate,  int* ipar,
+       /* double */
+        double t, double tmax, double hini,
+       /* double pointers */
+       double* _dt,
+       /* arrays */
+       double* tt, double* y0, double* y1, double* dy1, 
+       double* f, double* y, double* Fj, 
+       double* tmp, double* tmp2,  double *tmp3,
+       double* FF, double* rr, double* A, double* out, 
+       double* bb1, double* cc, 
+       double* yknots, double* yout,
+       /* SEXPs */
+       SEXP Func, SEXP Parms, SEXP Rho
+); 

@@ -125,7 +125,6 @@ void updateevent(double*, double*, int*);
 SEXP getPastValue   (SEXP T, SEXP nr);
 SEXP getPastGradient(SEXP T, SEXP nr);
 
-
 /*==========================================
   C- utilities, functions
 ==========================================*/
@@ -147,6 +146,7 @@ void updatehist(double t, double *y, double *dy, double *rwork, int *iwork);
 int nexthist(int i);
 double interpolate(int i, int k, double t0, double t1, double t, 
   double *Yh, int nq); 
+
 
 /*==========================================
   Global variables for history arrays
