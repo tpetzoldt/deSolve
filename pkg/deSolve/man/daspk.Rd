@@ -230,7 +230,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     defined in compiled code: the number of output variables calculated
     in the compiled function \code{res}, present in the shared
     library. Note: it is not automatically checked whether this is
-    indeed the number of output variables calculed in the dll - you have
+    indeed the number of output variables calculated in the dll - you have
     to perform this check in the code - See package vignette
     \code{"compiledCode"}.
   }

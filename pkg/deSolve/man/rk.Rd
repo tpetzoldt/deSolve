@@ -146,7 +146,7 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     defined in compiled code: the number of output variables calculated
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
-    indeed the number of output variables calculed in the dll - you have
+    indeed the number of output variables calculated in the dll - you have
     to perform this check in the code. See package vignette
     \code{"compiledCode"}.
   }
