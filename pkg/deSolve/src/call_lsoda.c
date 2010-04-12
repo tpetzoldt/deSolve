@@ -456,7 +456,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       } else if (istate == 3 && (solver == 4 || solver == 6)){
        /* root found - take into account if an EVENT */
         if (isEvent && rootevent) {
-          tEvent=tin;
+          tEvent = tin;
           updateevent(&tin, xytmp, &istate);
           istate = 1;
           repcount = 0;

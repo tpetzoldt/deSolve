@@ -1,5 +1,6 @@
 \name{plot.deSolve}
 \alias{plot.deSolve}
+\alias{plot.1D}
 \alias{hist.deSolve}
 \alias{image.deSolve}
 \title{
@@ -13,6 +14,8 @@ Plot the output of numeric integration routines.
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
   add.contour = FALSE, grid = NULL, xtype="image", ...)  
+plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) 
+
 }
 
 \arguments{
@@ -33,10 +36,14 @@ Plot the output of numeric integration routines.
   \item{xtype }{the name of the plotting function to use, one of "image", 
     "filled.contour", "persp".}
 
-  \item{grid }{only for \code{image} plots: the 1-D grid as a vector (output 
-    generated with \code{ode.1D}, or the x- and y-grid, as a \code{list} for 
-    output generated with \code{ode.2D}. }
+  \item{grid }{only for \code{image} plots and for \code{plot.1D}: 
+    the 1-D grid as a vector (output generated with \code{ode.1D}, 
+    or the x- and y-grid, as a \code{list} for output generated with 
+    \code{ode.2D}. }
 
+  \item{xyswap }{ if \code{TRUE}, then x-and y-values are swapped and the 
+    y-axis is from top to bottom. Useful for drawing vertical profiles. }
+    
   \item{\dots}{additional graphics arguments passed to
     \code{\link{plot.default}}, \code{\link{image}} or \code{\link{hist}}}
 }
@@ -61,6 +68,11 @@ Plot the output of numeric integration routines.
   For images, it is possible to pass an argument \code{xtype} which can
   take the values "image" (default), "filled.contour" or "persp", in order
   to use the respective plotting method.
+  
+  \code{plot} will always have \code{times} on the x-axis. For problems
+  solved with \code{ode.1D}, it may be more useful to use \code{plot.1D}
+  which will plot how spatial variables change with time. These plots will
+  have the \code{grid} on the x-axis.
 }
 
 \seealso{
@@ -162,6 +174,9 @@ image(out, grid = Distance, main="Aphid model", ylab="distance, m",
   xtype="persp", border=NA, theta=30)
 \dontrun{
   plot(out,ask=FALSE,mfrow=c(1,1))
+
+  plot.1D(out,ask=FALSE,type="l",lwd=2,xyswap=TRUE)
+
 }
 
 }

@@ -164,7 +164,7 @@ rootfun <- function (t, y, pars) {
   return(y-0.5)
 }
 
-# sets state vaiable = 1                                                  
+# sets state variable = 1                                                  
 eventfun <- function(t, y, pars) {
   return(y=1)
 }

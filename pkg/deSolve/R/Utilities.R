@@ -122,6 +122,7 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 
 
 plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
+
     if (is.null(which))
       which <- 1:(ncol(x)-1)
     t <- 1     # column with "times"
@@ -207,6 +208,85 @@ drapecol <- function (A, col = colorRampPalette(c("#00007F", "blue", "#007FFF", 
     return(drape)
 }
 
+### ============================================================================
+
+plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
+
+
+    nspec <- attributes(x)$nspec
+    dimens <- attributes(x)$dimens
+    proddim <- prod(dimens)
+    if (length(dimens) != 1)
+      stop ("plot.1D only works for models solved with 'ode.1D'")
+
+    if ((ncol(x)- nspec*proddim) < 1)
+      stop("ncol of 'x' should be > 'nspec' * dimens if x is a vector")
+
+    if (is.null(which))
+      which <- 1:nspec
+
+    var <-  if (! is.null(attributes(x)$ynames))
+      attributes(x)$ynames else 1:nspec
+
+    which <- select1dvar(which,var)
+
+    np <- length(which)
+
+    dots <- list(...)
+    nmdots <- names(dots)
+
+    # number of figures in a row and
+    # interactively wait if there are remaining figures
+
+    ask <- setplotpar(nmdots, dots, np, ask)
+    if (ask) {
+        oask <- devAskNewPage(TRUE)
+        on.exit(devAskNewPage(oask))
+    }
+
+
+    labs <- (is.null(dots$xlab) && is.null(dots$ylab))
+    xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
+    yylab <- if (is.null(dots$ylab))  var  else dots$ylab
+
+    ## allow individual xlab and ylab (vectorized)
+    xxlab <- rep(xxlab, length.out = np)
+    yylab <- rep(yylab, length.out = np)
+    times <- x[,1]
+    Main <-  if (is.null(dots$main)) paste("time",times) else rep(dots$main, length.out =length(times))
+    
+    for (j in 1:length(times)) {
+      for (i in which) {
+        dots$main <- Main[j]
+        istart <- (i-1)*proddim + 1
+        out <- x[j,(istart+1):(istart+prod(dimens))]
+
+        dots$xlab <- xxlab[i]
+        dots$ylab <- yylab[i]
+
+        if (! is.null(grid)) 
+          Grid = grid
+        else 
+          Grid = 1:length(out)
+          
+        if (! xyswap) {            
+          dots$xlab <- xxlab[i]
+          dots$ylab <- yylab[i]
+          do.call("plot", c(alist(Grid, out), dots))
+        } else {
+          if (is.null(labs)){
+            dots$ylab <- xxlab[i]
+            dots$xlab <- yylab[i]
+          } else {
+            dots$xlab <- xxlab[i]
+            dots$ylab <- yylab[i]
+            dots$ylim <- rev(range(Grid))    # y-axis reversed
+          }
+          do.call("plot", c(alist(out, Grid), dots))
+        } 
+       }
+     }
+}
 
 ### ============================================================================
 

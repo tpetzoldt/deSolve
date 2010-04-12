@@ -22,7 +22,7 @@ timestep(prev=TRUE)
 
 }
 \arguments{
-  \item{t }{the current time for which the lagged value is wanted; this should
+  \item{t }{the time for which the lagged value is wanted; this should
     be no larger than the current simulation time and no smaller than the 
     initial simulation time.  
   }
