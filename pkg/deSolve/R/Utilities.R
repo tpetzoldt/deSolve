@@ -364,7 +364,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
            else
               dots$col<-drapecol(out,dotscol)
           if (is.null(dotslim)) 
-            if (diff(range(out)) == 0) dots$zlim = c(0,1)
+            if (diff(range(out, na.rm=TRUE)) == 0) dots$zlim = c(0,1)
           else
             dots$zlim = dotslim          
         
@@ -419,8 +419,8 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
       length.out =N)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
-    xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""   else dots$ylab
+    xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
+    yylab <- if (is.null(dots$ylab))  "y"   else dots$ylab
 
     if (xtype=="persp")
       dotscol <- dots$col 
@@ -465,7 +465,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
            else
               dots$col<-drapecol(out,dotscol)
           if (is.null(dotslim)) 
-            if (diff(range(out)) == 0) dots$zlim = c(0,1)
+            if (diff(range(out, na.rm=TRUE)) == 0) dots$zlim = c(0,1)
           else
             dots$zlim = dotslim          
         

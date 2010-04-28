@@ -10,7 +10,7 @@ around the implemented ODE solvers}
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45", 
-           "bdf", "bdf_d", "impAdams", "expAdams", "impAdams_d"), ...)
+           "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"), ...)
 
 \method{print}{deSolve}(x, \dots)
 }
@@ -52,9 +52,9 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"}, \code{"lsodar"}, \code{"vode"},
     \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"},
-    \code{"ode45"}, \code{"bdf"}, \code{"bdf_d"}, \code{"expAdams"}, 
+    \code{"ode45"}, \code{"bdf"}, \code{"bdf_d"}, \code{"adams"}, 
     or \code{"impAdams"}).
-    The latter three are the backward differentiation formula, the explicit
+    The latter three are the backward differentiation formula, the (explicit)
     Adams and the implicit Adams method respectively (see details).
     The default integrator used is \link{lsoda}
   }
@@ -97,7 +97,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   \code{method = "lsode", mf = 23}). 
   It is best suited to solve stiff (systems of) equations.
 
-  \code{method = "expAdams"} triggers the Adams method that uses functional
+  \code{method = "adams"} triggers the Adams method that uses functional
   iteration (no Jacobian used); 
   (equal to \code{method = "lsode", mf = 10}. It is often the best 
   choice for solving non-stiff (systems of) equations. (note: when functional

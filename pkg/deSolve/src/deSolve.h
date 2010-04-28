@@ -70,6 +70,7 @@ extern SEXP R_envir;
 extern SEXP R_res_func;
 extern SEXP R_daejac_func;
 extern SEXP R_psol_func;
+extern SEXP R_mas_func;
 
 extern SEXP de_gparms;
 SEXP getListElement(SEXP list, const char* str);

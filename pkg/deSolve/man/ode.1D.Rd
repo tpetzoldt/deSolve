@@ -8,8 +8,8 @@
 }
 \usage{ode.1D(y, times, func, parms, nspec = NULL, dimens = NULL, 
    method= c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
-   "euler", "rk4", "ode23", "ode45", "bdf", "impAdams", "expAdams"),
-   names = NULL, ...)
+   "euler", "rk4", "ode23", "ode45", "bdf", "adams", "impAdams"),
+   names = NULL, bandwidth = 1, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -51,13 +51,18 @@
   \item{method }{the integrator. Use \code{"vode", "lsode", "lsoda", 
      "lsodar", "daspk"}, or \code{"lsodes"} if the model is very stiff;
      "impAdams" may be best suited for mildly stiff problems; 
-     \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
+     \code{"euler", "rk4", "ode23", "ode45", "adams"} are most
      efficient for non-stiff problems. Also allowed is to pass an integrator
      \code{function}. Use one of the other Runge-Kutta methods via 
      \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will
      trigger the cash-karp of order 4(5).
   }
   \item{names }{the names of the components; used for plotting.
+  }
+  \item{bandwidth }{the number of adjacent boxes over which transport occurs.
+    Normally equal to 1 (box i only interacts with box i-1, and i+1). 
+    Values larger than 1 will not work with \code{method = "lsodes"}.
+    Ignored if the method is explicit.
   }
   \item{... }{additional arguments passed to the integrator.}
 }

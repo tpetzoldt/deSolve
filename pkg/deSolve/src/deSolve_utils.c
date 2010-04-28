@@ -64,6 +64,8 @@ SEXP R_res_func;
 SEXP R_daejac_func;
 SEXP R_psol_func;
 
+SEXP R_mas_func;
+
 SEXP de_gparms;
 
 /*======================================================

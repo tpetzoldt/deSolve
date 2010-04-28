@@ -7,14 +7,12 @@
   Function \code{dede} is a general solver for delay differential equations, i.e.
   equations where the derivative depends on past values of the state variables
   or their derivatives. 
-  
-  
 }
-\usage{dede(y, times, func=NULL, parms, 
-  method = c( "lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk"), 
-  control=NULL, ...)
-
-}
+\usage{
+dede(y, times, func=NULL, parms, 
+    method = c( "lsoda", "lsode", "lsodes", "lsodar", "vode", 
+       "daspk", "bdf", "adams", "impAdams"), control=NULL, ...)
+}    
 \arguments{
   \item{y }{the initial (state) values for the DE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -43,16 +41,22 @@
     If method "daspk" is used, then \code{func} can be \code{NULL}, in which 
     case \code{res} should be used.
   }
-  \item{parms }{parameters passed to \code{func}.}
+  \item{parms }{parameters passed to \code{func}.
+  }
   \item{method }{the integrator to use, either a string (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"}, \code{"lsodar"}, \code{"vode"},
-    \code{"daspk"}) or a function that performs integration, or a list
-    of class \code{rkMethod}.
+    \code{"daspk"}, \code{"bdf"}, \code{"adams"}, \code{"impAdams"}) 
+    or a function that performs integration.
     The default integrator used is \link{lsoda}. 
   }
-  \item{control }{a list that can supply the size of the history array, as 
-    \code{control\$mxhist}; the default is 1e4}
-  \item{... }{additional arguments passed to the integrator.}
+  \item{control }{a list that can supply (1) the size of the history array, as 
+    \code{control\$mxhist}; the default is 1e4 and (2) how to interpolate, as
+    \code{control$interpol}, where \code{1} is  hermitian interpolation, 
+    \code{2} is variable order interpolation, using the Nordsieck history array.
+    Only for the two Adams methods is the second option recommended.
+  }
+  \item{... }{additional arguments passed to the integrator.
+  }
 }
 
 \value{

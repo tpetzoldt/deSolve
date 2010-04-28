@@ -10,7 +10,7 @@
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
-  method= c("lsodes", "euler", "rk4", "ode23", "ode45", "expAdams"),
+  method= c("lsodes", "euler", "rk4", "ode23", "ode45", "adams"),
   names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -53,7 +53,7 @@
   }
   \item{method }{the integrator. Use \code{"lsodes"} if the model is very stiff;
      \code{"impAdams"} may be best suited for mildly stiff problems; 
-     \code{"euler", "rk4", "ode23", "ode45", "expAdams"} are most
+     \code{"euler", "rk4", "ode23", "ode45", "adams"} are most
      efficient for non-stiff problems. Also allowed is to pass an integrator
      \code{function}. Use one of the other Runge-Kutta methods via 
      \code{rkMethod}. For instance, \code{method = rkMethod("ode45ck")} will

@@ -69,14 +69,15 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   } else if (sparsetype=="2D")  {
     nspec  <- nnz[1]
     dimens <- nnz[2:3]
+    maxdim <- max(dimens)
     Type   <- c(3,nnz)   #type=3
     nnz    <- n*(4+nspec)-2*nspec*(sum(dimens))
 
     if (Type[5]==1) { # cyclic boundary in x-direction
-      nnz <- nnz + 2*dimens[1]*nspec
+      nnz <- nnz + 2*maxdim*nspec
     }
     if (Type[6] ==1) {# cyclic boundary in y-direction
-      nnz <- nnz + 2*dimens[2]*nspec
+      nnz <- nnz + 2*maxdim*nspec
     }
   } else if (sparsetype=="3D")  {
     nspec  <- nnz[1]
