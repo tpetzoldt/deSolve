@@ -268,6 +268,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   lags <- checklags(lags, dllname) 
 
   ## end time lags...
+  on.exit(.C("unlock_solver"))
   out <- .Call("call_lsoda",y,times,Func,initpar,
                rtol, atol, rho, tcrit, JacFunc, ModelInit, Eventfunc,  
                as.integer(verbose), as.integer(itask), as.double(rwork),

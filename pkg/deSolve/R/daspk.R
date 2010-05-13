@@ -391,6 +391,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   storage.mode(y) <- storage.mode(dy) <- storage.mode(times) <- "double"
   storage.mode(rtol) <- storage.mode(atol)  <- "double"
 
+  on.exit(.C("unlock_solver"))
   out <- .Call("call_daspk", y, dy, times, Res, initpar,
       rtol, atol,rho, tcrit,
       JacRes, ModelInit, PsolFunc, as.integer(verbose),as.integer(info),
