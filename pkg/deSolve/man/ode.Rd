@@ -56,7 +56,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     or \code{"impAdams"}).
     The latter three are the backward differentiation formula, the (explicit)
     Adams and the implicit Adams method respectively (see details).
-    The default integrator used is \link{lsoda}
+    The default integrator used is \link{lsoda}.
   }
    \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be printed.}
@@ -85,7 +85,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   
   See the selected integrator for the additional options.
   
-  The default integrator used is \link{lsoda}
+  The default integrator used is \link{lsoda}.
   
   The option \code{method ="bdf"} provdes a handle to the backward 
   differentiation formula (it is equal to using \code{method = "lsode"}). 
@@ -100,20 +100,19 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   \code{method = "adams"} triggers the Adams method that uses functional
   iteration (no Jacobian used); 
   (equal to \code{method = "lsode", mf = 10}. It is often the best 
-  choice for solving non-stiff (systems of) equations. (note: when functional
+  choice for solving non-stiff (systems of) equations. Note: when functional
   iteration is used, the method is often said to be explicit, although it is  
-  in fact implicit)
+  in fact implicit.
   
   \code{method = "impAdams"} selects the implicit Adams method that uses Newton-
-  Raphson iteration (equal to \code{method = "lsode", mf = 12}
+  Raphson iteration (equal to \code{method = "lsode", mf = 12}.
 
   \code{method = "impAdams_d"} selects the implicit Adams method that uses Jacobi-
   Newton iteration, i.e. neglecting all off-diagonal elements (equal to 
-  \code{method = "lsode", mf = 13}
-
+  \code{method = "lsode", mf = 13}.
 
   For very stiff systems, \code{method ="daspk"} may outperform 
-  \code{method ="bdf"}  
+  \code{method ="bdf"}.
 }
 
 \seealso{

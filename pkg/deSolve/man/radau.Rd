@@ -7,12 +7,12 @@
   Solves the initial value problem for stiff or nonstiff systems of
   ordinary differential equations (ODE) in the form: \deqn{dy/dt = 
   f(t,y)} or linearly implicit differential algebraic equations in the 
-  form \deqn{M dy/dt = f(t,y)}   
+  form \deqn{M dy/dt = f(t,y)}.
   
   The \R function \code{radau} provides an interface to the Fortran solver 
-  RADAU5, written by Ernst Hairer and G. Wanner
+  RADAU5, written by Ernst Hairer and G. Wanner.
   
-  It implements the implicit Runge-Kutta mathod of order 5 with step size 
+  It implements the implicit Runge-Kutta method of order 5 with step size 
   control and continuous output.
   
   The system of ODE's or DAES is written as an \R function or can be defined in
@@ -367,9 +367,9 @@ E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
 \details{
   The work is done by the FORTRAN subroutine \code{RADAU5}, whose
   documentation should be consulted for details. The implementation
-  is based on the Fortran 77 version from Januari 18, 2002.
+  is based on the Fortran 77 version from January 18, 2002.
     
-  There are four standard choices for the jacobian which can be specified with
+  There are four standard choices for the Jacobian which can be specified with
   \code{jactype}.
 
   The options for \bold{jactype} are
@@ -400,7 +400,7 @@ E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
    
   The diagnostics of the integration can be printed to screen
   by calling \code{\link{diagnostics}}. If \code{verbose} = \code{TRUE},
-  the diagnostics will written to the screen at the end of the integration.
+  the diagnostics will be written to the screen at the end of the integration.
 
   See vignette("deSolve") from the \code{deSolve} package for an 
   explanation of each element in the vectors
