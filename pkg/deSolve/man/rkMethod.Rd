@@ -182,9 +182,6 @@ rkMethod(method = NULL, ...)
   Dormand, J. R. and Prince, P. J. (1980) A family of embedded
   Runge-Kutta formulae, J. Comput. Appl. Math. \bold{6}(1), 19--26.
 
-  Dormand, J. R. and Prince, P. J. (1981) High order embedded
-  Runge-Kutta formulae, J. Comput. Appl. Math. \bold{7}(1), 67--75.
-
   Engeln-Muellges, G. and Reutter, F. (1996) Numerik Algorithmen:
   Entscheidungshilfe zur Auswahl und Nutzung. VDI Verlag, Duesseldorf.
 
@@ -197,6 +194,9 @@ rkMethod(method = NULL, ...)
 
   Octave-Forge - Extra Packages for GNU Octave, Package OdePkg.
   \url{http://octave.sourceforge.net/doc/odepkg.html}
+
+  Prince, P. J.  and Dormand, J. R. (1981) High order embedded
+  Runge-Kutta formulae, J. Comput. Appl. Math. \bold{7}(1), 67--75.
 
   Runge, C. (1895) Ueber die numerische Aufloesung von
   Differentialgleichungen, Math. Ann. \bold{46}, 167--178.

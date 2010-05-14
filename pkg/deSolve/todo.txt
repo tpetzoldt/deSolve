@@ -8,14 +8,12 @@ Karline: delay differential equations in compiled code +
 
 Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
-Karline + Thomas: add dopri 8(5,3 ) - fortran??
+Karline + Thomas: add dopri 8(5,3) - Fortran??
 
 Karline: allow nesting of ode calls; use save/restore_N_Protect
 
 
 Ideas/wishes (ThPe): 
-
-Thomas: dopri8(7): use common instead of decimal fractions
 
 Karline, Thomas: timesteps should return NA if called outside of ODE
 
@@ -24,6 +22,12 @@ Karline, Thomas: timesteps should return NA if called outside of ODE
 NaN warnings and termination of R 
 - KS does not see how this can be resolved
 
+
+Changes version 1.8 Thomas:
+==========================
+
+dopri8(7) 
+- coefficients use now common instead of decimal fractions
 
 
 Changes version 1.8 Karline:
