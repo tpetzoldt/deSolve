@@ -103,15 +103,15 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 ### ============================================================================
 
 image.deSolve <- function (x, which = NULL, ask = NULL,
-  add.contour = FALSE, grid=NULL, xtype="image", ...) {
+  add.contour = FALSE, grid=NULL, method="image", ...) {
 
     dimens <- attributes(x)$dimens
     if (is.null(dimens))
       stop("cannot make an image from deSolve output which is 0-dimensional")
     else if (length(dimens) ==1)  # 1-D
-      plot.ode1D(x, which, ask, add.contour, grid, xtype=xtype, ...)
+      plot.ode1D(x, which, ask, add.contour, grid, method=method, ...)
     else if (length(dimens) ==2)  # 2-D
-      plot.ode2D(x, which, ask, add.contour, grid, xtype=xtype, ...)
+      plot.ode2D(x, which, ask, add.contour, grid, method=method, ...)
     else
       stop("cannot make an image from deSolve output with more than 2 dimensions")
 }
@@ -290,7 +290,7 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
 
 ### ============================================================================
 
-plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
+plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
 
 # if x is vector, check if there are enough columns ...
     nspec <- attributes(x)$nspec
@@ -327,10 +327,10 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
     yylab <- if (is.null(dots$ylab))  ""   else dots$ylab
-    if (xtype=="persp")
+    if (method=="persp")
       dotscol <- dots$col 
 
-    else if (xtype == "filled.contour")
+    else if (method == "filled.contour")
     dots$color.palette <- if (is.null(dots$color.palette)) 
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
@@ -356,7 +356,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
         List <- alist(z=out,x=times)
         if (! is.null(grid)) List$y = grid
 
-        if (xtype=="persp") {
+        if (method=="persp") {
            if(is.null(dotscol))  
              dots$col <- drapecol(out,
                colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
@@ -369,14 +369,14 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, xtype="image", ...) {
             dots$zlim = dotslim          
         
         }
-        do.call(xtype, c(List, dots))
+        do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
     }
 }
 
 ### ============================================================================
 
-plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image", 
+plot.ode2D <- function (x, which, ask, add.contour, grid, method="image", 
    ...) {
 
 
@@ -422,10 +422,10 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
     xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
     yylab <- if (is.null(dots$ylab))  "y"   else dots$ylab
 
-    if (xtype=="persp")
+    if (method=="persp")
       dotscol <- dots$col 
 
-    else if (xtype == "filled.contour")
+    else if (method == "filled.contour")
     dots$color.palette <- if (is.null(dots$color.palette)) 
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
@@ -457,7 +457,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
           List$y <- grid$y
         }
 
-        if (xtype=="persp") {
+        if (method=="persp") {
            if(is.null(dotscol))  
              dots$col <- drapecol(out,
                colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
@@ -470,7 +470,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, xtype="image",
             dots$zlim = dotslim          
         
         }
-        do.call(xtype, c(List, dots))
+        do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
      }
      if (sum(par("mfrow") - c(1,1))==0)

@@ -222,7 +222,7 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
 
 ### saving results
   out <- saveOut(out, y, n, Nglobal, Nmtot, func, Func2,
-                 iin= 1:5, iout=c(1,3,2,13,13))
+                 iin= 1:7, iout=c(1,3,4,2,13,13,10))
 
   attr(out, "type") <- "radau5"
   if (verbose) diagnostics(out)

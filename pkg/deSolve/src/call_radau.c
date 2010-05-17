@@ -341,7 +341,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /*                   ####   returning output   ####                           */    
   rwork[0] = hini;
   rwork[1] = tin ; 
-  terminate(idid,iwork,5,16,rwork,5,0);       
+  terminate(idid,iwork,7,13,rwork,5,0);       
   
 /*                   ####     termination      ####                           */    
   unprotect_all();

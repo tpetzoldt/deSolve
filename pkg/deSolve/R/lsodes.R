@@ -60,30 +60,33 @@ lsodes <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 ## This information is passed by ode.1D, ode.2D and ode.3D in parameter
 ## nnz (a vector).
 ## nnz is altered to include the number of nonzero elements (element 1).
-## 'Type' contains the type of sparsity + nspec + num boxes + cyclicBnd
-
+## 'Type' contains the type of sparsity + nspec + num boxes + cyclicBnd + bandwidth
+  
   if (sparsetype=="1D") {
     nspec  <- nnz[1]
+    bandwidth <- nnz[3]
     Type   <- c(2,nnz)    #type=2
-    nnz    <- n*(2+nspec)-2*nspec
+    nnz    <- n*(2+nspec*bandwidth)-2*nspec
   } else if (sparsetype=="2D")  {
     nspec  <- nnz[1]
     dimens <- nnz[2:3]
+    bandwidth <- nnz[6]
     maxdim <- max(dimens)
     Type   <- c(3,nnz)   #type=3
-    nnz    <- n*(4+nspec)-2*nspec*(sum(dimens))
+    nnz    <- n*(4+nspec*bandwidth)-2*nspec*(sum(dimens))
 
     if (Type[5]==1) { # cyclic boundary in x-direction
-      nnz <- nnz + 2*maxdim*nspec
+      nnz <- nnz + 2*maxdim*nspec*bandwidth
     }
     if (Type[6] ==1) {# cyclic boundary in y-direction
-      nnz <- nnz + 2*maxdim*nspec
+      nnz <- nnz + 2*maxdim*nspec*bandwidth
     }
   } else if (sparsetype=="3D")  {
     nspec  <- nnz[1]
     dimens <- nnz[2:4]    #type=4
+    bandwidth <- nnz[8]
     Type   <- c(4,nnz)
-    nnz    <- n*(6+nspec)-2*nspec*(sum(dimens))
+    nnz    <- n*(6+nspec*bandwidth)-2*nspec*(sum(dimens))
 
     if (Type[6]==1) { # cyclic boundary in x-direction
       nnz <- nnz + 2*dimens[1]*nspec

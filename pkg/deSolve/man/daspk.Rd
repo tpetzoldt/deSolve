@@ -7,7 +7,9 @@
     \item a system of ordinary differential equations (ODE) of the form
       \deqn{y' = f(t,y,...)} or
     \item a system of differential algebraic equations (DAE) of the form
-      \deqn{F(t,y,y') = 0}
+      \deqn{F(t,y,y') = 0} or
+    \item a system of linearly implicit DAES in the 
+       form \deqn{M y' = f(t,y)}    
   }
   using a combination of backward differentiation formula (BDF) and a
   direct linear system solution method (dense or banded).
@@ -24,7 +26,7 @@
 \usage{
 daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   nalg = 0, rtol = 1e-6, atol = 1e-8, jacfunc = NULL,
-  jacres = NULL, jactype = "fullint", estini = NULL,
+  jacres = NULL, jactype = "fullint", mass = NULL, estini = NULL,
   verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL,
   hini = 0, ynames = TRUE, maxord = 5, bandup = NULL,
   banddown = NULL, maxsteps = 5000, dllname = NULL,
@@ -155,6 +157,15 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     \code{"fullint"}, \code{"fullusr"}, \code{"bandusr"} or
     \code{"bandint"} - either full or banded and estimated internally or
     by the user.
+  }
+  \item{mass }{the mass matrix. 
+      If not \code{NULL}, the problem is a linearly
+     implicit DAE and defined as \eqn{mass dy/dt = f(t,y)}. The mass-matrix 
+     should be of dimension \code{n*n} where \code{n} is the 
+     number of y-values.
+
+     If \code{mass=NULL} then the model is either an ODE or a DAE, specified with
+     \code{res}
   }
   \item{estini }{only if a DAE system, and if initial values of \code{y}
     and \code{dy} are not consistent (i.e. F(t,y,dy) is not = 0), setting
@@ -340,6 +351,31 @@ Res_DAE <- function (t, y, yprime, pars)
   })
 }
 
+## =======================================================================
+## Chemical problem formulation 3: Mass * Func
+## Based on the DAE formulation
+## =======================================================================
+
+Mass_FUN <- function (t, y, pars)
+{
+  with (as.list(c(y, pars)), {
+
+    ## as above, but without the 
+    f1 <- prod
+    f2 <- - r*B
+    
+    ## and the equilibrium equation
+    f3   <- K*D - A*B
+
+    return(list(c(f1, f2, f3),
+                CONC = A+B+D))
+  })
+}
+Mass <- matrix(nr=3, nc=3, byrow = TRUE, 
+  data=c(1,  0, 1,         # dA + 0 + dB
+        -1,  1, 0,         # -dA + dB +0
+         0,  0, 0))        # algebraic
+         
 times <- seq(0, 100, by = 2)
 
 ## Initial conc; D is in equilibrium with A,B
@@ -355,6 +391,8 @@ dy  <- c(dA = 0, dB = 0, dD = 0)
 ## DAE model solved with daspk
 DAE <- as.data.frame(daspk(y = y, dy = dy, times = times,
          res = Res_DAE, parms = pars, atol = 1e-10, rtol = 1e-10))
+
+MASS<- daspk(y=y, times=times, func = Mass_FUN, parms = pars, mass = Mass)
 
 ## ================
 ## plotting output

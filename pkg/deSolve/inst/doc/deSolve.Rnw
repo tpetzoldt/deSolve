@@ -67,8 +67,8 @@ initial value problems, R}
 
   The implementation includes stiff integration routines based on the
   \pkg{ODEPACK} \proglang{FORTRAN} codes \citep{Hindmarsh83}.  It also includes fixed
-  and adative time-step Runge-Kutta solvers and the Euler method
-  \citep{Press92}.
+  and adaptive time-step explicit Runge-Kutta solvers and the Euler method
+  \citep{Press92}, and the implicit Runge-Kutta method RADAU \citep{hairer2}.
 
   In this vignette we outline how to implement differential equations
   as \R-functions.  Another vignette (``compiledCode'')
@@ -476,7 +476,7 @@ found in \citet{Soetaert08b}.  For 2-D problems, we refer to the
 help-files of function \code{ode.2D}.
 
 \section{Differential algebraic equations}
-
+\subsection{DAEs of index maximal 1}
 Function \code{daspk} from package \ds solves (relatively simple) DAEs
 of index\footnote{note that many -apparently simple- DAEs are
   higher-index DAEs} maximal 1.
@@ -530,6 +530,70 @@ matplot(out[,1], out[,2:3], type = "l", lwd = 2,
   see text for R-code}
 \label{fig:dae}
 \end{figure}
+
+\subsection{DAEs of index up to three}
+Function \code{radau} from package \ds can solve DAEs of index up to three
+provided that they can be written in the form $M dy/dt = f(t,y)$.
+
+Consider the well-known pendulum equation:
+\begin{eqnarray*}
+x' &=& u\\
+y' &=& v\\
+u' &=& -\lambda x\\
+v' &=& -\lambda y - 9.8\\
+0 &=& x^2 + y^2 - 1 
+\end{eqnarray*}
+where the dependent variables are $x, y, u, v$ and $\lambda$. 
+
+Implemented in \R to be used with function \code{radau} this becomes:
+<<>>=
+pendulum <- function (t, Y, parms) {
+ with (as.list(Y), 
+    
+    list(c(u        ,
+           v        ,
+          -lam *x    ,
+          -lam *y -9.8,
+           x^2 + y^2 -1
+     ))
+ 
+ )    
+}
+@
+A consistent set of initial conditions are:
+<<>>=
+yini  <- c(x=1, y=0, u=0, v=1, lam=1)
+@
+and the mass matrix $M$:
+<<>>=
+M <- diag(nr=5)
+M[5,5]<-0
+M
+@ 
+Function \code{radau} requires that the index of each equation is specified;
+there are 2 equations of index 1, two of index 2, one of index 3:
+<<>>=
+index <- c(2,2,1)
+times <- seq(from = 0, to = 10, by = 0.01)
+out  <- radau (y = yini, func = pendulum, parms=NULL,
+               times = times, mass = M, nind = index)
+@
+<<label=pendulum,include=FALSE>>=
+plot(out, type="l", lwd = 2)
+plot(out[,c("x","y")], type="l", lwd = 2)
+@
+\setkeys{Gin}{width=0.6\textwidth}
+\begin{figure}
+\begin{center}
+<<label=pendulum,fig=TRUE,echo=FALSE>>=
+<<pendulum>>
+@
+\end{center}
+\caption{Solution of the pendulum problem, an index 3 differential algebraic equation 
+  using radau - see text for R-code}
+\label{fig:pendulum}
+\end{figure}
+
 \clearpage
 
 \section{Integrating complex numbers, function zvode}
@@ -865,7 +929,7 @@ plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 \subsection{Avoiding numerical errors}
 
 The solvers from \pkg{ODEPACK} should be first choice for any problem and
-the the defaults of the control parameters are reasonable for many
+the defaults of the control parameters are reasonable for many
 practical problems. However, there are cases where they may give
 dubious results.  Consider the following Lotka-Volterra type of model:
 
@@ -946,11 +1010,11 @@ in our models and the codes of our students:
   the solver, in the assignments within your model equations and in
   the returned values. Check also whether the return value is the last
   statement of your model definition.
-\item The order of function parameters in the model definition is
+\item The order of function arguments in the model definition is
   \code{t, y, parms, ...}.  This order is strictly fixed, so that the
   \ds solvers can pass their data, but naming is flexible and can be
   adapted to your needs, e.g. \code{time, init, params}. Note also
-  that all three parameters must be given, even if \code{t} is not
+  that all three arguments must be given, even if \code{t} is not
   used in your model.
 \item Mixing of variable names: if you use the
   \code{with()}-construction explained above, you must ensure to avoid

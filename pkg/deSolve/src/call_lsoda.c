@@ -222,9 +222,10 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   int itol, itask, istate, iopt, jt, mflag,  is;
   int nroot, *jroot=NULL, isroot,  isDll, type;
   
-  int    *iwork, it, ntot, nout;   
+  int    *iwork, it, ntot, nout, iroot, *evals =NULL;   
   double *rwork;
-
+  SEXP TROOT, NROOT;
+  
   /* pointers to functions passed to FORTRAN */
   C_deriv_func_type *deriv_func;
   C_jac_func_type   *jac_func=NULL;
@@ -350,7 +351,12 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if ((solver == 4 || solver == 6) && nroot > 0)        /* lsodar, lsoder */
   { jroot = (int *) R_alloc(nroot, sizeof(int));
      for (j=0; j<nroot; j++) jroot[j] = 0;
-  
+     
+     if (isEvent) {
+       evals =(int *) R_alloc(3, sizeof(int));   /* function evaluations */
+       for (j=0; j<3; j++) evals[j] = 0;
+     }
+      
     if (isDll) 
     {
       root_func = (C_root_func_type *) R_ExternalPtrAddr(rootfunc);
@@ -398,6 +404,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       C_deriv_out(&nout,&tin,xytmp,dy,out);  
     for (j = 0; j < nout; j++) REAL(YOUT)[j + n_eq + 1] = out[j]; 
   }                 
+
+  iroot = 0;
 
 /*                     ####   main time loop   ####                           */    
   for (it = 0; it < nt-1; it++) {
@@ -457,10 +465,15 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
        /* root found - take into account if an EVENT */
         if (isEvent && rootevent) {
           tEvent = tin;
+          /* function evaluations set to 0 again . */
+          for (j=0; j<3; j++) evals[j] = evals[j] + iwork[10+j];
+          
           updateevent(&tin, xytmp, &istate);
           istate = 1;
           repcount = 0;
           if (mflag ==1) Rprintf("root found at time %g\n",tin);
+          if (iroot <= Rootsave) troot[iroot] = tin;
+          iroot ++; 
         } else{
 	       istate = -20;  repcount = 50;
 	      } 
@@ -514,6 +527,9 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 
   /*                   ####   returning output   ####                           */    
+  if (isEvent && rootevent && iroot > 0)
+    for (j=0; j<3; j++) iwork[10+j] = evals[j];
+
   terminate(istate,iwork, 23,0, rwork, 5,10);    /* istate, iwork, rwork */
   
   if (istate == -20) INTEGER(ISTATE)[0] = 3; 	  
@@ -522,12 +538,26 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     isroot = 1   ;
     PROTECT(IROOT = allocVector(INTSXP, nroot));incr_N_Protect();
     for (k = 0;k<nroot;k++) INTEGER(IROOT)[k] = jroot[k];
-    if (istate > 0) 
-      setAttrib(YOUT, install("iroot"), IROOT);
-    else 
-      setAttrib(YOUT2, install("iroot"), IROOT);
+    setAttrib(YOUT2, install("iroot"), IROOT);
   }
+  if (iroot > 0) {                                 /* root + events */
+    PROTECT(NROOT = allocVector(INTSXP, 1));incr_N_Protect();
+    INTEGER(NROOT)[0] = iroot;
+    
+    if (iroot > Rootsave) iroot = Rootsave; 
+    
+    PROTECT(TROOT = allocVector(REALSXP, iroot)); incr_N_Protect();
+    for (k = 0; k < iroot; k++) REAL(TROOT)[k] = troot[k];
 
+    if (istate > 0 ) {
+      setAttrib(YOUT, install("troot"), TROOT);
+      setAttrib(YOUT, install("nroot"), NROOT);
+    }  
+    else  {
+      setAttrib(YOUT2, install("troot"), TROOT);
+      setAttrib(YOUT2, install("nroot"), NROOT);
+    }      
+  }
 /*                       ####   termination   ####                            */    
   restore_N_Protected(old_N_Protect);
   unlock_solver();

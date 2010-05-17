@@ -873,6 +873,7 @@ C --- JACOBIAN IS BANDED
                   LBEG=LEND+1
                   IF (J.LE.MM*M2) GOTO 14
                END DO
+  	        NFCN=NFCN+MD
             END DO
          ELSE
 C --- JACOBIAN IS FULL
@@ -886,6 +887,8 @@ C --- JACOBIAN IS FULL
                END DO
                Y(I)=YSAFE
             END DO
+            NFCN=NFCN+N
+
          END IF
       ELSE
 C --- COMPUTE JACOBIAN MATRIX ANALYTICALLY

@@ -283,7 +283,7 @@ void sparsity1D (SEXP Type, int* iwork, int neq, int liw) {
     k = 1;
     for( i = 0; i < nspec; i++) {
       for( j = 0; j < nx; j++) {
-        if (ij > liw-4)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
+        if (ij > liw-3-nspec)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
         iwork[ij++] = k;
         if (j < nx-1) iwork[ij++] = k+1 ;
         if (j > 0)    iwork[ij++] = k-1 ;
@@ -317,7 +317,7 @@ void sparsity2D (SEXP Type, int* iwork, int neq, int liw) {
       isp = i*Nt;
       for( j = 0; j < nx; j++) {
         for( k = 0; k < ny; k++) {
-          if (ij > liw-4)  
+          if (ij > liw-8-nspec)  
             error("not enough memory allocated in iwork - increase liw %i ",liw);
           iwork[ij++] = m;
           if (k < ny-1)     iwork[ij++] = m+1;
@@ -351,7 +351,7 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
     nspec = INTEGER(Type)[1]; /* number components*/
     nx    = INTEGER(Type)[2]; /* dimension x*/
     ny    = INTEGER(Type)[3]; /* dimension y*/
-    nz    = INTEGER(Type)[4]; /* dimension y*/
+    nz    = INTEGER(Type)[4]; /* dimension y*/ 
 /*     bndx  = INTEGER(Type)[5];
        bndy  = INTEGER(Type)[6];  cyclic boundary NOT yet implemented*/
     Nt    = nx*ny*nz;
@@ -363,7 +363,7 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
       for( j = 0; j < nx; j++) {
         for( k = 0; k < ny; k++) {
           for( ll = 0; ll < nz; ll++) {
-            if (ij > liw-4)  
+            if (ij > liw-6-nspec)  
               error ("not enough memory allocated in iwork - increase liw %i ", liw);
             iwork[ij++] = m;
             if (ll < nz-1)  iwork[ij++] = m+1;

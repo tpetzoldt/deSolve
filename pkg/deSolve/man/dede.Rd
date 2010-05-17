@@ -87,12 +87,14 @@ but relies on the integrator to control the stepsize in the region of a
 discontinuity.
 
 \code{dede} does not include methods to deal with delays that are smaller than the 
-stepsize. 
+stepsize, although in some cases it may be possible to solve such models. 
 
 For these reasons, it can only solve rather simple delay differential equations.
 
-When used together with integrator \code{lsodar}, \code{dde} can simultaneously
-locate a root, and trigger an event.
+When used together with integrator \code{lsodar}, or \code{lsode} \code{dde} 
+can simultaneously locate a root, and trigger an event. See last example.
+
+
 }
 \seealso{
   \link{lagvalue}, \link{lagderiv},for how to specify lagged variables and 
@@ -216,6 +218,8 @@ times <- seq(0,12,len=1000)
 # solve the model  
 #-----------------------------
 # use lsodar because of root and event function
+# Note: NOT adding method ="lsodar" or method ="lsode" will give a 
+# strange warning...
 yout <- dede(y=yinit, times=times, func=derivs, parms=NULL,  
   method="lsodar", rootfun=root, events=list(func=event,root=TRUE))
 

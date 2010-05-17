@@ -9,7 +9,7 @@ around the implemented ODE solvers}
 
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
-           "euler", "rk4", "ode23", "ode45", 
+           "euler", "rk4", "ode23", "ode45", "radau", 
            "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"), ...)
 
 \method{print}{deSolve}(x, \dots)
@@ -50,9 +50,9 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   \item{method }{the integrator to use, either a *function* that performs 
     integration, or a list of class \code{rkMethod}, or a *string* 
     (\code{"lsoda"},
-    \code{"lsode"}, \code{"lsodes"}, \code{"lsodar"}, \code{"vode"},
-    \code{"daspk"}, \code{"euler"}, \code{"rk4"}, \code{"ode23"},
-    \code{"ode45"}, \code{"bdf"}, \code{"bdf_d"}, \code{"adams"}, 
+    \code{"lsode"}, \code{"lsodes"},\code{"lsodar"},\code{"vode"},
+    \code{"daspk"}, \code{"euler"}, \code{"rk4"},   \code{"ode23"},
+    \code{"ode45"}, \code{"radau"}, \code{"bdf"},   \code{"bdf_d"}, \code{"adams"}, 
     or \code{"impAdams"}).
     The latter three are the backward differentiation formula, the (explicit)
     Adams and the implicit Adams method respectively (see details).

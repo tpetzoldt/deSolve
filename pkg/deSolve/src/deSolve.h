@@ -34,7 +34,8 @@ double *forcings;
 
 /* events */
 double tEvent;
-int iEvent, nEvent, typeevent, rootevent;
+int iEvent, nEvent, typeevent, rootevent, Rootsave;
+double *troot;
 
 double *timeevent, *valueevent;
 int *svarevent, *methodevent;

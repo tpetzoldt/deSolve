@@ -52,7 +52,7 @@
     diagonal.
   }
   \item{method }{the integrator to use, one of \code{"vode"},
-    \code{"lsode"}, \code{"lsoda"}, \code{"lsodar"}.
+    \code{"lsode"}, \code{"lsoda"}, \code{"lsodar"}, \code{"radau"}.
   }
   \item{... }{additional arguments passed to the integrator.}
 }

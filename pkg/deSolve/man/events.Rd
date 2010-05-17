@@ -27,6 +27,10 @@
     the events take place,}
   \item{root: }{when events are specified by a function and triggered by a root,
     this logical should be set equal to \code{TRUE},}
+  \item{maxroot: }{when \code{root = TRUE}, the maximal number of times at 
+    with a root is found that are kept; defaults to 100. 
+    If the number of roots > \code{maxroot}, then only the first 
+    \code{maxroot} will be outputted}
   \item{ties: }{if events, as specified by a data.frame are "ordered", set to 
     "ordered", the default is "notordered". This will save some computational 
     time.}
@@ -60,6 +64,9 @@
   In this case, the integrator is informed that the simulation it to be 
   continued after a root is found by setting \code{events$root} equal to 
   \code{TRUE}. 
+  If in this case roots are found, then the output will have attribute 
+  \code{troot} which will contain the \code{times} at which a root was found.
+  There will be at most \code{events$maxroot} such values. The default is 100.
   
   See two last examples; also see example of \link{ccl4model}.
   
@@ -180,7 +187,9 @@ out <- lsodar(times=times, y=yini, func = func, parms=NULL,
   rootfun = rootfun)
 
 plot(out,type="l")
-
+# time of the root:
+troot <- attributes(out)$troot
+points(troot,rep(0.5,length(troot)))
 }
 
 \keyword{utilities}

@@ -8,7 +8,7 @@
 }
 \usage{ode.1D(y, times, func, parms, nspec = NULL, dimens = NULL, 
    method= c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
-   "euler", "rk4", "ode23", "ode45", "bdf", "adams", "impAdams"),
+   "euler", "rk4", "ode23", "ode45", "radau", "bdf", "adams", "impAdams"),
    names = NULL, bandwidth = 1, ...)
 }
 \arguments{
@@ -50,7 +50,7 @@
   }
   \item{method }{the integrator. Use \code{"vode", "lsode", "lsoda", 
      "lsodar", "daspk"}, or \code{"lsodes"} if the model is very stiff;
-     "impAdams" may be best suited for mildly stiff problems; 
+     "impAdams" or "radau" may be best suited for mildly stiff problems; 
      \code{"euler", "rk4", "ode23", "ode45", "adams"} are most
      efficient for non-stiff problems. Also allowed is to pass an integrator
      \code{function}. Use one of the other Runge-Kutta methods via 

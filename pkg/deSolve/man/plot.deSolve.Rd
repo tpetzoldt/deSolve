@@ -13,7 +13,7 @@ Plot the output of numeric integration routines.
 \method{plot}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
-  add.contour = FALSE, grid = NULL, xtype="image", ...)  
+  add.contour = FALSE, grid = NULL, method="image", ...)  
 plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) 
 
 }
@@ -33,8 +33,8 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   
   \item{add.contour }{if \code{TRUE}, will add contours to the image plot. }
 
-  \item{xtype }{the name of the plotting function to use, one of "image", 
-    "filled.contour", "persp".}
+  \item{method }{the name of the plotting method to use, one of "image", 
+    "filled.contour", "persp","contour".}
 
   \item{grid }{only for \code{image} plots and for \code{plot.1D}: 
     the 1-D grid as a vector (output generated with \code{ode.1D}, 
@@ -65,8 +65,8 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   image with \code{times} as x- and \code{the grid} as y-axis will be created.
   in second case, an x-y plot will be created, for all times. Unless 
   \code{ask=FALSE}, the user will be asked to confirm page changes. 
-  For images, it is possible to pass an argument \code{xtype} which can
-  take the values "image" (default), "filled.contour" or "persp", in order
+  For images, it is possible to pass an argument \code{method} which can
+  take the values "image" (default), "filled.contour", "contour" or "persp", in order
   to use the respective plotting method.
   
   \code{plot} will always have \code{times} on the x-axis. For problems
@@ -171,7 +171,7 @@ out   <- ode.1D(state, times, Aphid, parms = 0, nspec = 1)
 image(out, grid = Distance, main="Aphid model", ylab="distance, m")
 
 image(out, grid = Distance, main="Aphid model", ylab="distance, m", 
-  xtype="persp", border=NA, theta=30)
+  method="persp", border=NA, theta=30)
 \dontrun{
   plot(out,ask=FALSE,mfrow=c(1,1))
 
