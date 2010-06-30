@@ -244,17 +244,15 @@
 ##   from lsodar source code
 ## =======================================================================
 
-Fun <- function (t, y, parms)
-{
+Fun <- function (t, y, parms) {
   ydot <- vector(len = 3)
   ydot[1] <- -.04*y[1] + 1.e4*y[2]*y[3]
   ydot[3] <- 3.e7*y[2]*y[2]
-  ydot[2] <- -ydot[1]-ydot[3]
-  return(list(ydot,ytot = sum(y)))
+  ydot[2] <- -ydot[1] - ydot[3]
+  return(list(ydot, ytot = sum(y)))
 }
 
-rootFun <- function (t, y, parms)
-{
+rootFun <- function (t, y, parms) {
   yroot <- vector(len = 2)
   yroot[1] <- y[1] - 1.e-4
   yroot[2] <- y[3] - 1.e-2
@@ -279,12 +277,11 @@ diagnostics(out)
 ## =======================================================================
 
 ## Bacteria (Bac) are growing on a substrate (Sub)
-model <- function(t, state, pars)
-{
+model <- function(t, state, pars) {
   with (as.list(c(state, pars)), {
-    ##       substrate uptake             death  respiration
-    dBact =  gmax*eff*Sub/(Sub+ks)*Bact - dB*Bact - rB*Bact
-    dSub  = -gmax    *Sub/(Sub+ks)*Bact + dB*Bact            + input
+    ##        substrate uptake             death     respiration
+    dBact <-  gmax*eff*Sub/(Sub+ks)*Bact - dB*Bact - rB*Bact
+    dSub  <- -gmax    *Sub/(Sub+ks)*Bact + dB*Bact            + input
 
     return(list(c(dBact,dSub)))
   })
@@ -293,8 +290,7 @@ model <- function(t, state, pars)
 ## root is the condition where sum of |rates of change|
 ## is very small
 
-rootfun <- function (t, state, pars)
-{
+rootfun <- function (t, state, pars) {
   dstate <- unlist(model(t, state, pars)) # rate of change vector
   return(sum(abs(dstate)) - 1e-10)
 }
@@ -317,13 +313,13 @@ print(out)
 ## when it reaches the value 0.1, a random amount is added.
 
 derivfun <- function (t,y,parms)
-  list (-0.05*y)
+  list (-0.05 * y)
 
 rootfun <- function (t,y,parms)
-  return(y-0.1) 
+  return(y - 0.1) 
 
 eventfun <- function(t,y,parms)
-  return(y+runif(1))  
+  return(y + runif(1))  
 
 yini <- 0.8
 times <- 0:200
@@ -331,7 +327,7 @@ times <- 0:200
 out <- lsodar(func=derivfun, y = yini, times=times, 
   rootfunc = rootfun, events = list(func=eventfun, root = TRUE))
 
-plot(out, type="l", lwd=2, main = "lsodar with event")
+plot(out, type = "l", lwd = 2, main = "lsodar with event")
   
 }
 \references{
