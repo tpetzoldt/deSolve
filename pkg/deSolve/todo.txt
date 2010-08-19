@@ -10,6 +10,7 @@ Karline + Thomas: add dopri 8(5,3) - Fortran??
 Ideas/wishes (ThPe/karline): 
 ======
 Karline->Thomas: nesting of ode calls fails if run has been stopped (ESC); 
+fix: karline removed it again... 
 
 Karline, Thomas: timesteps should return NA if called outside of ODE
 
@@ -19,7 +20,7 @@ NaN warnings and termination of R
 - KS does not see how this can be resolved
 
 Delay differential equations in compiled code 
-- KS: not at all easy! 
+- KS: not at all easy , and who will use that?! 
 
 Changes version 1.8 Thomas:
 ==========================
@@ -40,8 +41,15 @@ Runge-kuttas:
 
 4. dopri8(7) added 
 
-5. radau added (DAE solver)
+5. radau added!! implicit runge kutta, solves also DAE up to index 3!
 
 6. image function for ode.2-D added.
+
+7. changed warning printing in FORTRAN code
+
+8. common interface for radau and daspk: 
+   both can solve systems written as M*dy = f(x,y).
+   dasp can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
+   
 
 

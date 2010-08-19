@@ -10,7 +10,8 @@
   form \deqn{M dy/dt = f(t,y)}.
   
   The \R function \code{radau} provides an interface to the Fortran solver 
-  RADAU5, written by Ernst Hairer and G. Wanner.
+  RADAU5, written by Ernst Hairer and G. Wanner, which implements the 3-stage
+  RADAU IIA method.
   
   It implements the implicit Runge-Kutta method of order 5 with step size 
   control and continuous output.

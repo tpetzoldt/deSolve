@@ -271,8 +271,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
           JF <- -1* jacfunc(Rin[1],y,parms,...)
           JF <- JF + Rin[2]*mass
         return(JF)
-      }
-           
+        }
       }
     } else if (! is.null(jacres)) { # Jacobian given
        tmp <- eval(jacres(times[1], y, dy, parms, 1, ...), rho)

@@ -11,7 +11,7 @@
 
 \usage{ode.3D(y, times, func, parms, nspec = NULL, dimens, 
   method = c("lsodes", "euler", "rk4", "ode23", "ode45", "adams"),
-  names = NULL, ...)}
+  names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
     \code{y} has a name attribute, the names will be used to label the
@@ -46,6 +46,10 @@
     dimensions in the model. 
   }
   \item{names }{the names of the components; used for plotting.
+  }
+  \item{cyclicBnd }{if not \code{NULL} then a number or a 3-valued vector
+    with the dimensions where a cyclic boundary is used - \code{1}: x-dimension,
+    \code{2}: y-dimension; \code{3}: z-dimension.
   }
   \item{method }{the integrator. Use \code{"lsodes"} if the model is very stiff;
      "impAdams" may be best suited for mildly stiff problems; 
@@ -169,11 +173,20 @@ diffusion3D <- function(t,Y,par)
   to specify the length of the real work array, \code{lrw}.
 
   Although a reasonable guess of \code{lrw} is made, it is likely that
-  this will be too low.  In this case, \code{ode.2D} will return with an
+  this will be too low.  
+  
+  In this case, \code{ode.2D} will return with an
   error message telling the size of the work array actually needed. In
   the second try then, set \code{lrw} equal to this number.
 
-
+  For instance, if you get the error:
+   
+  DLSODES- RWORK length is insufficient to proceed.                               
+        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
+      In above message,  I1 =     27627   I2 =     25932 
+      
+  set \code{lrw} equal to 27627 or a higher value
+    
   See \code{lsodes} for the additional options.
 }
 \seealso{

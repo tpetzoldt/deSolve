@@ -135,6 +135,15 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     with a message indicating the size of rwork actually required.
     Therefore, some experimentation may be necessary to estimate the
     value of \code{lrw}.
+    
+    For instance, if you get the error:
+   
+  DLSODES- RWORK length is insufficient to proceed.                               
+        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
+      In above message,  I1 =     27627   I2 =     25932 
+      
+  set \code{lrw} equal to 27627 or a higher value
+
   }
   \item{liw }{the length of the integer work array iwork; due to the
     sparsicity, this cannot be readily predicted. If \code{NULL}, a guess will

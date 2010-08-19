@@ -256,7 +256,8 @@ void updateevent(double *t, double *y, int *istate) {
         } while ((tEvent == *t) && (iEvent <= nEvent));
       } else {                      /* a function (R or compiled code) */
         event_func(&n_eq,t,y); 
-//        tEvent = timeevent[++iEvent]; 
+        if (!rootevent)
+          tEvent = timeevent[++iEvent];  /* karline: this was toggled off - why?*/
       }  
       *istate = 1;
     }

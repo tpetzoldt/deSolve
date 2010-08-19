@@ -229,14 +229,14 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   /* pointers to functions passed to FORTRAN */
   C_deriv_func_type *deriv_func;
   C_jac_func_type   *jac_func=NULL;
-  C_jac_vec_type    *jac_vec;
+  C_jac_vec_type    *jac_vec=NULL;
   C_root_func_type  *root_func=NULL;
 
 /******************************************************************************/
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
 
-  lock_solver(); /* prevent nested call of solvers that have global variables */
+//  lock_solver(); /* prevent nested call of solvers that have global variables */
 
 /*                      #### initialisation ####                              */    
   long int old_N_Protect = save_N_Protected();
@@ -285,7 +285,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   timesteps = (double *) R_alloc(2, sizeof(double));
      for (j=0; j<2; j++) timesteps[j] = 0.;
   
-/* if a 1-D or 2-D special-purpose problem (lsodes)
+/* if a 1-D, 2-D or 3-D special-purpose problem (lsodes)
    iwork will contain the sparsity structure */
 
   if (solver ==3)
@@ -560,7 +560,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 /*                       ####   termination   ####                            */    
   restore_N_Protected(old_N_Protect);
-  unlock_solver();
+//  unlock_solver();
 
   if (istate > 0)
     return(YOUT);

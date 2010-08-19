@@ -304,7 +304,7 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
 
 ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens, 
   method= c("lsodes","euler", "rk4", "ode23", "ode45", "adams"), 
-  names = NULL, ...){
+  names = NULL, cyclicBnd = NULL, ...){
  # check input
   if (is.character(method)) method <- match.arg(method)
   if (is.null(method)) method <- "lsodes"
@@ -327,6 +327,11 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens,
     stop("length of 'names' should equal 'nspec'")
 
   Bnd <- c(0,0,0)    #  cyclicBnd not included
+  if (! is.null(cyclicBnd)) {
+    if (max(cyclicBnd) > 3 )
+      stop ("cannot run steady.3D: cyclicBnd should be a vector or number not exceeding 3")
+    Bnd[cyclicBnd[cyclicBnd>0]]<-1
+  }
 
 # use lsodes - note:expects rev(dimens)...
   if (is.character(func) || method=="lsodes") {

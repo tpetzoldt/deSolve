@@ -424,7 +424,7 @@ C -------- UROUND   SMALLEST NUMBER SATISFYING 1.0D0+UROUND>1.0D0
          UROUND=WORK(1)
          IF (UROUND.LE.1.0D-19.OR.UROUND.GE.1.0D0) THEN
             WRITE(MSG,*)' COEFFICIENTS HAVE 20 DIGITS, UROUND=',WORK(1)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -433,7 +433,7 @@ C -------- CHECK AND CHANGE THE TOLERANCES
       IF (ITOL.EQ.0) THEN
           IF (ATOL(1).LE.0.D0.OR.RTOL(1).LE.10.D0*UROUND) THEN
               WRITE (MSG,*) ' TOLERANCES ARE TOO SMALL'
-              CALL rwarn(MSG)
+              CALL rprint(MSG)
               ARRET=.TRUE.
           ELSE
               QUOT=ATOL(1)/RTOL(1)
@@ -444,7 +444,7 @@ C -------- CHECK AND CHANGE THE TOLERANCES
           DO I=1,N
           IF (ATOL(I).LE.0.D0.OR.RTOL(I).LE.10.D0*UROUND) THEN
               WRITE (MSG,*) ' TOLERANCES(',I,') ARE TOO SMALL'
-              CALL rwarn(MSG)
+              CALL rprint(MSG)
               ARRET=.TRUE.
           ELSE
               QUOT=ATOL(I)/RTOL(I)
@@ -460,7 +460,7 @@ C -------- NMAX , THE MAXIMAL NUMBER OF STEPS -----
          NMAX=IWORK(2)
          IF (NMAX.LE.0) THEN
             WRITE(MSG,*)' WRONG INPUT IWORK(2)=',IWORK(2)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -471,7 +471,7 @@ C -------- NIT    MAXIMAL NUMBER OF NEWTON ITERATIONS
          NIT=IWORK(3)
          IF (NIT.LE.0) THEN
             WRITE(MSG,*)' CURIOUS INPUT IWORK(3)=',IWORK(3)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -488,7 +488,7 @@ C -------- PARAMETER FOR DIFFERENTIAL-ALGEBRAIC COMPONENTS
       IF (NIND1.EQ.0) NIND1=N
       IF (NIND1+NIND2+NIND3.NE.N) THEN
        WRITE(MSG,*)' CURIOUS INPUT FOR IWORK(5,6,7)=',NIND1,NIND2,NIND3
-       CALL rwarn(MSG)
+       CALL rprint(MSG)
        ARRET=.TRUE.
       END IF
 C -------- PRED   STEP SIZE CONTROL
@@ -505,7 +505,7 @@ C -------- PARAMETER FOR SECOND ORDER EQUATIONS
       IF (M2.EQ.0) M2=M1
       IF (M1.LT.0.OR.M2.LT.0.OR.M1+M2.GT.N) THEN
        WRITE(MSG,*)' CURIOUS INPUT FOR IWORK(9,10)=',M1,M2
-       CALL rwarn(MSG)
+       CALL rprint(MSG)
        ARRET=.TRUE.
       END IF
 C --------- SAFE     SAFETY FACTOR IN STEP SIZE PREDICTION
@@ -515,7 +515,7 @@ C --------- SAFE     SAFETY FACTOR IN STEP SIZE PREDICTION
          SAFE=WORK(2)
          IF (SAFE.LE.0.001D0.OR.SAFE.GE.1.0D0) THEN
             WRITE(MSG,*)' CURIOUS INPUT FOR WORK(2)=',WORK(2)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -526,7 +526,7 @@ C ------ THET     DECIDES WHETHER THE JACOBIAN SHOULD BE RECOMPUTED;
          THET=WORK(3)
          IF (THET.GE.1.0D0) THEN
             WRITE(MSG,*)' CURIOUS INPUT FOR WORK(3)=',WORK(3)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -538,7 +538,7 @@ C --- FNEWT   STOPPING CRITERION FOR NEWTON'S METHOD, USUALLY CHOSEN <1.
          FNEWT=WORK(4)
          IF (FNEWT.LE.UROUND/TOLST) THEN
             WRITE(MSG,*)' CURIOUS INPUT FOR WORK(4)=',WORK(4)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
       END IF
@@ -555,7 +555,7 @@ C --- QUOT1 AND QUOT2: IF QUOT1 < HNEW/HOLD < QUOT2, STEP SIZE = CONST.
       END IF
       IF (QUOT1.GT.1.0D0.OR.QUOT2.LT.1.0D0) THEN
          WRITE(MSG,*)' CURIOUS INPUT FOR WORK(5,6)=',QUOT1,QUOT2
-         CALL rwarn(MSG)
+         CALL rprint(MSG)
          ARRET=.TRUE.
       END IF
 C -------- MAXIMAL STEP SIZE
@@ -577,7 +577,7 @@ C -------  FACL,FACR     PARAMETERS FOR STEP SIZE SELECTION
       END IF
       IF (FACL.LT.1.0D0.OR.FACR.GT.1.0D0) THEN
             WRITE(MSG,*)' CURIOUS INPUT WORK(8,9)=',WORK(8),WORK(9)
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
          END IF
 C *** *** *** *** *** *** *** *** *** *** *** *** ***
@@ -615,7 +615,7 @@ C ------ BANDWITH OF "MAS" NOT SMALLER THAN BANDWITH OF "JAC"
           IF (MLMAS.GT.MLJAC.OR.MUMAS.GT.MUJAC) THEN
              WRITE (MSG,*) 'BANDWITH OF "MAS" NOT SMALLER THAN BANDWITH OF
      & "JAC"'
-            CALL rwarn(MSG)
+            CALL rprint(MSG)
             ARRET=.TRUE.
           END IF
       ELSE
@@ -632,7 +632,7 @@ C ------ HESSENBERG OPTION ONLY FOR EXPLICIT EQU. WITH FULL JACOBIAN
       IF ((IMPLCT.OR.JBAND).AND.IJOB.EQ.7) THEN
        WRITE(MSG,*)' HESSENBERG OPTION ONLY FOR EXPLICIT EQUATIONS WITH 
      &FULL JACOBIAN'
-         CALL rwarn(MSG)
+         CALL rprint(MSG)
          ARRET=.TRUE.
       END IF
 C ------- PREPARE THE ENTRY-POINTS FOR THE ARRAYS IN WORK -----
@@ -654,7 +654,7 @@ C ------ TOTAL STORAGE REQUIREMENT -----------
       ISTORE=IEE2I+NM1*LDE1-1
       IF(ISTORE.GT.LWORK)THEN
         WRITE(MSG,*)' INSUFFICIENT STORAGE FOR WORK, MIN. LWORK=',ISTORE
-        CALL rwarn(MSG)
+        CALL rprint(MSG)
         ARRET=.TRUE.
       END IF
 C ------- ENTRY POINTS FOR INTEGER WORKSPACE -----
@@ -665,7 +665,7 @@ C --------- TOTAL REQUIREMENT ---------------
       ISTORE=IEIPH+NM1-1
       IF (ISTORE.GT.LIWORK) THEN
          WRITE(MSG,*)' INSUFF. STORAGE FOR IWORK, MIN. LIWORK=',ISTORE
-         CALL rwarn(MSG)
+         CALL rprint(MSG)
          ARRET=.TRUE.
       END IF
 C ------ WHEN A FAIL HAS OCCURED, WE RETURN WITH IDID=-1
@@ -1155,27 +1155,27 @@ C --- FAIL EXIT
  176  CONTINUE
       WRITE(MSG,979)X   
       WRITE(MSG,*) ' MATRIX IS REPEATEDLY SINGULAR, IER=',IER
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
       IDID=-4
       RETURN
  177  CONTINUE
       WRITE(MSG,979)X   
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
       WRITE(MSG,*) ' STEP SIZE T0O SMALL, H=',H
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
       IDID=-3
       RETURN
  178  CONTINUE
       WRITE(MSG,979)X   
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
       WRITE(MSG,*) ' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED' 
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
       IDID=-2
       RETURN
 C --- EXIT CAUSED BY SOLOUT
  179  CONTINUE
       WRITE(MSG,979)X
-      CALL rwarn(MSG)
+      CALL rprint(MSG)
  979  FORMAT(' EXIT OF RADAU5 AT X=',E18.4) 
       IDID=2
       RETURN

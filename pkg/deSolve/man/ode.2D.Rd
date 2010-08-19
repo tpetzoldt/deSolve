@@ -256,6 +256,15 @@ diffusion2D <- function(t,Y,par)
   error message telling the size of the work array actually needed. In
   the second try then, set \code{lrw} equal to this number.
 
+  For instance, if you get the error:
+   
+  DLSODES- RWORK length is insufficient to proceed.                               
+        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
+      In above message,  I1 =     27627   I2 =     25932 
+      
+  set \code{lrw} equal to 27627 or a higher value
+
+
   In some cases, a cyclic boundary condition exists. This is when the first
   boxes in x-or y-direction interact with the last boxes. In this case, there
   will be extra non-zero fringes in the Jacobian which need to be taken

@@ -341,21 +341,46 @@ void sparsity2D (SEXP Type, int* iwork, int neq, int liw) {
       }
     }
 }
+void interact (int *ij, int nnz, int *iwork, int is, int ival) {
+  int i, isave;
+
+  isave = 1;
+/* check if not yet present for current state */
+	for (i = is; i < *ij; i++) 
+	  if (iwork[i] == ival) {
+	     isave = 0;
+	     break;
+	  }
+
+/* save */
+	if (isave == 1) {
+    if (*ij > nnz) 
+       error ("not enough memory allocated in iwork - increase liw %i ", nnz);
+     iwork[(*ij)++] = ival;
+  }
+}
 
 /*==================================================*/
+/* an element in C-array A(I,J,K), i=0,dim(1)-1 etc... is positioned at 
+ j*dim(2)*dim(3) + k*dim(3) + l + 1 in FORTRAN VECTOR! 
+ includes check on validity
+
+ dimens and boundary are reversed ... 
+ */
 
 void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
+    int nspec, nx, ny, nz, bndx, bndy, bndz, Nt, ij, is, isp, i, j, k, l, m, ll;
 
-    int nspec, nx, ny, nz,  Nt, ij, isp, i, j, k, l, m, ll;
+    nspec = INTEGER(Type)[1]; 
+    nx    = INTEGER(Type)[2]; 
+    ny    = INTEGER(Type)[3]; 
+    nz    = INTEGER(Type)[4]; 
+    bndx  = INTEGER(Type)[5];
+    bndy  = INTEGER(Type)[6]; 
+    bndz  = INTEGER(Type)[7]; 
 
-    nspec = INTEGER(Type)[1]; /* number components*/
-    nx    = INTEGER(Type)[2]; /* dimension x*/
-    ny    = INTEGER(Type)[3]; /* dimension y*/
-    nz    = INTEGER(Type)[4]; /* dimension y*/ 
-/*     bndx  = INTEGER(Type)[5];
-       bndy  = INTEGER(Type)[6];  cyclic boundary NOT yet implemented*/
     Nt    = nx*ny*nz;
-    ij     = 31+neq;
+    ij    = 31+neq;
     iwork[30] = 1;
     m = 1;
     for( i = 0; i < nspec; i++) {
@@ -363,18 +388,43 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
       for( j = 0; j < nx; j++) {
         for( k = 0; k < ny; k++) {
           for( ll = 0; ll < nz; ll++) {
+            is = ij;
+            
             if (ij > liw-6-nspec)  
               error ("not enough memory allocated in iwork - increase liw %i ", liw);
-            iwork[ij++] = m;
-            if (ll < nz-1)  iwork[ij++] = m+1;
-            if (k < ny-1)   iwork[ij++] = m+nz;
-            if (j < nx-1)   iwork[ij++] = m+ny*nz;
+                            interact (&ij, liw, iwork, is, m);
+            if (ll < nz-1)  
+              interact (&ij, liw, iwork, is, m+1);
+            else if (bndz == 1)
+              interact (&ij, liw, iwork, is, isp + j*ny*nz + k*nz + 1);              
+            
+            if (k  < ny-1) 
+              interact (&ij, liw, iwork, is, m+nz);
+            else  if (bndy == 1)
+              interact (&ij, liw, iwork, is, isp + j*ny*nz + ll + 1);
+              
+            if (j  < nx-1)  
+              interact (&ij, liw, iwork, is, m+ny*nz);
+            else if (bndx == 1)  
+              interact (&ij, liw, iwork, is, isp + k*nz + ll + 1);
 
-            if (j > 0)      iwork[ij++] = m-ny*nz;
-            if (k > 0)      iwork[ij++] = m-nz;
-            if (ll > 0)     iwork[ij++] = m-1;
+            if (j > 0)      
+              interact (&ij, liw, iwork, is, m-ny*nz);
+            else if (bndx == 1)
+              interact (&ij, liw, iwork, is, isp+(nx-1)*ny*nz+k*nz+ll+1);
+                                         
+            if (k > 0)  
+              interact (&ij, liw, iwork, is, m-nz);
+            else  if (bndy == 1)
+              interact (&ij, liw, iwork, is, isp + j*ny*nz+(ny-1)*nz+ll+1);              
+            
+            if (ll > 0) 
+              interact (&ij, liw, iwork, is, m-1);
+            else if (bndz == 1)  
+              interact (&ij, liw, iwork, is, isp + j*ny*nz+k*nz+nz);
+
             for(l = 0; l < nspec; l++)
-              if (l != i) iwork[ij++] = l*Nt+j*ny*nz+k*nz+ll+1;
+              if (l != i) interact (&ij, liw, iwork, is, l*Nt+j*ny*nz+k*nz+ll+1);
             iwork[30+m] = ij-30-neq;
             m = m+1;
           }
@@ -382,3 +432,4 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
       }
     }
 }
+
