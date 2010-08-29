@@ -86,7 +86,10 @@ SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
   \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
   for ODE solvers of the Livermore family .
 
-  \code{\link{daspk}}, for a DAE solver of the Livermore family.
+  \code{\link{daspk}}, for a DAE solver up to index 1, of the Livermore family.
+
+  \code{\link{radau}} for integrating DAEs up to index 3 using an implicit 
+    Runge-Kutta,
 
   \code{\link{rk}}, \code{\link{rk4}}, \code{\link{euler}} for Runge-Kutta
   solvers.

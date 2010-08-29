@@ -421,7 +421,7 @@ E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
     \item \code{\link{ode.1D}} for integrating 1-D models,
     \item \code{\link{ode.2D}} for integrating 2-D models,
     \item \code{\link{ode.3D}} for integrating 3-D models,
-    \item \code{\link{daspk}} for integrating DAE models
+    \item \code{\link{daspk}} for integrating DAE models op to index 1
   }
 
   \code{\link{diagnostics}} to print diagnostic messages.

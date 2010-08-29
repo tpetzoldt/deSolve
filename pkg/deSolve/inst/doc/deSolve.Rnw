@@ -68,7 +68,7 @@ initial value problems, R}
   The implementation includes stiff integration routines based on the
   \pkg{ODEPACK} \proglang{FORTRAN} codes \citep{Hindmarsh83}.  It also includes fixed
   and adaptive time-step explicit Runge-Kutta solvers and the Euler method
-  \citep{Press92}, and the implicit Runge-Kutta method RADAU \citep{hairer2}.
+  \citep{Press92}, and the implicit Runge-Kutta method RADAU \citep{Hairer2}.
 
   In this vignette we outline how to implement differential equations
   as \R-functions.  Another vignette (``compiledCode'')
@@ -259,26 +259,25 @@ values of state variable \code{X}, and so on.
 
 <<>>=
 require(deSolve)
-out <- as.data.frame(ode(y=state,times=times,func=Lorenz,parms=parameters))
+out <- ode(y=state,times=times,func=Lorenz,parms=parameters)
 head(out)
 @
 
 \subsubsection{Plotting results}
 
-Finally, the model output is plotted.  The figures are arranged in two
-rows and two columns (\code{mfrow}), and the size of the outer upper
+Finally, the model output is plotted. We use the plot method designed for
+objects of class \code{deSolve}, which will neatly arrange the figures 
+in two rows and two columns; before plotting, the size of the outer upper
 margin (the third margin) is increased (\code{oma}), such as to allow
-writing a figure heading (\code{mtext}).  First the X concentration
-versus time is plotted, then the Y concentration versus time, and
-finally Y versus X and Z versus X.
+writing a figure heading (\code{mtext}).  
+First all model variables are plotted versus time, and
+finally Z versus X.
 
 
 <<label=ode,include=FALSE>>=
-par(mfrow=c(2,2), oma=c(0,0,3,0))
-plot (times,out$X ,type="l",main="X", xlab="time", ylab="-")
-plot (times,out$Y ,type="l",main="Y", xlab="time", ylab="-")
-plot (out$X,out$Y, pch=".")
-plot (out$X,out$Z, pch=".")
+par(oma=c(0,0,3,0))
+plot (out, type = "l", xlab="time", ylab="-")
+plot (out[,"X"],out[,"Z"], pch=".")
 
 mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
 @
@@ -294,15 +293,27 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
   see text for R-code}
 \label{fig:dae}
 \end{figure}
-
-\subsection{Solvers for initial value problems of ordinary differential
+\clearpage
+\section{Solvers for initial value problems of ordinary differential
   equations}
 
 Package \ds contains several IVP ordinary differential equation
-solvers.  They can all be triggered from function \code{ode} (by
+solvers, that belong to the most important classes of solvers.  
+
+Most functions are based on original (FORTRAN) implementations, e.g.
+the Backward Differentiation Formulae and Adams methods 
+from ODEPACK \citep{Hindmarsh83}, or from \citep{Brown89,Petzold1983},
+the implicit Runge-Kutta method RADAU \citep{Hairer2}, and a de novo 
+implementation of several explicit 
+Runge-Kutta methods \citep{Hairer1, Press92, Butcher1987}.
+
+They can all be triggered from function \code{ode} (by
 setting the argument \code{method}), or can be run as stand-alone
 functions.  Moreover, for each integration routine, several options
 are available to optimise performance.
+
+The default integration method, based on FORTRAN code LSODA is one that 
+switches automatically between stiff and non-stiff systems \citep{Petzold1983}.
 
 Thus it should be possible to find, for one particular problem, the
 most efficient solver.  See \citep{deSolve_jss} for more information about
@@ -322,6 +333,69 @@ print(system.time(out  <- daspk (state, times, Lorenz, parameters)))
 print(system.time(out  <- vode  (state, times, Lorenz, parameters)))
 @
 
+\subsection{Runge-Kutta methods}
+The explicit Runge-Kutta methods are de novo implementations in \proglang{C}, 
+based on the Butcher tables \citep{Butcher1987}. 
+They comprise simple Runge-Kutta formulae (Heun's method \code{rk2}, 
+the classical 4th order Runge-Kutta, \code{rk4}) and several Runge-Kutta 
+pairs of order 3(2) to order 8(7). 
+
+The embedded, explicit methods are according to Fehlberg \citep{Fehlberg1967} 
+(\code{rk..f}), Dormand and Prince \citep{Dormand1980,Dormand1981} 
+(\code{rk..dp.}), Bogacki and Shampine \citep{Bogacki1989} 
+((\code{rk23bs}), \code{ode23}) and Cash and Karp \citep{Cash1990} 
+(\code{rk45ck}).
+
+With the following statement all implemented methods are shown: 
+<<>>=
+rkMethod() 
+@
+
+This list also contains implicit Runge-Kutta's (\code{irk..}), but they are 
+not optimally coded. The only well-implemented implicit Runge-Kutta is the 
+(\code{radau}) method \citep{Hairer2} that will be discussed in the section
+dealing with differential algebraic equations.
+
+Only two formulae (\code{rk45dp7, rk45ck}) support dense output.
+
+The properties of a Runge-Kutta method can be displayed as follows:
+<<>>=
+rkMethod("rk23")
+@
+
+Here \code{varstep} informs whether the method uses a variable time-step; 
+\code{FSAL} whether the first same as last strategy is used, while 
+\code{stage} and \code{Qerr} give the number of function evaluations needed 
+for one step, and the order of the local truncation error.
+\code{A,b1,b2,c} are the coefficients of the Butcher table. 
+
+It is also possible to define and use a new Runge-Kutta method:
+
+<<>>=
+func <- function(t, x, parms) {
+  with(as.list(c(parms, x)),{
+    dP  <- a * P      - b * C * P
+    dC  <- b * P * C  - c * C
+    res <- c(dP, dC)
+    list(res)
+  })
+}
+parms  <- 
+
+rKnew <- rkMethod(ID = "midpoint",
+    varstep = FALSE,
+    A      = c(0, 1/2),
+    b1      = c(0, 1),
+    c       = c(0, 1/2),
+    stage   = 2,
+    Qerr    = 1
+  )
+  
+out <- ode(y = c(P = 2, C = 1), times = 0:100, func, 
+      parms = c(a = 0.1, b = 0.1, c = 0.1), method = rKnew)
+head(out)
+@
+
 \subsection{Model diagnostics}
 
 Function \code{diagnostics} prints several diagnostics of the simulation
@@ -331,7 +405,7 @@ to the screen. For the runge kutta and lsode routine they are:
 diagnostics(out1)
 diagnostics(out2)
 @
-
+\clearpage
 \section{Partial differential equations}
 
 As package \ds includes integrators that deal efficiently with
@@ -345,7 +419,7 @@ Three special-purpose solvers are included in \ds:
 \begin{itemize}
 \item \code{ode.band} integrates 1-dimensional problems comprizing one
   species,
-\item \code{ode.1D} integrates 1-dimensional problems comprizing many
+\item \code{ode.1D} integrates 1-dimensional problems comprizing one or many
   species,
 \item \code{ode.2D} integrates 2-dimensional problems,
 \item \code{ode.2D} integrates 2-dimensional problems.
@@ -439,7 +513,7 @@ elapsed in seconds to solve this 60 state-variable model is estimated
 <<>>=
 times <-seq(0, 200, by = 1)
 print(system.time(
-  out <- ode.band(state, times, Aphid, parms = 0, nspec = 1)
+  out <- ode.1D(state, times, Aphid, parms = 0, nspec = 1)
 ))
 @
 
@@ -448,15 +522,14 @@ densities (next columns).
 
 <<>>=
 head(out[,1:5])
-DENSITY <- out[,2:(numboxes  +1)]
 @
 
-Finally, the output is plotted
-
+Finally, the output is plotted.
+It is simplest to do this with deSolve's S3-method \code{image}
 <<label=aphid, include=FALSE>>=
-filled.contour(x = times, y = Distance, DENSITY, color = topo.colors,
-               xlab = "time, days", ylab = "Distance on plant, m",
-               main = "Aphid density on a row of plants")
+image(out, method = "filled.contour", grid = Distance,
+      xlab = "time, days", ylab = "Distance on plant, m",
+      main = "Aphid density on a row of plants")
 @
 
 \setkeys{Gin}{width=0.8\textwidth}
@@ -471,11 +544,25 @@ filled.contour(x = times, y = Distance, DENSITY, color = topo.colors,
 \end{figure}
 
 As the 1-D model describes only one species, it is best solved with
-\ds function \code{ode.band}.  A multi-species IVP example can be
-found in \citet{Soetaert08b}.  For 2-D problems, we refer to the
+\ds function \code{ode.1D}.  A multi-species IVP example can be
+found in \citet{Soetaert08}.  For 2-D problems, we refer to the
 help-files of function \code{ode.2D}.
 
+\clearpage
 \section{Differential algebraic equations}
+Package \ds contains two functions that solve initial value problems of 
+differential algebraic equations. They are:
+\begin{itemize}
+\item \code{radau} which implicit Runge-Kutta RADAU5 \citep{Hairer2}
+\item \code{daspk}, based on the backward differentiation code DASPK \citep{Brenan96}
+\end{itemize}
+Function \code{radau} needs the input in the form $M y' = f(t,y,y')$ where $M$
+is the mass matrix. Function \code{daspk} also supports this input, but can also
+solve problems written in the form $F(t, y, y') = 0$. 
+
+\code{radau} solves problems up to index 3; \code{daspk} solves problems of 
+index $\leq$ 1.
+
 \subsection{DAEs of index maximal 1}
 Function \code{daspk} from package \ds solves (relatively simple) DAEs
 of index\footnote{note that many -apparently simple- DAEs are
@@ -595,7 +682,6 @@ plot(out[,c("x","y")], type="l", lwd = 2)
 \end{figure}
 
 \clearpage
-
 \section{Integrating complex numbers, function zvode}
 
 Function \code{zvode} solves ODEs that are composed of complex variables.
@@ -644,7 +730,7 @@ solution:
 analytical  <- cbind(f = exp(1i*times), g = 1/(exp(1i*times)+1.1))
 tail(cbind(out[,2], analytical[,1]))
 @
-
+\clearpage
 \section{Making good use of the integration options}
 
 The solvers from \pkg{ODEPACK} can be optimised if it is known whether the
@@ -741,7 +827,6 @@ Finally, if the model is specified as a "non-stiff" (by setting
 out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 @
 \clearpage
-
 \section{Events}
 
 As from version 1.6, \code{events} are supported. Events occur when
@@ -853,7 +938,7 @@ plot(out, which = "height", type = "l",lwd = 2,
 \caption{A model, with event triggered by a root function}
 \label{fig:event2}
 \end{figure}
-
+\clearpage
 \section{Delay differential equations}
 
 As from deSolve version 1.7, time lags are supported, and a new
@@ -920,9 +1005,6 @@ plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 \label{fig:dde}
 \end{figure}
 
-
-
-\clearpage
 \clearpage
 \section{Troubleshooting}
 
@@ -959,8 +1041,8 @@ is solved - using \code{lsoda}:
 xstart <- c(P = 0.5, C = 1)
 times  <- seq(0, 190, 0.1)
 
-out <- as.data.frame(ode(y = xstart, times = times,
-  func = SPCmod, parms = parms))
+out <- ode(y = xstart, times = times,
+  func = SPCmod, parms = parms)
 tail(out)
 @
 
@@ -982,8 +1064,8 @@ absolute values. Therefore, it helps here to reduce \code{atol} to a
 very small number or even to zero:
 
 <<>>=
-out <- as.data.frame(ode(y = xstart,times = times, func = SPCmod,
-                         parms = parms, atol = 0))
+out <- ode(y = xstart,times = times, func = SPCmod,
+                         parms = parms, atol = 0)
 matplot(out[,1], out[,2:3], type = "l")
 @
 
@@ -1030,10 +1112,108 @@ to ask a question to an appropriate mailing list,
 e.g. \url{r-help@r-project.org} or, more specific,
 \url{r-sig-dynamic-models@r-project.org}.
 
+\subsection{Making sense of deSolve's error messages}
+As many of \pkg{deSolve}'s functions are wrappers around existing FORTRAN codes, 
+the warning and error messages are derived from these codes.
+Whereas these codes are highly robust, well tested, and efficient, they are 
+not always as user-friendly as we would like.
+Especially some of the warnings/error messages may appear to be difficult 
+to understand.
+
+Consider the first example on the \code{ode} function:
+<<>>=
+LVmod <- function(Time, State, Pars) {
+  with(as.list(c(State, Pars)), {
+    Ingestion    <- rIng  * Prey*Predator
+    GrowthPrey   <- rGrow * Prey*(1-Prey/K)
+    MortPredator <- rMort * Predator
+
+    dPrey        <- GrowthPrey - Ingestion
+    dPredator    <- Ingestion*assEff -MortPredator
+
+    return(list(c(dPrey, dPredator)))
+  })
+}
+
+pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
+             rGrow  = 1.0,    # /day, growth rate of prey
+             rMort  = 0.2 ,   # /day, mortality rate of predator
+             assEff = 0.5,    # -, assimilation efficiency
+             K      = 10)     # mmol/m3, carrying capacity
+
+yini    <- c(Prey = 1, Predator = 2)
+times   <- seq(0, 200, by = 1)
+out     <- ode(func = LVmod, y = yini,
+              parms = pars, times = times)
+
+@
+This model is easily solved by the default integration method, \code{lsoda}.
+
+Now we change one of the parameters to an unrealistic value: 
+\code{rIng} is set to $100$.
+This means that the predator ingests 100 times its own body-weight per 
+day if there are plenty of prey.
+Needless to say that this is very unhealthy, if not lethal.
+
+Also, \code{lsoda} cannot solve the model anymore. 
+Thus, if we try:
+<<include=FALSE,results=hide>>=
+pars["rIng"]<-100
+out2    <- ode(func = LVmod, y = yini,
+              parms = pars, times = times)
+@
+
+A lot of seemingly incomprehensible messages will be written to the screen. 
+We repeat the latter part of them:
+\begin{verbatim}
+DLSODA-  Warning..Internal T (=R1) and H (=R2) are
+      such that in the machine, T + H = T on the next step
+     (H = step size). Solver will continue anyway.
+      In above,  R1 =  0.8562448350331D+02   R2 =  0.3273781304624D-17
+DLSODA-  Above warning has been issued I1 times.
+     It will not be issued again for this problem.
+      In above message,  I1 =        10
+DLSODA-  At current T (=R1), MXSTEP (=I1) steps
+      taken on this call before reaching TOUT
+      In above message,  I1 =      5000
+      In above message,  R1 =  0.8562448350331D+02
+Warning messages:
+1: In lsoda(y, times, func, parms, ...) :
+  an excessive amount of work (> maxsteps ) was done, but integration was not successful - increase maxsteps
+2: In lsoda(y, times, func, parms, ...) :
+  Returning early. Results are accurate, as far as they go
+\end{verbatim}
+The first sentence tells us that at T=0.8562448350331e+02, the solver used a step size H= 0.3273781304624e-17. 
+This step size is so small that it cannot tell the difference between T and T+H. Nevertheless, the solver tried again. 
+
+The second sentence tells that, at this warning has been occurring 10 times, it will not be outputted again.
+
+As expected, this error did not go away, so soon the maximal number of steps (5000) has been exceeded. This is indeed what the next message is about:
+
+The third sentence tells that at T=0.8562448350331e+02, maxstep =5000 steps have been done.
+
+The one before last message tells why the solver returned prematurely, and suggests a solution. 
+
+Note: simply increasing maxsteps will not work. 
+
+It makes more sense to first see if the output tells what happens:
+<<label=err,include=FALSE>>=
+plot(out2, type = "l", lwd = 2, main = "corrupt Lotka-Volterra model")
+@
+
+\setkeys{Gin}{width=0.4\textwidth}
+\begin{figure}
+\begin{center}
+<<label=err,fig=TRUE,echo=FALSE>>=
+<<err>>
+@
+\end{center}
+\caption{A model that cannot be solved correctly}
+\label{fig:err}
+\end{figure}
 
 \clearpage
 %\section{Function overview}
-\footnote{from version 1.7, lsode includes a root finding procedure, similar to lsodar}
 \begin{table*}[b]
 \caption{Summary of the functions that solve differential equations}\label{tb:rs}
 \centering
@@ -1041,15 +1221,17 @@ e.g. \url{r-help@r-project.org} or, more specific,
 \rule[-3mm]{0mm}{8mm}       Function &Description\\
 \hline \hline
 \code{ode}                  & integrates systems of ordinary differential equations, assumes a full, banded or arbitrary sparse Jacobian   \\ \hline
-\code{ode.1D}               & integrates systems of ODEs resulting from multicomponent 1-dimensional reaction-transport problems           \\ \hline
+\code{ode.1D}               & integrates systems of ODEs resulting from 1-dimensional reaction-transport problems           \\ \hline
 \code{ode.2D}               & integrates systems of ODEs resulting from 2-dimensional reaction-transport problems                          \\ \hline
 \code{ode.3D}               & integrates systems of ODEs resulting from 3-dimensional reaction-transport problems                          \\ \hline
 \code{ode.band}             & integrates systems of ODEs resulting from unicomponent 1-dimensional reaction-transport problems             \\ \hline
 \code{dede}                 & integrates systems of delay differential equations                                                           \\ \hline
 \code{daspk}                & solves systems of differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
+\code{radau}                & solves systems of ordinary or differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
 \code{lsoda}                & integrates ODEs, automatically chooses method for stiff or non-stiff problems, assumes a full or banded Jacobian   \\ \hline
 \code{lsodar}               & same as \code{lsoda}, but includes a root-solving procedure                                                  \\ \hline
-\code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian                   \\ \hline
+\code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian; 
+Note that, as from version 1.7, \code{lsode} includes a root finding procedure, similar to \code{lsodar}.                  \\ \hline
 \code{lsodes}               & integrates ODEs, using stiff method and assuming an arbitrary sparse Jacobian                                \\ \hline
 \code{rk}                   & integrates ODEs, using Runge-Kutta methods (includes Runge-Kutta 4 and Euler as special cases)               \\ \hline
 \code{rk4}                  & integrates ODEs, using the classical Runge-Kutta 4th order method (special code with less options than \code{rk}) \\ \hline
@@ -1058,6 +1240,7 @@ e.g. \url{r-help@r-project.org} or, more specific,
 \hline
 \end{tabular}
 \end{table*}
+
 
 \begin{table*}[b]
 \caption{Meaning of the integer return parameters in the different integration

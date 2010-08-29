@@ -505,7 +505,7 @@ par(mfrow = opa)
     \item an ODE system of the form \deqn{y' = f(t,y,...)}  for y = Y,
     or
     \item a DAE system of the form \deqn{F(t,y,y') = 0} for y = Y and y'
-    = YPRIME.
+    = YPRIME. The index of the DAE should be <=1.
   }
   
   ODEs are specified in \code{func}, DAEs are specified in \code{res}.
@@ -574,6 +574,8 @@ par(mfrow = opa)
 }
 \seealso{
   \itemize{
+    \item \code{\link{radau}} for integrating DAEs up to index 3,
+
     \item \code{\link{rk}}, \item \code{\link{rk4}} and \code{\link{euler}} for
       Runge-Kutta integrators.
     \item \code{\link{lsoda}}, \code{\link{lsode}},
