@@ -266,10 +266,10 @@ head(out)
 \subsubsection{Plotting results}
 
 Finally, the model output is plotted. We use the plot method designed for
-objects of class \code{deSolve}, which will neatly arrange the figures 
+objects of class \code{deSolve}, which will neatly arrange the figures
 in two rows and two columns; before plotting, the size of the outer upper
 margin (the third margin) is increased (\code{oma}), such as to allow
-writing a figure heading (\code{mtext}).  
+writing a figure heading (\code{mtext}).
 First all model variables are plotted versus time, and
 finally Z versus X.
 
@@ -298,21 +298,22 @@ mtext(outer=TRUE,side=3,"Lorenz model",cex=1.5)
   equations}
 
 Package \ds contains several IVP ordinary differential equation
-solvers, that belong to the most important classes of solvers.  
+solvers, that belong to the most important classes of solvers.
 
 Most functions are based on original (FORTRAN) implementations, e.g.
-the Backward Differentiation Formulae and Adams methods 
+the Backward Differentiation Formulae and Adams methods
 from ODEPACK \citep{Hindmarsh83}, or from \citep{Brown89,Petzold1983},
-the implicit Runge-Kutta method RADAU \citep{Hairer2}. The package contains also a de novo 
-implementation of several explicit 
+the implicit Runge-Kutta method RADAU \citep{Hairer2}. The package contains also a de novo
+implementation of several explicit
 Runge-Kutta methods \citep{Hairer1, Press92, Butcher1987}.
 
-They can all be triggered from function \code{ode} (by
-setting the argument \code{method}), or can be run as stand-alone
-functions.  Moreover, for each integration routine, several options
-are available to optimise performance.
+All methods\footnote{except \code{zvode}, the solver used for systems
+  containing complex numbers.} can be triggered from function
+\code{ode} (by setting the argument \code{method}), or can be run as
+stand-alone functions.  Moreover, for each integration routine,
+several options are available to optimise performance.
 
-The default integration method, based on FORTRAN code LSODA is one that 
+The default integration method, based on the FORTRAN code LSODA is one that
 switches automatically between stiff and non-stiff systems \citep{Petzold1983}.
 
 Thus it should be possible to find, for one particular problem, the
@@ -335,25 +336,25 @@ print(system.time(out  <- vode  (state, times, Lorenz, parameters)))
 
 \subsection{Runge-Kutta methods}
 
-The explicit Runge-Kutta methods are de novo implementations in \proglang{C}, 
+The explicit Runge-Kutta methods are de novo implementations in \proglang{C},
 based on the Butcher tables \citep{Butcher1987}.
-They comprise simple Runge-Kutta formulae (Heun's method \code{rk2}, 
-the classical 4th order Runge-Kutta, \code{rk4}) and several Runge-Kutta 
-pairs of order 3(2) to order 8(7). 
+They comprise simple Runge-Kutta formulae (Heun's method \code{rk2},
+the classical 4th order Runge-Kutta, \code{rk4}) and several Runge-Kutta
+pairs of order 3(2) to order 8(7).
 
-The embedded, explicit methods are according to Fehlberg \citep{Fehlberg1967} 
-(\code{rk..f}, \code{ode45}), Dormand and Prince \citep{Dormand1980,Dormand1981} 
-(\code{rk..dp.}), Bogacki and Shampine \citep{Bogacki1989} 
-((\code{rk23bs}), \code{ode23}) and Cash and Karp \citep{Cash1990} 
+The embedded, explicit methods are according to Fehlberg \citep{Fehlberg1967}
+(\code{rk..f}, \code{ode45}), Dormand and Prince \citep{Dormand1980,Dormand1981}
+(\code{rk..dp.}), Bogacki and Shampine \citep{Bogacki1989}
+((\code{rk23bs}), \code{ode23}) and Cash and Karp \citep{Cash1990}
 (\code{rk45ck}), where \code{ode23} and \code{ode45} are aliases for the popular methods \code{rk23bs} resp \code{rk45dp7}.
 
-With the following statement all implemented methods are shown: 
+With the following statement all implemented methods are shown:
 <<>>=
-rkMethod() 
+rkMethod()
 @
 
-This list also contains implicit Runge-Kutta's (\code{irk..}), but they are 
-not optimally coded. The only well-implemented implicit Runge-Kutta is the 
+This list also contains implicit Runge-Kutta's (\code{irk..}), but they are
+not optimally coded. The only well-implemented implicit Runge-Kutta is the
 (\code{radau}) method \citep{Hairer2} that will be discussed in the section
 dealing with differential algebraic equations.
 
@@ -364,13 +365,13 @@ The properties of a Runge-Kutta method can be displayed as follows:
 rkMethod("rk23")
 @
 
-Here \code{varstep} informs whether the method uses a variable time-step; 
-\code{FSAL} whether the first same as last strategy is used, while 
-\code{stage} and \code{Qerr} give the number of function evaluations needed 
+Here \code{varstep} informs whether the method uses a variable time-step;
+\code{FSAL} whether the first same as last strategy is used, while
+\code{stage} and \code{Qerr} give the number of function evaluations needed
 for one step, and the order of the local truncation error.
-\code{A,b1,b2,c} are the coefficients of the Butcher table. 
+\code{A,b1,b2,c} are the coefficients of the Butcher table.
 
-It is also possible to modify the parameters of a method (be very careful with this) 
+It is also possible to modify the parameters of a method (be very careful with this)
 or define and use a new Runge-Kutta method:
 
 <<>>=
@@ -382,7 +383,7 @@ func <- function(t, x, parms) {
     list(res)
   })
 }
-parms  <- 
+parms  <-
 
 rKnew <- rkMethod(ID = "midpoint",
     varstep = FALSE,
@@ -392,8 +393,8 @@ rKnew <- rkMethod(ID = "midpoint",
     stage   = 2,
     Qerr    = 1
   )
-  
-out <- ode(y = c(P = 2, C = 1), times = 0:100, func, 
+
+out <- ode(y = c(P = 2, C = 1), times = 0:100, func,
       parms = c(a = 0.1, b = 0.1, c = 0.1), method = rKnew)
 head(out)
 @
@@ -554,7 +555,7 @@ help-files of function \code{ode.2D}.
 
 \section{Differential algebraic equations}
 
-Package \ds contains two functions that solve initial value problems of 
+Package \ds contains two functions that solve initial value problems of
 differential algebraic equations. They are:
 \begin{itemize}
 \item \code{radau} which implicit Runge-Kutta RADAU5 \citep{Hairer2}
@@ -562,9 +563,9 @@ differential algebraic equations. They are:
 \end{itemize}
 Function \code{radau} needs the input in the form $M y' = f(t,y,y')$ where $M$
 is the mass matrix. Function \code{daspk} also supports this input, but can also
-solve problems written in the form $F(t, y, y') = 0$. 
+solve problems written in the form $F(t, y, y') = 0$.
 
-\code{radau} solves problems up to index 3; \code{daspk} solves problems of 
+\code{radau} solves problems up to index 3; \code{daspk} solves problems of
 index $\leq$ 1.
 
 \subsection{DAEs of index maximal 1}
@@ -633,23 +634,23 @@ x' &=& u\\
 y' &=& v\\
 u' &=& -\lambda x\\
 v' &=& -\lambda y - 9.8\\
-0 &=& x^2 + y^2 - 1 
+0 &=& x^2 + y^2 - 1
 \end{eqnarray*}
-where the dependent variables are $x, y, u, v$ and $\lambda$. 
+where the dependent variables are $x, y, u, v$ and $\lambda$.
 
 Implemented in \R to be used with function \code{radau} this becomes:
 <<>>=
 pendulum <- function (t, Y, parms) {
- with (as.list(Y), 
-    
+ with (as.list(Y),
+
     list(c(u,
            v,
           -lam *x,
           -lam *y -9.8,
            x^2 + y^2 -1
      ))
- 
- )    
+
+ )
 }
 @
 A consistent set of initial conditions are:
@@ -661,7 +662,7 @@ and the mass matrix $M$:
 M <- diag(nr=5)
 M[5,5]<-0
 M
-@ 
+@
 Function \code{radau} requires that the index of each equation is specified;
 there are 2 equations of index 1, two of index 2, one of index 3:
 <<>>=
@@ -681,7 +682,7 @@ plot(out[,c("x","y")], type="l", lwd = 2)
 <<pendulum>>
 @
 \end{center}
-\caption{Solution of the pendulum problem, an index 3 differential algebraic equation 
+\caption{Solution of the pendulum problem, an index 3 differential algebraic equation
   using radau - see text for R-code}
 \label{fig:pendulum}
 \end{figure}
@@ -1121,11 +1122,11 @@ e.g. \url{r-help@r-project.org} or, more specific,
 
 \subsection{Making sense of deSolve's error messages}
 
-As many of \pkg{deSolve}'s functions are wrappers around existing FORTRAN codes, 
+As many of \pkg{deSolve}'s functions are wrappers around existing FORTRAN codes,
 the warning and error messages are derived from these codes.
-Whereas these codes are highly robust, well tested, and efficient, they are 
+Whereas these codes are highly robust, well tested, and efficient, they are
 not always as user-friendly as we would like.
-Especially some of the warnings/error messages may appear to be difficult 
+Especially some of the warnings/error messages may appear to be difficult
 to understand.
 
 Consider the first example on the \code{ode} function:
@@ -1157,13 +1158,13 @@ out     <- ode(func = LVmod, y = yini,
 @
 This model is easily solved by the default integration method, \code{lsoda}.
 
-Now we change one of the parameters to an unrealistic value: 
+Now we change one of the parameters to an unrealistic value:
 \code{rIng} is set to $100$.
-This means that the predator ingests 100 times its own body-weight per 
+This means that the predator ingests 100 times its own body-weight per
 day if there are plenty of prey.
 Needless to say that this is very unhealthy, if not lethal.
 
-Also, \code{lsoda} cannot solve the model anymore. 
+Also, \code{lsoda} cannot solve the model anymore.
 Thus, if we try:
 <<include=FALSE,results=hide>>=
 pars["rIng"]<-100
@@ -1171,7 +1172,7 @@ out2    <- ode(func = LVmod, y = yini,
               parms = pars, times = times)
 @
 
-A lot of seemingly incomprehensible messages will be written to the screen. 
+A lot of seemingly incomprehensible messages will be written to the screen.
 We repeat the latter part of them:
 \begin{verbatim}
 DLSODA-  Warning..Internal T (=R1) and H (=R2) are
@@ -1191,8 +1192,8 @@ Warning messages:
 2: In lsoda(y, times, func, parms, ...) :
   Returning early. Results are accurate, as far as they go
 \end{verbatim}
-The first sentence tells us that at T=0.8562448350331e+02, the solver used a step size H= 0.3273781304624e-17. 
-This step size is so small that it cannot tell the difference between T and T+H. Nevertheless, the solver tried again. 
+The first sentence tells us that at T=0.8562448350331e+02, the solver used a step size H= 0.3273781304624e-17.
+This step size is so small that it cannot tell the difference between T and T+H. Nevertheless, the solver tried again.
 
 The second sentence tells that, at this warning has been occurring 10 times, it will not be outputted again.
 
@@ -1200,9 +1201,9 @@ As expected, this error did not go away, so soon the maximal number of steps (50
 
 The third sentence tells that at T=0.8562448350331e+02, maxstep =5000 steps have been done.
 
-The one before last message tells why the solver returned prematurely, and suggests a solution. 
+The one before last message tells why the solver returned prematurely, and suggests a solution.
 
-Note: simply increasing maxsteps will not work. 
+Note: simply increasing maxsteps will not work.
 
 It makes more sense to first see if the output tells what happens:
 <<label=err,include=FALSE>>=
@@ -1238,7 +1239,7 @@ plot(out2, type = "l", lwd = 2, main = "corrupt Lotka-Volterra model")
 \code{radau}                & solves systems of ordinary or differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
 \code{lsoda}                & integrates ODEs, automatically chooses method for stiff or non-stiff problems, assumes a full or banded Jacobian   \\ \hline
 \code{lsodar}               & same as \code{lsoda}, but includes a root-solving procedure                                                  \\ \hline
-\code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian; 
+\code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian;
 Note that, as from version 1.7, \code{lsode} includes a root finding procedure, similar to \code{lsodar}.                  \\ \hline
 \code{lsodes}               & integrates ODEs, using stiff method and assuming an arbitrary sparse Jacobian                                \\ \hline
 \code{rk}                   & integrates ODEs, using Runge-Kutta methods (includes Runge-Kutta 4 and Euler as special cases)               \\ \hline
