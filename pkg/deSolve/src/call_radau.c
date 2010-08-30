@@ -205,9 +205,10 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /******************************************************************************/
 /******                         STATEMENTS                               ******/
 /******************************************************************************/
-
+  lock_solver(); /* prevent nested call of solvers that have global variables */
 /*                      #### initialisation ####                              */    
-  init_N_Protect();
+  //init_N_Protect();
+  long int old_N_Protect = save_N_Protected();  
 
   n_eq = LENGTH(y);             /* number of equations */ 
   nt   = LENGTH(times);         /* number of output times */
@@ -344,7 +345,9 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   terminate(idid,iwork,7,13,rwork,5,0);       
   
 /*                   ####     termination      ####                           */    
-  unprotect_all();
+  unlock_solver();
+  restore_N_Protected(old_N_Protect);                           
+  //unprotect_all();
   if (idid > 0)
     return(YOUT);
   else

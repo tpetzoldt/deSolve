@@ -211,7 +211,7 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
 ### calling solver
   storage.mode(y) <- storage.mode(times) <- "double"
   tcrit <- NULL
-  on.exit(.C("unlock_solver")) ## ToDo: check locking in C/Fortran code
+  on.exit(.C("unlock_solver"))
   out <- .Call("call_radau",y,times,Func,MassFunc,JacFunc,initpar,
                rtol, atol, nrjac, nrmas, rho, ModelInit,  
                as.integer(verbose), as.double(rwork),

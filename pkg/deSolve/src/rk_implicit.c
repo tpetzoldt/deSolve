@@ -34,7 +34,7 @@ void kfunc(int stage, int neq, double t, double dt,
    double *out, int *ipar, int isDll, int isForcing){
       
    int i, j, k;  
-    /******  Prepare Coefficients from Butcher table ******/
+   /******  Prepare Coefficients from Butcher table ******/
    for (j = 0; j < stage; j++) {
      for (i = 0; i < neq; i++) Fj[i] = 0.;
      for (k =0; k < stage; k++) { // implicit part
@@ -201,7 +201,7 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
     it++;
     for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in rk_solvers.c - call_rk4auto: output buffer overflow\n");
+      Rprintf("error in rk_implicit.c - call_rkImpicit: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {

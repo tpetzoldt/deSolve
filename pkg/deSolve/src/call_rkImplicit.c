@@ -1,6 +1,7 @@
 /*==========================================================================*/
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
-/* General RK Solver for methods with fixed step size                       */
+/* RK Solver for implicit methods with fixed step size                      */
+/* (experimental code derived by K.S.)                                      */
 /*==========================================================================*/
 
 #include "rk_util.h"
