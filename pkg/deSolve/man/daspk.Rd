@@ -592,7 +592,7 @@ par(mfrow = opa)
   \code{\link{diagnostics}} to print diagnostic messages.
 }
 \note{
-  In this version, the krylov method is not (yet) supported.
+  In this version, the Krylov method is not (yet) supported.
 }
 \keyword{math}
 

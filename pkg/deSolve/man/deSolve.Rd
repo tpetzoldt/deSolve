@@ -72,36 +72,36 @@ VODE: A Variable Coefficient ODE Solver,
 SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
 }
 \seealso{
-  \code{\link{ode}} for a general interface to most of the ODE solvers
+  \code{\link{ode}} for a general interface to most of the ODE solvers,
   
-  \code{\link{ode.band}} for solving models with a banded Jacobian
+  \code{\link{ode.band}} for solving models with a banded Jacobian,
 
   \code{\link{ode.1D}}, \code{\link{ode.2D}}, \code{\link{ode.3D}},
-  for integrating 1-D, 2-D and 3-D models
+  for integrating 1-D, 2-D and 3-D models,
   
   \code{\link{dede}} for a general interface to the delay differential 
-  equation solvers
+  equation solvers,
 
   \code{\link{lsoda}}, \code{\link{lsode}},
   \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
-  for ODE solvers of the Livermore family .
+  for ODE solvers of the Livermore family,
 
-  \code{\link{daspk}}, for a DAE solver up to index 1, of the Livermore family.
+  \code{\link{daspk}}, for a DAE solver up to index 1, of the Livermore family,
 
   \code{\link{radau}} for integrating DAEs up to index 3 using an implicit 
     Runge-Kutta,
 
   \code{\link{rk}}, \code{\link{rk4}}, \code{\link{euler}} for Runge-Kutta
-  solvers.
+  solvers,
 
   \code{\link{DLLfunc}}, \code{\link{DLLres}}, for testing model implementations
-  in compiled code.
+  in compiled code,
 
   \code{\link{forcings}},  \code{\link{events}}, for how to implement forcing 
-  functions (external variables) and events (sudden changes in state variables)
+  functions (external variables) and events (sudden changes in state variables),
   
   \code{\link{lagvalue}}, \code{\link{lagderiv}}, for how to get access to 
-  lagged values of state variables and derivatives 
+  lagged values of state variables and derivatives.
   
 }
 

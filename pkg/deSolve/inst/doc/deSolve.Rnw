@@ -303,7 +303,7 @@ solvers, that belong to the most important classes of solvers.
 Most functions are based on original (FORTRAN) implementations, e.g.
 the Backward Differentiation Formulae and Adams methods 
 from ODEPACK \citep{Hindmarsh83}, or from \citep{Brown89,Petzold1983},
-the implicit Runge-Kutta method RADAU \citep{Hairer2}, and a de novo 
+the implicit Runge-Kutta method RADAU \citep{Hairer2}. The package contains also a de novo 
 implementation of several explicit 
 Runge-Kutta methods \citep{Hairer1, Press92, Butcher1987}.
 
@@ -334,17 +334,18 @@ print(system.time(out  <- vode  (state, times, Lorenz, parameters)))
 @
 
 \subsection{Runge-Kutta methods}
+
 The explicit Runge-Kutta methods are de novo implementations in \proglang{C}, 
-based on the Butcher tables \citep{Butcher1987}. 
+based on the Butcher tables \citep{Butcher1987}.
 They comprise simple Runge-Kutta formulae (Heun's method \code{rk2}, 
 the classical 4th order Runge-Kutta, \code{rk4}) and several Runge-Kutta 
 pairs of order 3(2) to order 8(7). 
 
 The embedded, explicit methods are according to Fehlberg \citep{Fehlberg1967} 
-(\code{rk..f}), Dormand and Prince \citep{Dormand1980,Dormand1981} 
+(\code{rk..f}, \code{ode45}), Dormand and Prince \citep{Dormand1980,Dormand1981} 
 (\code{rk..dp.}), Bogacki and Shampine \citep{Bogacki1989} 
 ((\code{rk23bs}), \code{ode23}) and Cash and Karp \citep{Cash1990} 
-(\code{rk45ck}).
+(\code{rk45ck}), where \code{ode23} and \code{ode45} are aliases for the popular methods \code{rk23bs} resp \code{rk45dp7}.
 
 With the following statement all implemented methods are shown: 
 <<>>=
@@ -369,7 +370,8 @@ Here \code{varstep} informs whether the method uses a variable time-step;
 for one step, and the order of the local truncation error.
 \code{A,b1,b2,c} are the coefficients of the Butcher table. 
 
-It is also possible to define and use a new Runge-Kutta method:
+It is also possible to modify the parameters of a method (be very careful with this) 
+or define and use a new Runge-Kutta method:
 
 <<>>=
 func <- function(t, x, parms) {
@@ -399,7 +401,7 @@ head(out)
 \subsection{Model diagnostics}
 
 Function \code{diagnostics} prints several diagnostics of the simulation
-to the screen. For the runge kutta and lsode routine they are:
+to the screen. For the Runge Kutta and lsode routine they are:
 
 <<>>=
 diagnostics(out1)
@@ -549,7 +551,9 @@ found in \citet{Soetaert08}.  For 2-D problems, we refer to the
 help-files of function \code{ode.2D}.
 
 \clearpage
+
 \section{Differential algebraic equations}
+
 Package \ds contains two functions that solve initial value problems of 
 differential algebraic equations. They are:
 \begin{itemize}
@@ -564,6 +568,7 @@ solve problems written in the form $F(t, y, y') = 0$.
 index $\leq$ 1.
 
 \subsection{DAEs of index maximal 1}
+
 Function \code{daspk} from package \ds solves (relatively simple) DAEs
 of index\footnote{note that many -apparently simple- DAEs are
   higher-index DAEs} maximal 1.
@@ -637,9 +642,9 @@ Implemented in \R to be used with function \code{radau} this becomes:
 pendulum <- function (t, Y, parms) {
  with (as.list(Y), 
     
-    list(c(u        ,
-           v        ,
-          -lam *x    ,
+    list(c(u,
+           v,
+          -lam *x,
           -lam *y -9.8,
            x^2 + y^2 -1
      ))
@@ -682,7 +687,7 @@ plot(out[,c("x","y")], type="l", lwd = 2)
 \end{figure}
 
 \clearpage
-\section{Integrating complex numbers, function zvode}
+\section{Integrating systems containing complex numbers, function zvode}
 
 Function \code{zvode} solves ODEs that are composed of complex variables.
 
@@ -731,6 +736,7 @@ analytical  <- cbind(f = exp(1i*times), g = 1/(exp(1i*times)+1.1))
 tail(cbind(out[,2], analytical[,1]))
 @
 \clearpage
+
 \section{Making good use of the integration options}
 
 The solvers from \pkg{ODEPACK} can be optimised if it is known whether the
@@ -770,7 +776,7 @@ out   <- lsode(yini, times, f1, parms = 0, jactype = "fullint")
 @
 
 It is possible for the user to provide the Jacobian. Especially for
-large problems this can result in subtantial time savings.  In a first
+large problems this can result in substantial time savings.  In a first
 case, the Jacobian is written as a full matrix:
 
 <<>>=
@@ -832,7 +838,7 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 As from version 1.6, \code{events} are supported. Events occur when
 the values of state variables are instantaneously changed.
 
-They can be specified as a data.frame, or in a function.  Events can
+They can be specified as a \code{data.frame}, or in a function.  Events can
 also be triggered by a root function.
 
 \subsection{Event specified in a data.frame}
@@ -939,6 +945,7 @@ plot(out, which = "height", type = "l",lwd = 2,
 \label{fig:event2}
 \end{figure}
 \clearpage
+
 \section{Delay differential equations}
 
 As from deSolve version 1.7, time lags are supported, and a new
@@ -946,7 +953,7 @@ general solver for delay differential equations, \code{dede} has been
 added.
 
 We implement the lemming model, example 6 from Shampine and Thompson,
-2000 solving delay differential equations with dde23.
+2000 solving delay differential equations with \code{dde23}.
 
 Function \code{lagvalue} calculates the value of the state variable at
 t-0.74.  As long a these lag values are not known, the value 19 is
@@ -1113,6 +1120,7 @@ e.g. \url{r-help@r-project.org} or, more specific,
 \url{r-sig-dynamic-models@r-project.org}.
 
 \subsection{Making sense of deSolve's error messages}
+
 As many of \pkg{deSolve}'s functions are wrappers around existing FORTRAN codes, 
 the warning and error messages are derived from these codes.
 Whereas these codes are highly robust, well tested, and efficient, they are 
