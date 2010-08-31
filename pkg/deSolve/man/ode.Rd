@@ -47,8 +47,8 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"compiledCode"} for more details.
   }
   \item{parms }{parameters passed to \code{func}.}
-  \item{method }{the integrator to use, either a *function* that performs 
-    integration, or a list of class \code{rkMethod}, or a *string* 
+  \item{method }{the integrator to use, either a \bpld{function} that performs 
+    integration, or a \bold{list} of class \code{rkMethod}, or a \bold{string} 
     (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"},\code{"lsodar"},\code{"vode"},
     \code{"daspk"}, \code{"euler"}, \code{"rk4"},   \code{"ode23"},
@@ -146,7 +146,7 @@ LVmod <- function(Time, State, Pars) {
     MortPredator <- rMort * Predator
 
     dPrey        <- GrowthPrey - Ingestion
-    dPredator    <- Ingestion*assEff -MortPredator
+    dPredator    <- Ingestion*assEff - MortPredator
 
     return(list(c(dPrey, dPredator)))
   })
@@ -187,10 +187,10 @@ SPCmod <- function(t, x, parms, input)  {
 }
 
 ## The parameters 
-parms  <- c(b = 0.001, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
+parms <- c(b = 0.001, c = 0.1, d = 0.1, e = 0.1, f = 0.1, g = 0.0)
 
 ## vector of timesteps
-times  <- seq(0, 200, length = 101)
+times <- seq(0, 200, length = 101)
 
 ## external signal with rectangle impulse
 signal <- as.data.frame(list(times = times,
@@ -209,7 +209,7 @@ out <- ode(y = xstart,times = times,
            func = SPCmod, parms, input = sigimp)
 
 ## Default plot method
-plot(out, type="l")
+plot(out, type = "l")
 
 ## User specified plotting
 mf <- par(mfrow = c(1, 2))
@@ -217,7 +217,7 @@ matplot(out[,1], out[,2:4], type = "l", xlab = "time", ylab = "state")
 legend("topright", col = 1:3, lty = 1:3, legend = c("S", "P", "C"))
 plot(out[,"P"], out[,"C"], type = "l", lwd = 2, xlab = "producer",
   ylab = "consumer")
-par(mfrow=mf)
+par(mfrow = mf)
 
 }
 
