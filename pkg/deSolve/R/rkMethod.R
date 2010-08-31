@@ -91,7 +91,7 @@ rkMethod <- function(method = NULL, ...) {
          stage = 6,
          Qerr  = 4
     ),
-    ## Cash-Karp method - td = 2: dense output type '2'
+    ## Cash-Karp method
     rk45ck = list(ID = "rk45ck",
          varstep = TRUE,
          FSAL = TRUE,
@@ -105,7 +105,7 @@ rkMethod <- function(method = NULL, ...) {
          b1 = c(2825/27648, 0, 18575/48384, 13525/55296, 277/14336, 1/4),
          b2 = c(37/378, 0, 250/621, 125/594, 0, 512/1771),
          c = c(0, 1/5, 3/10, 3/5,  1, 7/8),
-         densetype = 2,        # special dense output type 2
+         densetype = 2, # special dense output type 2
          stage = 6,
          Qerr = 4),
     ## England Method
@@ -237,7 +237,7 @@ rkMethod <- function(method = NULL, ...) {
         Qerr  = 7
     ),
     ## -------------------------------------------------------------------------
-    ## Implicit methods
+    ## Implicit methods; experimental!
     ## -------------------------------------------------------------------------
 
     ## Radau order 3
@@ -266,7 +266,7 @@ rkMethod <- function(method = NULL, ...) {
       b1 = c((16-sqrt(6))/36, (16+sqrt(6))/36, 1/9),
       c  = c(0.4-sqrt(6)/10, 0.4+sqrt(6)/10, 1),
       stage = 3,
-      Qerr = 6     ## ?? TP -> KS: 6 or 5
+      Qerr = 5
     ),
 
     ## Hammer - Hollingsworth coefficients , order 4
