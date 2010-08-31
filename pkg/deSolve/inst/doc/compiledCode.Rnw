@@ -123,13 +123,13 @@ Here are some rules of thumb when it is worthwhile or not to switch to
 \begin{itemize}
 \item As long as one makes use only of \proglang{R} s high-level
   commands, the time gain will be modest. This was demonstrated in
-  \citet{Soetaert08b}, where a formulation of two interacting
+  \citet{deSolve_jss}, where a formulation of two interacting
   populations dispersing on a 1-dimensional or a 2-dimensional grid
   led to a time gain of a factor two only when using \DLLmodels.
 
 \item Generally, the more statements in the model, the higher will be
-  the gain of using compiled code. Thus, in the same paper (Soetaert
-  et al. subm.), a very simple, 0-D, Lotka-Volterrra type of model
+  the gain of using compiled code. Thus, in the same paper 
+  \citep{deSolve_jss}, a very simple, 0-D, Lotka-Volterrra type of model
   describing only 2 state variables was solved 50 times faster when
   using compiled code.
 
