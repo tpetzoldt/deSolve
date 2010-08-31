@@ -129,7 +129,7 @@ lines(times[ii], out$NCratio[ii], lwd = 2 )
 
 
 plot (times[ii], out$PhotoSynthesis[ii],type = "l",
-       main = "PhotoSynthesis",xlab = "time, hours",
+       main = "PhotoSynthesis", xlab = "time, hours",
        ylab = "mmolC/m3/hr")
 polygon(times[ii], out$PAR[ii]-10, col = col, border = NA); box()
 lines(times[ii], out$PhotoSynthesis[ii], lwd = 2 )

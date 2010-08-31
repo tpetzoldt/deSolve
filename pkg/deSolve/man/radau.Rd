@@ -146,7 +146,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   }
   \item{maxsteps }{maximal number of steps taken by the solver, 
     \emph{for the entire integration}. This is different from the settings
-    of this argument in the solvers from package deSolve!
+    of this argument in the other solvers from package deSolve!
   }
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
@@ -224,10 +224,9 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
 ## Example 1: ODE
 ##   Various ways to solve the same model.
 ## =======================================================================
-require(deTestSet)
+
 ## the model, 5 state variables
-f1 <- function  (t, y, parms)
-{
+f1 <- function  (t, y, parms) {
   ydot <- vector(len = 5)
 
   ydot[1] <-  0.1*y[1] -0.2*y[2]
@@ -240,25 +239,23 @@ f1 <- function  (t, y, parms)
 }
 
 ## the Jacobian, written as a full matrix
-fulljac <- function  (t, y, parms)
-{
-   jac <- matrix(nrow = 5, ncol = 5, byrow = TRUE,
+fulljac <- function  (t, y, parms) {
+  jac <- matrix(nrow = 5, ncol = 5, byrow = TRUE,
                 data = c(0.1, -0.2,  0  ,  0  ,  0  ,
                         -0.3,  0.1, -0.2,  0  ,  0  ,
                          0  , -0.3,  0.1, -0.2,  0  ,
                          0  ,  0  , -0.3,  0.1, -0.2,
-                         0  ,  0  ,  0  , -0.3,  0.1)    )
-   return(jac)
+                         0  ,  0  ,  0  , -0.3,  0.1))
+  return(jac)
 }
 
 ## the Jacobian, written in banded form
-bandjac <- function  (t, y, parms)
-{
-   jac <- matrix(nrow = 3, ncol = 5, byrow = TRUE,
-                 data = c( 0  , -0.2, -0.2, -0.2, -0.2,
-                           0.1,  0.1,  0.1,  0.1,  0.1,
-                          -0.3, -0.3, -0.3, -0.3,    0)    )
-   return(jac)
+bandjac <- function  (t, y, parms) {
+  jac <- matrix(nrow = 3, ncol = 5, byrow = TRUE,
+                data = c( 0  , -0.2, -0.2, -0.2, -0.2,
+                          0.1,  0.1,  0.1,  0.1,  0.1,
+                         -0.3, -0.3, -0.3, -0.3,    0))
+  return(jac)
 }
 
 ## initial conditions and output times
@@ -287,18 +284,18 @@ out4  <- radau(yini, times, f1, parms = 0, jactype = "bandusr",
 ## Example 2: ODE
 ##   stiff problem from chemical kinetics
 ## =======================================================================
-Chemistry <- function (t,y,p) {
-     dy1 <- -.04*y[1] + 1.e4*y[2]*y[3]
-     dy2 <- .04*y[1] - 1.e4*y[2]*y[3] - 3.e7*y[2]^2
-     dy3 <- 3.e7*y[2]^2
-     list(c(dy1,dy2,dy3))
+Chemistry <- function (t, y, p) {
+  dy1 <- -.04*y[1] + 1.e4*y[2]*y[3]
+  dy2 <- .04*y[1] - 1.e4*y[2]*y[3] - 3.e7*y[2]^2
+  dy3 <- 3.e7*y[2]^2
+  list(c(dy1, dy2, dy3))
 }
 
-times <- 10^(seq(0,10,by=0.1))
+times <- 10^(seq(0, 10, by = 0.1))
 yini <- c(y1 = 1.0, y2 = 0, y3 = 0)
 
-out <- radau(func=Chemistry, times=times, y= yini, parms=NULL)
-plot(out, log="x", type="l", lwd=2)
+out <- radau(func = Chemistry, times = times, y = yini, parms = NULL)
+plot(out, log = "x", type = "l", lwd = 2)
 
 ## =============================================================================
 ## Example 3: DAE
@@ -322,7 +319,7 @@ caraxisfun <- function(t, y, parms) {
     Ll <- sqrt(xl^2 + yl^2)
     Lr <- sqrt((xr - xb)^2 + (yr - yb)^2)
         
-    dxl = ul; dyl = vl; dxr = ur; dyr = vr
+    dxl <- ul; dyl <- vl; dxr <- ur; dyr <- vr
         
     dul  <- (L0-Ll) * xl/Ll      + 2 * lam2 * (xl-xr) + lam1*xb
     dvl  <- (L0-Ll) * yl/Ll      + 2 * lam2 * (yl-yr) + lam1*yb - k * g
@@ -337,8 +334,8 @@ caraxisfun <- function(t, y, parms) {
     })
 }
 
-eps = 0.01; M = 10; k = M * eps^2/2; 
-L = 1; L0 = 0.5; r = 0.1; w = 10; g = 1
+eps <- 0.01; M <- 10; k <- M * eps^2/2; 
+L <- 1; L0 <- 0.5; r <- 0.1; w <- 10; g <- 1
 
 yini <- c(xl = 0, yl = L0, xr = L, yr = L0,
           ul = -L0/L, vl = 0,
@@ -346,7 +343,7 @@ yini <- c(xl = 0, yl = L0, xr = L, yr = L0,
           lam1 = 0, lam2 = 0)
 
 # the mass matrix
-Mass      <- diag(nrow=10, 1)
+Mass      <- diag(nrow = 10, 1)
 Mass[5,5] <- Mass[6,6] <- Mass[7,7] <- Mass[8,8] <- M * eps * eps/2
 Mass[9,9] <- Mass[10,10] <- 0
 Mass
@@ -354,11 +351,11 @@ Mass
 # index of the variables: 4 of index 1, 4 of index 2, 2 of index 3
 index <- c(4, 4, 2)
 
-times <- seq(0, 3, by=0.01)
+times <- seq(0, 3, by = 0.01)
 out <- radau(y = yini, mass=Mass, times = times, func = caraxisfun,
         parms = parameter, nind = index)
 
-plot(out, which = 1:4, type="l", lwd=2)
+plot(out, which = 1:4, type = "l", lwd = 2)
 }
 \references{
 E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
@@ -421,7 +418,7 @@ E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
     \item \code{\link{ode.1D}} for integrating 1-D models,
     \item \code{\link{ode.2D}} for integrating 2-D models,
     \item \code{\link{ode.3D}} for integrating 3-D models,
-    \item \code{\link{daspk}} for integrating DAE models op to index 1
+    \item \code{\link{daspk}} for integrating DAE models up to index 1
   }
 
   \code{\link{diagnostics}} to print diagnostic messages.
