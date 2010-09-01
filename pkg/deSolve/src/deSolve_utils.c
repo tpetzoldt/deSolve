@@ -3,6 +3,7 @@
 #include <R.h>
 #include <Rdefines.h>
 #include <R_ext/Applic.h>
+#include <R_ext/Rdynload.h>
 #include "deSolve.h"
 
 /*==================================================
@@ -115,7 +116,7 @@ void Initdeparms(int *N, double *parms) {
   }
 }
   
-SEXP get_deSolve_gparms(void) {
+DL_FUNC get_deSolve_gparms(void) {
   return de_gparms;
 }
 
