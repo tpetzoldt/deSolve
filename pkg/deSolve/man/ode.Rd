@@ -47,7 +47,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"compiledCode"} for more details.
   }
   \item{parms }{parameters passed to \code{func}.}
-  \item{method }{the integrator to use, either a \bpld{function} that performs 
+  \item{method }{the integrator to use, either a \bold{function} that performs 
     integration, or a \bold{list} of class \code{rkMethod}, or a \bold{string} 
     (\code{"lsoda"},
     \code{"lsode"}, \code{"lsodes"},\code{"lsodar"},\code{"vode"},
