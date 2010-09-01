@@ -2,7 +2,7 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-DL_FUNC get_deSolve_gparms(void);
+DL_FUNC get_deSolve_gparms;
 
 void
 R_init_deSolve(DllInfo *info) {
