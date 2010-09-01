@@ -1,13 +1,13 @@
 
 ### ============================================================================
-### radau, implicit runge-kutta 
+### radau, implicit runge-kutta
 ### ============================================================================
 
-radau <- function(y, times, func, parms, nind=c(length(y),0,0), 
-  rtol=1e-6, atol=1e-6, jacfunc=NULL, jactype = "fullint", 
-  mass = NULL, massup=NULL, massdown=NULL,verbose=FALSE, hmax = NULL, 
-  hini = 0, ynames=TRUE, bandup=NULL, banddown=NULL, maxsteps=10000, 
-  dllname=NULL, initfunc=dllname, initpar=parms, 
+radau <- function(y, times, func, parms, nind=c(length(y),0,0),
+  rtol=1e-6, atol=1e-6, jacfunc=NULL, jactype = "fullint",
+  mass = NULL, massup=NULL, massdown=NULL,verbose=FALSE, hmax = NULL,
+  hini = 0, ynames=TRUE, bandup=NULL, banddown=NULL, maxsteps=5000,
+  dllname=NULL, initfunc=dllname, initpar=parms,
   rpar=NULL, ipar=NULL, nout=0, outnames=NULL, forcings=NULL,
   initforc = NULL, fcontrol=NULL, ...)
 {
@@ -22,47 +22,50 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
   if (length(rtol) != length(atol)) {
     if (length(rtol) > length(atol))
       atol <- rep(atol, length.out=n)
-    else 
+    else
       rtol <- rep(rtol, length.out=n)
   }
 
-### index 
+### Number of steps until the solver gives up
+  nsteps  <- min(.Machine$integer.max, maxsteps * length(times))
+
+### index
   if (length(nind) != 3)
     stop("length of `nind' must be =3")
   if (sum(nind) != n)
     stop("sum of of `nind' must equal n, the number of equations")
 
-### Jacobian 
+### Jacobian
   full = TRUE
-  
+
     if (jactype == "fullint" ) {  # full, calculated internally
       ijac <- 0
-      banddown <- n 
-      bandup <- n 
+      banddown <- n
+      bandup <- n
     } else if (jactype == "fullusr" ) { # full, specified by user function
       ijac <- 1
-      banddown <- n 
+      banddown <- n
       bandup <- n
     } else if (jactype == "bandusr" ) { # banded, specified by user function
       ijac <- 1
       full <- FALSE
-      if (is.null(banddown) || is.null(bandup))   
+      if (is.null(banddown) || is.null(bandup))
         stop("'bandup' and 'banddown' must be specified if banded Jacobian")
     } else if (jactype == "bandint" ) { # banded, calculated internally
       ijac <- 0
       full <- FALSE
-      if (is.null(banddown) || is.null(bandup))   
+      if (is.null(banddown) || is.null(bandup))
         stop("'bandup' and 'banddown' must be specified if banded Jacobian")
     } else
      stop("'jactype' must be one of 'fullint', 'fullusr', 'bandusr' or 'bandint'")
   nrjac <- as.integer(c(ijac, banddown, bandup))
- 
+
   # check other specifications depending on Jacobian
-  if (ijac == 1 && is.null(jacfunc)) 
+  if (ijac == 1 && is.null(jacfunc))
     stop ("'jacfunc' NOT specified; either specify 'jacfunc' or change 'jactype'")
 
-### model and Jacobian function  
-  JacFunc   <- NULL  
+### model and Jacobian function
+  JacFunc   <- NULL
   Ynames    <- attr(y,"names")
   flist     <- list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
@@ -97,12 +100,12 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
         attr(state,"names") <- Ynames
          unlist(func   (time,state,parms,...))
       }
-         
+
       Func2   <- function(time,state)  {
         attr(state,"names") <- Ynames
         func   (time,state,parms,...)
       }
-         
+
       JacFunc <- function(time,state) {
         attr(state,"names") <- Ynames
         jacfunc(time,state,parms,...)
@@ -111,19 +114,19 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
     } else {                          # no ynames...
       Func    <- function(time,state)
          unlist(func   (time,state,parms,...))
-        
+
       Func2   <- function(time,state)
         func   (time,state,parms,...)
-         
+
       JacFunc <- function(time,state)
         jacfunc(time,state,parms,...)
     }
-        
+
     ## Check function and return the number of output variables +name
     FF <- checkFunc(Func2,times,y,rho)
     Nglobal<-FF$Nglobal
     Nmtot <- FF$Nmtot
-    
+
     ## Check jacobian function
     if (ijac == 1) {
       tmp <- eval(JacFunc(times[1], y), rho)
@@ -133,9 +136,9 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
       if ((!full && dd != c(bandup+banddown+1,n)) ||
           ( full && dd != c(n,n)))
          stop("Jacobian dimension not ok")
-     } 
-  }                                                                                
-  
+     }
+  }
+
 ### Not yet implemented
    mlmas <- n
    mumas <- n
@@ -154,14 +157,14 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
        mlmas <- massdown
        if (dimens[1] != mlmas + mumas +1)
        stop ("nr of rows in mass matrix should equal the number of variables in 'y' or 'massup'+'massdown'+1 ")
-     }  
+     }
    MassFunc <- function (n,lm) {
      if (nrow(mass) != lm || ncol(mass) != n)
        stop ("dimensions of mass matrix not ok")
-     return(mass) 
-   }  
+     return(mass)
+   }
   }
-  
+
   lmas <- n                    # Check this...
 
   nrmas <- as.integer(c(imas, mlmas, mumas))
@@ -173,8 +176,8 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
     ljac <- banddown + bandup + 1
     lmas <- mlmas + mumas + 1
     le <- 2*banddown + bandup + 1
-  }  
-  
+  }
+
 ### work arrays iwork, rwork
   # length of rwork and iwork
   lrw <- n * (ljac + lmas + 3*le + 12) + 20
@@ -186,16 +189,16 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
   rwork[] <- 0.
   iwork[] <- 0
 
-  iwork[2] <- maxsteps
+  iwork[2] <- nsteps
   iwork[5:7] <- nind
-  
+
 
   rwork[1] <- .Machine$double.neg.eps
   rwork[2] <- 0.9       # safety factor error reductin
   rwork[3] <- 0.001     # recalculation of jacobian factor
 
   rwork[7] <- hmax
-   
+
   if(is.null(times)) times<-c(0,1e8)
 
 ### print to screen...
@@ -204,8 +207,8 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
     printM("\n--------------------")
     printM("Integration method")
     printM("--------------------")
-   
-    printM( "radau5")  
+
+    printM( "radau5")
   }
 
 ### calling solver
@@ -213,7 +216,7 @@ radau <- function(y, times, func, parms, nind=c(length(y),0,0),
   tcrit <- NULL
   on.exit(.C("unlock_solver"))
   out <- .Call("call_radau",y,times,Func,MassFunc,JacFunc,initpar,
-               rtol, atol, nrjac, nrmas, rho, ModelInit,  
+               rtol, atol, nrjac, nrmas, rho, ModelInit,
                as.integer(verbose), as.double(rwork),
                as.integer(iwork), as.integer(Nglobal),
                as.integer(lrw),as.integer(liw),

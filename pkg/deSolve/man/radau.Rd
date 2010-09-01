@@ -24,7 +24,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   rtol = 1e-6, atol = 1e-6, jacfunc = NULL, jactype = "fullint", 
   mass = NULL, massup = NULL, massdown = NULL,
   verbose = FALSE, hmax = NULL, hini = 0, ynames = TRUE, 
-  bandup = NULL, banddown = NULL, maxsteps = 10000, 
+  bandup = NULL, banddown = NULL, maxsteps = 5000, 
   dllname = NULL, initfunc = dllname, initpar = parms, 
   rpar = NULL, ipar = NULL, nout = 0, outnames = NULL, 
   forcings = NULL, initforc = NULL, fcontrol = NULL, ...)
@@ -144,10 +144,10 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   \item{banddown }{number of non-zero bands below the diagonal, in case
     the Jacobian is banded.
   }
-  \item{maxsteps }{maximal number of steps taken by the solver, 
-    \emph{for the entire integration}. This is different from the settings
-    of this argument in the other solvers from package deSolve!
-  }
+  \item{maxsteps }{average maximal number of steps per output interval
+    taken by the solver. This argument is defined such to ensure
+    compatibility with the Livermore-solvers, but the maximum number of
+    steps in total is calculated as \code{length(times) * maxsteps}.
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
