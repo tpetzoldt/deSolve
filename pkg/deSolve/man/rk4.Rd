@@ -12,11 +12,11 @@
 euler(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   dllname = NULL, initfunc = dllname, initpar = parms,
   rpar = NULL, ipar = NULL, nout = 0, outnames = NULL,
-  forcings=NULL, initforc = NULL, fcontrol=NULL, ...)
+  forcings = NULL, initforc = NULL, fcontrol = NULL, ...)
 rk4(y, times, func, parms, verbose = FALSE, ynames = TRUE,
   dllname = NULL, initfunc = dllname, initpar = parms,
   rpar = NULL, ipar = NULL, nout = 0, outnames = NULL,
-  forcings=NULL, initforc = NULL, fcontrol=NULL, ...)
+  forcings = NULL, initforc = NULL, fcontrol = NULL, ...)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system. If \code{y}
