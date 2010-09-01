@@ -145,9 +145,11 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     the Jacobian is banded.
   }
   \item{maxsteps }{average maximal number of steps per output interval
-    taken by the solver. This argument is defined such to ensure
-    compatibility with the Livermore-solvers, but the maximum number of
-    steps in total is calculated as \code{length(times) * maxsteps}.
+    taken by the solver. This argument is defined such as to ensure
+    compatibility with the Livermore-solvers. RADAU only accepts the maximal
+    number of steps for the entire integration, and this is calculated 
+    as \code{length(times) * maxsteps}.
+  }
   \item{dllname }{a string giving the name of the shared library
     (without extension) that contains all the compiled function or
     subroutine definitions refered to in \code{func} and
