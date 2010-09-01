@@ -116,7 +116,7 @@ void Initdeparms(int *N, double *parms) {
   }
 }
   
-DL_FUNC get_deSolve_gparms(void) {
+SEXP get_deSolve_gparms(void) {
   return de_gparms;
 }
 

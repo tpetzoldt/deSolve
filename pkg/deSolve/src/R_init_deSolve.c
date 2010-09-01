@@ -2,9 +2,9 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-DL_FUNC get_deSolve_gparms;
+SEXP get_deSolve_gparms(void);
 
 void
 R_init_deSolve(DllInfo *info) {
-  R_RegisterCCallable("deSolve","get_deSolve_gparms", get_deSolve_gparms);
+	R_RegisterCCallable("deSolve","get_deSolve_gparms", (DL_FUNC) get_deSolve_gparms);
 }
