@@ -78,7 +78,7 @@ void dkfunc(int stage, int neq, double t, double dt,
      for (j = 0; j < nroot; j++) 
        df[nroot * i + j] = (tmp[j] - tmp2[j])/d2;   //df[j,i] j,i=1:nroot
      FF[i] = d1;                      // restore
-   } 
+   }
 }
 
 /* ks: check if tmp3 necessary ... */
@@ -132,12 +132,13 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
       /* function value and Jacobian*/ 
       kfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
         tmp, tmp2, out, ipar, isDll, isForcing);
+      it_tot++; /* count total number of time steps */
       errf = 0.;   
       for ( i = 0; i < nroot; i++) errf = errf + fabs(tmp[i]);
       if (errf < 1e-8) break; 
       dkfunc(stage, neq, t, dt, FF, Fj, A, cc, y0, Func, Parms, Rho, 
         tmp, tmp2, tmp3, out, ipar, isDll, isForcing, alfa);
-
+      it_tot = it_tot + nroot + 1;
       lu_solve (alfa, nroot, index, tmp);
       errx = 0;
       for (i = 0; i < nroot; i++) {
@@ -155,7 +156,6 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
     /* use BLAS with reduced error checking */
     blas_matprod1(FF, neq, stage, bb1, stage, one, dy1);
 
-    it_tot++; /* count total number of time steps */
     for (i = 0; i < neq; i++) {
       y1[i] = y0[i] +  dt * dy1[i];
     }

@@ -1255,7 +1255,10 @@ Note that, as from version 1.7, \code{lsode} includes a root finding procedure, 
 \caption{Meaning of the integer return parameters in the different integration
 routines. If \code{out} is the output matrix, then this vector can be
 retrieved by function \code{attributes(out)\$istate}; its
-contents is displayed by function \code{diagnostics(out)}}
+contents is displayed by function \code{diagnostics(out)}.
+Note that the number of function evaluations, is without the extra evaluations
+needed to generate the output for the ordinary variables.
+}
 \centering
 \begin{tabular}{p{.05\textwidth}p{.95\textwidth}}\hline
 \rule[-3mm]{0mm}{8mm}       Nr &Description\\

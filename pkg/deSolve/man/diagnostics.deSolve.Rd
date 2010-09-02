@@ -25,6 +25,10 @@
   also the root information.
   
   See tables 2 and 3 in vignette("deSolve") for what these vectors contain.
+  
+  Note: the number of function evaluations are *without* the extra calls 
+  performed to generate the ordinary output variables (if present). 
+  
 }
 \details{
   When the integration output is saved as a \code{data.frame}, then the required
