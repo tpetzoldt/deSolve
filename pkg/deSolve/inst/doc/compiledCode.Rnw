@@ -91,7 +91,7 @@ options(width=70)
 
 \section{Introduction}
 
-\pkg{deSolve} \citep{deSolve,deSolve_jss}, the successor of \proglang{R} package
+\pkg{deSolve} \citep{deSolve_jss,deSolve}, the successor of \proglang{R} package
 \pkg{odesolve} \citep{Setzer01} is a package to solve ordinary
 differential equations (ODE), differential algebraic equations (DAE)
 and partial differential equations (PDE).
@@ -1264,7 +1264,7 @@ dyn.unload("Forcing_lv.dll")
 \begin{center}
 \includegraphics{comp-event}
 \end{center}
-\caption{Solution of the Lotka-Volterra resource (S)-producer (P) -
+\caption{Solution of the Lotka-Volterra resource (S)~-- producer (P)~--
 consumer (C) model with time-variable input (signal) and with half of
 the consumer removed every 10 days - see text for R-code}
 \label{fig:lv2}
