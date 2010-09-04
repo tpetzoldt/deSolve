@@ -102,7 +102,7 @@ rkMethod(method = NULL, ...)
     Starting with version 1.8 implicit Runge-Kutta (\code{irk}) methods
     are also supported by the general \code{rk} interface, however their
     implementation is still experimental.  Instead of this you may
-    consider \code\link{radau}} for a specific full implementation of an
+    consider \code{\link{radau}} for a specific full implementation of an
     implicit Runge-Kutta method.  }
    
 \value{

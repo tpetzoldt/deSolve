@@ -4,11 +4,11 @@
 \alias{lagderiv}
 \alias{timestep}
 \title{
-  Time lagged values of state variables and derivatives.
+  Time Lagged Values of State Variables and Derivatives.
 }
 \description{
-  Functions \code{lagvalue} and \code{lagderiv} provide access to past (lagged)
-  values of state variables and derivatives.
+  Functions \code{lagvalue} and \code{lagderiv} provide access to past
+  (lagged) values of state variables and derivatives.
   
   They are to be used with function \code{dede}, to solve delay differential 
   equations.
@@ -16,9 +16,10 @@
   Function \code{timestep} gives the current and next timestep of the 
   integration.
 }
-\usage{lagvalue(t, nr)
+\usage{
+lagvalue(t, nr)
 lagderiv(t, nr)
-timestep(prev=TRUE)
+timestep(prev = TRUE)
 
 }
 \arguments{
@@ -64,11 +65,11 @@ timestep(prev=TRUE)
 ## two lag values
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
+##-----------------------------
+## the derivative function
+##-----------------------------
 derivs <- function(t, y, parms) { 
-  History <- function(t)
+  History <- function(t) {
     c(cos(t), sin(t))
     if (t < 1)
       lag1 <- History(t - 1)[1]    
@@ -79,36 +80,36 @@ derivs <- function(t, y, parms) {
       lag2 <- History(t - 2)[2]
     else 
       lag2 <- lagvalue(t - 2,2) # faster than lagvalue(t - 2)[2]
-  
+  }
   dy1 <- lag1 * lag2
   dy2 <- -y[1] * lag2
   
   list(c(dy1, dy2), lag1 = lag1, lag2 = lag2)
 }
 
-#-----------------------------
-# parameters
-#-----------------------------
+##-----------------------------
+## parameters
+##-----------------------------
 
 r <- 3.5; m <- 19
 
-#-----------------------------
-# initial values and times
-#-----------------------------
+##-----------------------------
+## initial values and times
+##-----------------------------
 
 yinit <- c(y1 = 0, y2 = 0)
 times <- seq(0, 20, by = 0.01)
 
-#-----------------------------
-# solve the model  
-#-----------------------------
+##-----------------------------
+## solve the model  
+##-----------------------------
 
 yout <- dede(y = yinit, times = times, func = derivs,
   parms = NULL, atol = 1e-9)
 
-#-----------------------------
-# plot results
-#-----------------------------
+##-----------------------------
+## plot results
+##-----------------------------
 
 plot(yout, type = "l", lwd = 2)
 
@@ -120,9 +121,9 @@ plot(yout, type = "l", lwd = 2)
 ## a vector with lag valuess
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
+##-----------------------------
+## the derivative function
+##-----------------------------
 predprey <- function(t, y, parms) {
   tlag <- t - 1
   if (tlag < 0)
@@ -135,15 +136,15 @@ predprey <- function(t, y, parms) {
   list(c(dy1, dy2))
 }
 
-#-----------------------------
-# parameters
-#-----------------------------
+##-----------------------------
+## parameters
+##-----------------------------
 
-a = 0.25; b = -0.01; c = -1 ; d = 0.01; m = 200
+a <- 0.25; b <- -0.01; c <- -1 ; d <- 0.01; m <- 200
 
-#-----------------------------
-# initial values and times
-#-----------------------------
+##-----------------------------
+## initial values and times
+##-----------------------------
 
 yinit <- c(y1 = 80, y2 = 30)
 times <- seq(0, 100, by = 0.01)
@@ -154,12 +155,12 @@ times <- seq(0, 100, by = 0.01)
 
 yout <- dede(y = yinit, times = times, func = predprey, parms = NULL)
 
-#-----------------------------
-# display, plot results
-#-----------------------------
+##-----------------------------
+## display, plot results
+##-----------------------------
 
 plot(yout, type = "l", lwd = 2, main = "Predator-prey model", mfrow = c(2, 2))
-plot(yout[,2],yout[,3], xlab = "y1", ylab = "y2", type = "l", lwd = 2)
+plot(yout[,2], yout[,3], xlab = "y1", ylab = "y2", type = "l", lwd = 2)
 
 diagnostics(yout)
 
@@ -170,9 +171,9 @@ diagnostics(yout)
 ##
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
+##-----------------------------
+## the derivative function
+##-----------------------------
 derivs <- function(t, y, parms) {
   tlag <- t - 1
   if (tlag < 0)
@@ -183,25 +184,24 @@ derivs <- function(t, y, parms) {
   list(c(dy = -dylag), dylag = dylag)
 }
 
-#-----------------------------
-# initial values and times
-#-----------------------------
+##-----------------------------
+## initial values and times
+##-----------------------------
 
 yinit <- 0
 times <- seq(0, 4, 0.001)
 
-#-----------------------------
-# solve the model  
-#-----------------------------
+##-----------------------------
+## solve the model  
+##-----------------------------
 
 yout <- dede(y = yinit, times = times, func = derivs, parms = NULL)
 
-#-----------------------------
-# display, plot results
-#-----------------------------
+##-----------------------------
+## display, plot results
+##-----------------------------
 
 plot(yout, type = "l", lwd = 2)
-
 }
 
 \keyword{utilities}

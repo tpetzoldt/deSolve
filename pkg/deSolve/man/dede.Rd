@@ -1,7 +1,7 @@
 \name{dede}
 \alias{dede}
 \title{
-  general solver for delay differential equations.
+  General Solver for Delay Differential Equations.
 }
 \description{
   Function \code{dede} is a general solver for delay differential equations, i.e.
@@ -11,7 +11,7 @@
 \usage{
 dede(y, times, func=NULL, parms, 
     method = c( "lsoda", "lsode", "lsodes", "lsodar", "vode", 
-       "daspk", "bdf", "adams", "impAdams"), control=NULL, ...)
+       "daspk", "bdf", "adams", "impAdams"), control = NULL, ...)
 }    
 \arguments{
   \item{y }{the initial (state) values for the DE system, a vector. If
@@ -22,14 +22,14 @@ dede(y, times, func=NULL, parms,
     value of \code{times} must be the initial time.
   }
   \item{func }{an \R-function that computes the values of the
-    derivatives in the ODE system (the model definition) at time t.
+    derivatives in the ODE system (the model definition) at time \eqn{t}.
 
     \code{func} must be defined as:
-     \code{func <- function(t, y, parms,...)}.  \code{t} is the current time
+     \code{func <- function(t, y, parms, ...)}.  \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
     variables in the DE system.  If the initial values \code{y} has a
     \code{names} attribute, the names will be available inside \code{func}.
-    \code{parms} is a vector or list of parameters; ... (optional) are
+    \code{parms} is a vector or list of parameters; \code{...} (optional) are
     any other arguments passed to the function.
   
     The return value of \code{func} should be a list, whose first
@@ -106,79 +106,76 @@ can simultaneously locate a root, and trigger an event. See last example.
 ## dy(t) = -y(t-1) ; y(t<0)=1 
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
-derivs <- function(t,y,parms) {
-	if (t < 1)
-		dy <- -1
-	else
-		dy <- - lagvalue(t - 1)
-	list(c(dy))
+##-----------------------------
+## the derivative function
+##-----------------------------
+derivs <- function(t, y, parms) {
+  if (t < 1)
+    dy <- -1
+  else
+    dy <- - lagvalue(t - 1)
+  list(c(dy))
 }
 
-#-----------------------------
-# initial values and times
-#-----------------------------
-
+##-----------------------------
+## initial values and times
+##-----------------------------
 yinit <- 1
-times <- seq(0,30,0.1)
+times <- seq(0, 30, 0.1)
 
-#-----------------------------
-# solve the model  
-#-----------------------------
+##-----------------------------
+## solve the model  
+##-----------------------------
+yout <- dede(y = yinit, times = times, func = derivs, parms = NULL)
 
-yout <- dede(y=yinit, times=times, func=derivs, parms=NULL)
-
-#-----------------------------
-# display, plot results
-#-----------------------------
-
-plot(yout, type="l", lwd=2, main="dy/dt = -y(t-1)")
+##-----------------------------
+## display, plot results
+##-----------------------------
+plot(yout, type = "l", lwd = 2, main = "dy/dt = -y(t-1)")
 
 ## =============================================================================
-## The infectuous disease model of Hairer ; two lags.
+## The infectuous disease model of Hairer; two lags.
 ## example 4 from Shampine and Thompson, 2000
 ## solving delay differential equations with dde23
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
+##-----------------------------
+## the derivative function
+##-----------------------------
 derivs <- function(t,y,parms) {
-	if (t < 1)
-		lag1 <- 0.1
-	else 
-		lag1 <- lagvalue(t - 1,2)
-	if (t < 10)
-		lag10 <- 0.1
-	else 
-		lag10 <- lagvalue(t - 10,2)
+  if (t < 1)
+    lag1 <- 0.1
+  else 
+    lag1 <- lagvalue(t - 1,2)
+  if (t < 10)
+    lag10 <- 0.1
+  else 
+    lag10 <- lagvalue(t - 10,2)
   
-  dy1 <- -y[1] * lag1 +lag10
-  dy2 <- y[1]*lag1-y[2]
-  dy3 <- y[2]-lag10
-	list(c(dy1,dy2,dy3))
+  dy1 <- -y[1] * lag1 + lag10
+  dy2 <- y[1] * lag1 - y[2]
+  dy3 <- y[2] - lag10
+  list(c(dy1, dy2, dy3))
 }
 
-#-----------------------------
-# initial values and times
-#-----------------------------
+##-----------------------------
+## initial values and times
+##-----------------------------
+yinit <- c(5, 0.1, 1)
+times <- seq(0, 40, by = 0.1)
 
-yinit <- c(5,0.1,1)
-times <- seq(0,40,by=0.1)
+##-----------------------------
+## solve the model  
+##-----------------------------
+system.time(
+  yout <- dede(y = yinit, times = times, func = derivs, parms = NULL)
+)
 
-#-----------------------------
-# solve the model  
-#-----------------------------
-
-system.time(yout <- dede(y=yinit, times=times, func=derivs, parms=NULL))
-
-#-----------------------------
-# display, plot results
-#-----------------------------
-
-matplot(yout[,1], yout[,-1], type="l", lwd=2, lty=1, main = "Infectuous disease - Hairer")
+##-----------------------------
+## display, plot results
+##-----------------------------
+matplot(yout[,1], yout[,-1], type = "l", lwd = 2, lty = 1,
+  main = "Infectuous disease - Hairer")
 
 ## =============================================================================
 ## time lags + EVENTS triggered by a root function
@@ -187,48 +184,49 @@ matplot(yout[,1], yout[,-1], type="l", lwd=2, lty=1, main = "Infectuous disease 
 ## solving delay differential equations with dde23
 ## =============================================================================
 
-#-----------------------------
-# the derivative function
-#-----------------------------
-derivs <- function(t,y,parms) {
-	if (t < tau)
-		lag <- 0
-	else 
-		lag <- lagvalue(t - tau)
+##-----------------------------
+## the derivative function
+##-----------------------------
+derivs <- function(t, y, parms) {
+  if (t < tau)
+    lag <- 0
+  else 
+    lag <- lagvalue(t - tau)
   
   dy1 <- y[2]
-  dy2 <- -sign(y[1])*gam*cos(y[1]) + sin(y[1]) - bet*lag[1] + A*sin(omega*t+mu)
-	list(c(dy1, dy2))
+  dy2 <- -sign(y[1]) * gam * cos(y[1]) +
+          sin(y[1]) - bet * lag[1] + A * sin(omega * t + mu)
+  list(c(dy1, dy2))
 }
 
-# root and event function
+## root and event function
 root <- function(t,y,parms) ifelse(t>0, return(y), return(1))
 event <- function(t,y,parms) return(c(y[1], y[2]*0.931))
 
-gam = 0.248; bet=1; tau=0.1; A=0.75; omega = 1.37; mu=asin(gam/A)
+gam = 0.248; bet = 1; tau = 0.1; A = 0.75
+omega = 1.37; mu = asin(gam/A)
 
-#-----------------------------
-# initial values and times
-#-----------------------------
+##-----------------------------
+## initial values and times
+##-----------------------------
+yinit <- c(y = 0, dy = 0)
+times <- seq(0, 12, len = 1000)
 
-yinit <- c(y=0, dy=0)
-times <- seq(0,12,len=1000)
+##-----------------------------
+## solve the model  
+##-----------------------------
+## use lsodar because of root and event function
+## Note: NOT adding method = "lsodar" or method = "lsode" will give a 
+## strange warning ...
+yout <- dede(y = yinit, times = times, func = derivs, parms = NULL,  
+  method = "lsodar", rootfun = root, events = list(func = event,root = TRUE))
 
-#-----------------------------
-# solve the model  
-#-----------------------------
-# use lsodar because of root and event function
-# Note: NOT adding method ="lsodar" or method ="lsode" will give a 
-# strange warning...
-yout <- dede(y=yinit, times=times, func=derivs, parms=NULL,  
-  method="lsodar", rootfun=root, events=list(func=event,root=TRUE))
+##-----------------------------
+## display, plot results
+##-----------------------------
 
-#-----------------------------
-# display, plot results
-#-----------------------------
-
-plot(yout, which = 1, type="l", lwd=2, main = "suitcase model", mfrow=c(1,2))
-plot(yout[,2],yout[,3], xlab="y", ylab="dy", type="l", lwd=2)
+plot(yout, which = 1, type = "l", lwd = 2, main = "suitcase model", mfrow = c(1,2))
+plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 
 }
 

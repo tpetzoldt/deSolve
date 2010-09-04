@@ -340,8 +340,8 @@ plot(out, type = "l", lwd = 2, main = "lsodar with event")
   Nonstiff Systems of Ordinary Differential Equations, Siam
   J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
 
- Kathie L. Hiebert and Lawrence F. Shampine, Implicitly Defined Output
- Points for Solutions of ODEs, Sandia Report SAND80-0180, February 1980.
+  Kathie L. Hiebert and Lawrence F. Shampine, Implicitly Defined Output
+  Points for Solutions of ODEs, Sandia Report SAND80-0180, February 1980.
     
  Netlib: \url{http://www.netlib.org}
  
@@ -414,7 +414,7 @@ plot(out, type = "l", lwd = 2, main = "lsodar with event")
 }
 \seealso{
   \itemize{
-    \item \code{\link{rk}}, \item \code{\link{rk4}} and \code{\link{euler}} for
+    \item \code{\link{rk}}, \code{\link{rkMethod}}, \code{\link{rk4}} and \code{\link{euler}} for
       Runge-Kutta integrators.
     \item \code{\link{lsoda}}, \code{\link{lsode}},
       \code{\link{lsodes}}, \code{\link{vode}},
