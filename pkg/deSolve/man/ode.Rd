@@ -38,7 +38,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     The return value of \code{func} should be a list, whose first
     element is a vector containing the derivatives of \code{y} with
     respect to \code{time}, and whose next elements are global values
-    that are required at each point in \code{times}.The derivatives
+    that are required at each point in \code{times}. The derivatives
     should be specified in the same order as the state variables \code{y}.
 
     If \code{func} is a string, then \code{dllname} must give the name
@@ -87,11 +87,11 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   
   The default integrator used is \link{lsoda}.
   
-  The option \code{method ="bdf"} provdes a handle to the backward 
+  The option \code{method = "bdf"} provdes a handle to the backward 
   differentiation formula (it is equal to using \code{method = "lsode"}). 
   It is best suited to solve stiff (systems of) equations.
   
-  The option \code{method ="bdf_d"} selects the backward 
+  The option \code{method = "bdf_d"} selects the backward 
   differentiation formula that uses Jacobi-Newton iteration (neglecting the 
   off-diagonal elements of the Jacobian (it is equal to using 
   \code{method = "lsode", mf = 23}). 
@@ -111,8 +111,8 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   Newton iteration, i.e. neglecting all off-diagonal elements (equal to 
   \code{method = "lsode", mf = 13}.
 
-  For very stiff systems, \code{method ="daspk"} may outperform 
-  \code{method ="bdf"}.
+  For very stiff systems, \code{method = "daspk"} may outperform 
+  \code{method = "bdf"}.
 }
 
 \seealso{
@@ -163,8 +163,8 @@ times   <- seq(0, 200, by = 1)
 out     <- as.data.frame(ode(func = LVmod, y = yini,
                          parms = pars, times = times))
 
-matplot(out$time,out[,2:3],type = "l",xlab = "time",ylab = "Conc",
-        main = "Lotka-Volterra",lwd = 2)
+matplot(out$time, out[,2:3], type = "l", xlab = "time", ylab = "Conc",
+        main = "Lotka-Volterra", lwd = 2)
 legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 
 ## =======================================================================

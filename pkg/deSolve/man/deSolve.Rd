@@ -31,8 +31,8 @@
   \tabular{ll}{
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
-    Version: \tab 1.7\cr
-    Date:    \tab 2010-02-16\cr
+    Version: \tab 1.8\cr
+    Date:    \tab 2010-09-01\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
@@ -53,23 +53,25 @@
   R. Woodrow Setzer (Maintainer)
 }
 \references{
-Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer (2010).
-  Solving Differential Equations in R: Package deSolve
-  Journal of Statistical Software, 33(9), 1--25.
-  \url{http://www.jstatsoft.org/v33/i09/}
 
-Alan C. Hindmarsh, 1983. ODEPACK, A Systematized Collection of ODE Solvers, in
-Scientific Computing, R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam,
-pp. 55-64.
+  Karline Soetaert, Thomas Petzoldt, R. Woodrow Setzer (2010).  Solving
+  Differential Equations in R: Package deSolve Journal of Statistical
+  Software, 33(9), 1--25.  \url{http://www.jstatsoft.org/v33/i09/}
 
-L. R. Petzold, 1983.
-A Description of DASSL: A Differential/Algebraic System Solver,
-in Scientific Computing,
-R. S. Stepleman et al. (Eds.), North-Holland, Amsterdam, pp. 65-68.
+  Alan C. Hindmarsh, 1983. ODEPACK, A Systematized Collection of ODE
+  Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
+  North-Holland, Amsterdam, pp. 55-64.
 
-P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989.
-VODE: A Variable Coefficient ODE Solver,
-SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
+  L. R. Petzold, 1983.  A Description of DASSL: A Differential/Algebraic
+  System Solver, in Scientific Computing, R. S. Stepleman et al. (Eds.),
+  North-Holland, Amsterdam, pp. 65-68.
+
+  P. N. Brown, G. D. Byrne, and A. C. Hindmarsh, 1989.  VODE: A Variable
+  Coefficient ODE Solver, SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
+
+  See also the references given on the specific help pages of the
+  different methods.
+
 }
 \seealso{
   \code{\link{ode}} for a general interface to most of the ODE solvers,
@@ -91,8 +93,8 @@ SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
   \code{\link{radau}} for integrating DAEs up to index 3 using an implicit 
     Runge-Kutta,
 
-  \code{\link{rk}}, \code{\link{rk4}}, \code{\link{euler}} for Runge-Kutta
-  solvers,
+  \code{\link{rk}}, \code{\link{rkMethod}}, \code{\link{rk4}},
+  \code{\link{euler}} for Runge-Kutta solvers,
 
   \code{\link{DLLfunc}}, \code{\link{DLLres}}, for testing model implementations
   in compiled code,

@@ -7,16 +7,14 @@
   Solves the initial value problem for stiff or nonstiff systems of
   ordinary differential equations (ODE) in the form: \deqn{dy/dt = 
   f(t,y)} or linearly implicit differential algebraic equations in the 
-  form \deqn{M dy/dt = f(t,y)}.
+  form: \deqn{M dy/dt = f(t,y)}.
   
   The \R function \code{radau} provides an interface to the Fortran solver 
   RADAU5, written by Ernst Hairer and G. Wanner, which implements the 3-stage
   RADAU IIA method.
-  
   It implements the implicit Runge-Kutta method of order 5 with step size 
   control and continuous output.
-  
-  The system of ODE's or DAES is written as an \R function or can be defined in
+  The system of ODEs or DAEs is written as an \R function or can be defined in
   compiled code that has been dynamically loaded.
 }
 \usage{
@@ -48,7 +46,10 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     function in a dynamically loaded shared library.
   
     If \code{func} is an \R-function, it must be defined as:
-     \code{func <- function(t, y, parms,...)}.  \code{t} is the current time
+    
+    \code{func <- function(t, y, parms,...)}.
+
+    \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
     variables in the ODE system.  If the initial values \code{y} has a
     \code{names} attribute, the names will be available inside \code{func}.
@@ -84,7 +85,8 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     long as \code{y}. See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
-    Jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations
+    \eqn{\dot{dy}_i/dy_j}{dydot(i)/dy(j)}, or
     a string giving the name of a function or subroutine in
     \file{dllname} that computes the Jacobian (see vignette
     \code{"compiledCode"} from package deSolve, for more about this option).
@@ -95,7 +97,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     that of \code{func}.
 
     If the Jacobian is a full matrix,
-    \code{jacfunc} should return a matrix dydot/dy, where the ith row
+    \code{jacfunc} should return a matrix \eqn{\dot{dy}/dy}{dydot/dy}, where the ith row
     contains the derivative of \eqn{dy_i/dt} with respect to \eqn{y_j},
     or a vector containing the matrix elements by columns (the way \R
     and FORTRAN store matrices).  \cr If the Jacobian is banded,
@@ -109,13 +111,13 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   }
   \item{mass }{the mass matrix. 
       If not \code{NULL}, the problem is a linearly
-     implicit DAE and defined as \eqn{mass dy/dt = f(t,y)}. If the mass-matrix 
-     is full, it should be of dimension \code{n*n} where \code{n} is the 
-     number of y-values; if banded the number of rows should be less than n,
-     and the mass-matrix is stored diagonal-wise with element (i,j) stored in 
-     mass(i-j+mumas+1,j).
+     implicit DAE and defined as \eqn{M\, dy/dt = f(t,y)}{M dy/dt = f(t,y)}. If the mass-matrix \eqn{M}
+     is full, it should be of dimension \eqn{n^2}{n*n} where \eqn{n} is the 
+     number of \eqn{y}-values; if banded the number of rows should be less than \eqn{n},
+     and the mass-matrix is stored diagonal-wise with element \eqn{(i, j)} stored in 
+    \code{mass(i - j + mumas + 1, j)}.
 
-     If \code{mass=NULL} then the model is an ODE (default)  
+     If \code{mass = NULL} then the model is an ODE (default)  
   }
   \item{massup }{number of non-zero bands above the diagonal of the \code{mass} 
     matrix, in case it is banded.
@@ -178,7 +180,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     defined in compiled code: the number of output variables calculated
     in the compiled function \code{func}, present in the shared
     library. Note: it is not automatically checked whether this is
-    indeed the number of output variables calculed in the dll - you have
+    indeed the number of output variables calculed in the DLL - you have
     to perform this check in the code - See vignette \code{"compiledCode"}
     from package \code{deSolve}.
   }
@@ -189,7 +191,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   }
   \item{forcings }{only used if \file{dllname} is specified: a list with
     the forcing function data sets, each present as a two-columned matrix,
-    with (time,value); interpolation outside the interval
+    with (time, value); interpolation outside the interval
     [min(\code{times}), max(\code{times})] is done by taking the value at
     the closest data extreme.
 
@@ -270,16 +272,16 @@ plot(out)
 
 ## stiff method, user-generated full Jacobian
 out2  <- radau(yini, times, f1, parms = 0, jactype = "fullusr",
-              jacfunc = fulljac)
+               jacfunc = fulljac)
 
 ## stiff method, internally-generated banded Jacobian
 ## one nonzero band above (up) and below(down) the diagonal
 out3  <- radau(yini, times, f1, parms = 0, jactype = "bandint",
-                              bandup = 1, banddown = 1)
+               bandup = 1, banddown = 1)
 
 ## stiff method, user-generated banded Jacobian
 out4  <- radau(yini, times, f1, parms = 0, jactype = "bandusr",
-              jacfunc = bandjac, bandup = 1, banddown = 1)
+               jacfunc = bandjac, bandup = 1, banddown = 1)
 
 
 ## =======================================================================
@@ -333,7 +335,7 @@ caraxisfun <- function(t, y, parms) {
     c2   <- (xl - xr)^2 + (yl - yr)^2 - L * L
         
     list(c(dxl, dyl, dxr, dyr, dul, dvl, dur, dvr, c1, c2))
-    })
+  })
 }
 
 eps <- 0.01; M <- 10; k <- M * eps^2/2; 
@@ -354,15 +356,15 @@ Mass
 index <- c(4, 4, 2)
 
 times <- seq(0, 3, by = 0.01)
-out <- radau(y = yini, mass=Mass, times = times, func = caraxisfun,
+out <- radau(y = yini, mass = Mass, times = times, func = caraxisfun,
         parms = parameter, nind = index)
 
 plot(out, which = 1:4, type = "l", lwd = 2)
 }
 \references{
-E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
- Stiff and Differential-algebraic problems. Springer series in computational
- mathematics 14, Springer-Verlag, second edition.
+  E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
+  Stiff and Differential-algebraic problems. Springer series in computational
+  mathematics 14, Springer-Verlag, second edition.
 }
 \details{
   The work is done by the FORTRAN subroutine \code{RADAU5}, whose
@@ -396,7 +398,7 @@ E. Hairer and G. Wanner, 1996. Solving Ordinary Differential Equations II.
   
   The input parameters \code{rtol}, and \code{atol} determine the
   \bold{error control} performed by the solver, which roughly keeps the 
-  local error of y(i) below rtol(i)*abs(y(i))+atol(i).  
+  local error of \eqn{y(i)} below \eqn{rtol(i)*abs(y(i))+atol(i)}.  
    
   The diagnostics of the integration can be printed to screen
   by calling \code{\link{diagnostics}}. If \code{verbose} = \code{TRUE},

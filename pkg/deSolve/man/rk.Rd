@@ -227,6 +227,13 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 \note{  
   Arguments \code{rpar} and \code{ipar} are provided for compatibility
   with \code{lsoda}.
+
+  Starting with version 1.8 implicit Runge-Kutta methods are also
+  supported by this general \code{rk} interface, however their
+  implementation is still experimental.  Instead of this you may
+  consider \code\link{radau}} for a specific full implementation of an
+  implicit Runge-Kutta method.
+  
 }
 \references{
   Butcher, J. C. (1987) The numerical analysis of ordinary differential

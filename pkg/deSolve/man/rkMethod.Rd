@@ -97,8 +97,13 @@ rkMethod(method = NULL, ...)
     \item Method \code{"rk45dp7"} (alias \code{"ode45"}) contains an
       efficient built-in interpolation scheme (dense output) based on
       intermediate function evaluations.
-  }
-}
+    }
+
+    Starting with version 1.8 implicit Runge-Kutta (\code{irk}) methods
+    are also supported by the general \code{rk} interface, however their
+    implementation is still experimental.  Instead of this you may
+    consider \code\link{radau}} for a specific full implementation of an
+    implicit Runge-Kutta method.  }
    
 \value{
   A list with the following elements:

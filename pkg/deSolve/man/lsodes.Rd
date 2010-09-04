@@ -137,11 +137,11 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     value of \code{lrw}.
     
     For instance, if you get the error:
-   
-  DLSODES- RWORK length is insufficient to proceed.                               
-        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
-      In above message,  I1 =     27627   I2 =     25932 
-      
+\preformatted{ 
+DLSODES- RWORK length is insufficient to proceed.                               
+  Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
+  In above message,  I1 =     27627   I2 =     25932 
+}    
   set \code{lrw} equal to 27627 or a higher value
 
   }
@@ -239,18 +239,17 @@ dy <- rep(0, n)
 
 times <- c(0, 0.1*(10^(0:4)))
 
-rtol = 1.0e-4
-atol = 1.0e-6
+rtol <- 1.0e-4
+atol <- 1.0e-6
 
-parms <- c(rk1 = 0.1,   rk2 = 10.0, rk3 = 50.0,  rk4 = 2.5,  rk5 = 0.1,
-           rk6 = 10.0,  rk7 = 50.0, rk8 = 2.5,   rk9 = 50.0, rk10 = 5.0,
+parms <- c(rk1  = 0.1,   rk2 = 10.0, rk3 = 50.0,  rk4 = 2.5,  rk5 = 0.1,
+           rk6  = 10.0,  rk7 = 50.0, rk8 = 2.5,   rk9 = 50.0, rk10 = 5.0,
            rk11 = 50.0, rk12 = 50.0,rk13 = 50.0, rk14 = 30.0,
            rk15 = 100.0,rk16 = 2.5, rk17 = 100.0,rk18 = 2.5,
            rk19 = 50.0, rk20 = 50.0)
 
 #
-chemistry <- function (time,Y,pars)
-{
+chemistry <- function (time, Y, pars) {
   with (as.list(pars), {
     dy[1] <- -rk1 *Y[1]
     dy[2] <-  rk1 *Y[1]        + rk11*rk14*Y[4]  + rk19*rk14*Y[5]  -
@@ -313,8 +312,7 @@ out2 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
 ## application 3. lsodes estimates the structure of the Jacobian
 ##                the Jacobian (vector) function is input
 ## =======================================================================
-chemjac <- function (time, Y, j, pars)
-{
+chemjac <- function (time, Y, j, pars) {
   with (as.list(pars), {
     PDJ <- rep(0,n)
 
@@ -455,7 +453,7 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
   vignette ("compiledCode"); information about linking forcing functions
   to compiled code is in \link{forcings}.
 
-  Examples in both C and FORTRAN are in the \file{dynload} subdirectory
+  Examples in both C and FORTRAN are in the \file{doc/examples/dynload} subdirectory
   of the \code{deSolve} package directory.
 }
 \seealso{

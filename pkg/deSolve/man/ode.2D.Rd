@@ -26,11 +26,11 @@
     function in a dynamically loaded shared library.
   
     If \code{func} is an \R-function, it must be defined as:
-    \code{func <- function(t, y, parms,...)}.  \code{t} is the current time
+    \code{func <- function(t, y, parms, ...)}. \code{t} is the current time
     point in the integration, \code{y} is the current estimate of the
     variables in the ODE system.  If the initial values \code{y} has a
     \code{names} attribute, the names will be available inside \code{func}.
-    \code{parms} is a vector or list of parameters; ... (optional) are
+    \code{parms} is a vector or list of parameters; \code{...} (optional) are
     any other arguments passed to the function.
   
     The return value of \code{func} should be a list, whose first
@@ -101,37 +101,35 @@
 ## Model definitions
 ## ==================
 
-lvmod2D <- function (time, state, pars, N, Da, dx)
-{
+lvmod2D <- function (time, state, pars, N, Da, dx) {
   NN <- N*N
   Prey <- matrix(nr = N,nc = N,state[1:NN])
   Pred <- matrix(nr = N,nc = N,state[(NN+1):(2*NN)])
 
-  with (as.list(pars),
-  {
+  with (as.list(pars), {
     ## Biology
-    dPrey   <- rGrow* Prey *(1- Prey/K) - rIng* Prey *Pred
-    dPred   <- rIng* Prey *Pred*assEff -rMort* Pred
+    dPrey <- rGrow * Prey * (1- Prey/K) - rIng  * Prey * Pred
+    dPred <- rIng  * Prey * Pred*assEff - rMort * Pred
 
-    zero <- rep(0,N)
+    zero <- rep(0, N)
 
     ## 1. Fluxes in x-direction; zero fluxes near boundaries
-    FluxPrey <- -Da * rbind(zero,(Prey[2:N,]-Prey[1:(N-1),]), zero)/dx
-    FluxPred <- -Da * rbind(zero,(Pred[2:N,]-Pred[1:(N-1),]), zero)/dx
+    FluxPrey <- -Da * rbind(zero,(Prey[2:N,] - Prey[1:(N-1),]), zero)/dx
+    FluxPred <- -Da * rbind(zero,(Pred[2:N,] - Pred[1:(N-1),]), zero)/dx
 
     ## Add flux gradient to rate of change
-    dPrey    <- dPrey - (FluxPrey[2:(N+1),]-FluxPrey[1:N,])/dx
-    dPred    <- dPred - (FluxPred[2:(N+1),]-FluxPred[1:N,])/dx
+    dPrey    <- dPrey - (FluxPrey[2:(N+1),] - FluxPrey[1:N,])/dx
+    dPred    <- dPred - (FluxPred[2:(N+1),] - FluxPred[1:N,])/dx
 
     ## 2. Fluxes in y-direction; zero fluxes near boundaries
-    FluxPrey <- -Da * cbind(zero,(Prey[,2:N]-Prey[,1:(N-1)]), zero)/dx
-    FluxPred <- -Da * cbind(zero,(Pred[,2:N]-Pred[,1:(N-1)]), zero)/dx
+    FluxPrey <- -Da * cbind(zero,(Prey[,2:N] - Prey[,1:(N-1)]), zero)/dx
+    FluxPred <- -Da * cbind(zero,(Pred[,2:N] - Pred[,1:(N-1)]), zero)/dx
 
     ## Add flux gradient to rate of change
-    dPrey    <- dPrey - (FluxPrey[,2:(N+1)]-FluxPrey[,1:N])/dx
-    dPred    <- dPred - (FluxPred[,2:(N+1)]-FluxPred[,1:N])/dx
+    dPrey    <- dPrey - (FluxPrey[,2:(N+1)] - FluxPrey[,1:N])/dx
+    dPred    <- dPred - (FluxPred[,2:(N+1)] - FluxPred[,1:N])/dx
 
-    return (list(c(as.vector(dPrey), as.vector(dPred))))
+    return(list(c(as.vector(dPrey), as.vector(dPred))))
  })
 }
 
@@ -139,7 +137,6 @@ lvmod2D <- function (time, state, pars, N, Da, dx)
 ## ===================
 ## Model applications
 ## ===================
-
 
 pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
              rGrow  = 1.0,    # /day, growth rate of prey
@@ -162,7 +159,7 @@ yini[cc] <- yini[NN+cc] <- 1
 ## solve model (5000 state variables...  use Cash-Karp Runge-Kutta method
 times   <- seq(0, 50, by = 1)
 out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
-              dimens = c(N, N), names = c("Prey","Pred"),
+              dimens = c(N, N), names = c("Prey", "Pred"),
               N = N, dx = dx, Da = Da, , method = rkMethod("rk45ck"))
 
 ## plot results
@@ -174,9 +171,8 @@ for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
 
-# similar:
+## similar:
 image(out, xlab = "x", ylab = "y")
-
 }
 
 ## =======================================================================
@@ -186,55 +182,52 @@ image(out, xlab = "x", ylab = "y")
 ## =======================================================================
 
 
-diffusion2D <- function(t,Y,par)
-  {
-   y    <- matrix(nr=nx,nc=ny,data=Y)  # vector to 2-D matrix
-   dY   <- -r*y        # consumption
-   BNDx   <- rep(1,nx)   # boundary concentration
-   BNDy   <- rep(1,ny)   # boundary concentration
+diffusion2D <- function(t, Y, par) {
+  y    <- matrix(nrow = nx, nccol = ny, data = Y)  # vector to 2-D matrix
+  dY   <- -r * y       # consumption
+  BNDx <- rep(1, nx)   # boundary concentration
+  BNDy <- rep(1, ny)   # boundary concentration
 
-   #diffusion in X-direction; boundaries=imposed concentration
-   Flux <- -Dx * rbind(y[1,]-BNDy,(y[2:nx,]-y[1:(nx-1),]),BNDy-y[nx,])/dx
-   dY   <- dY - (Flux[2:(nx+1),]-Flux[1:nx,])/dx
+  ## diffusion in X-direction; boundaries=imposed concentration
+  Flux <- -Dx * rbind(y[1,]-BNDy,(y[2:nx,]-y[1:(nx-1),]),BNDy-y[nx,])/dx
+  dY   <- dY - (Flux[2:(nx+1),]-Flux[1:nx,])/dx
 
-   #diffusion in Y-direction
-   Flux <- -Dy * cbind(y[,1]-BNDx,(y[,2:ny]-y[,1:(ny-1)]),BNDx-y[,ny])/dy
-   dY    <- dY - (Flux[,2:(ny+1)]-Flux[,1:ny])/dy
+  ## diffusion in Y-direction
+  Flux <- -Dy * cbind(y[,1]-BNDx,(y[,2:ny]-y[,1:(ny-1)]),BNDx-y[,ny])/dy
+  dY   <- dY - (Flux[,2:(ny+1)]-Flux[,1:ny])/dy
 
-   # extra flux on two sides
-   dY[,1] <- dY[,1]+  10
-   dY[1,] <- dY[1,]+  10
+  ## extra flux on two sides
+  dY[,1] <- dY[,1] + 10
+  dY[1,] <- dY[1,] + 10
 
-   # and exchange between sides on y-direction
-   dY[,ny] <- dY[,ny]+ (y[,1]-y[,ny])*10
-   return(list(as.vector(dY)))
+  ## and exchange between sides on y-direction
+  dY[,ny] <- dY[,ny] + (y[,1] - y[,ny]) * 10
+  return(list(as.vector(dY)))
+}
 
-  }
+## parameters
+dy <- dx <- 1  # grid size
+Dy <- Dx <- 1  # diffusion coeff, X- and Y-direction
+r  <- 0.05     # consumption rate
 
-  # parameters
-  dy    <- dx <- 1   # grid size
-  Dy    <- Dx <- 1   # diffusion coeff, X- and Y-direction
-  r     <- 0.05     # consumption rate
+nx <- 50
+ny <- 100
+y  <- matrix(nrow = nx, ncol = ny, 1)
 
-  nx  <- 50
-  ny  <- 100
-  y  <- matrix(nr=nx,nc=ny,1.)
+## model most efficiently solved with lsodes - need to specify lrw
 
-  # model most efficiently solved with lsodes - need to specify lrw
-
-  print(system.time(
-  ST3 <- ode.2D(y, times=1:100, func=diffusion2D, parms=NULL,
-                dimens=c(nx,ny), verbose=TRUE,
-                lrw=400000, atol=1e-10, rtol=1e-10, cyclicBnd=2)
- ))
+print(system.time(
+  ST3 <- ode.2D(y, times = 1:100, func = diffusion2D, parms = NULL,
+                dimens = c(nx, ny), verbose = TRUE,
+                lrw = 400000, atol = 1e-10, rtol = 1e-10, cyclicBnd = 2)
+))
 
 \dontrun{
-  zlim <- range(ST3[,-1])
-  for (i in 2:nrow(ST3)) {
-
+zlim <- range(ST3[,-1])
+for (i in 2:nrow(ST3)) {
   y <- matrix(nr=nx,nc=ny,data=ST3[i,-1])
   filled.contour(y,zlim=zlim,main=i)
-  }
+}
 }
 
 }
@@ -257,13 +250,12 @@ diffusion2D <- function(t,Y,par)
   the second try then, set \code{lrw} equal to this number.
 
   For instance, if you get the error:
-   
-  DLSODES- RWORK length is insufficient to proceed.                               
-        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
-      In above message,  I1 =     27627   I2 =     25932 
-      
+\preformatted{   
+DLSODES- RWORK length is insufficient to proceed.                               
+  Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)                    
+  In above message,  I1 =     27627   I2 =     25932 
+}      
   set \code{lrw} equal to 27627 or a higher value
-
 
   In some cases, a cyclic boundary condition exists. This is when the first
   boxes in x-or y-direction interact with the last boxes. In this case, there
