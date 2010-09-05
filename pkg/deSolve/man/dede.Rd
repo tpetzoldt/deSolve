@@ -153,8 +153,8 @@ derivs <- function(t,y,parms) {
     lag10 <- lagvalue(t - 10,2)
   
   dy1 <- -y[1] * lag1 + lag10
-  dy2 <- y[1] * lag1 - y[2]
-  dy3 <- y[2] - lag10
+  dy2 <-  y[1] * lag1 - y[2]
+  dy3 <-  y[2] - lag10
   list(c(dy1, dy2, dy3))
 }
 

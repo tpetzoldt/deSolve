@@ -69,18 +69,17 @@ timestep(prev = TRUE)
 ## the derivative function
 ##-----------------------------
 derivs <- function(t, y, parms) { 
-  History <- function(t) {
-    c(cos(t), sin(t))
-    if (t < 1)
-      lag1 <- History(t - 1)[1]    
-    else 
-      lag1 <- lagvalue(t - 1)[1] # returns a vector; select first element
+  History <- function(t) c(cos(t), sin(t))
+  if (t < 1)
+    lag1 <- History(t - 1)[1]    
+  else 
+    lag1 <- lagvalue(t - 1)[1] # returns a vector; select first element
 
-    if (t < 2)
-      lag2 <- History(t - 2)[2]
-    else 
-      lag2 <- lagvalue(t - 2,2) # faster than lagvalue(t - 2)[2]
-  }
+  if (t < 2)
+    lag2 <- History(t - 2)[2]
+  else 
+    lag2 <- lagvalue(t - 2,2) # faster than lagvalue(t - 2)[2]
+
   dy1 <- lag1 * lag2
   dy2 <- -y[1] * lag2
   
