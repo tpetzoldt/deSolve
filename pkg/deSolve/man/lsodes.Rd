@@ -72,7 +72,8 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
   \item{jacvec }{if not \code{NULL}, an \R function that computes a
     column of the Jacobian of the system of differential equations
-    dydot(i)/dy(j), or a string giving the name of a function or
+    \eqn{\partial\dot{y}_i/\partial y_j}{dydot(i)/dy(j)}, 
+    or a string giving the name of a function or
     subroutine in \file{dllname} that computes the column of the
     Jacobian (see vignette \code{"compiledCode"} for more about this option).
 
@@ -82,7 +83,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     number.  Thus, \code{jacvec} should be called as: \code{jacvec =
     func(t, y, j, parms)} and \code{jacvec} should return a vector
     containing column \code{j} of the Jacobian, i.e.  its i-th value is
-    dydot(i)/dy(j). If this function is absent, \code{lsodes} will
+    \eqn{\partial\dot{y}_i/\partial y_j}{dydot(i)/dy(j)}. If this function is absent, \code{lsodes} will
     generate the Jacobian by differences.
   }
   \item{sparsetype }{the sparsity structure of the Jacobian, one of

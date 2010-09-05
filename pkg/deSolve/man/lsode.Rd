@@ -85,7 +85,8 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     long as \code{y}. See details.
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
-    Jacobian of the system of differential equations dydot(i)/dy(j), or
+    Jacobian of the system of differential equations
+    \eqn{\partial\dot{y}_i/\partial y_j}{dydot(i)/dy(j)}, or
     a string giving the name of a function or subroutine in
     \file{dllname} that computes the Jacobian (see vignette
     \code{"compiledCode"} for more about this option).
@@ -96,7 +97,7 @@ lsode(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     that of \code{func}.
 
     If the Jacobian is a full matrix,
-    \code{jacfunc} should return a matrix dydot/dy, where the ith row
+    \code{jacfunc} should return a matrix \eqn{\partial\dot{y}/\partial y}{dydot/dy}, where the ith row
     contains the derivative of \eqn{dy_i/dt} with respect to \eqn{y_j},
     or a vector containing the matrix elements by columns (the way \R
     and FORTRAN store matrices).  \cr If the Jacobian is banded,

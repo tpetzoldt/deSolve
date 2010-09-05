@@ -119,7 +119,7 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     \code{func}.
     
     If the Jacobian is a full matrix, \code{jacfunc} should return a
-    matrix \eqn{\dot{dy}/dy}{dydot/dy}, where the ith row contains the derivative of
+    matrix \eqn{\partial\dot{y}/\partial y}{dydot/dy}, where the ith row contains the derivative of
     \eqn{dy_i/dt} with respect to \eqn{y_j}, or a vector containing the
     matrix elements by columns (the way \R and FORTRAN store matrices).
     

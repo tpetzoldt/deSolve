@@ -86,7 +86,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
     Jacobian of the system of differential equations
-    \eqn{\dot{dy}_i/dy_j}{dydot(i)/dy(j)}, or
+    \eqn{\partial\dot{y}_i/\partial y_j}{dydot(i)/dy(j)}, or
     a string giving the name of a function or subroutine in
     \file{dllname} that computes the Jacobian (see vignette
     \code{"compiledCode"} from package deSolve, for more about this option).
@@ -97,7 +97,7 @@ radau(y, times, func, parms, nind = c(length(y), 0, 0),
     that of \code{func}.
 
     If the Jacobian is a full matrix,
-    \code{jacfunc} should return a matrix \eqn{\dot{dy}/dy}{dydot/dy}, where the ith row
+    \code{jacfunc} should return a matrix \eqn{\partial\dot{y}/\partial y}{dydot/dy}, where the ith row
     contains the derivative of \eqn{dy_i/dt} with respect to \eqn{y_j},
     or a vector containing the matrix elements by columns (the way \R
     and FORTRAN store matrices).  \cr If the Jacobian is banded,

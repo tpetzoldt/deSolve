@@ -71,7 +71,7 @@
   }
   \item{jacfunc }{if not \code{NULL}, an \R function that computes the
     Jacobian of the system of differential equations
-    \eqn{\dot{dy}_i/dy_j}{dydot(i)/dy(j)}, or
+    \eqn{\partial\dot{y}_i/\partial y_j}{dydot(i)/dy(j)}, or
     a string giving the name of a function or subroutine in
     \file{dllname} that computes the Jacobian (see vignette
     \code{"compiledCode"} for more about this option).
