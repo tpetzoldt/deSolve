@@ -115,6 +115,7 @@ example(lsoda)
 example(ode.band)
 example(ode.1D)
 example(ode.2D)
+example(ode.3D)
 example(dede)
 
 ## run demos

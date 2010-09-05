@@ -183,7 +183,7 @@ image(out, xlab = "x", ylab = "y")
 
 
 diffusion2D <- function(t, Y, par) {
-  y    <- matrix(nrow = nx, nccol = ny, data = Y)  # vector to 2-D matrix
+  y    <- matrix(nrow = nx, ncol = ny, data = Y)  # vector to 2-D matrix
   dY   <- -r * y       # consumption
   BNDx <- rep(1, nx)   # boundary concentration
   BNDy <- rep(1, ny)   # boundary concentration

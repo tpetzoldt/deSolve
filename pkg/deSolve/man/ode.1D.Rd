@@ -208,7 +208,7 @@ O2BOD <- function(t, state, pars) {
   FluxBOD <- v * c(BOD_0, BOD)   # fluxes due to water transport
   FluxO2  <- v * c(O2_0, O2)
   
-  BODrate <- r * BO D            # 1-st order consumption
+  BODrate <- r * BOD             # 1-st order consumption
 
   ## rate of change = flux gradient  - consumption + reaeration (O2)
   dBOD         <- -diff(FluxBOD)/dx - BODrate
