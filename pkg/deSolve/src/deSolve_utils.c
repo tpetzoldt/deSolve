@@ -128,7 +128,7 @@ SEXP getTimestep() {
   PROTECT(value = NEW_NUMERIC(2));
   if (timesteps == NULL) {         /* integration not yet started... */
     for (int i = 0; i < 2; i++) 
-      NUMERIC_POINTER(value)[i] = 0.; // ThPe -> KS: changed from 1. to 0.
+      NUMERIC_POINTER(value)[i] = 0.0;
   } else
     for (int i = 0; i < 2; i++) 
       NUMERIC_POINTER(value)[i] = timesteps[i];
@@ -363,11 +363,11 @@ void interact (int *ij, int nnz, int *iwork, int is, int ival) {
 
 /*==================================================*/
 /* an element in C-array A(I,J,K), i=0,dim(1)-1 etc... is positioned at 
- j*dim(2)*dim(3) + k*dim(3) + l + 1 in FORTRAN VECTOR! 
- includes check on validity
+   j*dim(2)*dim(3) + k*dim(3) + l + 1 in FORTRAN VECTOR! 
+   includes check on validity
 
- dimens and boundary are reversed ... 
- */
+   dimens and boundary are reversed ... 
+*/
 
 void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
     int nspec, nx, ny, nz, bndx, bndy, bndz, Nt, ij, is, isp, i, j, k, l, m, ll;

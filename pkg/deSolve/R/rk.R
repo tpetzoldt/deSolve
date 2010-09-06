@@ -4,15 +4,15 @@
 ### ============================================================================
 
 rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
-  verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax, ynames=TRUE,
-  method = rkMethod("rk45dp7", ... ), maxsteps = 5000,
-  dllname = NULL, initfunc=dllname, initpar = parms,
-  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, forcings=NULL,
+  verbose = FALSE, tcrit = NULL, hmin = 0, hmax = NULL, hini = hmax,
+  ynames=TRUE, method = rkMethod("rk45dp7", ... ), maxsteps = 5000,
+  dllname = NULL, initfunc = dllname, initpar = parms,
+  rpar = NULL,  ipar = NULL, nout = 0, outnames=NULL, forcings = NULL,
   initforc = NULL, fcontrol=NULL, events = NULL, ...) {
 
     ## Check inputs
     hmax <- checkInput(y, times, func, rtol, atol,
-        jacfunc=NULL, tcrit, hmin, hmax, hini, dllname)
+      jacfunc = NULL, tcrit, hmin, hmax, hini, dllname)
     if (hmax == 0) hmax <- .Machine$double.xmax # i.e. practically unlimited
 
     n <- length(y)

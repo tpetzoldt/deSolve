@@ -45,7 +45,6 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
-  /* !!! testing code !!!                                                   */
   /*------------------------------------------------------------------------*/
   timesteps = (double *)R_alloc(2, sizeof(double)); 
   for (i = 0; i < 2; i++) timesteps[i] = 1;

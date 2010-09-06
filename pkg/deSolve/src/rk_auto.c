@@ -5,7 +5,7 @@
 /* Parts inspired by Press et al., 2002, 2007;                              */
 /*   see vignette for full references                                       */
 /*==========================================================================*/
-/* Karline: added rejected steps                                            */
+
 #include "rk_util.h"
 
 void rk_auto(
@@ -37,24 +37,18 @@ void rk_auto(
   double err, dtnew, t_ext;
   double dt = *_dt, errold = *_errold;
 
-  // make this user adjustable
+  /* todo: make this user adjustable */
   static const double minscale = 0.2, maxscale = 10.0, safe = 0.9;
 
   /*------------------------------------------------------------------------*/
   /* Main Loop                                                              */
   /*------------------------------------------------------------------------*/
   do {
-    // ThPe -> KS: how should actual resp. former time step be handled
-    // - in the first call
-    // - for rejected steps?
-    // Ks -> ThPe; first step: use 0; rejected steps ignored. at end:
-    // put=1.
+    if (accept) timesteps[0] = timesteps[1];
+    timesteps[1] = dt;
 
-    if (accept) timesteps[0] = timesteps[1];  // check
-    timesteps[1] = dt;               // experimental, check this 
-
-    /******  save former results of last step if the method allows this
-            (first same as last)                                       ******/
+    /*  save former results of last step if the method allows this
+       (first same as last)                                             */
     /* Karline: improve by saving "accepted" FF, use this when rejected */
     if (fsal && accept){
       j1 = 1;

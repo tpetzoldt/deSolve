@@ -96,8 +96,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
   /*------------------------------------------------------------------------*/
-  /* timesteps (for compatibility with lsoda)                                   */
-  /* !!! testing code !!!                                                   */
+  /* timesteps (for compatibility with lsoda)                               */
   /*------------------------------------------------------------------------*/
   timesteps = (double *)R_alloc(2, sizeof(double)); 
   for (i = 0; i < 2; i++) timesteps[i] = 1;

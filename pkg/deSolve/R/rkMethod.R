@@ -2,7 +2,8 @@
 ### Butcher tables for selected explicit ODE solvers of Runge-Kutta type
 ### Note that for fixed step methods A is a vector (the subdiagonal of matrix A)
 ###   For variable time step methods, A must be strictly lower triangular.
-###   The underlying rk code is currently restricted to explicit methods.
+###   The underlying rk codes support explicit methods
+###   and (still experimentally) some implicit methods.
 ### ============================================================================
 
 rkMethod <- function(method = NULL, ...) {

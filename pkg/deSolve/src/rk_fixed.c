@@ -47,7 +47,7 @@ void rk_fixed(
     timesteps[1] = dt;               // experimental, check this  
 
     /******  Prepare Coefficients from Butcher table ******/
-    /* NOTE: must be given as subdiagonal here, not matrix !!!  */
+    /* NOTE: must be given as subdiagonal here, not matrix !  */
     for (j = 0; j < stage; j++) {
       if (j == 0) 
         for(i = 0; i < neq; i++) Fj[i] = 0;

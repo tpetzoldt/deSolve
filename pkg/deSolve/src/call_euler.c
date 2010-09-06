@@ -42,7 +42,6 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
-  /* !!! testing code !!!                                                   */
   /*------------------------------------------------------------------------*/
   double *saved_ts, *my_ts;
 
