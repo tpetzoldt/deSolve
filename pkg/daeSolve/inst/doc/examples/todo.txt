@@ -1,7 +1,0 @@
-to do:
-
-check "randomness"
-1. run Andrews.R
-2. run car.R
-3. Re-run Andrews.R => slighly different
-4. re-run car.R => same
