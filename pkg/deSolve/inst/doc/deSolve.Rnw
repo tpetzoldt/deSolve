@@ -411,10 +411,10 @@ diagnostics(out2)
 As package \ds includes integrators that deal efficiently with
 arbitrarily sparse and banded Jacobians, it is especially well suited
 to solve initial value problems resulting from 1, 2 or 3-dimensional
-partial differential equations (PDE). These are first written as ODEs
-using the method-of-lines approach.
+partial differential equations (PDE), using the method-of-lines approach. 
+The PDEs are first written as ODEs, using finite differences.
 
-Three special-purpose solvers are included in \pkg{deSolve}:
+Several special-purpose solvers are included in \pkg{deSolve}:
 
 \begin{itemize}
 \item \code{ode.band} integrates 1-dimensional problems comprizing one
@@ -422,7 +422,7 @@ Three special-purpose solvers are included in \pkg{deSolve}:
 \item \code{ode.1D} integrates 1-dimensional problems comprizing one or many
   species,
 \item \code{ode.2D} integrates 2-dimensional problems,
-\item \code{ode.2D} integrates 2-dimensional problems.
+\item \code{ode.3D} integrates 3-dimensional problems.
 \end{itemize}
 
 As an example, consider the Aphid model described in
@@ -543,10 +543,10 @@ image(out, method = "filled.contour", grid = Distance,
 \label{fig:aphid}
 \end{figure}
 
-As the 1-D model describes only one species, it is best solved with
+As this is a 1-D model, it is best solved with
 \ds function \code{ode.1D}.  A multi-species IVP example can be
-found in \citet{Soetaert08}.  For 2-D problems, we refer to the
-help-files of function \code{ode.2D}.
+found in \citet{Soetaert08}.  For 2-D and 3-D problems, we refer to the
+help-files of functions \code{ode.2D} and \code{ode.3D}.
 
 \clearpage
 
@@ -1069,7 +1069,7 @@ matplot(out[,1], out[,2:3], type = "l")
 @
 
 It is, of course, not possible to set both, \code{atol} and
-\code{rtol} simultaneously to zero. As we see at this example, it is
+\code{rtol} simultaneously to zero. As we see from this example, it is
 always a good idea to test simulation results for plausibility. This
 can be done by theoretical considerations or by comparing the outcome
 of different ODE solvers and parametrizations.
@@ -1186,7 +1186,7 @@ Warning messages:
 The first sentence tells us that at T=0.8562448350331e+02, the solver used a step size H= 0.3273781304624e-17.
 This step size is so small that it cannot tell the difference between T and T+H. Nevertheless, the solver tried again.
 
-The second sentence tells that, at this warning has been occurring 10 times, it will not be outputted again.
+The second sentence tells that, as this warning has been occurring 10 times, it will not be outputted again.
 
 As expected, this error did not go away, so soon the maximal number of steps (5000) has been exceeded. This is indeed what the next message is about:
 
