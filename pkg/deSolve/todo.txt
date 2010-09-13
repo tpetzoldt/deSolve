@@ -1,6 +1,5 @@
 TODOs:
 ======
-Woody: fix Compiler "warning"
 
 Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
@@ -9,13 +8,12 @@ Karline + Thomas: add dopri 8(5,3) - Fortran??
 
 Ideas/wishes (ThPe/karline): 
 ======
-Karline->Thomas: nesting of ode calls fails if run has been stopped (ESC); 
-fix: karline removed it again... 
+
 
 Karline, Thomas: timesteps should return NA if called outside of ODE
 
 Impossibilities...
-======
+==================
 NaN warnings and termination of R 
 - KS does not see how this can be resolved
 
