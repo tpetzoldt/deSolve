@@ -223,10 +223,10 @@ print(system.time(
 ))
 
 \dontrun{
-zlim <- range(ST3[,-1])
+zlim <- range(ST3[, -1])
 for (i in 2:nrow(ST3)) {
-  y <- matrix(nr=nx,nc=ny,data=ST3[i,-1])
-  filled.contour(y,zlim=zlim,main=i)
+  y <- matrix(nr = nx, nc = ny, data = ST3[i, -1])
+  filled.contour(y, zlim = zlim, main = i)
 }
 }
 
