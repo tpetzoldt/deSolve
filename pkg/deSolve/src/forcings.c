@@ -204,7 +204,7 @@ int initEvents(SEXP elist, SEXP eventfunc) {
        
      i = LENGTH(Time);
      timeevent = (double *) R_alloc((int) i+1, sizeof(double));
-     for (j = 0; j < i; j++) timeevent[j] = REAL(Time)[j];
+     for (j = 0; j <= i; j++) timeevent[j] = REAL(Time)[j];  // thpe <=
      timeevent[i+1] = 0;
       
      if (typeevent == 1) {  
