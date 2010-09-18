@@ -75,6 +75,10 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   Eventfunc <- NULL
   events <- checkevents(events, times, Ynames, dllname,TRUE)
 
+  ## if (miter == 4) Jacobian should have banddown empty rows
+  if (miter == 4 && banddown>0)
+    erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
+
   if (is.character(func)) {   # function specified in a DLL
     DLL <- checkDLL(func,jacfunc,dllname,
                     initfunc,verbose,nout, outnames)
@@ -91,7 +95,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (nroot == 0)
         stop("if 'rootfunc' is specified in a DLL, then 'nroot' should be > 0")
     }
-
+                      
     ModelInit <- DLL$ModelInit
     Func    <- DLL$Func
     JacFunc <- DLL$JacFunc
@@ -105,6 +109,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (is.null(ipar)) ipar<-0
     if (is.null(rpar)) rpar<-0
     Eventfunc <- events$func
+     
   } else {
 
     if (is.null(initfunc))
@@ -127,7 +132,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
       JacFunc <- function(time,state) {
         attr(state,"names") <- Ynames
-        jacfunc(time,state,parms,...)
+         rbind(jacfunc(time,state,parms,...),erow)
       }
       RootFunc <- function(time,state) {
         attr(state,"names") <- Ynames
@@ -147,8 +152,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
         func   (time,state,parms,...)
 
       JacFunc <- function(time,state)
-        jacfunc(time,state,parms,...)
-
+         rbind(jacfunc(time,state,parms,...),erow)
+         
       RootFunc <- function(time,state)
         rootfunc(time,state,parms,...)
 
@@ -182,7 +187,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (!is.matrix(tmp))
          stop("Jacobian function 'jacfunc' must return a matrix\n")
       dd <- dim(tmp)
-      if ((miter ==4 && dd != c(bandup+banddown+1,n)) ||
+      if ((miter ==4 && dd != c(bandup+banddown+banddown+1,n)) ||
           (miter ==1 && dd != c(n,n)))
          stop("Jacobian dimension not ok")
      }
