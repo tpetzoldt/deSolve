@@ -95,7 +95,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (nroot == 0)
         stop("if 'rootfunc' is specified in a DLL, then 'nroot' should be > 0")
     }
-                      
+
     ModelInit <- DLL$ModelInit
     Func    <- DLL$Func
     JacFunc <- DLL$JacFunc
@@ -109,7 +109,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     if (is.null(ipar)) ipar<-0
     if (is.null(rpar)) rpar<-0
     Eventfunc <- events$func
-     
+
   } else {
 
     if (is.null(initfunc))
@@ -132,7 +132,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
       JacFunc <- function(time,state) {
         attr(state,"names") <- Ynames
-         rbind(jacfunc(time,state,parms,...),erow)
+        rbind(jacfunc(time,state,parms,...),erow)
       }
       RootFunc <- function(time,state) {
         attr(state,"names") <- Ynames
@@ -152,7 +152,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
         func   (time,state,parms,...)
 
       JacFunc <- function(time,state)
-         rbind(jacfunc(time,state,parms,...),erow)
+        rbind(jacfunc(time,state,parms,...),erow)
          
       RootFunc <- function(time,state)
         rootfunc(time,state,parms,...)
@@ -187,8 +187,8 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (!is.matrix(tmp))
          stop("Jacobian function 'jacfunc' must return a matrix\n")
       dd <- dim(tmp)
-      if ((miter ==4 && dd != c(bandup+banddown+banddown+1,n)) ||
-          (miter ==1 && dd != c(n,n)))
+      if ((miter == 4 && dd != c(bandup+banddown+banddown+1,n)) ||
+          (miter == 1 && dd != c(n,n)))
          stop("Jacobian dimension not ok")
      }
   }
