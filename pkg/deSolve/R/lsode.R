@@ -196,10 +196,10 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 ### work arrays iwork, rwork
   # length of rwork and iwork
-  lrw = 20+n*(maxord+1)+3*n  +3*nroot
-  if(miter %in% c(1,2) ) lrw = lrw + 2*n*n+2
-  if(miter ==3)          lrw = lrw + n+2
-  if(miter %in% c(4,5) ) lrw = lrw + (2*banddown+ bandup+1)*n+2
+  lrw <- 20+n*(maxord+1)+3*n  +3*nroot
+  if(miter %in% c(1,2) ) lrw <- lrw + 2*n*n+2
+  if(miter ==3)          lrw <- lrw + n+2
+  if(miter %in% c(4,5) ) lrw <- lrw + (2*banddown+ bandup+1)*n+2
 
   liw   <- if (miter %in% c(0,3)) 20 else 20+n
 

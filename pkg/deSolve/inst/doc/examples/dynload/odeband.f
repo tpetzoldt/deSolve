@@ -19,8 +19,10 @@ c Rate of change
 
 c The jacobian matrix 
       subroutine jacband (neq, t, y, ml, mu, pd, nrowpd,RP,IP)
-      INTEGER  NEQ, ML, MU, NRPD, ip(*)
-      DOUBLE PRECISION  T, Y(5), PD(4,5), rp(*)
+      INTEGER  NEQ, ML, MU, nrowpd, ip(*)
+      DOUBLE PRECISION  T, Y(5), PD(nrowpd,5), rp(*)
+
+        PD(:,:) = 0.D0
 
         PD(1,1) =  0.D0
         PD(1,2) = -.02D0
@@ -36,6 +38,5 @@ c The jacobian matrix
         PD(3,4) = -0.3D0
         PD(3,5) = 0.D0
 
-        PD(4,:) = 0.D0 
       RETURN
       END
