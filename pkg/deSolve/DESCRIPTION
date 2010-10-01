@@ -1,5 +1,5 @@
 Package: deSolve
-Version: 1.9
+Version: 1.8.1
 Title: General solvers for initial value problems of ordinary differential equations
        (ODE), partial differential equations (PDE), differential algebraic equations (DAE),
        and delay differential equations (DDE). 
