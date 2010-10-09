@@ -31,7 +31,7 @@ setplotpar <- function(nmdots, dots, nv, ask) {
 ## find a variable
 ## =============================================================================
 
-selectvar <- function (which,var) {
+selectvar <- function (which, var, NAallowed = FALSE) {
 
     if (!is.numeric(which)) {
         ln <- length(which)
@@ -39,9 +39,12 @@ selectvar <- function (which,var) {
         Select <- NULL
         for ( i in 1:ln) {
           ss <- which(which[i]==var)
-          if (length(ss) ==0)
+          if (length(ss) ==0 & ! NAallowed) 
             stop("variable ", which[i], " not in var")
-          Select <- c(Select,ss)
+          else if (length(ss) == 0)
+            Select <- c(Select,NA)
+          else
+            Select <- c(Select,ss)
         }
     }
     else {
@@ -119,19 +122,59 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 ### ============================================================================
 ### Plot utilities for the S3 plot method, 0-D, 1-D, 2-D
 ### ============================================================================
+# karline: from version 1.8.2, also possible to plot observations.
 
+plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL, 
+    obspar = list(), ...) {
 
-plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
+    getname <- function (x)
+      if (is.data.frame(x)) names(x) else colnames(x)
 
-    if (is.null(which))
-      which <- 1:(ncol(x)-1)
-    t <- 1     # column with "times"
-    var <- colnames(x)
-    which <- selectvar(which,var)
+    var   <- colnames(x)
+    if (! is.null(obs)) {
+       obsname <- getname(obs) 
+       if (! class(obs) %in% c("data.frame","matrix"))
+         stop ("'obs' should be either a 'data.frame' or a 'matrix'")
+    }
+    Which <- which 
+    if (is.null(Which) & is.null(obs))   # All variables plotted
+      Which <- 1:(ncol(x)-1)
+      
+    else if (is.null(Which)) {           # All common variables in x and obs plotted
+     Which <- which(var %in% obsname)
+     Which <- Which[Which != 1]          # remove first element (x-value)
+     Which <- var[Which]                 # names rather than 
+    } 
 
-    np <- length(which)
+    # check x2: if single instance of "deSolve": put it in a list
+    nother <- 0
+    if ("deSolve" %in% class(x2))
+      x2 <- list(x2)
+    
+    if (is.list(x2)) {
+      nother <- length(x2)
+      for ( i in 1:nother) {
+        if (min(colnames(x2[[i]]) == colnames(x)) == 0)
+          stop(" 'x2' and 'x' are not compatible - colnames not the same")
+        if (min(dim(x2[[i]]) - dim(x) == c(0, 0)) == 0) 
+          stop(" 'x2' and 'x' are not compatible - dimensions not the same")
+      }
+    } 
+    
+    # Position of variables in "x"
+    t  <- 1     # column with "times" 
+    xWhich   <- selectvar(Which,var)
 
-    dots <- list(...)
+    # Position of variables in "obs" (NA = not observed)
+    if (! is.null(obs)) {
+      ObsWhich <- selectvar(var[xWhich], obsname, NAallowed = TRUE)
+      ObsWhich [ ObsWhich > ncol(obs)] <- NA
+    } else 
+      ObsWhich <- rep(NA, length(xWhich))
+
+    np <- length(xWhich)
+
+    dots   <- list(...)
     nmdots <- names(dots)
 
     # number of figures in a row and
@@ -143,22 +186,55 @@ plot.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
         on.exit(devAskNewPage(oask))
     }
 
-
     xxlab <- if (is.null(dots$xlab))  colnames(x)[t]  else dots$xlab
     yylab <- if (is.null(dots$ylab))  ""              else dots$ylab
-    Main <-  if (is.null(dots$main))  colnames(x)[which] else dots$main
+    Main <-  if (is.null(dots$main))  colnames(x)[xWhich] else dots$main
 
-    ## allow individual xlab and ylab (vectorized)
+    ## allow individual xlab and ylab (vectorized) for each figure
     xxlab <- rep(xxlab, length.out = np)
     yylab <- rep(yylab, length.out = np)
-    Main <- rep(Main,length.out=np)
+    Main  <- rep(Main,  length.out=np)
+
+    isylim <- !is.null(dots$ylim)
+    ylim  <- dots$ylim
+    
+    # dots for other series - change
+    if (! is.null(x2)) {
+      dots2 <- list()
+      for ( i in 1:nother) {
+        dd <- list(lty = i+1, col = i+1, bg = i+1)
+        if ( length(dots$lty) == nother+1)
+          dd$lty <- dots$lty[i+1]
+        if ( length(dots$col) == nother+1)
+          dd$col <- dots$col[i+1]
+        if ( length(dots$bg) == nother+1)
+          dd$bg <- dots$bg[i+1]
+        dots2[[i]] <- dd 
+      }  
+    }
 
     for (i in 1:np) {
-        ii <- which[i]
+        ii <- xWhich[i]
+        io <- ObsWhich[i]
+        dots$ylim  <- ylim
+        if (! isylim) {
+          xs <- x[, ii]
+          if (! is.null(x2)) 
+           for (j in 1:nother) 
+             xs <- c(xs,x2[[j]][,ii])
+          if (! is.na(io)) xs <- c(xs,obs[,io])
+            dots$ylim <- range(xs, na.rm = TRUE)
+        }  
         dots$main <- Main[i]
         dots$xlab <- xxlab[i]
         dots$ylab <- yylab[i]
         do.call("plot", c(alist(x[, t], x[, ii]), dots))
+        if (! is.null(x2)) 
+          for (j in 1:nother)
+          do.call("lines", c(alist(x2[[j]][, t], x2[[j]][, ii]), dots2[[j]]))
+        
+        if (! is.na(io)) 
+          do.call("points", c(alist(obs[, 1], obs[, io]), obspar))        
     }
 }
 
@@ -192,8 +268,10 @@ select1dvar <- function (which,var) {
 ### ============================================================================
 
 
-drapecol <- function (A, col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), NAcol = "white")
+drapecol <- function (A, 
+          col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), 
+              NAcol = "white")
 {
     nr <- nrow(A)
     nc <- ncol(A)
