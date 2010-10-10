@@ -210,7 +210,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
     Main  <- if (is.null(dots$main))  varnames[xWhich] else dots$main
     Sub   <- if (is.null(dots$sub))   ""               else dots$sub
     Log   <- if (is.null(dots$log))   ""               else dots$log
-    Type  <- if (is.null(dots$type))  "l"              else dots$type
+    #Type  <- if (is.null(dots$type))  "l"              else dots$type
 
     ## allow individual xlab and ylab (vectorized) for each figure
     xxlab <- rep(xxlab, length.out = np)
@@ -223,32 +223,36 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
     isylim <- !is.null(dots$ylim)
     yylim   <- dots$ylim
 
-    # thpe->ks: variable ylim is extremely simple
+    # thpe->ks: a variable ylim is extremely simple
     # rep works also for lists
     if(!is.list(yylim)) yylim <- list(yylim)
     yylim <- rep(yylim, length.out = np)
     
     if (nx > 1) dotsx2 <- list()
 
-## for each deSolve output (nx) within a plot: col, lty, lwd 
-    Lty <- rep(NULL, nx) 
-    Lwd <- rep(NULL, nx) 
-    Pch <- rep(NULL, nx) 
+## for each deSolve output (nx) within a plot: col, lty, lwd, type
     
-    # ks -> Th: this assumes that there is only one type     
-    if (length(Type) > 1)
-      stop (" the type of all figures should be the same (length of 'type' <=1)")
+    ## ThPe->KS: the following lines were redundant
+    #Lty <- rep(NULL, nx) 
+    #Lwd <- rep(NULL, nx) 
+    #Pch <- rep(NULL, nx) 
+
+    ## solved this an other way round
+    #if (length(Type) > 1)
+    #  stop (" the type of all figures should be the same (length of 'type' <=1)")
     
-    if (Type != "p") {
-      Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
-      Lty <- rep(Lty, length.out = nx)
-      ## thpe: I would prefer lwd=1 as default for all lines
-      Lwd <- if (is.null(dots$lwd))  1:nx  else dots$lwd                               
-      Lwd <- rep(Lwd, length.out = nx)
-    } else {
-      Pch <- if (is.null(dots$pch))  1:nx  else dots$pch
-      Pch <- rep(Pch, length.out = nx)
-    }    
+    Type  <- if (is.null(dots$type)) "l" else dots$type
+    Type <- rep(Type, length.out = nx)
+
+    ## ThPe->KS: "if" removed 
+    ##            because redundant Lty ... is simply overruled by type
+    Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
+    Lty <- rep(Lty, length.out = nx)
+    Lwd <- if (is.null(dots$lwd))  par("lwd")  else dots$lwd                               
+    Lwd <- rep(Lwd, length.out = nx)
+    Pch <- if (is.null(dots$pch))  1:nx  else dots$pch
+    Pch <- rep(Pch, length.out = nx)
+
     Col <- if (is.null(dots$col))  1:nx  else dots$col
     Col <- rep(Col, length.out = nx)
     Bg  <- if (is.null(dots$bg))   1:nx  else dots$bg
@@ -256,48 +260,50 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
 ## for each output variable (plot)
     for (i in 1 : np) {
-        ii <- xWhich[i]     #position in 'x'
-        io <- ObsWhich[i]   #position in 'obs'
-        
-        # plotting parameters for deSolve output 1
-        dots$main <- Main[i]
-        dots$sub  <- Sub[i]
-        dots$log  <- Log[i]
-        dots$xlab <- xxlab[i]
-        dots$ylab <- yylab[i]
-        dots$type <-Type
+      ii <- xWhich[i]     #position in 'x'
+      io <- ObsWhich[i]   #position in 'obs'
+      
+      ## plotting parameters for deSolve output 1
+      dots$main <- Main[i]
+      dots$sub  <- Sub[i]
+      dots$log  <- Log[i]
+      dots$xlab <- xxlab[i]
+      dots$ylab <- yylab[i]
 
-        if (! isylim) {
-          yrange <- range(x[, ii])
-          if (! is.null(x2)) 
-           for (j in 1:nother) 
-             yrange <- range(yrange, x2[[j]][,ii], na.rm = TRUE)
-          if (! is.na(io)) yrange <- range(yrange, obs[,io], na.rm = TRUE)
-            dots$ylim <- yrange
-        } else {
-          dots$ylim  <- yylim[[i]]  # thpe added: yy and [[i]]        
-        } 
-        dots$lty <- Lty[1]
-        dots$lwd <- Lwd[1]
-        dots$pch <- Pch[1]
-        dots$col <- Col[1]
-        dots$bg  <- Bg[1]
-        do.call("plot", c(alist(x[, t], x[, ii]), dots))
-        
-        # if other deSolve outputs
+      if (! isylim) {
+        yrange <- range(x[, ii])
         if (! is.null(x2)) 
-          for (j in 2:nx) {
-           dotsx2$lty <- Lty[j]
-           dotsx2$lwd <- Lwd[j]
-           dotsx2$pch <- Pch[j]
-           dotsx2$col <- Col[j]
-           dotsx2$bg  <- Bg[j]
-          
-           do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), dotsx2))
+         for (j in 1:nother) 
+           yrange <- range(yrange, x2[[j]][,ii], na.rm = TRUE)
+        if (! is.na(io)) yrange <- range(yrange, obs[,io], na.rm = TRUE)
+          dots$ylim <- yrange
+      } else {
+        dots$ylim  <- yylim[[i]]
+      } 
+      dots$lty  <- Lty[1]
+      dots$lwd  <- Lwd[1]
+      dots$pch  <- Pch[1]
+      dots$col  <- Col[1]
+      dots$bg   <- Bg[1]
+      dots$type <- Type[1]
+      
+      do.call("plot", c(alist(x[, t], x[, ii]), dots))
+      
+      # if other deSolve outputs
+      if (! is.null(x2)) 
+        for (j in 2:nx) {
+          dotsx2$lty  <- Lty[j]
+          dotsx2$lwd  <- Lwd[j]
+          dotsx2$pch  <- Pch[j]
+          dotsx2$col  <- Col[j]
+          dotsx2$bg   <- Bg[j]
+          dotsx2$type <- Type[j]
+        
+          do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), dotsx2))
         }
-        # if observed variables
-        if (! is.na(io)) 
-          do.call("points", c(alist(obs[, 1], obs[, io]), obspar))        
+      # if observed variables
+      if (! is.na(io)) 
+        do.call("points", c(alist(obs[, 1], obs[, io]), obspar))        
     }
 }
 
