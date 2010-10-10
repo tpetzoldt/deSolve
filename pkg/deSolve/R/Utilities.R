@@ -265,15 +265,16 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
         dots$log  <- Log[i]
         dots$xlab <- xxlab[i]
         dots$ylab <- yylab[i]
-        dots$ylim  <- yylim[[i]]  # thpe added: yy and [[i]]
         if (! isylim) {
-          xs <- x[, ii]
+          yrange <- range(x[, ii])
           if (! is.null(x2)) 
            for (j in 1:nother) 
-             xs <- c(xs,x2[[j]][,ii])
-          if (! is.na(io)) xs <- c(xs,obs[,io])
-            dots$ylim <- range(xs, na.rm = TRUE)
-        }  
+             yrange <- range(yrange, x2[[j]][,ii], na.rm = TRUE)
+          if (! is.na(io)) yrange <- range(yrange, obs[,io], na.rm = TRUE)
+            dots$ylim <- yrange
+        } else {
+          dots$ylim  <- yylim[[i]]  # thpe added: yy and [[i]]        
+        } 
         dots$lty <- Lty[1]
         dots$lwd <- Lwd[1]
         dots$pch <- Pch[1]
