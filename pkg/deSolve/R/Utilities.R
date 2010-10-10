@@ -265,6 +265,8 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
         dots$log  <- Log[i]
         dots$xlab <- xxlab[i]
         dots$ylab <- yylab[i]
+        dots$type <-Type
+
         if (! isylim) {
           yrange <- range(x[, ii])
           if (! is.null(x2)) 
