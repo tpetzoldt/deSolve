@@ -68,8 +68,8 @@ print.deSolve <- function(x, ...)
 
 hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     t     <- 1     # column with "times"
-    var   <- colnames(x)
-    which <- selectvar(which,var)
+    varnames   <- colnames(x)
+    which <- selectvar(which,varnames)
 
     np <- length(which)
 
@@ -88,8 +88,8 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     }
     Main <- is.null(dots$main)
 
-    xxlab <- if (is.null(dots$xlab))  colnames(x)[t]  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""              else dots$ylab
+    xxlab <- if (is.null(dots$xlab))  varnames[t]  else dots$xlab
+    yylab <- if (is.null(dots$ylab))  ""           else dots$ylab
 
     ## allow individual xlab and ylab (vectorized)
     xxlab <- rep(xxlab, length.out = np)
@@ -97,7 +97,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 
     for (i in which) {
         if (Main)
-            dots$main <- colnames(x)[i]
+            dots$main <- varnames[i]
             dots$xlab <- xxlab[i-1]
             dots$ylab <- yylab[i-1]
         do.call("hist", c(alist(x[, i]), dots))
@@ -122,58 +122,75 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 ### ============================================================================
 ### Plot utilities for the S3 plot method, 0-D, 1-D, 2-D
 ### ============================================================================
-# karline: from version 1.8.2, also possible to plot observations.
+# karline: from version 1.9, also possible to plot observations.
 
 plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL, 
     obspar = list(), ...) {
 
+## internal function 
+    # ks->thpe  not sure if needed - could use colnames also for data.frames
     getname <- function (x)
       if (is.data.frame(x)) names(x) else colnames(x)
 
-    var   <- colnames(x)
+## check obs
     if (! is.null(obs)) {
        obsname <- getname(obs) 
-       if (! class(obs) %in% c("data.frame","matrix"))
+       if (! class(obs) %in% c("data.frame", "matrix"))
          stop ("'obs' should be either a 'data.frame' or a 'matrix'")
     }
-    Which <- which 
+
+## variables to be plotted
+    varnames <- colnames(x)
+    Which   <- which 
+    
     if (is.null(Which) & is.null(obs))   # All variables plotted
-      Which <- 1:(ncol(x)-1)
+      Which <- 1 : (ncol(x)-1)
       
     else if (is.null(Which)) {           # All common variables in x and obs plotted
-     Which <- which(var %in% obsname)
+     Which <- which(varnames %in% obsname)
      Which <- Which[Which != 1]          # remove first element (x-value)
-     Which <- var[Which]                 # names rather than 
+     Which <- varnames[Which]             # names rather than numbers
     } 
 
-    # check x2: if single instance of "deSolve": put it in a list
-    nother <- 0
+## check x2    
+    nother <- 0                          # number of other deSolve instances
+
+    # if single instance of "deSolve": put it in a list
     if ("deSolve" %in% class(x2))
       x2 <- list(x2)
     
     if (is.list(x2)) {
       nother <- length(x2)
-      for ( i in 1:nother) {
-        if (min(colnames(x2[[i]]) == colnames(x)) == 0)
-          stop(" 'x2' and 'x' are not compatible - colnames not the same")
-        if (min(dim(x2[[i]]) - dim(x) == c(0, 0)) == 0) 
+      for ( i in 1:nother) {             # check compatibility of x2/x inputs
+       if (! "deSolve" %in% class(x2[[i]]))
+         stop ("elements in 'x2' should be of class 'deSolve'")
+        
+        # ks->thpe to decide: should "times" be same, or allowed to differ? 
+        # (in latter case: need to check xlim, same as we now check ylim)
+        
+        if (min(dim(x2[[i]]) - dim(x) == c(0, 0)) == 0)   
           stop(" 'x2' and 'x' are not compatible - dimensions not the same")
+        if (min(colnames(x2[[i]]) == varnames) == 0)
+          stop(" 'x2' and 'x' are not compatible - colnames not the same")
       }
-    } 
+    } else if (! is.null(x2))
+      stop ("'x2' should contain objects of class 'deSolve'")
+    nx <- nother + 1
     
-    # Position of variables in "x"
+## Position of variables to be plotted in "x" and "x2"
     t  <- 1     # column with "times" 
-    xWhich   <- selectvar(Which,var)
+    xWhich   <- selectvar(Which,varnames)
+    np <- length(xWhich)
 
-    # Position of variables in "obs" (NA = not observed)
+## Position of variables in "obs" (NA = not observed)
     if (! is.null(obs)) {
-      ObsWhich <- selectvar(var[xWhich], obsname, NAallowed = TRUE)
-      ObsWhich [ ObsWhich > ncol(obs)] <- NA
+      ObsWhich <- selectvar(varnames[xWhich], obsname, NAallowed = TRUE)
+      ObsWhich [ ObsWhich > ncol(obs)] <- NA    # Ks->ks check why this was necessary...
     } else 
       ObsWhich <- rep(NA, length(xWhich))
 
-    np <- length(xWhich)
-
+## plotting parameters :
+## for each plot (1:np): xlim, ylim, log, main, sub, xlab, ylab, ann,
     dots   <- list(...)
     nmdots <- names(dots)
 
@@ -182,40 +199,64 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
     ask <- setplotpar(nmdots, dots, np, ask)
     if (ask) {
-        oask <- devAskNewPage(TRUE)
-        on.exit(devAskNewPage(oask))
+      oask <- devAskNewPage(TRUE)
+      on.exit(devAskNewPage(oask))
     }
 
-    xxlab <- if (is.null(dots$xlab))  colnames(x)[t]  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""              else dots$ylab
-    Main <-  if (is.null(dots$main))  colnames(x)[xWhich] else dots$main
+    xxlab <- if (is.null(dots$xlab))  varnames[t]      else dots$xlab
+    yylab <- if (is.null(dots$ylab))  ""               else dots$ylab
+    Main  <- if (is.null(dots$main))  varnames[xWhich] else dots$main
+    Sub   <- if (is.null(dots$sub))   ""               else dots$sub
+    Log   <- if (is.null(dots$log))   ""               else dots$log
+    Type  <- if (is.null(dots$type))  "l"              else dots$type
 
     ## allow individual xlab and ylab (vectorized) for each figure
     xxlab <- rep(xxlab, length.out = np)
     yylab <- rep(yylab, length.out = np)
-    Main  <- rep(Main,  length.out=np)
+    Main  <- rep(Main,  length.out = np)
+    Sub   <- rep(Sub,   length.out = np)
+    Log   <- rep(Log,   length.out = np)
 
+    # for now only one ylim, only one xlim...
     isylim <- !is.null(dots$ylim)
-    ylim  <- dots$ylim
+    ylim   <- dots$ylim
     
-    # dots for other series - change
-    if (! is.null(x2)) {
-      dots2 <- list()
-      for ( i in 1:nother) {
-        dd <- list(lty = i+1, col = i+1, bg = i+1)
-        if ( length(dots$lty) == nother+1)
-          dd$lty <- dots$lty[i+1]
-        if ( length(dots$col) == nother+1)
-          dd$col <- dots$col[i+1]
-        if ( length(dots$bg) == nother+1)
-          dd$bg <- dots$bg[i+1]
-        dots2[[i]] <- dd 
-      }  
-    }
+    if (nx > 1) dotsx2 <- list()
 
-    for (i in 1:np) {
-        ii <- xWhich[i]
-        io <- ObsWhich[i]
+## for each deSolve output (nx) within a plot: col, lty, lwd 
+    Lty <- rep(NULL, nx) 
+    Lwd <- rep(NULL, nx) 
+    Pch <- rep(NULL, nx) 
+    
+    # ks -> Th: this assumes that there is only one type     
+    if (length(Type) > 1)
+      stop (" the type of all figures should be the same (length of 'type' <=1)")
+    
+    if (Type != "p") {
+      Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
+      Lty <- rep(Lty, length.out = nx)
+      Lwd <- if (is.null(dots$lwd))  1:nx  else dots$lwd                               
+      Lwd <- rep(Lwd, length.out = nx)
+    } else {
+      Pch <- if (is.null(dots$pch))  1:nx  else dots$pch
+      Pch <- rep(Pch, length.out = nx)
+    }    
+    Col <- if (is.null(dots$col))  1:nx  else dots$col
+    Col <- rep(Col, length.out = nx)
+    Bg  <- if (is.null(dots$bg))   1:nx  else dots$bg
+    Bg  <- rep(Bg, length.out = nx)
+
+## for each output variable (plot)
+    for (i in 1 : np) {
+        ii <- xWhich[i]     #position in 'x'
+        io <- ObsWhich[i]   #position in 'obs'
+        
+        # plotting parameters for deSolve output 1
+        dots$main <- Main[i]
+        dots$sub  <- Sub[i]
+        dots$log  <- Log[i]
+        dots$xlab <- xxlab[i]
+        dots$ylab <- yylab[i]
         dots$ylim  <- ylim
         if (! isylim) {
           xs <- x[, ii]
@@ -225,14 +266,25 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
           if (! is.na(io)) xs <- c(xs,obs[,io])
             dots$ylim <- range(xs, na.rm = TRUE)
         }  
-        dots$main <- Main[i]
-        dots$xlab <- xxlab[i]
-        dots$ylab <- yylab[i]
+        dots$lty <- Lty[1]
+        dots$lwd <- Lwd[1]
+        dots$pch <- Pch[1]
+        dots$col <- Col[1]
+        dots$bg  <- Bg[1]
         do.call("plot", c(alist(x[, t], x[, ii]), dots))
-        if (! is.null(x2)) 
-          for (j in 1:nother)
-          do.call("lines", c(alist(x2[[j]][, t], x2[[j]][, ii]), dots2[[j]]))
         
+        # if other deSolve outputs
+        if (! is.null(x2)) 
+          for (j in 2:nx) {
+           dotsx2$lty <- Lty[j]
+           dotsx2$lwd <- Lwd[j]
+           dotsx2$pch <- Pch[j]
+           dotsx2$col <- Col[j]
+           dotsx2$bg  <- Bg[j]
+          
+           do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), dotsx2))
+        }
+        # if observed variables
         if (! is.na(io)) 
           do.call("points", c(alist(obs[, 1], obs[, io]), obspar))        
     }
@@ -303,10 +355,10 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
     if (is.null(which))
       which <- 1:nspec
 
-    var <-  if (! is.null(attributes(x)$ynames))
+    varnames <-  if (! is.null(attributes(x)$ynames))
       attributes(x)$ynames else 1:nspec
 
-    which <- select1dvar(which,var)
+    which <- select1dvar(which,varnames)
 
     np <- length(which)
 
@@ -325,7 +377,7 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  var  else dots$ylab
+    yylab <- if (is.null(dots$ylab))  varnames  else dots$ylab
 
     ## allow individual xlab and ylab (vectorized)
     xxlab <- rep(xxlab, length.out = np)
@@ -381,10 +433,10 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
     if (is.null(which))
       which <- 1:nspec
 
-    var <-  if (! is.null(attributes(x)$ynames))
+    varnames <-  if (! is.null(attributes(x)$ynames))
       attributes(x)$ynames else 1:nspec
 
-    which <- select1dvar(which,var)
+    which <- select1dvar(which,varnames)
 
     np <- length(which)
 
@@ -400,7 +452,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
         on.exit(devAskNewPage(oask))
     }
 
-    Main <-  if (is.null(dots$main)) var else rep(dots$main, length.out =np)
+    Main <-  if (is.null(dots$main)) varnames else rep(dots$main, length.out =np)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
@@ -469,10 +521,10 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
     if (is.null(which))
       which <- 1:nspec
 
-    var <-  if (! is.null(attributes(x)$ynames))
+    varnames <-  if (! is.null(attributes(x)$ynames))
       attributes(x)$ynames else 1:nspec
 
-    which <- select1dvar(which,var)
+    which <- select1dvar(which,varnames)
 
     np <- length(which)
 
@@ -491,9 +543,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
       on.exit(devAskNewPage(oask))
     }
 
-#    Main <-  if (is.null(dots$main)) var else rep(dots$main, length.out =np)
+#    Main <-  if (is.null(dots$main)) varnames else rep(dots$main, length.out =np)
     N <- np * nrow(x)
-    Main <-  if (is.null(dots$main)) rep(var,length.out=N) else rep(dots$main,
+    Main <-  if (is.null(dots$main)) rep(varnames,length.out=N) else rep(dots$main,
       length.out =N)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))

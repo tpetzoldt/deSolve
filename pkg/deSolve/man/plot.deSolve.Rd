@@ -133,7 +133,8 @@ plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
 
 ## add second output 
 plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
-  xlab = "Time (d)", main = "Time Series", x2 = out2,  col = c("red","blue")) 
+  xlab = "Time (d)", main = "Time Series", 
+  x2 = out2, col = c("red", "blue")) 
 
 
 ## Set user-defined mfrow

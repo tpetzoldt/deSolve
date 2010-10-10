@@ -6,8 +6,13 @@ Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 Karline + Thomas: add dopri 8(5,3) - Fortran??
 
 
+
+
 Ideas/wishes (ThPe/karline): 
 ======
+extend diagnostics: ?
+  to return number of timesteps, number of ftion evaluations, etc...
+
 
 
 Karline, Thomas: timesteps should return NA if called outside of ODE
@@ -19,6 +24,15 @@ NaN warnings and termination of R
 
 Delay differential equations in compiled code 
 - KS: not at all easy , and who will use that?! 
+
+Changes version 1.9
+==========================
+plot.deSolve to plot more than one output in same figures, + add observations
+
+Changes version 1.8.1:
+==========================
+fixed compiler warnings using valgrind (Thomas and Karline)
+fixed compiler warning C-code (Woody)
 
 Changes version 1.8 Thomas:
 ==========================
