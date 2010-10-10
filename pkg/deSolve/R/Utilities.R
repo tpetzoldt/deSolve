@@ -129,6 +129,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
 ## internal function 
     # ks->thpe  not sure if needed - could use colnames also for data.frames
+    # thpe -> ks: yes, colnames calls names for data.frames, see helpfile
     getname <- function (x)
       if (is.data.frame(x)) names(x) else colnames(x)
 
@@ -167,6 +168,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
         
         # ks->thpe to decide: should "times" be same, or allowed to differ? 
         # (in latter case: need to check xlim, same as we now check ylim)
+        # thpe->ks: should be variable in the future, but's ok for now.
         
         if (min(dim(x2[[i]]) - dim(x) == c(0, 0)) == 0)   
           stop(" 'x2' and 'x' are not compatible - dimensions not the same")
@@ -219,7 +221,12 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
     # for now only one ylim, only one xlim...
     isylim <- !is.null(dots$ylim)
-    ylim   <- dots$ylim
+    yylim   <- dots$ylim
+
+    # thpe->ks: variable ylim is extremely simple
+    # rep works also for lists
+    if(!is.list(yylim)) yylim <- list(yylim)
+    yylim <- rep(yylim, length.out = np)
     
     if (nx > 1) dotsx2 <- list()
 
@@ -235,6 +242,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
     if (Type != "p") {
       Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
       Lty <- rep(Lty, length.out = nx)
+      ## thpe: I would prefer lwd=1 as default for all lines
       Lwd <- if (is.null(dots$lwd))  1:nx  else dots$lwd                               
       Lwd <- rep(Lwd, length.out = nx)
     } else {
@@ -257,7 +265,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
         dots$log  <- Log[i]
         dots$xlab <- xxlab[i]
         dots$ylab <- yylab[i]
-        dots$ylim  <- ylim
+        dots$ylim  <- yylim[[i]]  # thpe added: yy and [[i]]
         if (! isylim) {
           xs <- x[, ii]
           if (! is.null(x2)) 
