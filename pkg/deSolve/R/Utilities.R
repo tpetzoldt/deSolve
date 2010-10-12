@@ -124,18 +124,12 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 ### ============================================================================
 # karline: from version 1.9, also possible to plot observations.
 
-plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL, 
-    obspar = list(), ...) {
-
-## internal function 
-    # ks->thpe  not sure if needed - could use colnames also for data.frames
-    # thpe -> ks: yes, colnames calls names for data.frames, see helpfile
-    getname <- function (x)
-      if (is.data.frame(x)) names(x) else colnames(x)
+plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL, 
+    obspar = list()) {
 
 ## check obs
     if (! is.null(obs)) {
-       obsname <- getname(obs) 
+       obsname <- colnames(obs) 
        if (! class(obs) %in% c("data.frame", "matrix"))
          stop ("'obs' should be either a 'data.frame' or a 'matrix'")
     }
@@ -153,16 +147,42 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
      Which <- varnames[Which]             # names rather than numbers
     } 
 
-## check x2    
-    nother <- 0                          # number of other deSolve instances
+## Position of variables to be plotted in "x" and "x2"
+    t  <- 1     # column with "times" 
+    xWhich   <- selectvar(Which,varnames)
+    np <- length(xWhich)
 
-    # if single instance of "deSolve": put it in a list
-    if ("deSolve" %in% class(x2))
-      x2 <- list(x2)
+    ldots   <- list(...)
+    ndots <- names(ldots)
+
+    # number of figures in a row and
+    # interactively wait if there are remaining figures
+
+    ask <- setplotpar(ndots, ldots, np, ask)
+    if (ask) {
+      oask <- devAskNewPage(TRUE)
+      on.exit(devAskNewPage(oask))
+    }
+
+## create two lists: x2: other deSolve objects, dots: plotting parameters
+    x2 <- list()
+    dots <- list()
+    nd <- 0
+    nother <- 0                          # number of other steady1D instances
+
+    if (length(ldots) > 0) 
+     for ( i in 1:length(ldots))
+      if ("deSolve" %in% class(ldots[[i]])){
+        x2[[nother <- nother+1]] <- ldots[[i]]  
+        names(x2)[nother] <- ndots[i]
+      } else if (! is.null(ldots[[i]])){
+        dots[[nd <- nd+1]] <- ldots[[i]]
+        names(dots)[nd] <- ndots[i]
+      }
+    nmdots <- names(dots)
     
-    if (is.list(x2)) {
-      nother <- length(x2)
-      for ( i in 1:nother) {             # check compatibility of x2/x inputs
+    if (nother > 0) {
+     for ( i in 1:nother) {             # check compatibility of x2/x inputs
        if (! "deSolve" %in% class(x2[[i]]))
          stop ("elements in 'x2' should be of class 'deSolve'")
         
@@ -175,14 +195,10 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
         if (min(colnames(x2[[i]]) == varnames) == 0)
           stop(" 'x2' and 'x' are not compatible - colnames not the same")
       }
-    } else if (! is.null(x2))
-      stop ("'x2' should contain objects of class 'deSolve'")
+    } 
+    
     nx <- nother + 1
     
-## Position of variables to be plotted in "x" and "x2"
-    t  <- 1     # column with "times" 
-    xWhich   <- selectvar(Which,varnames)
-    np <- length(xWhich)
 
 ## Position of variables in "obs" (NA = not observed)
     if (! is.null(obs)) {
@@ -193,17 +209,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
 ## plotting parameters :
 ## for each plot (1:np): xlim, ylim, log, main, sub, xlab, ylab, ann,
-    dots   <- list(...)
-    nmdots <- names(dots)
 
-    # number of figures in a row and
-    # interactively wait if there are remaining figures
-
-    ask <- setplotpar(nmdots, dots, np, ask)
-    if (ask) {
-      oask <- devAskNewPage(TRUE)
-      on.exit(devAskNewPage(oask))
-    }
 
     xxlab <- if (is.null(dots$xlab))  varnames[t]      else dots$xlab
     yylab <- if (is.null(dots$ylab))  ""               else dots$ylab
@@ -232,20 +238,9 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
 ## for each deSolve output (nx) within a plot: col, lty, lwd, type
     
-    ## ThPe->KS: the following lines were redundant
-    #Lty <- rep(NULL, nx) 
-    #Lwd <- rep(NULL, nx) 
-    #Pch <- rep(NULL, nx) 
-
-    ## solved this an other way round
-    #if (length(Type) > 1)
-    #  stop (" the type of all figures should be the same (length of 'type' <=1)")
-    
     Type  <- if (is.null(dots$type)) "l" else dots$type
     Type <- rep(Type, length.out = nx)
 
-    ## ThPe->KS: "if" removed 
-    ##            because redundant Lty ... is simply overruled by type
     Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
     Lty <- rep(Lty, length.out = nx)
     Lwd <- if (is.null(dots$lwd))  par("lwd")  else dots$lwd                               
@@ -272,7 +267,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
 
       if (! isylim) {
         yrange <- range(x[, ii])
-        if (! is.null(x2)) 
+        if (nother>0) 
          for (j in 1:nother) 
            yrange <- range(yrange, x2[[j]][,ii], na.rm = TRUE)
         if (! is.na(io)) yrange <- range(yrange, obs[,io], na.rm = TRUE)
@@ -290,7 +285,7 @@ plot.deSolve <- function (x, which = NULL, ask = NULL, x2 = NULL, obs = NULL,
       do.call("plot", c(alist(x[, t], x[, ii]), dots))
       
       # if other deSolve outputs
-      if (! is.null(x2)) 
+      if (nother>0) 
         for (j in 2:nx) {
           dotsx2$lty  <- Lty[j]
           dotsx2$lwd  <- Lwd[j]

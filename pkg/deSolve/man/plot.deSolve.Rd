@@ -10,8 +10,8 @@
 Plot the output of numeric integration routines.
 }
 \usage{
-\method{plot}{deSolve}(x, which = NULL, ask = NULL, x2 = NULL, obs = NULL, 
-  obspar= list(), ...)
+\method{plot}{deSolve}(x, ..., which = NULL, ask = NULL, obs = NULL, 
+  obspar= list())
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
   add.contour = FALSE, grid = NULL, method="image", ...)  
@@ -21,7 +21,12 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
 
 \arguments{
   \item{x }{an object of class \code{deSolve}, as returned by the
-    integrators, and to be plotted.}
+    integrators, and to be plotted.
+    
+    
+    For \code{plot.deSolve}, it is allowed to pass several objects of class
+    \code{deSolve} after \code{x} (unnamed) - see second example.
+    }
 
   \item{which }{the name(s) or the index to the variables that should be
     plotted.  Default = all variables, except \code{time}. }
@@ -45,13 +50,6 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   \item{xyswap }{ if \code{TRUE}, then x-and y-values are swapped and the 
     y-axis is from top to bottom. Useful for drawing vertical profiles.}
 
-  \item{x2 }{a second object of class \code{deSolve}, or a list of objects 
-    of class \code{deSolve}, as returned by the
-    integrators, and to be plotted on the same graphs as \code{x}.
-    \code{x} and \code{x2} have to be compatible, i.e. the column names should
-    be the same and they should have same number of rows.
-    }
-
   \item{obs }{a \code{data.frame} or \code{matrix} with "observed data" that 
     will be added as \code{points} to the plots. 
     The first column of \code{obs} should contain the \code{time}-variable. 
@@ -61,8 +59,19 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   \item{obspar }{additional graphics arguments passed to \code{points}, for 
     plotting the observed data
   }
-  \item{\dots}{additional graphics arguments passed to
-    \code{\link{plot.default}}, \code{\link{image}} or \code{\link{hist}}}
+  \item{\dots}{additional arguments.
+  
+    The graphical arguments are passed to
+    \code{\link{plot.default}}, \code{\link{image}} or \code{\link{hist}} 
+
+    For \code{plot.deSolve}, the dots may contain other objects of class 
+    \code{deSolve}, as returned by the integrators, and 
+    to be plotted on the same graphs as \code{x}  - see second example.
+    In this case, \code{x} and and these other objects should be compatible, 
+    i.e. the names should be the same and they should have same number of rows.
+    
+    For \code{plot.deSolve}, the arguments after \ldots must be matched exactly.     
+  } 
 }
 
 \details{
@@ -98,7 +107,7 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
 }
 \examples{
 ## =======================================================================
-## A Predator-Prey model with 4 species in matrix formulation
+## Example 1. A Predator-Prey model with 4 species in matrix formulation
 ## =======================================================================
 
 LVmatrix <- function(t, n, parms) {
@@ -120,22 +129,12 @@ y     <- c(prey1 = 1, prey2 = 1, pred1 = 2, pred2 = 2)
 
 out <- ode(y, times, LVmatrix, parms)
 
-parms2 <- parms
-parms2$r[1] <- 0.2
-out2 <- ode(y, times, LVmatrix, parms2)
-
 ## Basic line plot
 plot(out, type = "l")
 
 ## User-specified axis labels
 plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", main = "Time Series") 
-
-## add second output 
-plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
-  xlab = "Time (d)", main = "Time Series", 
-  x2 = out2, col = c("red", "blue")) 
-
 
 ## Set user-defined mfrow
 pm <- par (mfrow = c(2, 2))
@@ -150,6 +149,28 @@ plot(out[,"prey2"], out[,"pred2"], xlab = "prey2",
 
 ## restore graphics parameters
 par ("mfrow" = pm)
+
+
+## =======================================================================
+## Example 2. Add second and third output, and observations
+## =======================================================================
+
+# New runs with different parameter settings
+parms2      <- parms
+parms2$r[1] <- 0.2
+out2 <- ode(y, times, LVmatrix, parms2)
+
+# New runs with different parameter settings
+parms3      <- parms
+parms3$r[1] <- 0.05
+out3 <- ode(y, times, LVmatrix, parms3)
+
+# plot all three outputs
+plot(out, out2, out3, type = "l", 
+  ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+  xlab = "Time (d)", main = "Time Series", 
+  col = c("red", "blue", "darkred")) 
+
 
 ## 'observed' data
 obs <- matrix (ncol = 3, 

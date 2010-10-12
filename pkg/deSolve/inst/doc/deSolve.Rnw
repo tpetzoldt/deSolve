@@ -1005,6 +1005,92 @@ plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 \end{figure}
 
 \clearpage
+\section{Plotting deSolve Objects}
+There are S3 \code{plot} and \code{image} methods for plotting 0-D (plot), and
+1-D and 2-D model output (image) as 
+generated with \code{ode}, \code{ode.1D}, \code{ode.2D}.
+
+How to use it and examples can be found by typing \code{?plot.deSolve}.
+
+\subsection{Plotting Multiple Scenario's}
+HERE SOME TEXT!
+
+We implement the simple combustion model, which can be found on 
+\url{http://www.scholarpedia.org/article/Stiff_systems}:
+\[
+y' = y^2 * (1-y)
+\]
+
+The model is run with 4 different values of the initial conditions:
+$y = 0.01, 0.02, 0.03, 0.04$ and written to \code{deSolve} objects \code{out}, 
+\code{out2}, \code{out3}, \code{out4}. 
+<<>>=
+require(deSolve)
+
+combustion <- function (t, y, parms)
+  list(y^2 * (1-y) )
+@
+<<>>=
+yini  <- 0.01
+times <- 0 : 200
+@
+<<>>=
+out  <- ode(times = times, y = yini,   parms = 0, func = combustion)
+out2 <- ode(times = times, y = yini*2, parms = 0, func = combustion)
+out3 <- ode(times = times, y = yini*3, parms = 0, func = combustion)
+out4 <- ode(times = times, y = yini*4, parms = 0, func = combustion)
+@
+The different scenarios are plotted at once, and a suitable legend written.
+<<label=plotdeSolve,include=FALSE>>=
+plot(out, out2, out3, out4, main = "combustion")
+legend("bottomright", lty = 1:4, col = 1:4, legend = 1:4, title = "yini*i")
+@
+\setkeys{Gin}{width=\textwidth}
+\begin{figure}
+\begin{center}
+<<label=plotdeSolve,fig=TRUE,echo=FALSE,width=8,height=4>>=
+<<plotdeSolve>>
+@
+\end{center}
+\caption{Plotting 4 outputs in one figure}
+\label{fig:plotdeSolve}
+\end{figure}
+
+\subsection{Plotting Output with Observations}
+<<>>=
+obs <- subset (ccl4data, animal == "A", c(time, ChamberConc))
+names(obs) <- c("time", "CP")
+parms <- c(0.182, 4.0, 4.0, 0.08, 0.04, 0.74, 0.05, 0.15, 0.32, 16.17, 
+            281.48, 13.3, 16.17, 5.487, 153.8, 0.04321671, 
+            0.40272550, 951.46, 0.02, 1.0,  3.80000000)
+yini <- c(AI = 21, AAM = 0, AT = 0, AF = 0, AL = 0, CLT = 0, AM = 0)
+
+out <- ccl4model (times = seq(0, 6, by = 0.05), y = yini, parms = parms)
+
+par2 <- parms
+par2[1] <- 0.1
+out2 <- ccl4model (times = seq(0, 6, by = 0.05), y = yini, parms = par2)
+
+@
+<<label=plotobs,include=FALSE>>=
+plot(out, out2, which = c("AI","MASS","CP"))
+legend("topright", lty = 1:2, col = 1:2, legend = c("p1", "p2"))
+plot(out, out2, col = c("blue", "red"), lwd = 2, 
+     obs = obs, obspar = list(pch = 18, col = "green", cex = 1.2), 
+     mfrow = NULL)
+@
+\setkeys{Gin}{width=\textwidth}
+\begin{figure}
+\begin{center}
+<<label=plotobs,fig=TRUE,echo=FALSE>>=
+<<plotobs>>
+@
+\end{center}
+\caption{Plotting output and obs in one figure}
+\label{fig:plotobs}
+\end{figure}
+
+\clearpage
 \section{Troubleshooting}
 
 \subsection{Avoiding numerical errors}
