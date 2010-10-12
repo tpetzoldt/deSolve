@@ -1,5 +1,5 @@
 \name{ode.2D}
-\alias{ode.2D}
+\alias{ode.2D}                                             
 
 \title{Solver for 2-Dimensional Ordinary Differential Equations}
 

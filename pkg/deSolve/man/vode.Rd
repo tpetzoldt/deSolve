@@ -1,5 +1,5 @@
 \name{vode}
-\alias{vode}
+\alias{vode}                                   
 
 \title{Solver for Ordinary Differential Equations (ODE)}
 

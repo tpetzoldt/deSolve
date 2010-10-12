@@ -213,3 +213,4 @@ void rk_implicit( double * alfa,  // neq*stage * neq*stage
   /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
 }
+ 

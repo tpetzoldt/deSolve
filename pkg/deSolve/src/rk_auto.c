@@ -217,3 +217,4 @@ void rk_auto(
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_rej = nreject;
   *_it_tot = it_tot; *_dt = dtnew; *_errold = errold;
 }
+ 

@@ -1,5 +1,5 @@
 \name{daspk}
-\alias{daspk}
+\alias{daspk}                                                   
 \title{Solver for Differential Algebraic Equations (DAE)}
 \description{
   Solves either:
