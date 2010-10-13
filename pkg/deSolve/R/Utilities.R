@@ -1,6 +1,64 @@
 ### ============================================================================
+### ============================================================================
+### S3 methods
+### ============================================================================
+### ============================================================================
+
+
+### ============================================================================
 ### first some common functions
 ### ============================================================================
+
+## =============================================================================
+## function for checking and expanding arguments in dots (...) with default
+## =============================================================================
+
+    expanddots <- function (dots, default, np) {
+      xxlab <- if (is.null(dots)) default else dots
+      rep(xxlab, length.out = np)
+    }
+
+## =============================================================================
+## function for expanding arguments in dots  (...)
+## =============================================================================
+# ks->ThPe: works but not if there is somewhere a "NULL", e.g. as for las in
+# dots <- list(par = TRUE, lty =1:2, lwd = 2, las=c(NULL,1,2))
+# ddots <- setdots(dots,3) 
+# null in las will be ignored...
+
+setdots <- function (dots, np) {
+  dd <- list()
+  if (length(dots) == 0) return(dd)
+  id <- 0 
+  for (i in 1: length(dots)) {
+   if (! is.null(dots[[i]]) & ! is.function(dots[[i]])) {
+    dd[[id<-id+1]] <- rep(dots[[i]], length = np)
+    names(dd)[id] <- names(dots)[i]
+   } else if(is.function(dots[[i]])) {
+    dd[[id<-id+1]] <- dots[[i]]
+    names(dd)[id] <- names(dots)[i]
+   } 
+  }  
+  return(dd)
+} 
+## =============================================================================
+## function for extracting element ii from dots  (...)
+## =============================================================================
+
+extractdots <- function (dots, ii) {
+
+  Dots <- list()
+  if (length(dots) == 0) return(Dots)
+  for (i in 1:length(dots))
+   if (! is.null(dots[[i]][ii])& ! is.function(dots[[i]])) {
+    Dots[i] <- dots[[i]][ii]
+    names(Dots)[i] <- names(dots)[i]   
+   } else if (is.function(dots[[i]])) {
+    Dots[i] <- dots[[i]]
+    names(Dots)[i] <- names(dots)[i]   
+   }
+  Dots
+}    
 
 ## =============================================================================
 ## Set the mfrow parameters and whether to "ask" for opening a new device
@@ -58,18 +116,21 @@ selectvar <- function (which, var, NAallowed = FALSE) {
 }
 
 ### ============================================================================
-### S3 methods
+### print a deSolve object
 ### ============================================================================
 
 print.deSolve <- function(x, ...)
   print(as.data.frame(x), ... )
 
 ### ============================================================================
+### Create a histogram for a list of variables
+### ============================================================================
 
 hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
+   
     t     <- 1     # column with "times"
-    varnames   <- colnames(x)
-    which <- selectvar(which,varnames)
+    varnames <- colnames(x)
+    which    <- selectvar(which, varnames)
 
     np <- length(which)
 
@@ -86,20 +147,18 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
         oask <- devAskNewPage(TRUE)
         on.exit(devAskNewPage(oask))
     }
-    Main <- is.null(dots$main)
-
-    xxlab <- if (is.null(dots$xlab))  varnames[t]  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""           else dots$ylab
-
-    ## allow individual xlab and ylab (vectorized)
-    xxlab <- rep(xxlab, length.out = np)
-    yylab <- rep(yylab, length.out = np)
-
-    for (i in which) {
-        if (Main)
-            dots$main <- varnames[i]
-            dots$xlab <- xxlab[i-1]
-            dots$ylab <- yylab[i-1]
+    
+    Main  <- expanddots (dots$main, varnames[which], np)
+    xxlab <- expanddots (dots$xlab, varnames[t],     np)
+    yylab <- expanddots (dots$ylab,  ""        ,     np)
+    Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
+    
+    for (ii in 1:np) {
+        i <- which[ii]
+        dots <- extractdots(Dots, ii)
+        dots$main <- Main[ii]
+        dots$xlab <- xxlab[ii]
+        dots$ylab <- yylab[ii]
         do.call("hist", c(alist(x[, i]), dots))
     }
 }
@@ -186,12 +245,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
        if (! "deSolve" %in% class(x2[[i]]))
          stop ("elements in 'x2' should be of class 'deSolve'")
         
-        # ks->thpe to decide: should "times" be same, or allowed to differ? 
-        # (in latter case: need to check xlim, same as we now check ylim)
-        # thpe->ks: should be variable in the future, but's ok for now.
-        
-        if (min(dim(x2[[i]]) - dim(x) == c(0, 0)) == 0)   
-          stop(" 'x2' and 'x' are not compatible - dimensions not the same")
+        # ks->thpe "times" can now be varied
         if (min(colnames(x2[[i]]) == varnames) == 0)
           stop(" 'x2' and 'x' are not compatible - colnames not the same")
       }
@@ -209,49 +263,39 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 
 ## plotting parameters :
 ## for each plot (1:np): xlim, ylim, log, main, sub, xlab, ylab, ann,
+##                      what        default            total #
+    xxlab <- expanddots(dots$xlab,  varnames[t]      , np)
+    yylab <- expanddots(dots$ylab,  ""               , np)
+    Main  <- expanddots(dots$main,  varnames[xWhich] , np)
+    Sub   <- expanddots(dots$sub ,  ""               , np)
+    Log   <- expanddots(dots$log ,  ""               , np)
 
-
-    xxlab <- if (is.null(dots$xlab))  varnames[t]      else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""               else dots$ylab
-    Main  <- if (is.null(dots$main))  varnames[xWhich] else dots$main
-    Sub   <- if (is.null(dots$sub))   ""               else dots$sub
-    Log   <- if (is.null(dots$log))   ""               else dots$log
-    #Type  <- if (is.null(dots$type))  "l"              else dots$type
-
-    ## allow individual xlab and ylab (vectorized) for each figure
-    xxlab <- rep(xxlab, length.out = np)
-    yylab <- rep(yylab, length.out = np)
-    Main  <- rep(Main,  length.out = np)
-    Sub   <- rep(Sub,   length.out = np)
-    Log   <- rep(Log,   length.out = np)
-
-    # for now only one ylim, only one xlim...
+    # ylim and xlim can be lists
     isylim <- !is.null(dots$ylim)
     yylim   <- dots$ylim
 
-    # thpe->ks: a variable ylim is extremely simple
-    # rep works also for lists
+    isxlim <- !is.null(dots$xlim)
+    xxlim   <- dots$xlim
+
     if(!is.list(yylim)) yylim <- list(yylim)
     yylim <- rep(yylim, length.out = np)
+
+    if(!is.list(xxlim)) xxlim <- list(xxlim)
+    xxlim <- rep(xxlim, length.out = np)
     
     if (nx > 1) dotsx2 <- list()
 
 ## for each deSolve output (nx) within a plot: col, lty, lwd, type
     
-    Type  <- if (is.null(dots$type)) "l" else dots$type
-    Type <- rep(Type, length.out = nx)
-
-    Lty <- if (is.null(dots$lty))  1:nx  else dots$lty
-    Lty <- rep(Lty, length.out = nx)
-    Lwd <- if (is.null(dots$lwd))  par("lwd")  else dots$lwd                               
-    Lwd <- rep(Lwd, length.out = nx)
-    Pch <- if (is.null(dots$pch))  1:nx  else dots$pch
-    Pch <- rep(Pch, length.out = nx)
-
-    Col <- if (is.null(dots$col))  1:nx  else dots$col
-    Col <- rep(Col, length.out = nx)
-    Bg  <- if (is.null(dots$bg))   1:nx  else dots$bg
-    Bg  <- rep(Bg, length.out = nx)
+    Type <- expanddots(dots$type, "l",      nx)
+    Lty  <- expanddots(dots$lty, 1:nx,      nx)
+    Lwd  <- expanddots(dots$lwd, par("lwd"),nx)
+    Pch  <- expanddots(dots$pch, 1:nx,      nx)
+    Col  <- expanddots(dots$col, 1:nx,      nx)
+    Bg   <- expanddots(dots$bg,  1:nx,      nx)
+ 
+## ks->Thpe: also here? 
+    Dots  <- setdots(dots, nx)   # expand all dots to np values (no defaults)
 
 ## for each output variable (plot)
     for (i in 1 : np) {
@@ -259,6 +303,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       io <- ObsWhich[i]   #position in 'obs'
       
       ## plotting parameters for deSolve output 1
+      dots      <- extractdots(Dots, i)
       dots$main <- Main[i]
       dots$sub  <- Sub[i]
       dots$log  <- Log[i]
@@ -275,6 +320,18 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       } else {
         dots$ylim  <- yylim[[i]]
       } 
+
+      if (! isxlim) {
+        xrange <- range(x[, t])
+        if (nother>0) 
+         for (j in 1:nother) 
+           xrange <- range(xrange, x2[[j]][,t], na.rm = TRUE)
+        if (! is.na(io)) xrange <- range(xrange, obs[,1], na.rm = TRUE)
+          dots$xlim <- xrange
+      } else {
+        dots$xlim  <- xxlim[[i]]
+      } 
+
       dots$lty  <- Lty[1]
       dots$lwd  <- Lwd[1]
       dots$pch  <- Pch[1]
@@ -287,6 +344,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       # if other deSolve outputs
       if (nother>0) 
         for (j in 2:nx) {
+
           dotsx2$lty  <- Lty[j]
           dotsx2$lwd  <- Lwd[j]
           dotsx2$pch  <- Pch[j]
@@ -388,17 +446,19 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
 
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
-    xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  varnames  else dots$ylab
+    xxlab <- expanddots(dots$xlab,  "x", np)
+    yylab <- expanddots(dots$ylab,  varnames, np)
 
     ## allow individual xlab and ylab (vectorized)
-    xxlab <- rep(xxlab, length.out = np)
-    yylab <- rep(yylab, length.out = np)
     times <- x[,1]
     Main <-  if (is.null(dots$main)) paste("time",times) else rep(dots$main, length.out =length(times))
 
+   ## ???
+    Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
+
     for (j in 1:length(times)) {
       for (i in which) {
+        dots      <- extractdots(Dots, i)
         dots$main <- Main[j]
         istart <- (i-1)*proddim + 1
         out <- x[j,(istart+1):(istart+prod(dimens))]
@@ -432,7 +492,7 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
 
 ### ============================================================================
 
-plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
+plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...) {
 
 # if x is vector, check if there are enough columns ...
     nspec <- attributes(x)$nspec
@@ -464,37 +524,39 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
         on.exit(devAskNewPage(oask))
     }
 
-    Main <-  if (is.null(dots$main)) varnames else rep(dots$main, length.out =np)
-
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
-    xxlab <- if (is.null(dots$xlab))  "times"  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  ""   else dots$ylab
+
+    Main  <-  expanddots(dots$main, varnames, np)
+    xxlab <- expanddots(dots$xlab, "times", np)
+    yylab <- expanddots(dots$ylab,"",       np)
+    dotscol <- NULL
     if (method=="persp")
       dotscol <- dots$col
 
     else if (method == "filled.contour")
-    dots$color.palette <- if (is.null(dots$color.palette))
+    dotscolorpalette <- if (is.null(dots$color.palette))
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
     else
-    dots$col <- if (is.null(dots$col))
+    dotscol <- if (is.null(dots$col))
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
 
     dotslim <- dots$zlim
+    Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
 
-    ## allow individual xlab and ylab (vectorized)
-    xxlab <- rep(xxlab, length.out = np)
-    yylab <- rep(yylab, length.out = np)
     times <- x[,1]
-    for (i in which) {
-        dots$main <- Main[i]
+    for (ii in 1:np) {
+        i <- which[ii]
+        dots      <- extractdots(Dots, ii)
+        dots$main <- Main[ii]
         istart <- (i-1)*proddim + 1
         out <- x[,(istart+1):(istart+prod(dimens))]
 
-        dots$xlab <- xxlab[i]
-        dots$ylab <- yylab[i]
+        dots$xlab <- xxlab[ii]
+        dots$ylab <- yylab[ii]
 
+        dots$col <- dotscol 
         List <- alist(z=out,x=times)
         if (! is.null(grid)) List$y = grid
 
@@ -510,7 +572,8 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method="image", ...) {
           else
             dots$zlim = dotslim
 
-        }
+        } else if (method == "filled.contour")
+        dots$color.palette <- dotscolorpalette
         do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
     }
@@ -557,12 +620,11 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
 
 #    Main <-  if (is.null(dots$main)) varnames else rep(dots$main, length.out =np)
     N <- np * nrow(x)
-    Main <-  if (is.null(dots$main)) rep(varnames,length.out=N) else rep(dots$main,
-      length.out =N)
-
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
-    xxlab <- if (is.null(dots$xlab))  "x"  else dots$xlab
-    yylab <- if (is.null(dots$ylab))  "y"   else dots$ylab
+
+    Main <-  expanddots(dots$main, varnames, N)
+    xxlab <- expanddots(dots$xlab,  "x"  , N)
+    yylab <- expanddots(dots$ylab,  "y"  , N)
 
     if (method=="persp")
       dotscol <- dots$col
@@ -578,14 +640,13 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
 
     dotslim <- dots$zlim
 
-    ## allow individual xlab and ylab (vectorized)
-    xxlab <- rep(xxlab, length.out = N)
-    yylab <- rep(yylab, length.out = N)
+    Dots  <- setdots(dots, N)   # expand all dots to np values (no defaults)
 
     ii <- 0
     for (nt in 1:nrow(x)) {
       for (i in which) {
         ii <- ii+1
+        dots      <- extractdots(Dots, ii)
         dots$main <- Main[ii]
         istart <- (i-1)*proddim + 1
         out <- x[nt,(istart+1):(istart+prod(dimens))]
@@ -620,5 +681,3 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
 
    }
 }
-
-
