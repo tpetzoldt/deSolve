@@ -82,7 +82,16 @@ plot(out, out2, out3, type = "p",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), cex=0.5)
+
+plot(out, out2, out3, type = "p",
+  ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+  xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
+  lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), 
+  cex=0.5, cex.axis=.5, cex.lab=1.2, cex.main=1)
+
   
-## ThPe: todo: add cex.lab, cex.axis  
+## ThPe: todo
+## - add cex.obs, [cex.main?]
+## - list version of cex
   
   

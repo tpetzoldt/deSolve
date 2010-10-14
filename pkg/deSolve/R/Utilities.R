@@ -238,6 +238,10 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     Main  <- expanddots(dots$main,  varnames[xWhich] , np)
     Sub   <- expanddots(dots$sub ,  ""               , np)
     Log   <- expanddots(dots$log ,  ""               , np)
+    ## thpe: and also:
+    Cex.lab  <- expanddots(dots$cex.lab ,  par("cex.lab"), np)
+    Cex.axis <- expanddots(dots$cex.axis , par("cex.axis"), np)
+    Cex.main <- expanddots(dots$cex.main , par("cex.main"), np)
 
     # ylim and xlim can be lists
     isylim <- !is.null(dots$ylim)
@@ -279,6 +283,9 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       dots$log  <- Log[i]
       dots$xlab <- xxlab[i]
       dots$ylab <- yylab[i]
+      dots$cex.lab <- Cex.lab[i]
+      dots$cex.axis <- Cex.axis[i]
+      dots$cex.main <- Cex.main[i]
 
       if (! isylim) {
         yrange <- range(x[, ii])
