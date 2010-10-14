@@ -37,11 +37,11 @@ plot(out, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", main = "Time Series")
 
 ## add second output 
-plot(out, x2=out2, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+plot(out, out2, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", main = "Time Series", col = c("red", "blue"))
 
-## add second output
-plot(out, x2=list(out2, out3), type = "l",
+## add third output
+plot(out, out2, out3, type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1)
@@ -49,7 +49,7 @@ plot(out, x2=list(out2, out3), type = "l",
 
  
 ## ylim is vector
-plot(out, x2=list(out2, out3), type = "l",
+plot(out, out2, out3, type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
@@ -57,26 +57,32 @@ plot(out, x2=list(out2, out3), type = "l",
 
   
 ## ylim is list
-plot(out, x2=list(out2, out3), type = "l",
+plot(out, out2, out3, type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
   ylim=list(c(0,20)))
   
 ## individual ylim
-plot(out, x2=list(out2, out3), type = "l",
+plot(out, out2, out3, type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
   ylim=list(c(0,15), c(0, 12), c(0,20), c(0, 25)))
   
 ## incomplete ylim list
-plot(out, x2=list(out2, out3), type = "l",
+plot(out, out2, out3, type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
   ylim=list(c(0,15), c(0, 12), c(0,20)))
   
+## type"p"
+plot(out, out2, out3, type = "p",
+  ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+  xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
+  lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), cex=0.5)
   
+## ThPe: todo: add cex.lab, cex.axis  
   
   

@@ -13,52 +13,25 @@
 ## function for checking and expanding arguments in dots (...) with default
 ## =============================================================================
 
-    expanddots <- function (dots, default, np) {
-      xxlab <- if (is.null(dots)) default else dots
-      rep(xxlab, length.out = np)
-    }
+expanddots <- function (dots, default, n) {
+  dots <- if (is.null(dots)) default else dots
+  rep(dots, length.out = n)
+}
 
 ## =============================================================================
-## function for expanding arguments in dots  (...)
+## functions for expanding arguments in dots  (...)
 ## =============================================================================
-# ks->ThPe: works but not if there is somewhere a "NULL", e.g. as for las in
-# dots <- list(par = TRUE, lty =1:2, lwd = 2, las=c(NULL,1,2))
-# ddots <- setdots(dots,3) 
-# null in las will be ignored...
 
-setdots <- function (dots, np) {
-  dd <- list()
-  if (length(dots) == 0) return(dd)
-  id <- 0 
-  for (i in 1: length(dots)) {
-   if (! is.null(dots[[i]]) & ! is.function(dots[[i]])) {
-    dd[[id<-id+1]] <- rep(dots[[i]], length = np)
-    names(dd)[id] <- names(dots)[i]
-   } else if(is.function(dots[[i]])) {
-    dd[[id<-id+1]] <- dots[[i]]
-    names(dd)[id] <- names(dots)[i]
-   } 
-  }  
-  return(dd)
-} 
+repdots <- function(dots, n) 
+  if (is.function(dots)) dots else rep(dots, length.out = n)
+
+setdots <- function(dots, n) lapply(dots, repdots, n)
+
 ## =============================================================================
 ## function for extracting element ii from dots  (...)
 ## =============================================================================
 
-extractdots <- function (dots, ii) {
-
-  Dots <- list()
-  if (length(dots) == 0) return(Dots)
-  for (i in 1:length(dots))
-   if (! is.null(dots[[i]][ii])& ! is.function(dots[[i]])) {
-    Dots[i] <- dots[[i]][ii]
-    names(Dots)[i] <- names(dots)[i]   
-   } else if (is.function(dots[[i]])) {
-    Dots[i] <- dots[[i]]
-    names(Dots)[i] <- names(dots)[i]   
-   }
-  Dots
-}    
+extractdots <- function(dots, index)   lapply(dots, "[", index)
 
 ## =============================================================================
 ## Set the mfrow parameters and whether to "ask" for opening a new device
@@ -66,17 +39,14 @@ extractdots <- function (dots, ii) {
 
 setplotpar <- function(nmdots, dots, nv, ask) {
     if (!any(match(nmdots, c("mfrow", "mfcol"), nomatch = 0))) {
-      nc <- min(ceiling(sqrt(nv)),3)
-      nr <- min(ceiling(nv/nc),3)
+      nc <- min(ceiling(sqrt(nv)), 3)
+      nr <- min(ceiling(nv/nc), 3)
       mfrow <- c(nr, nc)
-    }
-    else if ("mfcol" %in% nmdots)
-        mfrow <- rev(dots$mfcol)
+    } else if ("mfcol" %in% nmdots)
+      mfrow <- rev(dots$mfcol)
     else mfrow <- dots$mfrow
 
-    if (! is.null(mfrow)) {
-      mf <- par(mfrow=mfrow)
-    }
+    if (! is.null(mfrow))  mf <- par(mfrow = mfrow)
 
    ## interactively wait if there are remaining figures
     if (is.null(ask))
@@ -90,28 +60,26 @@ setplotpar <- function(nmdots, dots, nv, ask) {
 ## =============================================================================
 
 selectvar <- function (which, var, NAallowed = FALSE) {
-
-    if (!is.numeric(which)) {
-        ln <- length(which)
-        # keep ordering...
-        Select <- NULL
-        for ( i in 1:ln) {
-          ss <- which(which[i]==var)
-          if (length(ss) ==0 & ! NAallowed) 
-            stop("variable ", which[i], " not in var")
-          else if (length(ss) == 0)
-            Select <- c(Select,NA)
-          else
-            Select <- c(Select,ss)
-        }
+  if (!is.numeric(which)) {
+    ln <- length(which)
+    # keep ordering...
+    Select <- NULL
+    for ( i in 1:ln) {
+      ss <- which(which[i]==var)
+      if (length(ss) ==0 & ! NAallowed) 
+        stop("variable ", which[i], " not in var")
+      else if (length(ss) == 0)
+        Select <- c(Select,NA)
+      else
+        Select <- c(Select,ss)
     }
-    else {
-        Select <- which + 1  # "Select now refers to the column number
-        if (max(Select) > length(var))
-            stop("index in 'which' too large")
-        if (min(Select) < 1)
-            stop("index in 'which' should be > 0")
-    }
+  } else {
+    Select <- which + 1  # "Select now refers to the column number
+    if (max(Select) > length(var))
+        stop("index in 'which' too large")
+    if (min(Select) < 1)
+        stop("index in 'which' should be > 0")
+  }
   return(Select)
 }
 
@@ -120,7 +88,7 @@ selectvar <- function (which, var, NAallowed = FALSE) {
 ### ============================================================================
 
 print.deSolve <- function(x, ...)
-  print(as.data.frame(x), ... )
+  print(as.data.frame(x), ...)
 
 ### ============================================================================
 ### Create a histogram for a list of variables
@@ -151,6 +119,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     Main  <- expanddots (dots$main, varnames[which], np)
     xxlab <- expanddots (dots$xlab, varnames[t],     np)
     yylab <- expanddots (dots$ylab,  ""        ,     np)
+    
     Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
     
     for (ii in 1:np) {
@@ -291,6 +260,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     Lty  <- expanddots(dots$lty, 1:nx,      nx)
     Lwd  <- expanddots(dots$lwd, par("lwd"),nx)
     Pch  <- expanddots(dots$pch, 1:nx,      nx)
+    Cex  <- expanddots(dots$cex, 1:nx,      nx)
     Col  <- expanddots(dots$col, 1:nx,      nx)
     Bg   <- expanddots(dots$bg,  1:nx,      nx)
  
@@ -335,6 +305,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       dots$lty  <- Lty[1]
       dots$lwd  <- Lwd[1]
       dots$pch  <- Pch[1]
+      dots$cex  <- Cex[1]
       dots$col  <- Col[1]
       dots$bg   <- Bg[1]
       dots$type <- Type[1]
@@ -344,10 +315,10 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       # if other deSolve outputs
       if (nother>0) 
         for (j in 2:nx) {
-
           dotsx2$lty  <- Lty[j]
           dotsx2$lwd  <- Lwd[j]
           dotsx2$pch  <- Pch[j]
+          dotsx2$cex  <- Cex[j]
           dotsx2$col  <- Col[j]
           dotsx2$bg   <- Bg[j]
           dotsx2$type <- Type[j]
