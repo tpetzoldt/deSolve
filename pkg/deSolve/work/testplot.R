@@ -13,7 +13,7 @@ parms <- list(
                0.01, 0.1, 0.0, 0.0),      # predator 2; prefers prey 2
                nrow = 4, ncol = 4, byrow=TRUE)
 )
-times <- seq(from = 0, to = 500, by = 0.1)
+times <- seq(from = 0, to = 500, by = 1)
 y     <- c(prey1 = 1, prey2 = 1, pred1 = 2, pred2 = 2)
 
 out <- ode(y, times, LVmatrix, parms)
@@ -91,7 +91,7 @@ plot(out, out2, out3, type = "p",
 
   
 ## ThPe: todo
-## - add cex.obs, [cex.main?]
 ## - list version of cex
+## - add meningful obs values
   
   
