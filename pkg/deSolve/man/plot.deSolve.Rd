@@ -4,7 +4,7 @@
 \alias{hist.deSolve}
 \alias{image.deSolve}
 \title{
- Plot and Histogram Method for deSolve Objects
+ Plot, Image and Histogram Method for deSolve Objects
 }
 \description{
 Plot the output of numeric integration routines.
@@ -183,7 +183,12 @@ plot(out, which = "prey1", type = "l", obs = obs,
 
 plot(out, type = "l", obs = obs, col = "red")
 
+# Simple histogram
 hist(out, col = "darkblue", breaks = 50)
+
+# different parameters per plot
+hist(out, col = c("darkblue","red", "orange", "black"), 
+     breaks = c(10,50))
 
 ## =======================================================================
 ## The Aphid model from Soetaert and Herman, 2009.

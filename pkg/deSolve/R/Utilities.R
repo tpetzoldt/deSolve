@@ -18,6 +18,13 @@ expanddots <- function (dots, default, n) {
   rep(dots, length.out = n)
 }
 
+# ks->Th: for xlim and ylim....
+expanddotslist <- function (dots, n) {
+    if (is.null(dots)) return(dots)
+    dd <- if (!is.list(dots )) list(dots) else dots
+    rep(dd, length.out = n)
+}
+
 ## =============================================================================
 ## functions for expanding arguments in dots  (...)
 ## =============================================================================
@@ -28,7 +35,7 @@ repdots <- function(dots, n)
 setdots <- function(dots, n) lapply(dots, repdots, n)
 
 ## =============================================================================
-## function for extracting element ii from dots  (...)
+## function for extracting element 'index' from dots  (...)
 ## =============================================================================
 
 extractdots <- function(dots, index)   lapply(dots, "[", index)
@@ -119,12 +126,18 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     Main  <- expanddots (dots$main, varnames[which], np)
     xxlab <- expanddots (dots$xlab, varnames[t],     np)
     yylab <- expanddots (dots$ylab,  ""        ,     np)
-    
+
+# ks->Th: xlim and ylim are special: - is there a better way????
+    xxlim <- expanddotslist(dots$xlim, np)
+    yylim <- expanddotslist(dots$ylim, np)
+      
     Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
     
     for (ii in 1:np) {
         i <- which[ii]
         dots <- extractdots(Dots, ii)
+        if (! is.null(xxlim)) dots$xlim <- xxlim[[ii]]
+        if (! is.null(yylim)) dots$ylim <- yylim[[ii]]
         dots$main <- Main[ii]
         dots$xlab <- xxlab[ii]
         dots$ylab <- yylab[ii]
@@ -224,9 +237,12 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     
 
 ## Position of variables in "obs" (NA = not observed)
+    nobs <- 0
     if (! is.null(obs)) {
       ObsWhich <- selectvar(varnames[xWhich], obsname, NAallowed = TRUE)
-      ObsWhich [ ObsWhich > ncol(obs)] <- NA    # Ks->ks check why this was necessary...
+      ObsWhich [ ObsWhich > ncol(obs)] <- NA  # Ks->ks check why this was necessary...
+      nobs <- length(ObsWhich)
+      ObsDots <- setdots(obspar, nobs)
     } else 
       ObsWhich <- rep(NA, length(xWhich))
 
@@ -238,6 +254,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     Main  <- expanddots(dots$main,  varnames[xWhich] , np)
     Sub   <- expanddots(dots$sub ,  ""               , np)
     Log   <- expanddots(dots$log ,  ""               , np)
+
     ## thpe: and also:
     Cex.lab  <- expanddots(dots$cex.lab ,  par("cex.lab"), np)
     Cex.axis <- expanddots(dots$cex.axis , par("cex.axis"), np)
@@ -245,17 +262,11 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 
     # ylim and xlim can be lists
     isylim <- !is.null(dots$ylim)
-    yylim   <- dots$ylim
+    yylim   <- expanddotslist(dots$ylim, np)
 
     isxlim <- !is.null(dots$xlim)
-    xxlim   <- dots$xlim
+    xxlim   <- expanddotslist(dots$xlim, np)
 
-    if(!is.list(yylim)) yylim <- list(yylim)
-    yylim <- rep(yylim, length.out = np)
-
-    if(!is.list(xxlim)) xxlim <- list(xxlim)
-    xxlim <- rep(xxlim, length.out = np)
-    
     if (nx > 1) dotsx2 <- list()
 
 ## for each deSolve output (nx) within a plot: col, lty, lwd, type
@@ -272,6 +283,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     Dots  <- setdots(dots, nx)   # expand all dots to np values (no defaults)
 
 ## for each output variable (plot)
+    iobs <- 0
     for (i in 1 : np) {
       ii <- xWhich[i]     #position in 'x'
       io <- ObsWhich[i]   #position in 'obs'
@@ -332,9 +344,12 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
         
           do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), dotsx2))
         }
-      # if observed variables
-      if (! is.na(io)) 
-        do.call("points", c(alist(obs[, 1], obs[, io]), obspar))        
+      # ks -> ThPe if observed variables: select coorect pars
+      if (! is.na(io)) {
+        iobs <- iobs +1
+        do.call("points", c(alist(obs[, 1], obs[, io]), 
+                extractdots(ObsDots, iobs)))     
+      }     
     }
 }
 
@@ -425,7 +440,7 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
     xxlab <- expanddots(dots$xlab,  "x", np)
-    yylab <- expanddots(dots$ylab,  varnames, np)
+    yylab <- expanddots(dots$ylab,  varnames[which], np)
 
     ## allow individual xlab and ylab (vectorized)
     times <- x[,1]
@@ -434,9 +449,15 @@ plot.1D <- function (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) {
    ## ???
     Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
 
+# ks->Th: xlim and ylim are special: 
+    xxlim <- expanddotslist(dots$xlim,np)
+    yylim <- expanddotslist(dots$ylim,np)
+
     for (j in 1:length(times)) {
       for (i in which) {
         dots      <- extractdots(Dots, i)
+        if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
+        if (! is.null(yylim)) dots$ylim <- yylim[[i]]
         dots$main <- Main[j]
         istart <- (i-1)*proddim + 1
         out <- x[j,(istart+1):(istart+prod(dimens))]
@@ -504,9 +525,9 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...)
 
     labs <- (is.null(dots$xlab) && is.null(dots$ylab))
 
-    Main  <-  expanddots(dots$main, varnames, np)
-    xxlab <- expanddots(dots$xlab, "times", np)
-    yylab <- expanddots(dots$ylab,"",       np)
+    Main  <- expanddots(dots$main, varnames[which], np)
+    xxlab <- expanddots(dots$xlab, "times",  np)
+    yylab <- expanddots(dots$ylab, "",       np)
     dotscol <- NULL
     if (method=="persp")
       dotscol <- dots$col
@@ -521,12 +542,18 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...)
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
 
     dotslim <- dots$zlim
+# ks->Th: xlim and ylim are special: - is there a better way????
+    xxlim <- expanddotslist(dots$xlim, np)
+    yylim <- expanddotslist(dots$ylim, np)
+
     Dots  <- setdots(dots, np)   # expand all dots to np values (no defaults)
 
     times <- x[,1]
     for (ii in 1:np) {
         i <- which[ii]
         dots      <- extractdots(Dots, ii)
+        if (! is.null(xxlim)) dots$xlim <- xxlim[[ii]]
+        if (! is.null(yylim)) dots$ylim <- yylim[[ii]]
         dots$main <- Main[ii]
         istart <- (i-1)*proddim + 1
         out <- x[,(istart+1):(istart+prod(dimens))]
@@ -608,13 +635,13 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
       dotscol <- dots$col
 
     else if (method == "filled.contour")
-    dots$color.palette <- if (is.null(dots$color.palette))
+    dotscolor.palette <- if (is.null(dots$color.palette))
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
     else
-    dots$col <- if (is.null(dots$col))
+    dotscol <- if (is.null(dots$col))
       colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
+             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dotscol
 
     dotslim <- dots$zlim
 
@@ -650,7 +677,10 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
           else
             dots$zlim = dotslim
 
-        }
+        } else if (method == "image")
+          dots$col <- dotscol
+        else if (method == "filled.contour")
+          dots$color.palette <- dotscolor.palette        
         do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add=TRUE))
      }

@@ -1060,6 +1060,8 @@ legend("bottomright", lty = 1:4, col = 1:4, legend = 1:4, title = "yini*i")
 <<>>=
 obs <- subset (ccl4data, animal == "A", c(time, ChamberConc))
 names(obs) <- c("time", "CP")
+head(obs)
+
 parms <- c(0.182, 4.0, 4.0, 0.08, 0.04, 0.74, 0.05, 0.15, 0.32, 16.17, 
             281.48, 13.3, 16.17, 5.487, 153.8, 0.04321671, 
             0.40272550, 951.46, 0.02, 1.0,  3.80000000)
@@ -1072,12 +1074,11 @@ par2[1] <- 0.1
 out2 <- ccl4model (times = seq(0, 6, by = 0.05), y = yini, parms = par2)
 
 @
+We plot all these scenarios and the observed data at once:
 <<label=plotobs,include=FALSE>>=
-plot(out, out2, which = c("AI","MASS","CP"))
+plot(out, out2, which = c("AI","MASS", "CP"), col = c("blue", "red"), 
+     lwd = 2, obs = obs, obspar = list(pch = 18, col = "green", cex = 1.2))
 legend("topright", lty = 1:2, col = 1:2, legend = c("p1", "p2"))
-plot(out, out2, col = c("blue", "red"), lwd = 2, 
-     obs = obs, obspar = list(pch = 18, col = "green", cex = 1.2), 
-     mfrow = NULL)
 @
 \setkeys{Gin}{width=\textwidth}
 \begin{figure}
@@ -1089,6 +1090,150 @@ plot(out, out2, col = c("blue", "red"), lwd = 2,
 \caption{Plotting output and obs in one figure}
 \label{fig:plotobs}
 \end{figure}
+
+If we do not select the variables to be plotted, then only the ones for which 
+there are observed data are plotted.
+Assume we have measured the total mass at the end of day 6:
+<<>>=
+obs <- cbind(obs, MASS = NA)
+obs <- rbind(obs, c(6, NA, 12))
+tail (obs)
+@
+
+<<label=obs2,include=FALSE>>=
+plot(out, out2, col = c("blue", "red"), lwd = 2, 
+     obs = obs, obspar = list(pch = c(16,18), 
+               col = c("blue","green"), cex = 1.2))
+@
+\setkeys{Gin}{width=0.4\textwidth}
+\begin{figure}
+\begin{center}
+<<label=plotobs2,fig=TRUE,echo=FALSE,width=8,height=4>>=
+<<obs2>>
+@
+\end{center}
+\caption{Plotting variables in common with observations}
+\label{fig:plotobs2}
+\end{figure}
+
+\subsection{Plotting Summary Histograms}
+The \code{hist} command plots the histogram for each variable; all plot 
+parameters can be set individually (here for \code{col}). 
+
+To generate the next plot, we overrule the default \code{mfrow} setting which
+would plot the figures in 3 rows and 3 columns (and hence plot one figure
+in isolation)
+
+<<label=hist,include=FALSE>>=
+hist(out, col = grey(seq(0, 1, by = 0.1)), mfrow = c(3,4))
+@
+\setkeys{Gin}{width=1.0\textwidth}
+\begin{figure}
+\begin{center}
+<<label=plothist,fig=TRUE,echo=FALSE>>=
+<<hist>>
+@
+\end{center}
+\caption{Plotting histograms of all output variables}
+\label{fig:plothist}
+\end{figure}
+
+\subsection{Plotting multi-dimensional output}
+The \code{image} command plots time-x images for models solved with 
+\code{ode.1D}, or generates x-y plots for models solved with \code{ode.2D}.
+
+We exemplify its use by means of a Lotka-Volterra model, implemented in 1-D.
+The model describes a predator and its prey diffusing on a flat surface
+and in concentric circles. This is a 1-D model, with cylindrical coordinates
+
+Note that it is simpler to implement this model in R-package \code{ReacTran}
+\citep{ReacTran}.
+
+
+<<>>=
+lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
+  with (as.list(parms), {
+    PREY <- state[1:N]
+    PRED <- state[(N+1):(2*N)]
+
+    ## Fluxes due to diffusion
+    ## at internal and external boundaries: zero gradient
+    FluxPrey <- -Da * diff(c(PREY[1], PREY, PREY[N]))/dri
+    FluxPred <- -Da * diff(c(PRED[1], PRED, PRED[N]))/dri
+
+    ## Biology: Lotka-Volterra model
+    Ingestion     <- rIng  * PREY * PRED
+    GrowthPrey    <- rGrow * PREY * (1-PREY/cap)
+    MortPredator  <- rMort * PRED
+
+    ## Rate of change = Flux gradient + Biology
+    dPREY    <- -diff(ri * FluxPrey)/rr/dr   +
+                GrowthPrey - Ingestion
+    dPRED    <- -diff(ri * FluxPred)/rr/dr   +
+                Ingestion * assEff - MortPredator
+
+    return (list(c(dPREY, dPRED)))
+  })
+}
+
+## ==================
+## Model application
+## ==================
+
+## model parameters:
+
+R  <- 20                        # total radius of surface, m
+N  <- 100                       # 100 concentric circles
+dr <- R/N                       # thickness of each layer
+r  <- seq(dr/2,by = dr,len = N) # distance of center to mid-layer
+ri <- seq(0,by = dr,len = N+1)  # distance to layer interface
+dri <- dr                       # dispersion distances
+
+parms <- c(Da     = 0.05,       # m2/d, dispersion coefficient
+           rIng   = 0.2,        # /day, rate of ingestion
+           rGrow  = 1.0,        # /day, growth rate of prey
+           rMort  = 0.2 ,       # /day, mortality rate of pred
+           assEff = 0.5,        # -, assimilation efficiency
+           cap    = 10)         # density, carrying capacity
+
+## Initial conditions: both present in central circle (box 1) only
+state    <- rep(0, 2 * N)
+state[1] <- state[N + 1] <- 10
+                
+## RUNNING the model:
+times  <- seq(0, 200, by = 1)   # output wanted at these time intervals
+
+## the model is solved by the two implemented methods:
+## 1. Default: banded reformulation
+print(system.time(
+  out <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
+                nspec = 2, names = c("PREY", "PRED"),
+                N = N, rr = r, ri = ri, dr = dr, dri = dri)
+))
+@
+We first plot both 1-Dimensional state variables at once; we specify that 
+the figures are arranged in two rows, and 2 columns; when we call \code{image},
+we overrule the default mfrow setting (\code{mfrow = NULL}).
+Next we plot "PREY" again, once with the default xlim and ylim, and next
+zooming in. Note that xlim and ylim are a list here.
+<<label=img,include=FALSE>>=
+par(mfrow = c(2,2))
+image(out, grid = r, mfrow = NULL)
+image(out, grid = r, which = c("PREY", "PREY"), mfrow = NULL,
+      xlim = list(NULL, c(0,10)), ylim = list(NULL, c(0,5)))
+@
+
+\setkeys{Gin}{width=1.0\textwidth}
+\begin{figure}
+\begin{center}
+<<label=plotimg,fig=TRUE,echo=FALSE>>=
+<<img>>
+@
+\end{center}
+\caption{image plots}
+\label{fig:plotimg}
+\end{figure}
+
 
 \clearpage
 \section{Troubleshooting}
