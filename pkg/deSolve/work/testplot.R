@@ -50,15 +50,15 @@ plot(out, out2, which = 1:4, type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", 
 plot(out, out2, out3, type = "l", which = 1:4, 
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
-  lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1)
+  lty= 1:4, main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1)
   
 
  
 ## ylim is vector
 plot(out, out2, out3, which = 1:5, type = "l",
-  ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+  main = c("Prey 1", "Prey 2", "Pred 1", "Pred 2", "Sum"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
-  lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
+  lty= 1,  lwd=1,
   ylim = c(0,20))
 
   
@@ -76,7 +76,7 @@ plot(out, out2, out3, which = 1:4,  type = "l",
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
   ylim=list(c(0,15), c(0, 12), c(0,20), c(0, 25)))
   
-## individual ylim, some not specified   - DOES NOT WORK...
+## individual ylim, some not specified   - THIS  ....DOES NOT WORK...
 plot(out, out2, out3, which = 1:4,  type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
@@ -101,18 +101,18 @@ plot(out, out2, out3, which = 1:4,  type = "p",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), 
-  cex=0.5, cex.axis=.5, cex.lab=1.2, cex.main=1)
+  cex=0.8, cex.axis=.5, cex.lab=1.5, cex.main=1)
 
 plot(out, out2, out3, which = 1:4,  type = "p",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), 
-  cex=c(1, 2, 3), cex.axis=c(0.5, 0.2, 0.8), cex.lab=c(0.5, 0.2, 0.8), 
+  cex=c(1, 0.5, 0.3), cex.axis=c(0.5, 0.2, 0.8), cex.lab=c(0.5, 0.2, 0.8), 
   cex.main=c(0.5, 0.2, 0.8))
 
   
 ## ThPe: todo
-## - list version of cex
+## - list version of cex  WHY????
 ## - add meningful obs values
   
   
