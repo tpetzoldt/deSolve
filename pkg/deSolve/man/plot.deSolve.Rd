@@ -176,10 +176,7 @@ plot(out, out2, out3, type = "l",
 
 
 ## 'observed' data
-obs <- matrix (ncol = 3, 
-              data = c(seq(10, 1000, by = 100),
-                       rep(0.1, 10), rep (1.0, 10)))
-colnames(obs) <- c("time", "prey1", "prey2")
+obs <- as.data.frame(out[out[,1] \%in\% seq(10, 500, by=30), ])
 
 plot(out, which = "prey1", type = "l", obs = obs, 
      obspar = list(pch = 18, cex = 2))

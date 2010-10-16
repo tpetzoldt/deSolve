@@ -112,9 +112,20 @@ plot(out, out2, out3, which = 1:4,  type = "p",
 
   
 ## ThPe: todo
-## - list version of cex  WHY????
-## - add meningful obs values
-  
+## - list version of cex  
+## KS: WHY????
+## ThPe: to encode additional information; done (experimentally), see example:
+
+obs <- as.data.frame(out[out[,1] %in% seq(10, 500, by=30), ])
+
+nobs <- nrow(obs)
+rbd <- rainbow(nobs)
+plot(out, type = "l", obs = obs,
+  obspar = list(col=list(rbd, "red", "blue", rbd),
+  pch=list(18, 19, 1:2, 1:nobs), cex=list(2, seq(0.5, 3, length=nobs), 1.2, 1.2)))
+
+
+################################################################################
   
 ## add second output 
 plot(out, out2, which = c("prey1", "prey2"), 

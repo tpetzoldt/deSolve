@@ -40,7 +40,11 @@ setdots <- function(dots, n) lapply(dots, repdots, n)
 ## function for extracting element 'index' from dots  (...)
 ## =============================================================================
 
-extractdots <- function(dots, index)   lapply(dots, "[", index)
+extractdots <- function(dots, index) {
+  ret <- lapply(dots, "[", index)
+  ret <- lapply(ret, unlist) ## thpe: flatten list (experimental)
+  return(ret)
+}
 
 ## =============================================================================
 ## Set the mfrow parameters and whether to "ask" for opening a new device
@@ -210,7 +214,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     if (length(ldots) > 0) 
      for ( i in 1:length(ldots))
       if ("deSolve" %in% class(ldots[[i]])) {
-        x2[[nother <- nother+1]] <- ldots[[i]]  
+        x2[[nother <- nother + 1]] <- ldots[[i]]  
         names(x2)[nother] <- ndots[i]
       } else if (! is.null(ldots[[i]])) {
         dots[[nd <- nd+1]] <- ldots[[i]]
@@ -221,7 +225,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 ## check compatibility of all deSolve objects    
     if (nother > 0) {
       for ( i in 1:nother) {            
-        if (min (colnames(x2[[i]]) == varnames) == 0)
+        if (min(colnames(x2[[i]]) == varnames) == 0)
           stop("'x' is not compatible with other deSolve objects - colnames not the same")
       }
     } 
@@ -240,7 +244,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 
 ## plotting parameters : split in plot parameters and point parameters
     plotnames <- c("xlab","ylab","xlim","ylim","main","sub","log","asp",
-                   "ann","axes","frame.plot","panel.first","panel.first",
+                   "ann","axes","frame.plot","panel.first","panel.last",
                    "cex.lab","cex.axis","cex.main")    
     
     # plot.default parameters
@@ -249,16 +253,16 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     dotmain <- setdots(dotmain, np)  # expand to np for each plot
 
     # these are different from the default
-    dotmain$xlab <- expanddots(dots$xlab,  varnames[t]      , np)
-    dotmain$ylab <- expanddots(dots$ylab,  ""               , np)
-    dotmain$main <- expanddots(dots$main,  varnames[xWhich] , np)
+    dotmain$xlab <- expanddots(dots$xlab, varnames[t]     , np)
+    dotmain$ylab <- expanddots(dots$ylab, ""              , np)
+    dotmain$main <- expanddots(dots$main, varnames[xWhich], np)
 
     # ylim and xlim can be lists and are at least two values
     isylim <- !is.null(dots$ylim)
-    yylim   <- expanddotslist(dots$ylim, np)
+    yylim  <- expanddotslist(dots$ylim, np)
 
     isxlim <- !is.null(dots$xlim)
-    xxlim   <- expanddotslist(dots$xlim, np)
+    xxlim  <- expanddotslist(dots$xlim, np)
 
     # point parameters
     ip <- !names(dots) %in% plotnames
@@ -266,11 +270,11 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     dotpoints <- setdots(dotpoints, nx)   # expand all dots to nx values
 
     # these are different from default
-    dotpoints$type <- expanddots(dots$type, "l",      nx)
-    dotpoints$lty  <- expanddots(dots$lty, 1:nx,      nx)
-    dotpoints$pch  <- expanddots(dots$pch, 1:nx,      nx)
-    dotpoints$col  <- expanddots(dots$col, 1:nx,      nx)
-    dotpoints$bg   <- expanddots(dots$bg,  1:nx,      nx)
+    dotpoints$type <- expanddots(dots$type, "l", nx)
+    dotpoints$lty  <- expanddots(dots$lty, 1:nx, nx)
+    dotpoints$pch  <- expanddots(dots$pch, 1:nx, nx)
+    dotpoints$col  <- expanddots(dots$col, 1:nx, nx)
+    dotpoints$bg   <- expanddots(dots$bg,  1:nx, nx)
  
 ## for each output variable (plot)
     iobs <- 0
@@ -314,9 +318,9 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
           Dotpoints <- extractdots(dotpoints, j)
           do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), Dotpoints))
         }
-      # ks -> ThPe if observed variables: select coorect pars
+      # ks -> ThPe if observed variables: select correct pars
       if (! is.na(io)) {
-        iobs <- iobs +1
+        iobs <- iobs + 1
         do.call("points", c(alist(obs[, 1], obs[, io]), 
                 extractdots(ObsDots, iobs)))     
       }     
@@ -419,29 +423,27 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
 
     # allow individual xlab and ylab (vectorized)
     times <- x[,1]
-    Dots$main <- expanddots(Dots$main, paste("time",times), np)
+    Dots$main <- expanddots(Dots$main, paste("time", times), np)
 
     # xlim and ylim are special: 
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
 
+    ## thpe: additional check *before* the loop
+    if (! is.null(grid))
+      Grid <- grid
+    else
+      Grid <- 1:length(out)
     
     for (j in 1:length(times)) {
       for (i in which) {
-      
-        ## thpe: additional check *before*
-        if (! is.null(grid))
-          Grid <- grid
-        else
-          Grid <- 1:length(out)
-                       
-        dots      <- extractdots(Dots, i)
+        dots <- extractdots(Dots, i)
         if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
         if (! is.null(yylim)) dots$ylim <- yylim[[i]]
         if (is.null(yylim) & xyswap) 
            dots$ylim <- rev(range(Grid))    # y-axis 
-        istart <- (i-1)*proddim + 1
-        out <- x[j,(istart+1):(istart+prod(dimens))]
+        istart <- (i - 1) * proddim + 1
+        out <- x[j, (istart+ 1 ) : (istart + prod(dimens))]
 
         if (! is.null(grid))
           Grid <- grid
@@ -466,7 +468,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...)
     dimens <- attributes(x)$dimens
     proddim <- prod(dimens)
 
-    if ((ncol(x)- nspec*proddim) < 1)
+    if ((ncol(x)- nspec * proddim) < 1)
       stop("ncol of 'x' should be > 'nspec' * dimens if x is a vector")
 
 ## variables to be plotted
@@ -533,18 +535,18 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...)
       List <- alist(z = out, x = times)
       if (! is.null(grid)) List$y = grid
 
-        if (method=="persp") {
+        if (method == "persp") {
            if(is.null(dotscol))
              dots$col <- drapecol(out,
                colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
               "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
            else
-              dots$col<-drapecol(out,dotscol)
+              dots$col <- drapecol(out, dotscol)
           if (is.null(dotslim))  # this to prevent error when range = 0
             if (diff(range(out, na.rm=TRUE)) == 0) 
               dots$zlim <- c(0, 1)
           else
-            dots$zlim = dotslim
+            dots$zlim <- dotslim
 
         } else if (method == "filled.contour")
           dots$color.palette <- dotscolorpalette
@@ -556,7 +558,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...)
 
 ### ============================================================================
 
-plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
+plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
    ...) {
 
 ## if x is vector, check if there are enough columns ...
@@ -613,8 +615,8 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dotscol      
 
     dotslim <- dots$zlim
+ 
     i <- 0
-
     for (nt in 1:nrow(x)) {
       for (ii in which) {
         i       <- i+1
@@ -635,10 +637,10 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
                colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
               "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
            else
-              dots$col<-drapecol(out,dotscol)
+              dots$col <- drapecol(out, dotscol)
           if (is.null(dotslim))
-            if (diff(range(out, na.rm=TRUE)) == 0) 
-              dots$zlim <- c(0,1)
+            if (diff(range(out, na.rm = TRUE)) == 0) 
+              dots$zlim <- c(0, 1)
           else
             dots$zlim = dotslim
 
@@ -650,8 +652,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method="image",
         do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add = TRUE))
      }
-     if (sum(par("mfrow") - c(1,1))==0)
-       mtext(outer=TRUE, side=3,paste("time ",x[nt,1]), cex=1.5, line=-1.5)
+     if (sum(par("mfrow") - c(1, 1)) == 0)
+       mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]), 
+         cex = 1.5, line = -1.5)
 
    }
 }

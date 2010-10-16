@@ -260,7 +260,7 @@ the requested output times.
 
 
 <<>>=
-require(deSolve)
+library(deSolve)
 out <- ode(y = state, times = times, func = Lorenz, parms = parameters)
 head(out)
 @
@@ -953,7 +953,7 @@ assigned to the state variable. Note that the simulation starts at
 time = - 0.74.
 
 <<>>=
-require(deSolve)
+library(deSolve)
 
 #-----------------------------
 # the derivative function
@@ -1006,6 +1006,7 @@ plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 
 \clearpage
 \section{Plotting deSolve Objects}
+
 There are S3 \code{plot} and \code{image} methods for plotting 0-D (plot), and
 1-D and 2-D model output (image) as 
 generated with \code{ode}, \code{ode.1D}, \code{ode.2D}.
@@ -1013,19 +1014,26 @@ generated with \code{ode}, \code{ode.1D}, \code{ode.2D}.
 How to use it and examples can be found by typing \code{?plot.deSolve}.
 
 \subsection{Plotting Multiple Scenario's}
-HERE SOME TEXT!
 
-We implement the simple combustion model, which can be found on 
+%% HERE SOME TEXT!
+%% thpe:
+The \code{plot} method for \code{deSolve} objects can also be used to compare 
+different scenarios, e.g from the same model but with different sets of parameters
+or initial values, with one single call to \code{plot}.
+
+As an example we implement the simple combustion model, which can be found on 
 \url{http://www.scholarpedia.org/article/Stiff_systems}:
+
 \[
 y' = y^2 * (1-y)
 \]
 
 The model is run with 4 different values of the initial conditions:
 $y = 0.01, 0.02, 0.03, 0.04$ and written to \code{deSolve} objects \code{out}, 
-\code{out2}, \code{out3}, \code{out4}. 
+\code{out2}, \code{out3}, \code{out4}.
+ 
 <<>>=
-require(deSolve)
+library(deSolve)
 
 combustion <- function (t, y, parms)
   list(y^2 * (1-y) )
@@ -1040,7 +1048,9 @@ out2 <- ode(times = times, y = yini*2, parms = 0, func = combustion)
 out3 <- ode(times = times, y = yini*3, parms = 0, func = combustion)
 out4 <- ode(times = times, y = yini*4, parms = 0, func = combustion)
 @
-The different scenarios are plotted at once, and a suitable legend written.
+
+The different scenarios are plotted at once, and a suitable legend is written.
+
 <<label=plotdeSolve,include=FALSE>>=
 plot(out, out2, out3, out4, main = "combustion")
 legend("bottomright", lty = 1:4, col = 1:4, legend = 1:4, title = "yini*i")
@@ -1057,6 +1067,10 @@ legend("bottomright", lty = 1:4, col = 1:4, legend = 1:4, title = "yini*i")
 \end{figure}
 
 \subsection{Plotting Output with Observations}
+
+With the help of the optional argument \code{obs} it is possible to
+specify observation data that should be added to a \code{deSolve} plot.
+
 <<>>=
 obs <- subset (ccl4data, animal == "A", c(time, ChamberConc))
 names(obs) <- c("time", "CP")
@@ -1067,18 +1081,19 @@ parms <- c(0.182, 4.0, 4.0, 0.08, 0.04, 0.74, 0.05, 0.15, 0.32, 16.17,
             0.40272550, 951.46, 0.02, 1.0,  3.80000000)
 yini <- c(AI = 21, AAM = 0, AT = 0, AF = 0, AL = 0, CLT = 0, AM = 0)
 
-out <- ccl4model (times = seq(0, 6, by = 0.05), y = yini, parms = parms)
+out <- ccl4model(times = seq(0, 6, by = 0.05), y = yini, parms = parms)
 
 par2 <- parms
 par2[1] <- 0.1
-out2 <- ccl4model (times = seq(0, 6, by = 0.05), y = yini, parms = par2)
+out2 <- ccl4model(times = seq(0, 6, by = 0.05), y = yini, parms = par2)
 
 @
 We plot all these scenarios and the observed data at once:
 <<label=plotobs,include=FALSE>>=
-plot(out, out2, which = c("AI","MASS", "CP"), col = c("blue", "red"), 
-     lwd = 2, obs = obs, obspar = list(pch = 18, col = "green", cex = 1.2))
-legend("topright", lty = 1:2, col = 1:2, legend = c("p1", "p2"))
+plot(out, out2, which = c("AI", "MASS", "CP"), col = c("blue", "red"), 
+  lwd = 2, obs = obs, obspar = list(pch = 18, col = "green", cex = 1.2))
+legend("topright", lty = c(1,2,NA), pch = c(NA, NA, 18), 
+  col = c("blue", "red", "green"), lwd = 2, legend = c("p1", "p2", "obs"))
 @
 \setkeys{Gin}{width=\textwidth}
 \begin{figure}
@@ -1091,9 +1106,10 @@ legend("topright", lty = 1:2, col = 1:2, legend = c("p1", "p2"))
 \label{fig:plotobs}
 \end{figure}
 
-If we do not select the variables to be plotted, then only the ones for which 
-there are observed data are plotted.
-Assume we have measured the total mass at the end of day 6:
+If we do not select specific variables, then only the ones for which 
+there are observed data are plotted. Assume we have measured the total mass at 
+the end of day 6:
+
 <<>>=
 obs <- cbind(obs, MASS = NA)
 obs <- rbind(obs, c(6, NA, 12))
@@ -1102,8 +1118,8 @@ tail (obs)
 
 <<label=obs2,include=FALSE>>=
 plot(out, out2, col = c("blue", "red"), lwd = 2, 
-     obs = obs, obspar = list(pch = c(16,18), 
-               col = c("blue","green"), cex = 1.2))
+     obs = obs, obspar = list(pch = c(16, 18), 
+               col = c("blue", "green"), cex = 1.2))
 @
 \setkeys{Gin}{width=0.4\textwidth}
 \begin{figure}
@@ -1117,7 +1133,8 @@ plot(out, out2, col = c("blue", "red"), lwd = 2,
 \end{figure}
 
 \subsection{Plotting Summary Histograms}
-The \code{hist} command plots the histogram for each variable; all plot 
+
+The \code{hist} function plots the histogram for each variable; all plot 
 parameters can be set individually (here for \code{col}). 
 
 To generate the next plot, we overrule the default \code{mfrow} setting which
@@ -1125,7 +1142,7 @@ would plot the figures in 3 rows and 3 columns (and hence plot one figure
 in isolation)
 
 <<label=hist,include=FALSE>>=
-hist(out, col = grey(seq(0, 1, by = 0.1)), mfrow = c(3,4))
+hist(out, col = grey(seq(0, 1, by = 0.1)), mfrow = c(3, 4))
 @
 \setkeys{Gin}{width=1.0\textwidth}
 \begin{figure}
@@ -1139,7 +1156,8 @@ hist(out, col = grey(seq(0, 1, by = 0.1)), mfrow = c(3,4))
 \end{figure}
 
 \subsection{Plotting multi-dimensional output}
-The \code{image} command plots time-x images for models solved with 
+
+The \code{image} function plots time versus x images for models solved with 
 \code{ode.1D}, or generates x-y plots for models solved with \code{ode.2D}.
 
 We exemplify its use by means of a Lotka-Volterra model, implemented in 1-D.
@@ -1211,11 +1229,13 @@ print(system.time(
                 N = N, rr = r, ri = ri, dr = dr, dri = dri)
 ))
 @
+
 We first plot both 1-Dimensional state variables at once; we specify that 
 the figures are arranged in two rows, and 2 columns; when we call \code{image},
 we overrule the default mfrow setting (\code{mfrow = NULL}).
 Next we plot "PREY" again, once with the default xlim and ylim, and next
 zooming in. Note that xlim and ylim are a list here.
+
 <<label=img,include=FALSE>>=
 par(mfrow = c(2,2))
 image(out, grid = r, mfrow = NULL)
@@ -1246,7 +1266,7 @@ practical problems. However, there are cases where they may give
 dubious results.  Consider the following Lotka-Volterra type of model:
 
 <<>>=
-SPCmod <- function(t, x, parms)  {
+PCmod <- function(t, x, parms)  {
   with(as.list(c(parms, x)), {
     dP <- c*P   - d*C*P      # producer
     dC <- e*P*C - f*C        # consumer
@@ -1272,7 +1292,7 @@ xstart <- c(P = 0.5, C = 1)
 times  <- seq(0, 190, 0.1)
 
 out <- ode(y = xstart, times = times,
-  func = SPCmod, parms = parms)
+  func = PCmod, parms = parms)
 tail(out)
 @
 
@@ -1294,9 +1314,9 @@ absolute values. Therefore, it helps here to reduce \code{atol} to a
 very small number or even to zero:
 
 <<>>=
-out <- ode(y = xstart,times = times, func = SPCmod,
+out <- ode(y = xstart,times = times, func = PCmod,
                          parms = parms, atol = 0)
-matplot(out[,1], out[,2:3], type = "l")
+matplot(out[,1], out[,2:3], type = "l", ylab="Producer, Consumer", xlab="time")
 @
 
 It is, of course, not possible to set both, \code{atol} and
