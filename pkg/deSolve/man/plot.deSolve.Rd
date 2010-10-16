@@ -80,11 +80,14 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   specifying user-defined settings for \code{mfrow} or \code{mfcol}.
   Set \code{mfrow} equal to \code{NULL} to avoid the plotting function to 
   change user-defined \code{mfrow} or \code{mfcol} settings.
-  
 
   Other graphical parameters can be passed as well. Parameters
-  \code{xlab} and \code{ylab} are vectorized, so it is possible to
-  assign specific axis labels to individual plots.
+  are vectorized, either according to the number of plots 
+  (e.g. \code{xlab}, \code{ylab}, \code{main}) or according to the number of lines within
+  one plot (e.g. \code{col}, \code{lty}, \code{lwd} etc.) so it is possible to
+  assign specific axis labels to individual plots, resp. different plotting 
+  style. Plotting parameter \code{ylim} can also be a list to assign different
+  axis limits to individual plots.
   
   Image plots will only work for 1-D and 2-D variables, as solved with
   \code{\link{ode.1D}} and \code{\link{ode.2D}}. In the first case, an

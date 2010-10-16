@@ -428,6 +428,13 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
     
     for (j in 1:length(times)) {
       for (i in which) {
+      
+        ## thpe: additional check *before*
+        if (! is.null(grid))
+          Grid <- grid
+        else
+          Grid <- 1:length(out)
+                       
         dots      <- extractdots(Dots, i)
         if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
         if (! is.null(yylim)) dots$ylim <- yylim[[i]]
@@ -437,9 +444,9 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
         out <- x[j,(istart+1):(istart+prod(dimens))]
 
         if (! is.null(grid))
-          Grid = grid
+          Grid <- grid
         else
-          Grid = 1:length(out)
+          Grid <- 1:length(out)
 
         if (! xyswap) {
           do.call("plot", c(alist(Grid, out), dots))
