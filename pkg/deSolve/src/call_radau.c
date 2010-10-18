@@ -264,7 +264,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 
   /* initialise global R-variables...  */
   initglobals (nt, ntot);
-  //timesteps = (double *) R_alloc(2, sizeof(double));
+  timesteps = (double *) R_alloc(2, sizeof(double));
   for (j=0; j<2; j++) timesteps[j] = 0.;
   
   /* Initialization of Parameters, Forcings (DLL) */

@@ -98,7 +98,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
   /*------------------------------------------------------------------------*/
-  //timesteps = (double *)R_alloc(2, sizeof(double)); 
+  timesteps = (double *)R_alloc(2, sizeof(double)); 
   for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
@@ -168,7 +168,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
 
   if (nknots < 2) {nknots = 1; interpolate = FALSE;}
-  //if (dd || densetype > 0) interpolate = TRUE;
   if (densetype > 0) interpolate = TRUE;
   
   yknots = (double*) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
@@ -294,10 +293,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
   
-  // experimental
-  // set default value for timesteps
-  for (i = 0; i < 2; i++) timesteps[i] = 0;
-
   /* release R resources */
   if (verbose) 
     Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d it_rej %d\n", 

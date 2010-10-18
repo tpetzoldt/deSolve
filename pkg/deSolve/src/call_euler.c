@@ -48,6 +48,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   //saved_ts  = timesteps;
   //my_ts     = (double *)R_alloc(2, sizeof(double));
   //timesteps = my_ts;
+  timesteps = (double *)R_alloc(2, sizeof(double));
   for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
@@ -136,10 +137,9 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   for (it = 0; it < nt - 1; it++) {
     t = tt[it];
     dt = tt[it + 1] - t;
-    // Rprintf("%g\n", dt);
 
-    timesteps[0] = timesteps[1];     // experimental, check this
-    timesteps[1] = dt;               // experimental, check this  
+    timesteps[0] = timesteps[1];
+    timesteps[1] = dt;
   
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
