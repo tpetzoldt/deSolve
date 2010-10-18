@@ -8,7 +8,7 @@ func1 <- function(t,y,p) {
     cat(t, "inner ", timestep(TRUE), timestep(FALSE), "\n")
     list(-0.1 * y)
    }
-   oo <- ode(y = y,times=1:3, p=NULL, func=ff, method="vode")
+   oo <- ode(y = y,times=1:3, p=NULL, func=ff, method="euler")
    oo <- as.data.frame(oo)
    y2 <- unlist(oo[3, 2:4])
    list(0.1 * y2)

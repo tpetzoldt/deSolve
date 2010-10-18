@@ -43,11 +43,11 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
   /*------------------------------------------------------------------------*/
-  double *saved_ts, *my_ts;
+  //double *saved_ts, *my_ts;
 
-  saved_ts  = timesteps;
-  my_ts     = (double *)R_alloc(2, sizeof(double));
-  timesteps = my_ts;
+  //saved_ts  = timesteps;
+  //my_ts     = (double *)R_alloc(2, sizeof(double));
+  //timesteps = my_ts;
   for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
@@ -171,14 +171,13 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   */
   setIstate(R_yout, R_istate, istate, it, 1, 0, 1, 0);
 
-  // for testing; if setting the pointer works, then returned timestep
-  // should never be -99
-  for (i = 0; i < 2; i++) timesteps[i] = -99; 
-
   // reset timesteps pointer to saved state
-  timesteps = saved_ts;
+  // timesteps = saved_ts;
   
   /* release R resources */
+  //timesteps = NULL;
+  timesteps[0] = 0;
+  timesteps[1] = 0;
   restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

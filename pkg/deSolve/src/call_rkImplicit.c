@@ -68,7 +68,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
   /*------------------------------------------------------------------------*/
-  timesteps = (double *)R_alloc(2, sizeof(double)); 
+  //timesteps = (double *)R_alloc(2, sizeof(double)); 
   for (i = 0; i < 2; i++) timesteps[i] = 1;
   
   /**************************************************************************/
@@ -273,6 +273,9 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     Rprintf("Maxsteps %d\n", maxsteps);
   }
   /* release R resources */
+  timesteps[0] = 0;
+  timesteps[1] = 0;
+ 
   restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

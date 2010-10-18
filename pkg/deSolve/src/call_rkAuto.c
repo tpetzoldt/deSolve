@@ -98,7 +98,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for compatibility with lsoda)                               */
   /*------------------------------------------------------------------------*/
-  timesteps = (double *)R_alloc(2, sizeof(double)); 
+  //timesteps = (double *)R_alloc(2, sizeof(double)); 
   for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /*------------------------------------------------------------------------*/
@@ -303,6 +303,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     Rprintf("\nNumber of time steps it = %d, it_ext = %d, it_tot = %d it_rej %d\n", 
       it, it_ext, it_tot, it_rej);
   /* release R resources */
+  timesteps[0] = 0;
+  timesteps[1] = 0;
+  
   restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

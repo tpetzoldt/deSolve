@@ -2,9 +2,10 @@
 #include <Rdefines.h>
 
 /*============================================================================
-  global R variables      it,
+  global R variables 
 ============================================================================*/
-double *timesteps;
+
+double *timesteps; // see also R_init_deSolve.c
 
 SEXP YOUT, YOUT2, ISTATE, RWORK, IROOT;    /* returned to R */
 SEXP Time, Y, YPRIME , Rin;
