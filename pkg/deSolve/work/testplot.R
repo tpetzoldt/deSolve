@@ -177,7 +177,7 @@ hist(out, col = c("blue", "red", "green"),
 ## ================
 require (ReacTran)
 
-lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
+lvmod <- function (time, state, parms) {
   with (as.list(parms), {
     PREY <- state[1:N]
     PRED <- state[(N+1):(2*N)]
@@ -195,7 +195,8 @@ lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
     dPREY    <- tranPrey$dC + GrowthPrey - Ingestion
     dPRED    <- tranPred$dC + Ingestion * assEff - MortPredator
 
-    return (list(c(dPREY, dPRED)))
+    return (list(c(dPREY, dPRED), total = PREY+PRED, SUM =sum(PRED+PREY),
+     twoD = matrix(nrow=2, 1:4), secomat =matrix(nr = 3, nc=2, 1:6)))
   })
 }
 
@@ -229,18 +230,10 @@ times  <- seq(0, 200, by = 1)   # output wanted at these time intervals
 ## the model is solved by the two implemented methods:
 ## 1. Default: banded reformulation
 print(system.time(
-  out <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
-                nspec = 2, names = c("PREY", "PRED"),
-                N = N, rr = r, ri = ri, dr = dr, dri = dri)
+  out1D <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
+                nspec = 2, names = c("PREY", "PRED"))
 ))
 
-## 2. Using sparse method
-print(system.time(
-  out2 <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
-                 nspec = 2, names = c("PREY","PRED"), 
-                 N = N, rr = r, ri = ri, dr = dr, dri = dri,
-                 method = "lsodes")
-))
 
 ## ================
 ## Plotting output
@@ -248,13 +241,95 @@ print(system.time(
 # the data in 'out' consist of: 1st col times, 2-N+1: the prey
 # N+2:2*N+1: predators
 
-image(out, which = "PREY", grid = r, xlab = "time, days", 
+image(out1D, grid = r, xlab = "time, days", 
       ylab = "Distance, m", main = "Prey density")
 
 # zoom in
-image(out, which = c("PREY","PREY"), grid = r, xlab = "time, days", 
+image(out1D, which = c("PREY","PREY"), grid = r, xlab = "time, days", 
       ylab = "Distance, m", main = "Prey density",
       xlim = list(NULL,c(0,20)), ylim = list(NULL, c(0,5)))
 
+image(out1D, grid = r, which = "total", xlab = "time, days", 
+      ylab = "Distance, m", main = "Total density")
+
+image(out1D, grid = r, which = "secomat", xlab = "time, days", 
+      ylab = "Distance, m", main = "Total density")
+plot.1D(out1D)
 
 
+
+lvmod2D <- function (time, state, pars, N, Da, dx) {
+  NN <- N*N
+  Prey <- matrix(nr = N,nc = N,state[1:NN])
+  Pred <- matrix(nr = N,nc = N,state[(NN+1):(2*NN)])
+
+  with (as.list(pars), {
+    ## Biology
+    dPrey <- rGrow * Prey * (1- Prey/K) - rIng  * Prey * Pred
+    dPred <- rIng  * Prey * Pred*assEff - rMort * Pred
+
+    zero <- rep(0, N)
+
+    ## 1. Fluxes in x-direction; zero fluxes near boundaries
+    FluxPrey <- -Da * rbind(zero,(Prey[2:N,] - Prey[1:(N-1),]), zero)/dx
+    FluxPred <- -Da * rbind(zero,(Pred[2:N,] - Pred[1:(N-1),]), zero)/dx
+
+    ## Add flux gradient to rate of change
+    dPrey    <- dPrey - (FluxPrey[2:(N+1),] - FluxPrey[1:N,])/dx
+    dPred    <- dPred - (FluxPred[2:(N+1),] - FluxPred[1:N,])/dx
+
+    ## 2. Fluxes in y-direction; zero fluxes near boundaries
+    FluxPrey <- -Da * cbind(zero,(Prey[,2:N] - Prey[,1:(N-1)]), zero)/dx
+    FluxPred <- -Da * cbind(zero,(Pred[,2:N] - Pred[,1:(N-1)]), zero)/dx
+
+    ## Add flux gradient to rate of change
+    dPrey    <- dPrey - (FluxPrey[,2:(N+1)] - FluxPrey[,1:N])/dx
+    dPred    <- dPred - (FluxPred[,2:(N+1)] - FluxPred[,1:N])/dx
+
+    return(list(c(dPrey, dPred), TOT= Prey+Pred, 
+        PPco = colSums(Prey), PP = Prey, SUM=sum(Prey+Pred)))
+ })
+}
+
+
+## ===================
+## Model applications
+## ===================
+
+pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
+             rGrow  = 1.0,    # /day, growth rate of prey
+             rMort  = 0.2 ,   # /day, mortality rate of predator
+             assEff = 0.5,    # -, assimilation efficiency
+             K      = 5  )    # mmol/m3, carrying capacity
+
+R  <- 20                      # total length of surface, m
+N  <- 50                      # number of boxes in one direction
+dx <- R/N                     # thickness of each layer
+Da <- 0.05                    # m2/d, dispersion coefficient
+
+NN <- N*N                     # total number of boxes
+
+## initial conditions
+yini    <- rep(0, 2*N*N)
+cc      <- c((NN/2):(NN/2+1)+N/2, (NN/2):(NN/2+1)-N/2)
+yini[cc] <- yini[NN+cc] <- 1
+
+## solve model (5000 state variables...  use Cash-Karp Runge-Kutta method
+times   <- seq(0, 50, by = 1)
+out2D <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
+              dimens = c(N, N), names = c("Prey", "Pred"),
+              N = N, dx = dx, Da = Da, lrw = 1e6)#method = rkMethod("rk45ck"))
+
+## plot results
+Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+                          "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+
+ for (i in seq(1, length(times), by = 1))
+   image(matrix(nr = N, nc = N, out2D[i, 2:(NN+1)]),
+   col = Col(100), xlab = , zlim = range(out2D[,2:(NN+1)]))
+
+## similar:
+image(out2D, xlab = "x", ylab = "y", ask =FALSE)
+image(out2D, which = c("Prey","TOT"), xlab = "x", ylab = "y", ask = FALSE)
+plot(out2D, which = "SUM")
+image(out2D, which = "PPco")  # does not work: 1-D variable in 2-D model!

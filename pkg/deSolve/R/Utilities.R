@@ -130,7 +130,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     # different from default settings
     Dots$main <- expanddots (dots$main, varnames[which], np)
     Dots$xlab <- expanddots (dots$xlab, varnames[t],     np)
-    Dots$xlab <- expanddots (dots$xlabb,  ""        ,     np)
+    Dots$xlab <- expanddots (dots$xlabb, ""        ,     np)
 
 ## xlim and ylim are special: they are vectors or lists
     xxlim <- expanddotslist(dots$xlim, np)
@@ -149,21 +149,24 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 ### Image, filled.contour and persp plots
 ### ============================================================================
 image.deSolve <- function (x, which = NULL, ask = NULL,
-  add.contour = FALSE, grid=NULL, method="image", ...) {
+  add.contour = FALSE, grid=NULL, method="image", legend = FALSE, ...) {
 
     dimens <- attributes(x)$dimens
     if (is.null(dimens))
       stop("cannot make an image from deSolve output which is 0-dimensional")
     else if (length(dimens) ==1)  # 1-D
-      plot.ode1D(x, which, ask, add.contour, grid, method=method, ...)
+      plot.ode1D(x, which, ask, add.contour, grid, method=method, 
+        legend = legend, ...)
     else if (length(dimens) ==2)  # 2-D
-      plot.ode2D(x, which, ask, add.contour, grid, method=method, ...)
+      plot.ode2D(x, which, ask, add.contour, grid, method=method, 
+        legend = legend, ...)
     else
       stop("cannot make an image from deSolve output with more than 2 dimensions")
 }
 
 ### ============================================================================
 ### Plot utilities for the S3 plot method, 0-D, 1-D, 2-D
+### Plotting 0-D variables
 ### ============================================================================
 
 plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL, 
@@ -327,19 +330,69 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     }
 }
 
+### ============================================================================
+## to draw a legend
+### ============================================================================
+
+drawlegend <- function (parleg, dots) {
+        Plt <- par(plt = parleg)
+        par(new = TRUE)
+        ix <- 1
+        minz <- dots$zlim[1]
+        maxz <- dots$zlim[2]
+        binwidth <- (maxz - minz)/64
+        iy <- seq(minz + binwidth/2, maxz - binwidth/2, by = binwidth)
+        iz <- matrix(iy, nrow = 1, ncol = length(iy))
+
+        image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", 
+              ylab = "", col = dots$col)
+      
+        do.call("axis", list(side = 4, mgp = c(3,1,0), las=2))
+      
+        par(plt = Plt)
+}
 
 ### ============================================================================
-select1dvar <- function (which, var) {
+## to drape a color over a persp plot.
+### ============================================================================
 
+drapecol <- function (A,
+          col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), 
+              NAcol = "white", Range = NULL)
+{
+    nr <- nrow(A)
+    nc <- ncol(A)
+    ncol <- length(col)
+    AA <- 0.25 * (A[1:(nr - 1), 1:(nc - 1)] + A[1:(nr - 1), 2:nc] +
+        A[2:nr, 1:(nc - 1)] + A[2:nr, 2:nc])  
+    if(is.null(Range)) Range <- range(A, na.rm = TRUE)
+    Ar <- Range
+    rn <- Ar[2] - Ar[1]
+    ifelse(rn != 0, drape <- col[1 + trunc((AA - Ar[1])/rn *
+        (ncol - 1))], drape <- rep(col[1], ncol))
+    drape[is.na(drape)] <- NAcol
+    return(drape)
+}
+
+### ============================================================================
+### Finding 1-D variables
+### ============================================================================
+
+select1dvar <- function (which, var, att) {
+
+    proddim <- prod(att$dimens)
+    ln   <- length(which)
+    csum <- cumsum(att$lengthvar) + 2
+    
     if (!is.numeric(which)) {
-        ln <- length(which)
         # keep ordering...
         Select <- NULL
-        for ( i in 1:ln) {
+        for ( i in 1 : ln) {
           ss <- which(which[i] == var)
-          if (length(ss) ==0)
+          if (length(ss) == 0)
             stop("variable ", which[i], " not in var")
-          Select <- c(Select,ss)
+          Select <- c(Select, ss)
         }
     }
     else {
@@ -349,39 +402,86 @@ select1dvar <- function (which, var) {
         if (min(Select) < 1)
             stop("index in 'which' should be > 0")
     }
-  return(Select)
+
+    istart <- numeric(ln)
+    istop  <- numeric(ln)
+    for ( i in 1 : ln) {
+      if (Select[i] <= att$nspec) {
+        ii <- Select[i]
+        istart[i] <- (ii-1)*proddim + 2
+        istop[i]  <- istart[i] + proddim-1   
+      } else {
+        ii <- Select[i] - att$nspec
+        istart[i] <- csum[ii]
+        istop[i]  <- csum[ii+1]-1   
+      }
+    }
+      
+  return(list(which = Select, istart = istart, istop = istop))
  }
-
 ### ============================================================================
-# to drape a color over a persp plot.
-### ============================================================================
-
-
-drapecol <- function (A, 
-          col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), 
-              NAcol = "white")
-{
-    nr <- nrow(A)
-    nc <- ncol(A)
-    ncol <- length(col)
-    AA <- 0.25 * (A[1:(nr - 1), 1:(nc - 1)] + A[1:(nr - 1), 2:nc] +
-        A[2:nr, 1:(nc - 1)] + A[2:nr, 2:nc])
-    Ar <- range(AA, na.rm = TRUE)
-    rn <- Ar[2] - Ar[1]
-    ifelse(rn != 0, drape <- col[1 + trunc((AA - Ar[1])/rn *
-        (ncol - 1))], drape <- rep(col[1], ncol))
-    drape[is.na(drape)] <- NAcol
-    return(drape)
-}
-
+### Finding 2-D variables
 ### ============================================================================
 
-plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, ...) {
+select2dvar <- function (which, var, att) {
+
+    proddim <- prod(att$dimens)
+    ln   <- length(which)
+    csum <- cumsum(att$lengthvar) + 2
+    
+    if (!is.numeric(which)) {
+        # keep ordering...
+        Select <- NULL
+        for ( i in 1 : ln) {
+          ss <- which(which[i] == var)
+          if (length(ss) == 0)
+            stop("variable ", which[i], " not in var")
+          Select <- c(Select, ss)
+        }
+    }
+    else {
+        Select <- which  # "Select now refers to the column number
+        if (max(Select) > length(var))
+            stop("index in 'which' too large")
+        if (min(Select) < 1)
+            stop("index in 'which' should be > 0")
+    }
+
+    istart <- numeric(ln)
+    istop  <- numeric(ln)
+    dimens <- list()
+    for ( i in 1 : ln) {
+      if (Select[i] <= att$nspec) {  # a state variable
+        ii <- Select[i]
+        istart[i] <- (ii-1)*proddim + 2
+        istop[i]  <- istart[i] + proddim-1 
+        dimens[[i]] <- att$dimens 
+      } else {
+        ii <- Select[i] - att$nspec
+        istart[i] <- csum[ii]
+        istop[i]  <- csum[ii+1]-1
+        ij <- which(names(att$dimvar) == var[Select[i]])
+        if (length(ij) == 0) 
+          stop("variable ",var[Select]," is not two-dimensional")
+        dimens[[i]] <- att$dimvar[[ij]]
+           
+      }
+    }
+      
+  return(list(which = Select, istart = istart, istop = istop, dim = dimens))
+ }
+ 
+### ============================================================================
+### plotting 1-D variables as line plot
+### ============================================================================
+
+plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, 
+  xyswap = FALSE, ...) {
 
 ## Check settings of x
-    nspec <- attributes(x)$nspec
-    dimens <- attributes(x)$dimens
+    att <- attributes(x)
+    nspec <- att$nspec
+    dimens <- att$dimens
     proddim <- prod(dimens)
     if (length(dimens) != 1)
       stop ("plot.1D only works for models solved with 'ode.1D'")
@@ -391,13 +491,16 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
 
     if (is.null(which))
       which <- 1:nspec
-
-    varnames <- if (! is.null(attributes(x)$ynames))
-      attributes(x)$ynames else 1:nspec
-
-    which <- select1dvar(which, varnames)
-
     np <- length(which)
+
+    varnames <-  if (! is.null(att$ynames))
+      att$ynames else 1:nspec
+   
+    if (! is.null(att$lengthvar))
+      varnames <- c(varnames, names(att$lengthvar)[-1])
+      
+    Select <- select1dvar(which, varnames, att)
+    which <- Select$which
 
     dots <- list(...)
     nmdots <- names(dots)
@@ -423,27 +526,33 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
 
     # allow individual xlab and ylab (vectorized)
     times <- x[,1]
-    Dots$main <- expanddots(Dots$main, paste("time", times), np)
+    Dots$main <- expanddots(Dots$main, paste("time",times), np)
+    Dotsmain <- expanddots(dots$main, paste("time",times), length(times))
 
     # xlim and ylim are special: 
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
 
     ## thpe: additional check *before* the loop
-    if (! is.null(grid))
-      Grid <- grid
-    else
-      Grid <- 1:length(out)
+    # KS->ThPe: but out is not known yet
+#    if (! is.null(grid))
+#      Grid <- grid
+#    else
+#      Grid <- 1:length(out)
     
     for (j in 1:length(times)) {
-      for (i in which) {
-        dots <- extractdots(Dots, i)
+      for (i in 1:np) {
+        istart <- Select$istart[i]
+        istop  <- Select$istop[i]
+        
+        dots      <- extractdots(Dots, i)
+        dots$main <- Dotsmain[j]
         if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
         if (! is.null(yylim)) dots$ylim <- yylim[[i]]
         if (is.null(yylim) & xyswap) 
            dots$ylim <- rev(range(Grid))    # y-axis 
-        istart <- (i - 1) * proddim + 1
-        out <- x[j, (istart+ 1 ) : (istart + prod(dimens))]
+
+        out <- x[j,istart:istop]
 
         if (! is.null(grid))
           Grid <- grid
@@ -461,109 +570,145 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, .
 
 ### ============================================================================
 
-plot.ode1D <- function (x, which, ask, add.contour, grid, method = "image", ...) {
+plot.ode1D <- function (x, which, ask, add.contour, grid, 
+   method = "image", legend, ...) {
+
+## Default color scheme
+   BlueRed <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 
 ## if x is vector, check if there are enough columns ...
-    nspec <- attributes(x)$nspec
-    dimens <- attributes(x)$dimens
-    proddim <- prod(dimens)
+   att <- attributes(x)
+   nspec <- att$nspec
+   dimens <- att$dimens
+   proddim <- prod(dimens)
 
     if ((ncol(x)- nspec * proddim) < 1)
       stop("ncol of 'x' should be > 'nspec' * dimens if x is a vector")
 
 ## variables to be plotted
-    if (is.null(which))
-      which <- 1:nspec
+   if (is.null(which))
+      which <- 1 : nspec
 
-    varnames <-  if (! is.null(attributes(x)$ynames))
-      attributes(x)$ynames else 1:nspec
+   np <- length(which)
 
-    which <- select1dvar(which, varnames)
+   varnames <-  if (! is.null(att$ynames))
+      att$ynames else 1:nspec
+   
+   if (! is.null(att$lengthvar))
+      varnames <- c(varnames, names(att$lengthvar)[-1])
+      
+   Select <- select1dvar(which, varnames, att)
+   which <- Select$which
 
-    np <- length(which)
-
-    dots <- list(...)
-    nmdots <- names(dots)
+   dots <- list(...)
+   nmdots <- names(dots)
 
 ## number of figures in a row and interactively wait if remaining figures
-    ask <- setplotpar(nmdots, dots, np, ask)
-    if (ask) {
+   ask <- setplotpar(nmdots, dots, np, ask)
+   if (ask) {
         oask <- devAskNewPage(TRUE)
         on.exit(devAskNewPage(oask))
     }
 
-    Dots  <- setdots(dots, np)   # expand dots to np values (no defaults)
+   Dots  <- setdots(dots, np)   # expand dots to np values (no defaults)
 
     # different from the default
-    Dots$main  <- expanddots(dots$main, varnames[which], np)
-    Dots$xlab  <- expanddots(dots$xlab, "times",  np)
-    Dots$ylab  <- expanddots(dots$ylab, "",       np)
+   Dots$main  <- expanddots(dots$main, varnames[which], np)
+   Dots$xlab  <- expanddots(dots$xlab, "times",  np)
+   Dots$ylab  <- expanddots(dots$ylab, "",       np)
 
     # colors - different if persp, image or filled.contour
-    dotscol <- NULL
-    if (method == "persp")
+    
+   if (method == "persp")
       dotscol <- dots$col
 
-    else if (method == "filled.contour")
-    dotscolorpalette <- if (is.null(dots$color.palette))
-      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
-    else
-    dotscol <- if (is.null(dots$col))
-      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dots$col
+   else if (method == "filled.contour")  {
+      dotscolorpalette <- if (is.null(dots$color.palette))
+        BlueRed else dots$color.palette
+      dotscol <- dotscolorpalette(100)
+      add.contour <- FALSE
+      legend <- FALSE
+   } else
+     dotscol <- if (is.null(dots$col))
+       BlueRed(100) else dots$col
 
-    dotslim <- dots$zlim
+   Addcontour <- rep(add.contour, length = np)
 
-## xlim and ylim are special: - is there a better way????
-    xxlim <- expanddotslist(dots$xlim, np)
-    yylim <- expanddotslist(dots$ylim, np)
+## xlim, ylim and zlim are special:  
+   xxlim <- expanddotslist(dots$xlim, np)
+   yylim <- expanddotslist(dots$ylim, np)
+   zzlim <- expanddotslist(dots$zlim, np)
 
-    times <- x[,1]
+   times <- x[,1]
 
+   if (legend) {
+      parplt <- par("plt") - c(0,0.05,0,0) 
+      parleg <- c(parplt[2]+0.02, parplt[2]+0.05, parplt[3], parplt[4])
+      plt.or <- par(plt = parplt)
+      on.exit(par(plt = plt.or))
+   }  
 ## for each output variable (plot)
-    for (i in 1:np) {
-      ii <- which[i]
+   for (i in 1:np) {
+      
+      ii     <- which[i]
+      istart <- Select$istart[i]
+      istop  <- Select$istop[i]
+      out    <- x[ ,istart:istop]
+      
       dots      <- extractdots(Dots, i)
-      dots$col  <- dotscol 
       if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
       if (! is.null(yylim)) dots$ylim <- yylim[[i]]
-
-      istart <- (ii-1)*proddim + 1
-      out    <- x[ ,(istart+1):(istart+prod(dimens))]
+      if (! is.null(zzlim)) dots$zlim <- zzlim[[i]]
+      else
+        dots$zlim <- range(out, na.rm=TRUE)
 
       List <- alist(z = out, x = times)
       if (! is.null(grid)) List$y = grid
 
-        if (method == "persp") {
-           if(is.null(dotscol))
-             dots$col <- drapecol(out,
-               colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
-           else
-              dots$col <- drapecol(out, dotscol)
-          if (is.null(dotslim))  # this to prevent error when range = 0
+      if (method == "persp") {
+          if (is.null(dots$zlim))  # this to prevent error when range = 0
             if (diff(range(out, na.rm=TRUE)) == 0) 
               dots$zlim <- c(0, 1)
+
+          if(is.null(dotscol))
+             dots$col <- drapecol(out, col = BlueRed (100), Range = dots$zlim)
           else
-            dots$zlim <- dotslim
+             dots$col <- drapecol(out, col = dotscol, Range = dots$zlim)
 
         } else if (method == "filled.contour")
           dots$color.palette <- dotscolorpalette
-        
+        else 
+          dots$col <- dotscol 
+          
         do.call(method, c(List, dots))
-        if (add.contour) do.call("contour", c(List, add = TRUE))
-    }
-}
+        if (Addcontour[i]) do.call("contour", c(List, add = TRUE))
 
+      if (legend) {
+        if (method == "persp") 
+           if (is.null(dotscol))
+             dots$col <- BlueRed(100)
+           else
+              dots$col <- dotscol
+        if (is.null(dots$zlim)) dots$zlim <- range(out, na.rm=TRUE)
+
+        drawlegend(parleg, dots)      
+      }
+  }
+}
 ### ============================================================================
 
 plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
-   ...) {
+   legend = TRUE, ...) {
+
+## Default color scheme
+   BlueRed <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 
 ## if x is vector, check if there are enough columns ...
-    nspec <- attributes(x)$nspec
-    dimens <- attributes(x)$dimens
+    att <- attributes(x)
+    nspec <- att$nspec
+    dimens <- att$dimens
     proddim <- prod(dimens)
 
     if ((ncol(x)- nspec*proddim) < 1)
@@ -572,14 +717,17 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 ## variables to be plotted
     if (is.null(which))
       which <- 1:nspec
-
-    varnames <-  if (! is.null(attributes(x)$ynames))
-      attributes(x)$ynames else 1:nspec
-
-    which <- select1dvar(which,varnames)
-
     np <- length(which)
 
+    varnames <-  if (! is.null(att$ynames))
+      att$ynames else 1:nspec
+    if (! is.null(att$lengthvar))
+      varnames <- c(varnames, names(att$lengthvar)[-1])
+
+
+    Select <- select2dvar(which,varnames,att)
+    which <- Select$which
+    
     dots <- list(...)
     nmdots <- names(dots)
 
@@ -596,7 +744,12 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 #    Main <-  if (is.null(dots$main)) varnames else rep(dots$main, length.out =np)
     N <- np * nrow(x)
 
+    if (method == "filled.contour") {
+      add.contour <- FALSE
+      legend <- FALSE
+    }
     Dots  <- setdots(dots, N)  # expand dots to np values (no defaults)
+
     # different from the default
     Dots$main <- expanddots(dots$main, varnames[which], N)
     Dots$xlab <- expanddots(dots$xlab,  "x"  , N)
@@ -605,25 +758,46 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
     if (method == "persp")
       dotscol <- dots$col
 
-    else if (method == "filled.contour")
-    dotscolor.palette <- if (is.null(dots$color.palette))
-      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))else dots$color.palette
+    else if (method == "filled.contour") {
+      dotscolorpalette <- if (is.null(dots$color.palette))
+        BlueRed else dots$color.palette
+      dotscol <- dotscolorpalette(100)
+      add.contour <- FALSE
+      legend <- FALSE
+    }
     else
     dotscol <- if (is.null(dots$col))
-      colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-             "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100) else dotscol      
+      BlueRed(100) else dotscol      
 
     dotslim <- dots$zlim
- 
+
+    xxlim <- expanddotslist(dots$xlim, np)
+    yylim <- expanddotslist(dots$ylim, np)
+    zzlim <- expanddotslist(dots$zlim, np)
+
+    Addcontour <- rep(add.contour, length = np)
+
     i <- 0
+    if (legend) {
+      parplt <- par("plt") - c(0,0.05,0,0) 
+      parleg <- c(parplt[2]+0.02, parplt[2]+0.05, parplt[3], parplt[4])
+      plt.or <- par(plt = parplt)
+      on.exit(par(plt = plt.or))
+    }  
     for (nt in 1:nrow(x)) {
-      for (ii in which) {
+      for (ii in 1:np) {
         i       <- i+1
+        istart <- Select$istart[ii]
+        istop  <- Select$istop[ii]
+        out <- x[nt,istart:istop]
+        dim(out) <- Select$dim[[ii]]
+
         dots    <- extractdots(Dots, i)
-        istart  <- (ii-1)*proddim + 1
-        out <- x[nt,(istart+1):(istart+prod(dimens))]
-        dim(out) <- dimens
+        if (! is.null(xxlim)) dots$xlim <- xxlim[[ii]]
+        if (! is.null(yylim)) dots$ylim <- yylim[[ii]]
+        if (! is.null(zzlim)) dots$zlim <- zzlim[[ii]]
+      else
+        dots$zlim <- range(out, na.rm=TRUE)
 
         List <- alist(z = out)
         if (! is.null(grid)) {
@@ -632,29 +806,36 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
         }
 
         if (method == "persp") {
-           if(is.null(dotscol))
-             dots$col <- drapecol(out,
-               colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100))
-           else
-              dots$col <- drapecol(out, dotscol)
-          if (is.null(dotslim))
+          if (is.null(dots$zlim))
             if (diff(range(out, na.rm = TRUE)) == 0) 
               dots$zlim <- c(0, 1)
+          
+          if(is.null(dotscol))
+            dots$col <- drapecol(out, col = BlueRed(100), Range = dots$zlim)
           else
-            dots$zlim = dotslim
+            dots$col <- drapecol(out, col = dotscol, Range = dots$zlim)
 
         } else if (method == "image")
           dots$col <- dotscol
         else if (method == "filled.contour")
-          dots$color.palette <- dotscolor.palette        
+          dots$color.palette <- dotscolorpalette        
         
         do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add = TRUE))
+
+        if (legend) {
+          if (method == "persp") 
+            if (is.null(dotscol))
+             dots$col <- BlueRed(100)
+            else
+              dots$col <- dotscol
+          if (is.null(dots$zlim)) dots$zlim <- range(out, na.rm=TRUE)
+
+          drawlegend(parleg, dots)      
+        }
+       }
      }
      if (sum(par("mfrow") - c(1, 1)) == 0)
        mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]), 
          cex = 1.5, line = -1.5)
-
-   }
 }

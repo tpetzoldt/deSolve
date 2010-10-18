@@ -14,7 +14,8 @@ Plot the output of numeric integration routines.
   obspar= list())
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
-  add.contour = FALSE, grid = NULL, method="image", ...)  
+  add.contour = FALSE, grid = NULL, method="image", legend = FALSE, 
+  ...)  
 plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) 
 
 }
@@ -58,6 +59,9 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   }
   \item{obspar }{additional graphics arguments passed to \code{points}, for 
     plotting the observed data
+  }
+  \item{legend }{if \code{TRUE}, a color legend will be drawn on the right
+    of ecah image.
   }
   \item{\dots}{additional arguments.
   
@@ -231,7 +235,8 @@ state         <- c(APHIDS = APHIDS)      # initialise state variables
 times <- seq(0, 200, by = 1)   # output wanted at these time intervals
 out   <- ode.1D(state, times, Aphid, parms = 0, nspec = 1)
 
-image(out, grid = Distance, main = "Aphid model", ylab = "distance, m")
+image(out, grid = Distance, main = "Aphid model", ylab = "distance, m", 
+  legend = TRUE)
 
 image(out, grid = Distance, main = "Aphid model", ylab = "distance, m", 
   method = "persp", border = NA, theta = 30)

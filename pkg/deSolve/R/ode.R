@@ -149,7 +149,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
   # internal function #
     bmodel <- function (time,state,pars,model,...) {
       Modconc <-  model(time,state[ij],pars,...)   # ij: reorder state variables
-      list(c(Modconc[[1]][ii]),Modconc[-1])        # ii: reorder rate of change
+      c(list(Modconc[[1]][ii]),Modconc[-1])        # ii: reorder rate of change
     }
 
     if (is.character(func))

@@ -1167,7 +1167,11 @@ and in concentric circles. This is a 1-D model, with cylindrical coordinates
 Note that it is simpler to implement this model in R-package \code{ReacTran}
 \citep{ReacTran}.
 
-
+<<echo=FALSE,results=hide>>=
+options(prompt = " ")
+options(continue = " ") 
+@
+We start by defining the derivative function
 <<>>=
 lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
   with (as.list(parms), {
@@ -1193,13 +1197,13 @@ lvmod <- function (time, state, parms, N, rr, ri, dr, dri) {
     return (list(c(dPREY, dPRED)))
   })
 }
-
-## ==================
-## Model application
-## ==================
-
-## model parameters:
-
+@
+<<echo=FALSE,results=hide>>=
+options(prompt = " ")
+options(continue = " ") 
+@
+Then we define the parameters, which we put in a list
+<<>>=
 R  <- 20                        # total radius of surface, m
 N  <- 100                       # 100 concentric circles
 dr <- R/N                       # thickness of each layer
@@ -1214,15 +1218,14 @@ parms <- c(Da     = 0.05,       # m2/d, dispersion coefficient
            assEff = 0.5,        # -, assimilation efficiency
            cap    = 10)         # density, carrying capacity
 
-## Initial conditions: both present in central circle (box 1) only
+@
+After defining initial conditions, the model is solved with routine \code{ode.1D}
+<<>>=
 state    <- rep(0, 2 * N)
 state[1] <- state[N + 1] <- 10
                 
-## RUNNING the model:
 times  <- seq(0, 200, by = 1)   # output wanted at these time intervals
 
-## the model is solved by the two implemented methods:
-## 1. Default: banded reformulation
 print(system.time(
   out <- ode.1D(y = state, times = times, func = lvmod, parms = parms,
                 nspec = 2, names = c("PREY", "PRED"),
@@ -1234,13 +1237,16 @@ We first plot both 1-Dimensional state variables at once; we specify that
 the figures are arranged in two rows, and 2 columns; when we call \code{image},
 we overrule the default mfrow setting (\code{mfrow = NULL}).
 Next we plot "PREY" again, once with the default xlim and ylim, and next
-zooming in. Note that xlim and ylim are a list here.
+zooming in. Note that xlim and ylim are a list here.  
+When we call \code{image} for the second time,
+we overrule the default \code{mfrow} setting by specifying (\code{mfrow = NULL}).
 
 <<label=img,include=FALSE>>=
-par(mfrow = c(2,2))
-image(out, grid = r, mfrow = NULL)
+image(out, grid = r, mfrow = c(2,2), method = "persp", border=NA,
+      ticktype = "detailed", legend = TRUE)
 image(out, grid = r, which = c("PREY", "PREY"), mfrow = NULL,
-      xlim = list(NULL, c(0,10)), ylim = list(NULL, c(0,5)))
+      xlim = list(NULL, c(0,10)), ylim = list(NULL, c(0,5)),
+      add.contour = c(FALSE, TRUE))
 @
 
 \setkeys{Gin}{width=1.0\textwidth}
