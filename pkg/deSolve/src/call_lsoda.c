@@ -282,7 +282,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
      for (j=0; j<length(rWork); j++) rwork[j] = REAL(rWork)[j];
 
 /* a global variable*/  
-  timesteps = (double *) R_alloc(2, sizeof(double));
+  //timesteps = (double *) R_alloc(2, sizeof(double));
   for (j=0; j<2; j++) timesteps[j] = 0.;
   
 /* if a 1-D, 2-D or 3-D special-purpose problem (lsodes)

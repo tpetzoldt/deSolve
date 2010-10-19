@@ -210,7 +210,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   rwork = (double *) R_alloc(lrw, sizeof(double));
     for (j = 0; j < lrw; j++) rwork[j] = REAL(rWork)[j];
     
-  timesteps = (double *) R_alloc(2, sizeof(double));
+  //timesteps = (double *) R_alloc(2, sizeof(double));
   for (j = 0; j < 2; j++) timesteps[j] = 0.;
 
   /**************************************************************************/
