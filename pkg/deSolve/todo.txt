@@ -5,6 +5,10 @@ Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
 Karline + Thomas: add dopri 8(5,3) - Fortran??
 
+summary.deSolve
+
+subset.deSolve
+
 
 
 
@@ -13,13 +17,12 @@ Ideas/wishes (ThPe/karline):
 extend diagnostics: ?
   to return number of timesteps, number of ftion evaluations, etc...
 
-
-
 Karline, Thomas: timesteps should return NA if called outside of ODE
+
 
 Impossibilities...
 ==================
-NaN warnings and termination of R 
+resolve NaN warnings and termination of R 
 - KS does not see how this can be resolved
 
 Delay differential equations in compiled code 
@@ -27,7 +30,10 @@ Delay differential equations in compiled code
 
 Changes version 1.9
 ==========================
-plot.deSolve to plot more than one output in same figures, + add observations
+plot.deSolve to plot more than one output in same figures, + add
+observations
+
+fixed bug in 'timesteps'
 
 Changes version 1.8.1:
 ==========================
