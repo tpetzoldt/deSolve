@@ -41,7 +41,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int verbose = INTEGER(Verbose)[0];
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for compatibility with lsoda)                               */
+  /* timesteps (for advection computation in ReacTran)
   /*------------------------------------------------------------------------*/
   //double *saved_ts, *my_ts;
 
@@ -138,8 +138,8 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     dt = tt[it + 1] - t;
     // Rprintf("%g\n", dt);
 
-    timesteps[0] = timesteps[1];     // experimental, check this
-    timesteps[1] = dt;               // experimental, check this  
+    timesteps[0] = timesteps[1];
+    timesteps[1] = dt;
   
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);

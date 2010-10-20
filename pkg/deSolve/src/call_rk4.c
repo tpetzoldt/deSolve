@@ -44,10 +44,9 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int verbose = INTEGER(Verbose)[0];
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for compatibility with lsoda)                               */
+  /* timesteps (for advection computation in ReacTran)
   /*------------------------------------------------------------------------*/
-  //timesteps = (double *)R_alloc(2, sizeof(double)); 
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
+  for (i = 0; i < 2; i++) timesteps[i] = 0;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -144,9 +143,8 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   for (it = 0; it < nt - 1; it++) {
     t = tt[it];
     dt = tt[it + 1] - t;
-
-    timesteps[0] = timesteps[1];     // experimental, check this
-    timesteps[1] = dt;               // experimental, check this  
+    timesteps[0] = timesteps[1];
+    timesteps[1] = dt;
   
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);

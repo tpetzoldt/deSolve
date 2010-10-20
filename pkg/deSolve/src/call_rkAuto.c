@@ -96,10 +96,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
   /*------------------------------------------------------------------------*/
-  /* timesteps (for compatibility with lsoda)                               */
+  /* timesteps (for advection computation in ReacTran)
   /*------------------------------------------------------------------------*/
-  //timesteps = (double *)R_alloc(2, sizeof(double)); 
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
+  for (i = 0; i < 2; i++) timesteps[i] = 0;
 
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
@@ -293,10 +292,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr, it_rej);
 
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
-  
-  // experimental
-  // set default value for timesteps
-  for (i = 0; i < 2; i++) timesteps[i] = 0;
 
   /* release R resources */
   if (verbose) 

@@ -66,10 +66,9 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   neq = length(Xstart);
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for compatibility with lsoda)                               */
+  /* timesteps (for advection computation in ReacTran)
   /*------------------------------------------------------------------------*/
-  //timesteps = (double *)R_alloc(2, sizeof(double)); 
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
+  for (i = 0; i < 2; i++) timesteps[i] = 0;
   
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
@@ -262,10 +261,6 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   /* attach essential internal information (codes are compatible to lsoda) */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr, 0);
-
-  // experimental
-  // set default value for timesteps
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
 
   /* release R resources */
   if (verbose) {
