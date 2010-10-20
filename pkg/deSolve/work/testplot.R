@@ -1,5 +1,46 @@
 require(deSolve)
 
+# problematic
+
+### derivative function
+E3 <- function(t,y,parms) {
+  
+      dy1<- -A*y[1]-B*y[1]*y[3]
+      dy2<-  A*y[1]             -M*C*y[2]*y[3]
+      dy3<-  A*y[1]-B*y[1]*y[3] -M*C*y[2]*y[3] + C*y[4]
+      dy4<-         B*y[1]*y[3]                - C*y[4]
+      list(c(dy1,dy2,dy3,dy4))
+  }
+
+#-----------------------------
+# model parameters
+#-----------------------------
+
+A=7.89e-10; B=1.1e7; C=1.13e3; M=1e6
+
+#-----------------------------
+# initial values and times
+#-----------------------------
+
+yini  <- c(1.76e-3,rep(1e-20,3)) 
+
+times <- c(1e-6,10^(seq(-5,12,by=0.1)))
+
+#-----------------------------
+# solve the model
+#-----------------------------
+
+out <-  ode(func=E3, parms=NULL, y = yini, atol=1e-10,rtol=1e-10,
+      times=times,  maxsteps = 1e5, method = "lsoda")
+
+summary(out)
+plot(out, type="l", lwd=2, log="xy")  # this used to work! - 
+                                      # we have to mimic the way log="xy" works...
+
+
+
+
+
 LVmatrix <- function(t, n, parms) {
   with(parms, {
     dn <- r * n + n * (A %*% n)
@@ -252,8 +293,13 @@ image(out1D, which = c("PREY","PREY"), grid = r, xlab = "time, days",
 image(out1D, grid = r, which = "total", xlab = "time, days", 
       ylab = "Distance, m", main = "Total density")
 
-image(out1D, grid = r, which = "secomat", xlab = "time, days", 
+image(out1D,  which = "secomat", xlab = "time, days", 
       ylab = "Distance, m", main = "Total density")
+
+# should complain 
+#image(out1D,  grid = r, which = "secomat", xlab = "time, days", 
+#      ylab = "Distance, m", main = "Total density")
+
 plot.1D(out1D)
 
 
@@ -332,4 +378,7 @@ Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
 image(out2D, xlab = "x", ylab = "y", ask =FALSE)
 image(out2D, which = c("Prey","TOT"), xlab = "x", ylab = "y", ask = FALSE)
 plot(out2D, which = "SUM")
-image(out2D, which = "PPco")  # does not work: 1-D variable in 2-D model!
+#image(out2D, which = "PPco")  # does not work: 1-D variable in 2-D model!
+
+# range(subset(out2D,which = "TOT"))
+

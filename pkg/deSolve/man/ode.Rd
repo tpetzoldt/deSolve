@@ -1,6 +1,7 @@
 \name{ode}
 \alias{ode}
 \alias{print.deSolve}
+\alias{summary.deSolve}
 
 \title{General Solver for Ordinary Differential Equations}
 
@@ -13,6 +14,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"), ...)
 
 \method{print}{deSolve}(x, \dots)
+\method{summary}{deSolve}(object, \dots)
 }
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -60,6 +62,9 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   }
    \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be printed.}
+   \item{object }{an object of class \code{deSolve}, as returned by the
+    integrators, and whose summary is to be calculated. In contrast to R's default,
+    this returns a data.frame. It returns one sumamry columns for a multi-D variable.}
   \item{... }{additional arguments passed to the integrator or to the
     methods.}
 }
@@ -162,6 +167,7 @@ yini    <- c(Prey = 1, Predator = 2)
 times   <- seq(0, 200, by = 1)
 out     <- as.data.frame(ode(func = LVmod, y = yini,
                          parms = pars, times = times))
+summary(out)
 
 matplot(out$time, out[,2:3], type = "l", xlab = "time", ylab = "Conc",
         main = "Lotka-Volterra", lwd = 2)

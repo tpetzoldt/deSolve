@@ -100,6 +100,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
       out <- ode.band(y, times, func, parms, nspec = nspec,
         method = method, bandup = nspec*bandwidth,
         banddown = nspec*bandwidth, ...)
+      attr(out,"ynames") <- names
       return(out)
     }
 

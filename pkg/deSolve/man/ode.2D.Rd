@@ -162,11 +162,13 @@ out <- ode.2D(y = yini, times = times, func = lvmod2D, parms = pars,
               dimens = c(N, N), names = c("Prey", "Pred"),
               N = N, dx = dx, Da = Da, method = rkMethod("rk45ck"))
 
+diagnostics(out)
+summary(out)
+
+\dontrun{
 ## plot results
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                           "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-
-\dontrun{
 for (i in seq(1, length(times), by = 1))
    image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
