@@ -23,7 +23,7 @@ A=7.89e-10; B=1.1e7; C=1.13e3; M=1e6
 #-----------------------------
 
 yini  <- c(1.76e-3,rep(1e-20,3)) 
-
+names(yini) <- paste("y",1:4, sep="")
 times <- c(1e-6,10^(seq(-5,12,by=0.1)))
 
 #-----------------------------
@@ -31,15 +31,17 @@ times <- c(1e-6,10^(seq(-5,12,by=0.1)))
 #-----------------------------
 
 out <-  ode(func=E3, parms=NULL, y = yini, atol=1e-10,rtol=1e-10,
-      times=times,  maxsteps = 1e5, method = "lsoda")
+      times=times,  maxsteps = 1e5, method = "lsode")
 
 summary(out)
 plot(out, type="l", lwd=2, log="xy")  # this used to work! - 
                                       # we have to mimic the way log="xy" works...
 
+subset(out, 1:3) ->Out
 
+subset(out, c("time","y1","y2"),y1 > 1e-10)
 
-
+###
 
 LVmatrix <- function(t, n, parms) {
   with(parms, {
@@ -68,7 +70,7 @@ parms3 <- parms
 parms3$r[2] <- 0.2
 out3 <- ode(y, times, LVmatrix, parms3)
 
-
+subset(out, c("prey1","prey2"), prey1>prey2)
 
 
 ## Basic line plot
@@ -285,6 +287,8 @@ print(system.time(
 image(out1D, grid = r, xlab = "time, days", 
       ylab = "Distance, m", main = "Prey density")
 
+image(subset(out1D, "PREY"))
+
 # zoom in
 image(out1D, which = c("PREY","PREY"), grid = r, xlab = "time, days", 
       ylab = "Distance, m", main = "Prey density",
@@ -302,7 +306,7 @@ image(out1D,  which = "secomat", xlab = "time, days",
 
 plot.1D(out1D)
 
-
+### TWO-D model
 
 lvmod2D <- function (time, state, pars, N, Da, dx) {
   NN <- N*N
@@ -378,6 +382,14 @@ Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
 image(out2D, xlab = "x", ylab = "y", ask =FALSE)
 image(out2D, which = c("Prey","TOT"), xlab = "x", ylab = "y", ask = FALSE)
 plot(out2D, which = "SUM")
+
+OO <- subset(out2D, "Prey", time == 25)
+dim(OO) <- c(50,50)
+image(OO)
+
+O1 <- subset(out2D, "PPco")
+image(O1)
+ 
 #image(out2D, which = "PPco")  # does not work: 1-D variable in 2-D model!
 
 # range(subset(out2D,which = "TOT"))

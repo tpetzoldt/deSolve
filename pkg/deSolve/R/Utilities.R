@@ -638,7 +638,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
    Dots$xlab  <- expanddots(dots$xlab, "times",  np)
    Dots$ylab  <- expanddots(dots$ylab, "",       np)
 
-    # colors - different if persp, image or filled.contour
+   # colors - different if persp, image or filled.contour
     
    if (method == "persp")
       dotscol <- dots$col
@@ -911,3 +911,74 @@ summary.deSolve <- function(object, ...){
   data.frame(t(Summ))         # like this or not transposed?
 }
 
+### ============================================================================
+### Subsets of ode variables
+### ============================================================================
+
+subset.deSolve  <- function(x, which, subset = NULL, ...) {
+  Which <- which
+
+  if (missing(subset)) 
+        r <- TRUE
+  else {
+        e <- substitute(subset)
+        r <- eval(e, as.data.frame(x), parent.frame())
+        if (!is.logical(r)) 
+            stop("'subset' must evaluate to logical")
+        r <- r & !is.na(r)
+  }
+
+  if (is.numeric(Which))  
+    return(x[r ,Which+1])
+  
+  att <- attributes(x)
+  svar   <- att$lengthvar[1]   # number of state variables
+  lvar   <- att$lengthvar[-1]  # length of other variables
+  nspec  <- att$nspec          # for models solved with ode.1D, ode.2D
+  if(is.null(nspec)) nspec <- svar
+  dimens <- att$dimens
+  
+  # variable names: information for state and ordinary variables is different
+  if (is.null(att$ynames)) 
+    if (is.null(dimens))
+      varnames <- colnames(x)[2:(svar+1)] 
+    else
+      varnames <- 1:nspec
+  else  
+    varnames <- att$ynames   # this gives one name for multi-dimensional var.  
+  varnames <-c("time",varnames)
+  if (length(lvar) > 0) {
+    lvarnames <- names(lvar)
+    if (is.null(lvarnames)) 
+      lvarnames <- (length(varnames)+1):(length(varnames)+length(lvar))
+    varnames <- c(varnames, lvarnames)
+  }
+  
+  # length of state AND other variables
+  if (is.null(dimens))                 # all 0-D state variables
+    lvar <- c(rep(1, len = svar), lvar)
+  else
+    lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables 
+  
+  cvar <- cumsum(c(1,lvar))
+
+  # Add selected variables to Out 
+  Out <- NULL
+  for (iw in 1:length(Which)) {
+    i <- which (varnames == Which[iw])
+    if (is.null(i)) { 
+      i <- which (colnames(x) == Which[iw])
+      if (is.null(i))
+         stop ("cannot find variable ",Which[iw]," in output")
+      Out <- cbind(Out, x[,i])
+    } else { 
+      if (is.null(i))
+         stop ("cannot find variable ",Which[iw]," in output")
+      istart <- 1
+      if (i > 1) istart <- cvar[i-1]+1
+      istop <- cvar[i]
+       Out <- cbind(Out, x[ ,istart:istop])
+    }  
+  }
+  return(Out[r,])
+}
