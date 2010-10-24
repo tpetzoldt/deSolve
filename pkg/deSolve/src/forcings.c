@@ -263,5 +263,3 @@ void updateevent(double *t, double *y, int *istate) {
       *istate = 1;
     }
 }
-
- 

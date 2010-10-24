@@ -52,6 +52,46 @@ extractdots <- function(dots, index) {
   return(ret)
 }
 
+### ============================================================================
+### Merge two observed data files; assumed that first column = 'x' and ignored
+### ============================================================================
+
+mergeObs <- function(obs, Newobs) {
+      
+  if (! class(Newobs) %in% c("data.frame","matrix"))
+    stop ("the elements in 'obs' should be either a 'data.frame' or a 'matrix'")
+      
+  obsname <- colnames(obs)
+
+## check if some observed variables in NewObs are already in obs
+  newname <- colnames(Newobs)[-1]    # 1st column = x-var and ignored
+  ii <- which (newname %in% obsname)
+  if (length(ii) > 0)
+    obsname <- c(obsname, newname[-ii] ) 
+  else
+    obsname <- c(obsname, newname) 
+
+## padding with NA of the two datasets
+  O1 <- matrix(nrow = nrow(Newobs), ncol = ncol(obs), data = NA)
+  O1[ ,1] <- Newobs[,1]
+  for (j in ii) {   # obseerved data in common are put in correct position
+    jj <- which (obsname == newname[j])
+    O1[,jj] <- Newobs[,j+1]
+  }
+  O1 <- cbind(O1, Newobs[,-c(1,ii+1)] )
+  colnames(O1) <- obsname
+
+  nnewcol <- ncol(Newobs)-1 - length (ii)  # number of new columns
+  if (nnewcol > 0) {     
+     O2 <- matrix(nrow = nrow(obs), ncol = nnewcol, data = NA)
+     O2 <- cbind(obs, O2)
+     colnames(O2) <- obsname
+  } else O2 <- obs
+      
+  obs <- rbind(O2, O1) 
+  return(obs) 
+}
+
 ## =============================================================================
 ## Set the mfrow parameters and whether to "ask" for opening a new device
 ## =============================================================================
@@ -86,7 +126,7 @@ selectvar <- function (which, var, NAallowed = FALSE) {
     for ( i in 1:ln) {
       ss <- which(which[i]==var)
       if (length(ss) ==0 & ! NAallowed) 
-        stop("variable ", which[i], " not in var")
+        stop("variable ", which[i], " not in variable names")
       else if (length(ss) == 0)
         Select <- c(Select,NA)
       else
@@ -178,11 +218,33 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL, 
     obspar = list()) {
 
-## check observed data
+## check observed data - can be a list
+    nobs <- 0
+
     if (! is.null(obs)) {
+
+      if (!is.data.frame(obs) & is.list(obs)) { # a list with different data sets
+       Obs <- obs
+       obs <- Obs[[1]]  
+       obs.pos <- matrix(nrow = 1, c(1, nrow(obs)))
+       if (! class(obs) %in% c("data.frame", "matrix"))
+         stop ("'obs' should be either a 'data.frame' or a 'matrix'")
+       if (length(Obs) > 1)
+         for ( i in 2 : length(Obs)) {
+           obs <- mergeObs(obs, Obs[[i]])
+           obs.pos <- rbind(obs.pos, c(obs.pos[nrow(obs.pos),2] +1, nrow(obs)))
+         }
+       obsname <- colnames(obs) 
+      } else {
        obsname <- colnames(obs) 
        if (! class(obs) %in% c("data.frame", "matrix"))
          stop ("'obs' should be either a 'data.frame' or a 'matrix'")
+       obs.pos <- matrix(nrow = 1, c(1, nrow(obs)))
+      }                       
+    DD <- duplicated(obsname)
+    if (sum(DD) > 0)  
+      obs <- mergeObs(obs[,!DD], cbind(obs[,1],obs[,DD]))
+    nobs <- nrow(obs.pos)   
     }
 
 ## variables to be plotted
@@ -242,12 +304,10 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     nx <- nother + 1 # total number of deSolve objects to be plotted
 
 ## Position of variables in "obs" (NA = not observed)
-    nobs <- 0
-    if (! is.null(obs)) {
+    if (nobs > 0) {
       ObsWhich <- selectvar(varnames[xWhich], obsname, NAallowed = TRUE)
-      ObsWhich [ ObsWhich > ncol(obs)] <- NA  # Ks->ks check why this was necessary...
-      nobs <- length(ObsWhich)
-      ObsDots <- setdots(obspar, nobs)
+      ObsWhich [ ObsWhich > ncol(obs)] <- NA  
+      Obspar <- setdots(obspar, nobs)
     } else 
       ObsWhich <- rep(NA, np)
 
@@ -267,10 +327,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     dotmain$main <- expanddots(dots$main, varnames[xWhich], np)
 
     # ylim and xlim can be lists and are at least two values
-    isylim <- !is.null(dots$ylim)
     yylim  <- expanddotslist(dots$ylim, np)
-
-    isxlim <- !is.null(dots$xlim)
     xxlim  <- expanddotslist(dots$xlim, np)
 
     # point parameters
@@ -284,9 +341,9 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     dotpoints$pch  <- expanddots(dots$pch, 1:nx, nx)
     dotpoints$col  <- expanddots(dots$col, 1:nx, nx)
     dotpoints$bg   <- expanddots(dots$bg,  1:nx, nx)
+
  
 ## for each output variable (plot)
-    iobs <- 0
     for (i in 1 : np) {
       ii <- xWhich[i]     # position of variable in 'x'
       io <- ObsWhich[i]   # position of variable in 'obs'
@@ -302,43 +359,43 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       }       
       
       # ranges
-      if (! isylim) {
+      if ( is.null (yylim[[i]])) {
         yrange <- Range(NULL, x[, ii], Ylog)
         if (nother>0) 
          for (j in 1:nother) 
            yrange <- Range(yrange, x2[[j]][,ii], Ylog)
         if (! is.na(io)) yrange <- Range(yrange, obs[,io], Ylog)
           Dotmain$ylim <- yrange
-      } else {
+      } else  
         Dotmain$ylim  <- yylim[[i]]
-      } 
+       
 
-      if (! isxlim) {
+      if ( is.null (xxlim[[i]])) {
         xrange <- Range(NULL, x[, t], Xlog)
         if (nother>0) 
          for (j in 1:nother) 
            xrange <- Range(xrange, x2[[j]][,t], Xlog)
         if (! is.na(io)) xrange <- Range(xrange, obs[,1], Xlog)
           Dotmain$xlim <- xrange
-      } else {
+      } else  
         Dotmain$xlim  <- xxlim[[i]]
-      } 
+        
       
       # first deSolve object plotted (new plot created)
       do.call("plot", c(alist(x[, t], x[, ii]), Dotmain, Dotpoints))
       
-      # if other deSolve outputs
-      if (nother > 0) 
-        for (j in 2:nx) {
-          Dotpoints <- extractdots(dotpoints, j)
-          do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), Dotpoints))
-        }
+      if (nother > 0)        # if other deSolve outputs
+        for (j in 2:nx)   
+          do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), 
+                  extractdots(dotpoints, j)) )
+         
       # ks -> ThPe if observed variables: select correct pars
-      if (! is.na(io)) {
-        iobs <- iobs + 1
-        do.call("points", c(alist(obs[, 1], obs[, io]), 
-                extractdots(ObsDots, iobs)))     
-      }     
+      if (! is.na(io))   
+           for (j in 1: nobs) 
+              if (length (i.obs <- obs.pos[j, 1]:obs.pos[j, 2]) > 0) 
+                do.call("points", c(alist(obs[i.obs, 1], obs[i.obs, io]), 
+                         extractdots(Obspar, j) ))        
+            
     }
 }
 
@@ -409,7 +466,7 @@ select1dvar <- function (which, var, att) {
         for ( i in 1 : ln) {
           ss <- which(which[i] == var)
           if (length(ss) == 0)
-            stop("variable ", which[i], " not in var")
+            stop("variable ", which[i], " not in variable names")
           Select <- c(Select, ss)
         }
     }
@@ -455,7 +512,7 @@ select2dvar <- function (which, var, att) {
         for ( i in 1 : ln) {
           ss <- which(which[i] == var)
           if (length(ss) == 0)
-            stop("variable ", which[i], " not in var")
+            stop("variable ", which[i], " not in variable names")
           Select <- c(Select, ss)
         }
     }
@@ -534,15 +591,9 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
     Dots <- setdots(dots, np) # expand all dots to np values (no defaults)
 
     # These are different from defaulst
-    llab <- (!is.null(dots$xlab) |!is.null(dots$ylab)) 
     Dots$xlab <- expanddots(dots$xlab,  "x", np)
     Dots$ylab <- expanddots(dots$ylab,  varnames[which], np)
 
-    if (xyswap & !llab) {
-        xl <- Dots$ylab
-        Dots$ylab <- Dots$xlab
-        Dots$xlab <- Dots$ylab
-    }
 
     # allow individual xlab and ylab (vectorized)
     times <- x[,1]
@@ -560,6 +611,8 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
 #    else
 #      Grid <- 1:length(out)
     
+    xyswap <- rep(xyswap, length = np)
+
     for (j in 1:length(times)) {
       for (i in 1:np) {
         istart <- Select$istart[i]
@@ -569,7 +622,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
         dots$main <- Dotsmain[j]
         if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
         if (! is.null(yylim)) dots$ylim <- yylim[[i]]
-        if (is.null(yylim) & xyswap) 
+        if (is.null(yylim) & xyswap[i]) 
            dots$ylim <- rev(range(Grid))    # y-axis 
 
         out <- x[j,istart:istop]
@@ -579,9 +632,15 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
         else
           Grid <- 1:length(out)
 
-        if (! xyswap) {
+        if (! xyswap[i]) {
           do.call("plot", c(alist(Grid, out), dots))
         } else {
+          if (is.null(dots$xlab) | is.null(dots$ylab)) {
+            xl <- dots$ylab
+            dots$ylab <- dots$xlab
+            dots$xlab <- dots$ylab
+          }
+        
           do.call("plot", c(alist(out, Grid), dots))
         }
        }

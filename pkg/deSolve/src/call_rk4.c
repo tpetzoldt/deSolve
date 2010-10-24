@@ -44,7 +44,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int verbose = INTEGER(Verbose)[0];
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for advection computation in ReacTran)
+  /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
   for (i = 0; i < 2; i++) timesteps[i] = 0;
 

@@ -119,7 +119,7 @@ plot(out, out2, out3, which = 1:4,  type = "l",
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), lwd=1,
   ylim=list(c(0,15), c(0, 12), c(0,20), c(0, 25)))
   
-## individual ylim, some not specified   - THIS  ....DOES NOT WORK...
+## individual ylim, some not specified    
 plot(out, out2, out3, which = 1:4,  type = "l",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
@@ -146,12 +146,12 @@ plot(out, out2, out3, which = 1:4,  type = "p",
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), 
   cex=0.8, cex.axis=.5, cex.lab=1.5, cex.main=1)
 
-plot(out, out2, out3, which = 1:4,  type = "p",
+plot(out, out2, which = 1:4,  type = "p",
   ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
   xlab = "Time (d)", col = c("red", "blue", "forestgreen"),
   lty= c(1,1,1), main=c("Prey 1", "Prey 2", "Prey 3", "Prey 4"), 
-  cex=c(1, 0.5, 0.3), cex.axis=c(0.5, 0.2, 0.8), cex.lab=c(0.5, 0.2, 0.8), 
-  cex.main=c(0.5, 0.2, 0.8))
+  cex=c(1, 1.5), cex.axis=c(0.5, 0.2, 0.8), cex.lab=c(0.5, 1.2, 0.8), 
+  cex.main=c(0.5, 2, 0.8))
 
   
 ## ThPe: todo
@@ -160,19 +160,23 @@ plot(out, out2, out3, which = 1:4,  type = "p",
 ## ThPe: to encode additional information; done (experimentally), see example:
 
 obs <- as.data.frame(out[out[,1] %in% seq(10, 500, by=30), ])
+obs2 <- out[out[,1] %in% seq(0, 500, by=100), ]
 
 nobs <- nrow(obs)
 rbd <- rainbow(nobs)
-plot(out, type = "l", obs = obs,
-  obspar = list(col=list(rbd, "red", "blue", rbd),
+plot(out, type = "l", obs = list(obs, obs2),
+  obspar = list(col=c(list(rbd, "red", "blue", rbd),"black"),
   pch=list(18, 19, 1:2, 1:nobs), cex=list(2, seq(0.5, 3, length=nobs), 1.2, 1.2)))
 
+plot(out, type = "l", obs = list(obs, obs2), which="prey1",
+  obspar = list(col=c("red","black"),
+  pch=list(18, "+"), cex=c(2,3)))
 
 ################################################################################
   
 ## add second output 
 plot(out, out2, which = c("prey1", "prey2"), 
-type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"),
+type = "l", ylab = c("Prey 1", "Prey 2", "Pred 1", "Pred 2"), log=c("y",""),
   xlab = "Time (d)", main = "Time Series", col = c("red", "blue"))
 
 plot(out, out2, which = "prey2",
@@ -181,18 +185,19 @@ type = "l", ylab = c("Prey 2", "Prey 2", "Pred 1", "Pred 2"),
 
 timeobs <- seq (0,300,50)
 prey2   <- (1 - 0.7*sin(2 * pi * timeobs / 60))*(1+0.1*runif(length(timeobs)))
-obsdat <- cbind (time=timeobs, prey2 = prey2)
+obsdat <- cbind (time=timeobs, prey2 = prey2, pred2 = NA)
 
 obsdat[3,2] <- NA
-obsdat <- cbind (obsdat, sum = NA)
-obsdat <- rbind (obsdat, c(100,NA, 2), c(300,NA, 3.5))
+
+obsdat <- rbind(obsdat, matrix(nr=2,byrow=T,c(50,NA,5,150,NA,10)))
+
+
+obsdat2 <- cbind( time = c(100,300), pred2 = c(2, 13.5))
 
 # plotting withe different parameter settings
 plot(out, out2, type = "l", xlab = "Time (d)", col = c("red", "blue"),
-  obs = obsdat, obspar = list(pch = 16, cex = 2, col = c("orange", "darkblue")))
-
-plot(out, out2, which = 5:1, type = "l", xlab = "Time (d)", col = c("red", "blue"),
-  obs = obsdat, obspar = list(pch = 16, cex = 2, col = c("orange", "darkblue")))
+  obs = list(obsdat, obsdat2), 
+  obspar = list(pch = 16, cex = 2, col = c("orange", "darkblue")))
 
 
 ### ============================================================================
@@ -390,7 +395,9 @@ image(OO)
 O1 <- subset(out2D, "PPco")
 image(O1)
  
+summary(out2D)
+
 #image(out2D, which = "PPco")  # does not work: 1-D variable in 2-D model!
 
-# range(subset(out2D,which = "TOT"))
+ range(subset(out2D,which = "TOT"))
 

@@ -96,7 +96,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
   /*------------------------------------------------------------------------*/
-  /* timesteps (for advection computation in ReacTran)
+  /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
   for (i = 0; i < 2; i++) timesteps[i] = 0;
 
@@ -305,3 +305,4 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   return(R_yout);
 }
  
+

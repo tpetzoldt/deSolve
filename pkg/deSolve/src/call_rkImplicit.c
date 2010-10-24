@@ -66,7 +66,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   neq = length(Xstart);
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for advection computation in ReacTran)
+  /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
   for (i = 0; i < 2; i++) timesteps[i] = 0;
   

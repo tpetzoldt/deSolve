@@ -180,12 +180,21 @@ plot(out, out2, out3, type = "l",
 
 
 ## 'observed' data
-obs <- as.data.frame(out[out[,1] \%in\% seq(10, 500, by=30), ])
+obs <- as.data.frame(out[out[,1] \%in\% seq(10, 500, by = 30), ])
 
 plot(out, which = "prey1", type = "l", obs = obs, 
      obspar = list(pch = 18, cex = 2))
 
 plot(out, type = "l", obs = obs, col = "red")
+
+## second set of 'observed' data and two outputs
+obs2 <- as.data.frame(out2[out2[,1] \%in\% seq(10, 500, by = 50), ])
+
+## manual xlim, log
+plot(out, out2, type = "l", obs = list(obs, obs2), col = c("red", "blue"),
+      obspar = list(pch = 18:19, cex = 2, col = c("red", "blue")),
+      log = c("y",""), which = c("prey1","prey1"), 
+      xlim = list(c(100, 500), c(0, 400)))
 
 # Simple histogram
 hist(out, col = "darkblue", breaks = 50)

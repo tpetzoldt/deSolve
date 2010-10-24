@@ -41,7 +41,7 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int verbose = INTEGER(Verbose)[0];
 
   /*------------------------------------------------------------------------*/
-  /* timesteps (for advection computation in ReacTran)
+  /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
   //double *saved_ts, *my_ts;
 

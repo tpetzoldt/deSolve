@@ -83,7 +83,7 @@ void dkfunc(int stage, int neq, double t, double dt,
 
 /* ks: check if tmp3 necessary ... */
 void rk_implicit( double * alfa,  /* neq*stage * neq*stage */
-       int *index,                /* neq*stage *
+       int *index,                /* neq*stage */
        /* integers */
        int fsal, int neq, int stage,
        int isDll, int isForcing, int verbose,
