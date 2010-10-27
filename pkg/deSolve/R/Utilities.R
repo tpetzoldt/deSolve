@@ -186,8 +186,8 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     for (ii in 1:np) {
         i <- which[ii]
         dots <- extractdots(Dots, ii)
-        if (! is.null(xxlim)) dots$xlim <- xxlim[[ii]]
-        if (! is.null(yylim)) dots$ylim <- yylim[[ii]]
+        if (! is.null(xxlim[[ii]])) dots$xlim <- xxlim[[ii]]
+        if (! is.null(yylim[[ii]])) dots$ylim <- yylim[[ii]]
         do.call("hist", c(alist(x[, i]), dots))
     }
 }
@@ -635,10 +635,9 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
         if (! xyswap[i]) {
           do.call("plot", c(alist(Grid, out), dots))
         } else {
-          if (is.null(dots$xlab) | is.null(dots$ylab)) {
-            xl <- dots$ylab
-            dots$ylab <- dots$xlab
-            dots$xlab <- dots$ylab
+          if (is.null(Dots$xlab[i]) | is.null(Dots$ylab[i])) {
+            dots$ylab <- Dots$xlab[i]
+            dots$xlab <- Dots$ylab[i]
           }
         
           do.call("plot", c(alist(out, Grid), dots))

@@ -24,7 +24,6 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
   \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be plotted.
     
-    
     For \code{plot.deSolve}, it is allowed to pass several objects of class
     \code{deSolve} after \code{x} (unnamed) - see second example.
     }
@@ -44,24 +43,29 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
     "filled.contour", "persp", "contour".}
 
   \item{grid }{only for \code{image} plots and for \code{plot.1D}: 
-    the 1-D grid as a vector (output generated with \code{ode.1D}, 
-    or the x- and y-grid, as a \code{list} for output generated with 
-    \code{ode.2D}.}
+    the 1-D grid as a vector (for output generated with \code{ode.1D}), 
+    or the x- and y-grid, as a \code{list} (for output generated with 
+    \code{ode.2D}).}
 
   \item{xyswap }{ if \code{TRUE}, then x-and y-values are swapped and the 
     y-axis is from top to bottom. Useful for drawing vertical profiles.}
 
   \item{obs }{a \code{data.frame} or \code{matrix} with "observed data" that 
-    will be added as \code{points} to the plots. 
-    The first column of \code{obs} should contain the \code{time}-variable. 
+    will be added as \code{points} to the plots. \code{obs} can also be a 
+    \code{list} with multiple data.frames and/or matrices containing 
+    observed data.
+    The first column of an observed data set should contain the \code{time}-variable. 
     If \code{obs} is not \code{NULL} and \code{which} is \code{NULL}, 
     then the variables, common to both \code{obs} and \code{x} will be plotted.
   }
   \item{obspar }{additional graphics arguments passed to \code{points}, for 
-    plotting the observed data
+    plotting the observed data. If \code{obs} is a \code{list} containing multiple
+    observed data sets, then the graphics arguments can be  a vector
+    or a list (e.g. for \code{xlim}, \code{ylim}), specifying each data set 
+    separately.
   }
-  \item{legend }{if \code{TRUE}, a color legend will be drawn on the right
-    of ecah image.
+  \item{legend }{if \code{TRUE}, a color legend will be drawn on the right 
+    of each image.
   }
   \item{\dots}{additional arguments.
   
@@ -72,7 +76,7 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
     \code{deSolve}, as returned by the integrators, and 
     to be plotted on the same graphs as \code{x}  - see second example.
     In this case, \code{x} and and these other objects should be compatible, 
-    i.e. the names should be the same and they should have same number of rows.
+    i.e. the column names should be the same.
     
     For \code{plot.deSolve}, the arguments after \ldots must be matched exactly.     
   } 
@@ -87,11 +91,18 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
 
   Other graphical parameters can be passed as well. Parameters
   are vectorized, either according to the number of plots 
-  (e.g. \code{xlab}, \code{ylab}, \code{main}) or according to the number of lines within
-  one plot (e.g. \code{col}, \code{lty}, \code{lwd} etc.) so it is possible to
+  (\code{xlab, ylab}, \code{main, sub}, \code{xlim, ylim}, \code{log},
+   \code{asp, ann, axes, frame.plot},\code{panel.first,panel.last},
+   \code{cex.lab,cex.axis,cex.main}) or 
+  according to the number of lines within one plot (other parameters 
+  e.g. \code{col}, \code{lty}, \code{lwd} etc.) so it is possible to
   assign specific axis labels to individual plots, resp. different plotting 
-  style. Plotting parameter \code{ylim} can also be a list to assign different
-  axis limits to individual plots.
+  style. Plotting parameter \code{ylim}, or \code{xlim} can also be a list 
+  to assign different axis limits to individual plots.
+  
+  Similarly, the graphical parameters for observed data, as passed by 
+  \code{obspar} can be vectorized, according to the number of observed 
+  data sets.
   
   Image plots will only work for 1-D and 2-D variables, as solved with
   \code{\link{ode.1D}} and \code{\link{ode.2D}}. In the first case, an
