@@ -20,5 +20,6 @@ Description: Functions that solve initial value problems of a system of
              resulting from 1-D, 2-D and 3-D partial differential equations
              (PDE) that have been converted to ODEs by numerical differencing.
 License: GPL (>= 2)
+URL: http://desolve.r-forge.r-project.org/
 LazyData: yes
 
