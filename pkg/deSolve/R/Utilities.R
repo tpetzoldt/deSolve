@@ -13,7 +13,7 @@
 # Update range, taking into account neg values for log transformed values
 Range <- function(Range, x, log) {
    if (log) 
-      x[x<0] <- min(x[x>0])  # remove zeros
+      x[x <= 0] <- min(x[x>0])  # remove zeros
    return( range(Range, x, na.rm = TRUE) )
 }
 
