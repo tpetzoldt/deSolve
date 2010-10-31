@@ -998,8 +998,8 @@ summary.deSolve <- function(object, ...){
 ### Subsets of ode variables
 ### ============================================================================
 
-subset.deSolve  <- function(x, which, subset = NULL, ...) {
-  Which <- which
+subset.deSolve  <- function(x, which = NULL, select = which, subset = NULL, ...) {
+  Which <- select
 
   if (missing(subset)) 
         r <- TRUE

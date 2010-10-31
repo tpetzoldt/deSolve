@@ -3,6 +3,7 @@
 \alias{plot.1D}
 \alias{hist.deSolve}
 \alias{image.deSolve}
+\alias{subset.deSolve}
 \title{
  Plot, Image and Histogram Method for deSolve Objects
 }
@@ -16,6 +17,9 @@ Plot the output of numeric integration routines.
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
   add.contour = FALSE, grid = NULL, method="image", legend = FALSE, 
   ...)  
+\method{subset}{deSolve}(x, which = NULL, select = which, 
+  subset = NULL, \dots)
+
 plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) 
 
 }
@@ -29,8 +33,13 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
     }
 
   \item{which }{the name(s) or the index to the variables that should be
-    plotted.  Default = all variables, except \code{time}. }
+    plotted or selected.  Default = all variables, except \code{time}. }
 
+  \item{select }{which variable/columns to be selected.
+  }
+  \item{subset }{logical expression indicating elements or rows to keep in 
+    \code{select}: missing values are taken as \code{false}
+  }
   \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
     each plot, if \code{NULL} the user is only asked if more than one
     page of plots is necessary and the current graphics device is set
@@ -244,7 +253,7 @@ Aphid <- function(t, APHIDS, parameters) {
   deltax  <- c (0.5, rep(1, numboxes - 1), 0.5)
   Flux    <- -D * diff(c(0, APHIDS, 0))/deltax
   dAPHIDS <- -diff(Flux)/delx + APHIDS * r
-  list(dAPHIDS)
+  list(dAPHIDS, Flux = Flux)
 }
   
 ## ==================
@@ -275,6 +284,9 @@ image(out, grid = Distance, main = "Aphid model", ylab = "distance, m",
 
 image(out, grid = Distance, main = "Aphid model", ylab = "distance, m", 
   method = "persp", border = NA, theta = 30)
+
+FluxAphid <- subset(out, select = "Flux", subset = time<50)
+
 \dontrun{
   plot(out,ask = FALSE, mfrow = c(1, 1))
   plot.1D(out, ask = FALSE, type = "l", lwd = 2, xyswap = TRUE)

@@ -2,7 +2,6 @@
 \alias{ode}
 \alias{print.deSolve}
 \alias{summary.deSolve}
-
 \title{General Solver for Ordinary Differential Equations}
 
 \description{Solves a system of ordinary differential equations; a wrapper
@@ -60,11 +59,13 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     Adams and the implicit Adams method respectively (see details).
     The default integrator used is \link{lsoda}.
   }
-   \item{x }{an object of class \code{deSolve}, as returned by the
-    integrators, and to be printed.}
-   \item{object }{an object of class \code{deSolve}, as returned by the
+  \item{x }{an object of class \code{deSolve}, as returned by the
+    integrators, and to be printed or to be subsetted.
+  }
+  \item{object }{an object of class \code{deSolve}, as returned by the
     integrators, and whose summary is to be calculated. In contrast to R's default,
-    this returns a data.frame. It returns one sumamry columns for a multi-D variable.}
+    this returns a data.frame. It returns one sumamry columns for a multi-D variable.
+  }
   \item{... }{additional arguments passed to the integrator or to the
     methods.}
 }
