@@ -383,36 +383,30 @@ times <- seq(0, 100, by = 2)
 y     <- c(A = 2, B = 3, D = 2*3/K)
 
 ## ODE model solved with daspk
-ODE <- as.data.frame(daspk(y = y, times = times, func = Fun_ODE,
-                     parms = pars, atol = 1e-10, rtol = 1e-10))
+ODE <- daspk(y = y, times = times, func = Fun_ODE,
+                     parms = pars, atol = 1e-10, rtol = 1e-10)
 
 ## Initial rate of change
 dy  <- c(dA = 0, dB = 0, dD = 0) 
 
 ## DAE model solved with daspk
-DAE <- as.data.frame(daspk(y = y, dy = dy, times = times,
-         res = Res_DAE, parms = pars, atol = 1e-10, rtol = 1e-10))
+DAE <- daspk(y = y, dy = dy, times = times,
+         res = Res_DAE, parms = pars, atol = 1e-10, rtol = 1e-10)
 
 MASS<- daspk(y=y, times=times, func = Mass_FUN, parms = pars, mass = Mass)
 
 ## ================
 ## plotting output
 ## ================
-opa <- par(mfrow = c(2,2))
 
-for (i in 2:5)
-{
-plot(ODE$time,ODE[,i],xlab = "time",
-     ylab = "conc",main = names(ODE)[i],type = "l")
-points(DAE$time,DAE[,i],col = "red")
-}
-legend("bottomright",lty = c(1,NA),pch = c(NA,1),
-       col = c("black","red"),legend = c("ODE","DAE"))      
-       
+plot(ODE, DAE, xlab = "time", ylab = "conc", type = c("l", "p"),
+     pch = c(NA, 1))
+
+legend("bottomright", lty = c(1, NA), pch = c(NA, 1),
+  col = c("black", "red"), legend = c("ODE", "DAE"))
+
 # difference between both implementations:
 max(abs(ODE-DAE))
-
-par(mfrow = opa)
 
 ## =======================================================================
 ## same DAE model, now with the Jacobian
@@ -438,9 +432,9 @@ jacres_DAE <- function (t, y, yprime, pars, cj)
 
 PD <- matrix(nc = 3, nr = 3, 0)
 
-DAE2 <- as.data.frame(daspk(y = y, dy = dy, times = times,
+DAE2 <- daspk(y = y, dy = dy, times = times,
           res = Res_DAE, jacres = jacres_DAE, jactype = "fullusr",
-          parms = pars, atol = 1e-10, rtol = 1e-10))
+          parms = pars, atol = 1e-10, rtol = 1e-10)
          
 max(abs(DAE-DAE2))
 
@@ -454,25 +448,23 @@ times <- seq(0, 100, by = 2)
 pars <- c(K = 1, ka   = 1e6, r    = 1)
 
 ## Initial conc; D is in equilibrium with A,B
-y     <- c(A = 2, B = 3, D = 2*3/pars["K"])
+y     <- c(A = 2, B = 3, D = as.double(2*3/pars["K"]))
 
 ## Initial rate of change
 dy  <- c(dA = 0, dB = 0, dD = 0)
 
 # production increases with time
-prod <- matrix(nc=2,data=c(seq(0,100,by=10),0.1*(1+runif(11)*1)))
+prod <- matrix(ncol = 2, 
+               data = c(seq(0, 100, by = 10), 0.1*(1+runif(11)*1)))
 
-ODE_dll <- as.data.frame(daspk(y=y,dy=dy,times=times,res="chemres",
-          dllname="deSolve", initfunc="initparms",
-          initforc="initforcs", parms=pars, forcings=prod,
-          atol=1e-10,rtol=1e-10,nout=2, outnames=c("CONC","Prod")))
+ODE_dll <- daspk(y = y, dy = dy, times = times, res = "chemres",
+          dllname = "deSolve", initfunc = "initparms",
+          initforc = "initforcs", parms = pars, forcings = prod,
+          atol = 1e-10, rtol = 1e-10, nout = 2, 
+          outnames = c("CONC","Prod"))
 
-opa <- par(mfrow = c(1,2))
-plot(ODE_dll$time,ODE_dll$Prod,xlab = "time",
-     ylab = "/day",main = "production rate",type = "l")
-plot(ODE_dll$time,ODE_dll$D,xlab = "time",
-     ylab = "conc",main = "D",type = "l")
-par(mfrow = opa)
+plot(ODE_dll, which = c("Prod", "D"), xlab = "time",
+     ylab = c("/day", "conc"), main = c("production rate","D"))
 
 }
 \references{

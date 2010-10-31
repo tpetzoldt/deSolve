@@ -165,11 +165,10 @@ pars    <- c(rIng   = 0.2,    # /day, rate of ingestion
 
 yini    <- c(Prey = 1, Predator = 2)
 times   <- seq(0, 200, by = 1)
-out     <- as.data.frame(ode(func = LVmod, y = yini,
-                         parms = pars, times = times))
+out     <- ode(func = LVmod, y = yini, parms = pars, times = times)
 summary(out)
 
-matplot(out$time, out[,2:3], type = "l", xlab = "time", ylab = "Conc",
+matplot(out[,1], out[,2:3], type = "l", xlab = "time", ylab = "Conc",
         main = "Lotka-Volterra", lwd = 2)
 legend("topright", c("prey", "predator"), col = 1:2, lty = 1:2)
 

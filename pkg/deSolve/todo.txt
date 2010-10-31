@@ -10,9 +10,6 @@ Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
 Karline + Thomas: add dopri 8(5,3) - Fortran??
 
-summary.deSolve
-
-subset.deSolve
 
 
 
@@ -22,8 +19,13 @@ Ideas/wishes (ThPe/karline):
 extend diagnostics: ?
   to return number of timesteps, number of ftion evaluations, etc...
 
-Karline, Thomas: timesteps should return NA if called outside of ODE
 
+Done version 1.9 ...
+==================
+summary.deSolve
+subset.deSolve
+Timesteps OK if called outside of ODE
+plotting deSolve objects improved...
 
 Impossibilities...
 ==================

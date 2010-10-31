@@ -54,9 +54,17 @@ plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...)
     will be added as \code{points} to the plots. \code{obs} can also be a 
     \code{list} with multiple data.frames and/or matrices containing 
     observed data.
-    The first column of an observed data set should contain the \code{time}-variable. 
+    
+    By default the first column of an observed data set should contain 
+    the \code{time}-variable. An exception is when the first column of 
+    \code{obs} consists of factors, or characters (strings).
+    Then it is assumed that the data are presented in long (database) format,
+    where the first three columns contain (name, time, y).  
+    
     If \code{obs} is not \code{NULL} and \code{which} is \code{NULL}, 
     then the variables, common to both \code{obs} and \code{x} will be plotted.
+
+
   }
   \item{obspar }{additional graphics arguments passed to \code{points}, for 
     plotting the observed data. If \code{obs} is a \code{list} containing multiple
@@ -206,6 +214,13 @@ plot(out, out2, type = "l", obs = list(obs, obs2), col = c("red", "blue"),
       obspar = list(pch = 18:19, cex = 2, col = c("red", "blue")),
       log = c("y",""), which = c("prey1","prey1"), 
       xlim = list(c(100, 500), c(0, 400)))
+
+## data in 'long' format
+OBS <- data.frame(name = c(rep("prey1",3), rep("prey2",2)), 
+                  time = c(10, 100, 250, 10, 400), 
+                  value = c(0.05, 0.04, 0.7, 0.5, 1))
+OBS
+plot(out, obs = OBS, obspar = c(pch = 18, cex = 2))
 
 # Simple histogram
 hist(out, col = "darkblue", breaks = 50)
