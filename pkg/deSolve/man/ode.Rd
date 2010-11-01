@@ -64,7 +64,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
   }
   \item{object }{an object of class \code{deSolve}, as returned by the
     integrators, and whose summary is to be calculated. In contrast to R's default,
-    this returns a data.frame. It returns one sumamry columns for a multi-D variable.
+    this returns a data.frame. It returns one summary column for a multi-dimensional variable.
   }
   \item{... }{additional arguments passed to the integrator or to the
     methods.}

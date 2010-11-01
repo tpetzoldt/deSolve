@@ -12,7 +12,7 @@
 ### ============================================================================
 # Update range, taking into account neg values for log transformed values
 Range <- function(Range, x, log) {
-   if (log) 
+   if (log)
       x[x <= 0] <- min(x[x>0])  # remove zeros
    return( range(Range, x, na.rm = TRUE) )
 }
@@ -37,7 +37,7 @@ expanddotslist <- function (dots, n) {
 ## functions for expanding arguments in dots  (...)
 ## =============================================================================
 
-repdots <- function(dots, n) 
+repdots <- function(dots, n)
   if (is.function(dots)) dots else rep(dots, length.out = n)
 
 setdots <- function(dots, n) lapply(dots, repdots, n)
@@ -59,7 +59,7 @@ extractdots <- function(dots, index) {
 # from 3-columned format (what, where, value) to wide format...
 convert2wide <- function(Data) {
     cnames   <- as.character(unique(Data[,1]))
-    
+
     MAT      <- Data[Data[,1] == cnames[1], 2:3]
     colnames.MAT <- c("x", cnames[1])
 
@@ -70,18 +70,18 @@ convert2wide <- function(Data) {
       colnames(nt) <- colnames(MAT)
       MAT <- rbind(MAT, nt)
       colnames.MAT <- c(colnames.MAT, ivar)
-    }  
+    }
   colnames(MAT) <- colnames.MAT
   return(MAT)
 }
 
 
 mergeObs <- function(obs, Newobs) {
-      
+
   if (! class(Newobs) %in% c("data.frame","matrix"))
     stop ("the elements in 'obs' should be either a 'data.frame' or a 'matrix'")
-      
-  if (is.character(Newobs[,1]) | is.factor(Newobs[,1])) 
+
+  if (is.character(Newobs[,1]) | is.factor(Newobs[,1]))
     Newobs <- convert2wide(Newobs)
 
   obsname <- colnames(obs)
@@ -90,9 +90,9 @@ mergeObs <- function(obs, Newobs) {
   newname <- colnames(Newobs)[-1]    # 1st column = x-var and ignored
   ii <- which (newname %in% obsname)
   if (length(ii) > 0)
-    obsname <- c(obsname, newname[-ii] ) 
+    obsname <- c(obsname, newname[-ii] )
   else
-    obsname <- c(obsname, newname) 
+    obsname <- c(obsname, newname)
 
 ## padding with NA of the two datasets
   O1 <- matrix(nrow = nrow(Newobs), ncol = ncol(obs), data = NA)
@@ -105,14 +105,14 @@ mergeObs <- function(obs, Newobs) {
   colnames(O1) <- obsname
 
   nnewcol <- ncol(Newobs)-1 - length (ii)  # number of new columns
-  if (nnewcol > 0) {     
+  if (nnewcol > 0) {
      O2 <- matrix(nrow = nrow(obs), ncol = nnewcol, data = NA)
      O2 <- cbind(obs, O2)
      colnames(O2) <- obsname
   } else O2 <- obs
-      
-  obs <- rbind(O2, O1) 
-  return(obs) 
+
+  obs <- rbind(O2, O1)
+  return(obs)
 }
 
 ## =============================================================================
@@ -148,7 +148,7 @@ selectvar <- function (which, var, NAallowed = FALSE) {
     Select <- NULL
     for ( i in 1:ln) {
       ss <- which(which[i]==var)
-      if (length(ss) ==0 & ! NAallowed) 
+      if (length(ss) ==0 & ! NAallowed)
         stop("variable ", which[i], " not in variable names")
       else if (length(ss) == 0)
         Select <- c(Select,NA)
@@ -177,7 +177,7 @@ print.deSolve <- function(x, ...)
 ### ============================================================================
 
 hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
-   
+
     t        <- 1     # column with "times"
     varnames <- colnames(x)
     which    <- selectvar(which, varnames)
@@ -193,8 +193,8 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
         on.exit(devAskNewPage(oask))
     }
 
-## expand all dots to np values (no defaults        
-    Dots  <- setdots(dots, np)   
+## expand all dots to np values (no defaults
+    Dots  <- setdots(dots, np)
 
     # different from default settings
     Dots$main <- expanddots (dots$main, varnames[which], np)
@@ -205,7 +205,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
 
-##    
+##
     for (ii in 1:np) {
         i <- which[ii]
         dots <- extractdots(Dots, ii)
@@ -224,10 +224,10 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
     if (is.null(dimens))
       stop("cannot make an image from deSolve output which is 0-dimensional")
     else if (length(dimens) ==1)  # 1-D
-      plot.ode1D(x, which, ask, add.contour, grid, method=method, 
+      plot.ode1D(x, which, ask, add.contour, grid, method=method,
         legend = legend, ...)
     else if (length(dimens) ==2)  # 2-D
-      plot.ode2D(x, which, ask, add.contour, grid, method=method, 
+      plot.ode2D(x, which, ask, add.contour, grid, method=method,
         legend = legend, ...)
     else
       stop("cannot make an image from deSolve output with more than 2 dimensions")
@@ -238,7 +238,7 @@ image.deSolve <- function (x, which = NULL, ask = NULL,
 ### Plotting 0-D variables
 ### ============================================================================
 
-plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL, 
+plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     obspar = list()) {
 
 ## check observed data - can be a list
@@ -248,7 +248,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 
       if (!is.data.frame(obs) & is.list(obs)) { # a list with different data sets
        Obs <- obs
-       obs <- Obs[[1]]  
+       obs <- Obs[[1]]
        obs.pos <- matrix(nrow = 1, c(1, nrow(obs)))
        if (! class(obs) %in% c("data.frame", "matrix"))
          stop ("'obs' should be either a 'data.frame' or a 'matrix'")
@@ -257,36 +257,36 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
            obs <- mergeObs(obs, Obs[[i]])
            obs.pos <- rbind(obs.pos, c(obs.pos[nrow(obs.pos),2] +1, nrow(obs)))
          }
-       obsname <- colnames(obs) 
+       obsname <- colnames(obs)
       } else {
        if (is.character(obs[,1]) | is.factor(obs[,1]))   # long format - convert
           obs <- convert2wide(obs)
-       obsname <- colnames(obs) 
+       obsname <- colnames(obs)
        if (! class(obs) %in% c("data.frame", "matrix"))
          stop ("'obs' should be either a 'data.frame' or a 'matrix'")
        obs.pos <- matrix(nrow = 1, c(1, nrow(obs)))
-      }                       
+      }
     DD <- duplicated(obsname)
-    if (sum(DD) > 0)  
+    if (sum(DD) > 0)
       obs <- mergeObs(obs[,!DD], cbind(obs[,1],obs[,DD]))
-    nobs <- nrow(obs.pos)   
+    nobs <- nrow(obs.pos)
     }
 
 ## variables to be plotted
     varnames <- colnames(x)
-    Which   <- which 
-    
+    Which   <- which
+
     if (is.null(Which) & is.null(obs))  # All variables plotted
       Which <- 1 : (ncol(x)-1)
-      
+
     else if (is.null(Which)) {          # All common variables in x and obs plotted
      Which <- which(varnames %in% obsname)
      Which <- Which[Which != 1]         # remove first element (x-value)
      Which <- varnames[Which]           # names rather than numbers
-    } 
+    }
 
-## Position of variables to be plotted in "x" 
-    t       <- 1     # column with "times" 
+## Position of variables to be plotted in "x"
+    t       <- 1     # column with "times"
     xWhich  <- selectvar(Which, varnames)
     np      <- length(xWhich)
 
@@ -300,17 +300,17 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       on.exit(devAskNewPage(oask))
     }
 
-## create two lists: x2:   other deSolve objects, 
+## create two lists: x2:   other deSolve objects,
 ##                   dots: remaining (plotting) parameters
     x2     <- list()
     dots   <- list()
     nd     <- 0
-    nother <- 0            
+    nother <- 0
 
-    if (length(ldots) > 0) 
+    if (length(ldots) > 0)
      for ( i in 1:length(ldots))
       if ("deSolve" %in% class(ldots[[i]])) {
-        x2[[nother <- nother + 1]] <- ldots[[i]]  
+        x2[[nother <- nother + 1]] <- ldots[[i]]
         names(x2)[nother] <- ndots[i]
       } else if (! is.null(ldots[[i]])) {
         dots[[nd <- nd+1]] <- ldots[[i]]
@@ -318,29 +318,29 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       }
     nmdots <- names(dots)
 
-## check compatibility of all deSolve objects    
+## check compatibility of all deSolve objects
     if (nother > 0) {
-      for ( i in 1:nother) {            
+      for ( i in 1:nother) {
         if (min(colnames(x2[[i]]) == varnames) == 0)
           stop("'x' is not compatible with other deSolve objects - colnames not the same")
       }
-    } 
+    }
 
     nx <- nother + 1 # total number of deSolve objects to be plotted
 
 ## Position of variables in "obs" (NA = not observed)
     if (nobs > 0) {
       ObsWhich <- selectvar(varnames[xWhich], obsname, NAallowed = TRUE)
-      ObsWhich [ ObsWhich > ncol(obs)] <- NA  
+      ObsWhich [ ObsWhich > ncol(obs)] <- NA
       Obspar <- setdots(obspar, nobs)
-    } else 
+    } else
       ObsWhich <- rep(NA, np)
 
 ## plotting parameters : split in plot parameters and point parameters
     plotnames <- c("xlab","ylab","xlim","ylim","main","sub","log","asp",
                    "ann","axes","frame.plot","panel.first","panel.last",
-                   "cex.lab","cex.axis","cex.main")    
-    
+                   "cex.lab","cex.axis","cex.main")
+
     # plot.default parameters
     ii <- names(dots) %in% plotnames
     dotmain <- dots[ii]
@@ -367,60 +367,60 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
     dotpoints$col  <- expanddots(dots$col, 1:nx, nx)
     dotpoints$bg   <- expanddots(dots$bg,  1:nx, nx)
 
- 
+
 ## for each output variable (plot)
     for (i in 1 : np) {
       ii <- xWhich[i]     # position of variable in 'x'
       io <- ObsWhich[i]   # position of variable in 'obs'
-      
+
       # plotting parameters for deSolve output 1 (opens a plot)
       Dotmain   <- extractdots(dotmain, i)
       Dotpoints <- extractdots(dotpoints, 1)
-      
+
       Xlog <- Ylog <- FALSE
-      if (! is.null(Dotmain$log)) { 
+      if (! is.null(Dotmain$log)) {
         Ylog  <- length(grep("y",Dotmain$log))
         Xlog  <- length(grep("x",Dotmain$log))
-      }       
-      
+      }
+
       # ranges
       if ( is.null (yylim[[i]])) {
         yrange <- Range(NULL, x[, ii], Ylog)
-        if (nother>0) 
-         for (j in 1:nother) 
+        if (nother>0)
+         for (j in 1:nother)
            yrange <- Range(yrange, x2[[j]][,ii], Ylog)
         if (! is.na(io)) yrange <- Range(yrange, obs[,io], Ylog)
           Dotmain$ylim <- yrange
-      } else  
+      } else
         Dotmain$ylim  <- yylim[[i]]
-       
+
 
       if ( is.null (xxlim[[i]])) {
         xrange <- Range(NULL, x[, t], Xlog)
-        if (nother>0) 
-         for (j in 1:nother) 
+        if (nother>0)
+         for (j in 1:nother)
            xrange <- Range(xrange, x2[[j]][,t], Xlog)
         if (! is.na(io)) xrange <- Range(xrange, obs[,1], Xlog)
           Dotmain$xlim <- xrange
-      } else  
+      } else
         Dotmain$xlim  <- xxlim[[i]]
-        
-      
+
+
       # first deSolve object plotted (new plot created)
       do.call("plot", c(alist(x[, t], x[, ii]), Dotmain, Dotpoints))
-      
+
       if (nother > 0)        # if other deSolve outputs
-        for (j in 2:nx)   
-          do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]), 
+        for (j in 2:nx)
+          do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]),
                   extractdots(dotpoints, j)) )
-         
+
       # ks -> ThPe if observed variables: select correct pars
-      if (! is.na(io))   
-           for (j in 1: nobs) 
-              if (length (i.obs <- obs.pos[j, 1]:obs.pos[j, 2]) > 0) 
-                do.call("points", c(alist(obs[i.obs, 1], obs[i.obs, io]), 
-                         extractdots(Obspar, j) ))        
-            
+      if (! is.na(io))
+           for (j in 1: nobs)
+              if (length (i.obs <- obs.pos[j, 1]:obs.pos[j, 2]) > 0)
+                do.call("points", c(alist(obs[i.obs, 1], obs[i.obs, io]),
+                         extractdots(Obspar, j) ))
+
     }
 }
 
@@ -438,11 +438,11 @@ drawlegend <- function (parleg, dots) {
         iy <- seq(minz + binwidth/2, maxz - binwidth/2, by = binwidth)
         iz <- matrix(iy, nrow = 1, ncol = length(iy))
 
-        image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", 
+        image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "",
               ylab = "", col = dots$col)
-      
+
         do.call("axis", list(side = 4, mgp = c(3,1,0), las=2))
-      
+
         par(plt = Plt)
 }
 
@@ -452,21 +452,21 @@ drawlegend <- function (parleg, dots) {
 
 drapecol <- function (A,
           col = colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100), 
+              "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))(100),
               NAcol = "white", Range = NULL)
 {
     nr <- nrow(A)
     nc <- ncol(A)
     ncol <- length(col)
-    
+
     AA <- 0.25 * (A[1:(nr - 1), 1:(nc - 1)] + A[1:(nr - 1), 2:nc] +
-        A[2:nr, 1:(nc - 1)] + A[2:nr, 2:nc])  
-    if (is.null(Range)) 
+        A[2:nr, 1:(nc - 1)] + A[2:nr, 2:nc])
+    if (is.null(Range))
       Range <- range(A, na.rm = TRUE)
     else {
       AA[AA > Range[2]] <- Range[2]
       AA[AA < Range[1]] <- Range[1]
-    }  
+    }
     Ar <- Range
     rn <- Ar[2] - Ar[1]
     ifelse(rn != 0, drape <- col[1 + trunc((AA - Ar[1])/rn *
@@ -484,7 +484,7 @@ select1dvar <- function (which, var, att) {
     proddim <- prod(att$dimens)
     ln   <- length(which)
     csum <- cumsum(att$lengthvar) + 2
-    
+
     if (!is.numeric(which)) {
         # keep ordering...
         Select <- NULL
@@ -509,14 +509,14 @@ select1dvar <- function (which, var, att) {
       if (Select[i] <= att$nspec) {
         ii <- Select[i]
         istart[i] <- (ii-1)*proddim + 2
-        istop[i]  <- istart[i] + proddim-1   
+        istop[i]  <- istart[i] + proddim-1
       } else {
         ii <- Select[i] - att$nspec
         istart[i] <- csum[ii]
-        istop[i]  <- csum[ii+1]-1   
+        istop[i]  <- csum[ii+1]-1
       }
-      if (istart[i] == istop[i]) 
-        stop ("variable ",which[i], " is not a 1-D variable")  
+      if (istart[i] == istop[i])
+        stop ("variable ",which[i], " is not a 1-D variable")
 
     }
   return(list(which = Select, istart = istart, istop = istop))
@@ -530,7 +530,7 @@ select2dvar <- function (which, var, att) {
     proddim <- prod(att$dimens)
     ln   <- length(which)
     csum <- cumsum(att$lengthvar) + 2
-    
+
     if (!is.numeric(which)) {
         # keep ordering...
         Select <- NULL
@@ -556,28 +556,28 @@ select2dvar <- function (which, var, att) {
       if (Select[i] <= att$nspec) {  # a state variable
         ii <- Select[i]
         istart[i] <- (ii-1)*proddim + 2
-        istop[i]  <- istart[i] + proddim-1 
-        dimens[[i]] <- att$dimens 
+        istop[i]  <- istart[i] + proddim-1
+        dimens[[i]] <- att$dimens
       } else {
         ii <- Select[i] - att$nspec
         istart[i] <- csum[ii]
         istop[i]  <- csum[ii+1]-1
         ij <- which(names(att$dimvar) == var[Select[i]])
-        if (length(ij) == 0) 
+        if (length(ij) == 0)
           stop("variable ",var[Select]," is not two-dimensional")
         dimens[[i]] <- att$dimvar[[ij]]
-           
+
       }
     }
-      
+
   return(list(which = Select, istart = istart, istop = istop, dim = dimens))
  }
- 
+
 ### ============================================================================
 ### plotting 1-D variables as line plot
 ### ============================================================================
 
-plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL, 
+plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
   xyswap = FALSE, ...) {
 
 ## Check settings of x
@@ -597,10 +597,10 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
 
     varnames <-  if (! is.null(att$ynames))
       att$ynames else 1:nspec
-   
+
     if (! is.null(att$lengthvar))
       varnames <- c(varnames, names(att$lengthvar)[-1])
-      
+
     Select <- select1dvar(which, varnames, att)
     which <- Select$which
 
@@ -625,7 +625,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
     Dots$main <- expanddots(Dots$main, paste("time",times), np)
     Dotsmain <- expanddots(dots$main, paste("time",times), length(times))
 
-    # xlim and ylim are special: 
+    # xlim and ylim are special:
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
 
@@ -635,20 +635,20 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
 #      Grid <- grid
 #    else
 #      Grid <- 1:length(out)
-    
+
     xyswap <- rep(xyswap, length = np)
 
     for (j in 1:length(times)) {
       for (i in 1:np) {
         istart <- Select$istart[i]
         istop  <- Select$istop[i]
-        
+
         dots      <- extractdots(Dots, i)
         dots$main <- Dotsmain[j]
         if (! is.null(xxlim[[i]])) dots$xlim <- xxlim[[i]]
         if (! is.null(yylim[[i]])) dots$ylim <- yylim[[i]]
-        if (is.null(yylim[[i]]) & xyswap[i]) 
-           dots$ylim <- rev(range(Grid))    # y-axis 
+        if (is.null(yylim[[i]]) & xyswap[i])
+           dots$ylim <- rev(range(Grid))    # y-axis
 
         out <- x[j,istart:istop]
 
@@ -664,7 +664,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
             dots$ylab <- Dots$xlab[i]
             dots$xlab <- Dots$ylab[i]
           }
-        
+
           do.call("plot", c(alist(out, Grid), dots))
         }
        }
@@ -673,7 +673,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
 
 ### ============================================================================
 
-plot.ode1D <- function (x, which, ask, add.contour, grid, 
+plot.ode1D <- function (x, which, ask, add.contour, grid,
    method = "image", legend, ...) {
 
 ## Default color scheme
@@ -697,10 +697,10 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
 
    varnames <-  if (! is.null(att$ynames))
       att$ynames else 1:nspec
-   
+
    if (! is.null(att$lengthvar))
       varnames <- c(varnames, names(att$lengthvar)[-1])
-      
+
    Select <- select1dvar(which, varnames, att)
    which <- Select$which
 
@@ -722,7 +722,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
    Dots$ylab  <- expanddots(dots$ylab, "",       np)
 
    # colors - different if persp, image or filled.contour
-    
+
    if (method == "persp")
       dotscol <- dots$col
 
@@ -738,7 +738,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
 
    Addcontour <- rep(add.contour, length = np)
 
-## xlim, ylim and zlim are special:  
+## xlim, ylim and zlim are special:
    xxlim <- expanddotslist(dots$xlim, np)
    yylim <- expanddotslist(dots$ylim, np)
    zzlim <- expanddotslist(dots$zlim, np)
@@ -746,19 +746,19 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
    times <- x[,1]
 
    if (legend) {
-      parplt <- par("plt") - c(0,0.07,0,0) 
+      parplt <- par("plt") - c(0,0.07,0,0)
       parleg <- c(parplt[2]+0.02, parplt[2]+0.05, parplt[3], parplt[4])
       plt.or <- par(plt = parplt)
       on.exit(par(plt = plt.or))
-   }  
+   }
 ## for each output variable (plot)
    for (i in 1:np) {
-      
+
       ii     <- which[i]
       istart <- Select$istart[i]
       istop  <- Select$istop[i]
       out    <- x[ ,istart:istop]
-      
+
       dots      <- extractdots(Dots, i)
       if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
       if (! is.null(yylim)) dots$ylim <- yylim[[i]]
@@ -771,7 +771,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
 
       if (method == "persp") {
           if (is.null(dots$zlim))  # this to prevent error when range = 0
-            if (diff(range(out, na.rm=TRUE)) == 0) 
+            if (diff(range(out, na.rm=TRUE)) == 0)
               dots$zlim <- c(0, 1)
 
           if(is.null(dotscol))
@@ -781,21 +781,21 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
 
         } else if (method == "filled.contour")
           dots$color.palette <- dotscolorpalette
-        else 
-          dots$col <- dotscol 
-          
+        else
+          dots$col <- dotscol
+
         do.call(method, c(List, dots))
         if (Addcontour[i]) do.call("contour", c(List, add = TRUE))
 
       if (legend) {
-        if (method == "persp") 
+        if (method == "persp")
            if (is.null(dotscol))
              dots$col <- BlueRed(100)
            else
               dots$col <- dotscol
         if (is.null(dots$zlim)) dots$zlim <- range(out, na.rm=TRUE)
 
-        drawlegend(parleg, dots)      
+        drawlegend(parleg, dots)
       }
   }
 }
@@ -832,7 +832,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 
     Select <- select2dvar(which,varnames,att)
     which <- Select$which
-    
+
     dots <- list(...)
     nmdots <- names(dots)
 
@@ -872,7 +872,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
     }
     else
     if (is.null(dots$col))
-      dotscol <- BlueRed(100) else  dotscol <-  dots$col    
+      dotscol <- BlueRed(100) else  dotscol <-  dots$col
 
     dotslim <- dots$zlim
 
@@ -884,11 +884,11 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 
     i <- 0
     if (legend) {
-      parplt <- par("plt") - c(0,0.05,0,0) 
+      parplt <- par("plt") - c(0,0.05,0,0)
       parleg <- c(parplt[2]+0.02, parplt[2]+0.05, parplt[3], parplt[4])
       plt.or <- par(plt = parplt)
       on.exit(par(plt = plt.or))
-    }  
+    }
     for (nt in 1:nrow(x)) {
       for (ii in 1:np) {
         i       <- i+1
@@ -914,9 +914,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 
         if (method == "persp") {
           if (is.null(dots$zlim))
-            if (diff(range(out, na.rm = TRUE)) == 0) 
+            if (diff(range(out, na.rm = TRUE)) == 0)
               dots$zlim <- c(0, 1)
-          
+
           if(is.null(dotscol))
             dots$col <- drapecol(out, col = BlueRed(100), Range = dots$zlim)
           else
@@ -925,25 +925,25 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
         } else if (method == "image")
           dots$col <- dotscol
         else if (method == "filled.contour")
-          dots$color.palette <- dotscolorpalette        
-        
+          dots$color.palette <- dotscolorpalette
+
         do.call(method, c(List, dots))
         if (add.contour) do.call("contour", c(List, add = TRUE))
 
         if (legend) {
-          if (method == "persp") 
+          if (method == "persp")
             if (is.null(dotscol))
              dots$col <- BlueRed(100)
             else
               dots$col <- dotscol
           if (is.null(dots$zlim)) dots$zlim <- range(out, na.rm=TRUE)
 
-          drawlegend(parleg, dots)      
+          drawlegend(parleg, dots)
         }
        }
      }
      if (sum(par("mfrow") - c(1, 1)) == 0)
-       mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]), 
+       mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]),
          cex = 1.5, line = -1.5)
 }
 
@@ -958,16 +958,16 @@ summary.deSolve <- function(object, ...){
   lvar   <- att$lengthvar[-1]  # length of other variables
   nspec  <- att$nspec          # for models solved with ode.1D, ode.2D
   dimens <- att$dimens
-  
+
   # variable names: information for state and ordinary variables is different
-  if (is.null(att$ynames)) 
+  if (is.null(att$ynames))
     if (is.null(dimens))
-      varnames <- colnames(object)[2:(svar+1)] 
+      varnames <- colnames(object)[2:(svar+1)]
     else
       varnames <- 1:nspec
-  else  
-    varnames <- att$ynames   # this gives one name for multi-dimensional var.  
-  
+  else
+    varnames <- att$ynames   # this gives one name for multi-dimensional var.
+
   if (length(lvar) > 0) {
     lvarnames <- names(lvar)
     if (is.null(lvarnames)) lvarnames <- (length(varnames)+1):(length(varnames)+length(lvar))
@@ -977,18 +977,18 @@ summary.deSolve <- function(object, ...){
   if (is.null(dimens))                 # all 0-D state variables
     lvar <- c(rep(1, len = svar), lvar)
   else
-    lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables 
+    lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables
 
-  # summaries for all variables  
+  # summaries for all variables
   Summ <- NULL
   for (i in 1:length(lvar)) {
     if (lvar[i] > 1)
       { Select <- select1dvar(i, varnames, att)
         out <- as.vector(object[,Select$istart:Select$istop])
-      }  
-    else   
+      }
+    else
       out <- object[ ,selectvar(varnames[i], colnames(object))]
-  Summ <- rbind(Summ, c(summary(out, ...), N = length(out), sd = sd(out)))    
+  Summ <- rbind(Summ, c(summary(out, ...), N = length(out), sd = sd(out)))
   }
   rownames(Summ) <- varnames  # rownames or an extra column?
   data.frame(t(Summ))         # like this or not transposed?
@@ -998,70 +998,70 @@ summary.deSolve <- function(object, ...){
 ### Subsets of ode variables
 ### ============================================================================
 
-subset.deSolve  <- function(x, which = NULL, select = which, subset = NULL, ...) {
-  Which <- select
+subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...) {
+  Which <- which # for compatibility between plot.deSolve and subset
 
-  if (missing(subset)) 
+  if (missing(subset))
         r <- TRUE
   else {
         e <- substitute(subset)
         r <- eval(e, as.data.frame(x), parent.frame())
-        if (!is.logical(r)) 
+        if (!is.logical(r))
             stop("'subset' must evaluate to logical")
         r <- r & !is.na(r)
   }
 
-  if (is.numeric(Which))  
+  if (is.numeric(Which))
     return(x[r ,Which+1])
-  
-  att <- attributes(x)
-  svar   <- att$lengthvar[1]   # number of state variables
-  lvar   <- att$lengthvar[-1]  # length of other variables
-  nspec  <- att$nspec          # for models solved with ode.1D, ode.2D
+
+  att   <- attributes(x)
+  svar  <- att$lengthvar[1]   # number of state variables
+  lvar  <- att$lengthvar[-1]  # length of other variables
+  nspec <- att$nspec          # for models solved with ode.1D, ode.2D
   if(is.null(nspec)) nspec <- svar
   dimens <- att$dimens
-  
+
   # variable names: information for state and ordinary variables is different
-  if (is.null(att$ynames)) 
+  if (is.null(att$ynames))
     if (is.null(dimens))
-      varnames <- colnames(x)[2:(svar+1)] 
+      varnames <- colnames(x)[2:(svar+1)]
     else
       varnames <- 1:nspec
-  else  
-    varnames <- att$ynames   # this gives one name for multi-dimensional var.  
-  varnames <-c("time",varnames)
+  else
+    varnames <- att$ynames   # this gives one name for multi-dimensional var.
+  varnames <- c("time",varnames)
   if (length(lvar) > 0) {
     lvarnames <- names(lvar)
-    if (is.null(lvarnames)) 
+    if (is.null(lvarnames))
       lvarnames <- (length(varnames)+1):(length(varnames)+length(lvar))
     varnames <- c(varnames, lvarnames)
   }
-  
+
   # length of state AND other variables
   if (is.null(dimens))                 # all 0-D state variables
     lvar <- c(rep(1, len = svar), lvar)
   else
-    lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables 
-  
+    lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables
+
   cvar <- cumsum(c(1,lvar))
 
-  # Add selected variables to Out 
+  # Add selected variables to Out
   Out <- NULL
   for (iw in 1:length(Which)) {
     i <- which (varnames == Which[iw])
-    if (is.null(i)) { 
+    if (is.null(i)) {
       i <- which (colnames(x) == Which[iw])
       if (is.null(i))
-         stop ("cannot find variable ",Which[iw]," in output")
+         stop ("cannot find variable ", Which[iw], " in output")
       Out <- cbind(Out, x[,i])
-    } else { 
+    } else {
       if (is.null(i))
-         stop ("cannot find variable ",Which[iw]," in output")
+         stop ("cannot find variable ", Which[iw], " in output")
       istart <- 1
       if (i > 1) istart <- cvar[i-1]+1
       istop <- cvar[i]
        Out <- cbind(Out, x[ ,istart:istop])
-    }  
+    }
   }
   return(Out[r,])
 }

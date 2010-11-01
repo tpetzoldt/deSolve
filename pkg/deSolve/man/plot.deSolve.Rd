@@ -12,16 +12,15 @@ Plot the output of numeric integration routines.
 }
 \usage{
 \method{plot}{deSolve}(x, ..., which = NULL, ask = NULL, obs = NULL, 
-  obspar= list())
+  obspar = list())
 \method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
-  add.contour = FALSE, grid = NULL, method="image", legend = FALSE, 
+  add.contour = FALSE, grid = NULL, method = "image", legend = FALSE, 
   ...)  
-\method{subset}{deSolve}(x, which = NULL, select = which, 
-  subset = NULL, \dots)
+\method{subset}{deSolve}(x, subset = NULL, select= NULL,
+  which = select, \dots)
 
-plot.1D (x, which=NULL, ask=NULL, grid=NULL, xyswap = FALSE, ...) 
-
+plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, ...) 
 }
 
 \arguments{
@@ -285,7 +284,7 @@ image(out, grid = Distance, main = "Aphid model", ylab = "distance, m",
 image(out, grid = Distance, main = "Aphid model", ylab = "distance, m", 
   method = "persp", border = NA, theta = 30)
 
-FluxAphid <- subset(out, select = "Flux", subset = time<50)
+FluxAphid <- subset(out, select = "Flux", subset = time < 50)
 
 \dontrun{
   plot(out,ask = FALSE, mfrow = c(1, 1))
