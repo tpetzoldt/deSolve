@@ -1,5 +1,5 @@
 \documentclass[article,nojss]{jss}
-\DeclareGraphicsExtensions{.pdf,.eps}
+\DeclareGraphicsExtensions{.pdf,.eps, .jpeg}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add-on packages and fonts
 \usepackage{graphicx}
@@ -526,18 +526,22 @@ head(out[,1:5])
 
 Finally, the output is plotted.
 It is simplest to do this with \pkg{deSolve}'s \proglang{S3}-method \code{image}
-<<label=aphid, include=FALSE>>=
+%% Do this offline
+%%<<label=aphid, include=FALSE>>=
+\begin{verbatim}
 image(out, method = "filled.contour", grid = Distance,
       xlab = "time, days", ylab = "Distance on plant, m",
       main = "Aphid density on a row of plants")
-@
+\end{verbatim}
+%%@
 
 \setkeys{Gin}{width=0.8\textwidth}
 \begin{figure}
 \begin{center}
-<<label=aphidfig,fig=TRUE,echo=FALSE>>=
-<<aphid>>
-@
+%%<<label=aphidfig,fig=TRUE,echo=FALSE>>=
+%%<<aphid>>
+%%@
+\includegraphics{aphid.jpeg}
 \end{center}
 \caption{Solution of the 1-dimensional aphid model - see text for \R-code}
 \label{fig:aphid}
@@ -1121,7 +1125,7 @@ plot(out, out2, col = c("blue", "red"), lwd = 2,
      obs = obs, obspar = list(pch = c(16, 18), 
                col = c("blue", "green"), cex = 1.2))
 @
-\setkeys{Gin}{width=0.4\textwidth}
+\setkeys{Gin}{width=1.0\textwidth}
 \begin{figure}
 \begin{center}
 <<label=plotobs2,fig=TRUE,echo=FALSE,width=8,height=4>>=
@@ -1241,20 +1245,24 @@ zooming in. Note that xlim and ylim are a list here.
 When we call \code{image} for the second time,
 we overrule the default \code{mfrow} setting by specifying (\code{mfrow = NULL}).
 
-<<label=img,include=FALSE>>=
+%% This is done offline.
+%%<<label=img,include=FALSE>>=
+\begin{verbatim}
 image(out, grid = r, mfrow = c(2,2), method = "persp", border=NA,
       ticktype = "detailed", legend = TRUE)
 image(out, grid = r, which = c("PREY", "PREY"), mfrow = NULL,
       xlim = list(NULL, c(0,10)), ylim = list(NULL, c(0,5)),
       add.contour = c(FALSE, TRUE))
-@
+\end{verbatim}
+%%@
 
 \setkeys{Gin}{width=1.0\textwidth}
 \begin{figure}
 \begin{center}
-<<label=plotimg,fig=TRUE,echo=FALSE>>=
-<<img>>
-@
+%%<<label=plotimg,fig=TRUE,echo=FALSE>>=
+%%<<img>>
+%%@
+\includegraphics{image1D.jpeg}
 \end{center}
 \caption{image plots}
 \label{fig:plotimg}
