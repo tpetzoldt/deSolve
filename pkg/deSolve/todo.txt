@@ -13,6 +13,12 @@ plot.1D
 - in case of ask=FALSE thpe would like to have an additional argument "delay" 
   for animations.
 
+Vignette
+========
+
+- deSolve.pdf is now rather big and in the end blows up the
+  package. Is there a possibility to reduce the size of the included
+  figures?
 
 
 TODOs:
