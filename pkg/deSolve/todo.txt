@@ -2,6 +2,18 @@ Issues with plot-function
 
 Plotting 1-D variable in 0-D model and so on.
 
+subset.deSolve
+==============
+
+- argument which (or select) should have a useful default value
+
+plot.1D
+=======
+
+- in case of ask=FALSE thpe would like to have an additional argument "delay" 
+  for animations.
+
+
 
 TODOs:
 ======
