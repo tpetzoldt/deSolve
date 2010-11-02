@@ -959,6 +959,8 @@ summary.deSolve <- function(object, ...){
   nspec  <- att$nspec          # for models solved with ode.1D, ode.2D
   dimens <- att$dimens
 
+  if (is.null(svar)) svar <- att$dim[2]-1  # models solved as DLL
+
   # variable names: information for state and ordinary variables is different
   if (is.null(att$ynames))
     if (is.null(dimens))
@@ -986,8 +988,12 @@ summary.deSolve <- function(object, ...){
       { Select <- select1dvar(i, varnames, att)
         out <- as.vector(object[,Select$istart:Select$istop])
       }
-    else
-      out <- object[ ,selectvar(varnames[i], colnames(object))]
+    else {
+      Select <- selectvar(varnames[i], colnames(object), NAallowed = TRUE)
+      if (is.na(Select))   # trick for composite names, e.g. "A.x" rather than "A"
+         Select <- cumsum(lvar)[i]      
+      out <- object[ ,Select]
+    }  
   Summ <- rbind(Summ, c(summary(out, ...), N = length(out), sd = sd(out)))
   }
   rownames(Summ) <- varnames  # rownames or an extra column?
@@ -999,6 +1005,7 @@ summary.deSolve <- function(object, ...){
 ### ============================================================================
 
 subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...) {
+  
   Which <- which # for compatibility between plot.deSolve and subset
 
   if (missing(subset))
@@ -1014,10 +1021,15 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...
   if (is.numeric(Which))
     return(x[r ,Which+1])
 
+  if (is.null(Which))
+    return(x[r , ])
+
   att   <- attributes(x)
   svar  <- att$lengthvar[1]   # number of state variables
   lvar  <- att$lengthvar[-1]  # length of other variables
   nspec <- att$nspec          # for models solved with ode.1D, ode.2D
+
+  if (is.null(svar)) svar <- att$dim[2]-1  # models solved as DLL
   if(is.null(nspec)) nspec <- svar
   dimens <- att$dimens
 
@@ -1049,9 +1061,9 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...
   Out <- NULL
   for (iw in 1:length(Which)) {
     i <- which (varnames == Which[iw])
-    if (is.null(i)) {
+    if (length(i) == 0) {
       i <- which (colnames(x) == Which[iw])
-      if (is.null(i))
+      if (length(i) == 0)
          stop ("cannot find variable ", Which[iw], " in output")
       Out <- cbind(Out, x[,i])
     } else {
