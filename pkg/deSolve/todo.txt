@@ -1,17 +1,24 @@
-Issues with plot-function
+================================================================================
+Questions/issues for this version
 
-Plotting 1-D variable in 0-D model and so on.
+plot-function
+==============
+
+Plotting 1-D variable in 0-D model and so on. 
+ks->ThPe: leave it for now
 
 subset.deSolve
 ==============
 
 - argument which (or select) should have a useful default value
+- ks->ThPe: returns all variables, except time.
 
 plot.1D
 =======
 
 - in case of ask=FALSE thpe would like to have an additional argument "delay" 
   for animations.
+- ks->ThPe: can you do this?  
 
 Vignette
 ========
@@ -19,31 +26,21 @@ Vignette
 - deSolve.pdf is now rather big and in the end blows up the
   package. Is there a possibility to reduce the size of the included
   figures?
+  
+- karline->ThPe: (some) Large figures now made offline - is this enough? 
 
 
-TODOs:
+================================================================================
+TODOs, Ideas/wishes (ThPe/karline):  for future versions???
 ======
 
 Thomas: add "timelags" (and "root finding"?) to runge-kuttas
 
 Karline + Thomas: add dopri 8(5,3) - Fortran??
 
-
-
-
-
-Ideas/wishes (ThPe/karline): 
-======
 extend diagnostics: ?
-  to return number of timesteps, number of ftion evaluations, etc...
+  e.g. to return number of timesteps, number of ftion evaluations, etc...
 
-
-Done version 1.9 ...
-==================
-summary.deSolve
-subset.deSolve
-Timesteps OK if called outside of ODE
-plotting deSolve objects improved...
 
 Impossibilities...
 ==================
@@ -51,14 +48,25 @@ resolve NaN warnings and termination of R
 - KS does not see how this can be resolved
 
 Delay differential equations in compiled code 
-- KS: not at all easy , and who will use that?! 
+- KS: not at all easy, and who will use that?! 
 
+================================================================================
 Changes version 1.9
 ==========================
-plot.deSolve to plot more than one output in same figures, + add
-observations
+(Thomas + Karline)
+
+summary.deSolve
+
+subset.deSolve
+
+plotting deSolve objects improved:
+   -> plot more than one output in same figures (scenarios), 
+   -> add observations
+
+vignette improved
 
 fixed bug in 'timesteps'
+Timesteps OK if called outside of ODE
 
 Changes version 1.8.1:
 ==========================
