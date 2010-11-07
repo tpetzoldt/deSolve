@@ -1022,7 +1022,7 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...
     return(x[r ,Which+1])
 
   if (is.null(Which))
-    return(x[r , ])
+    return(x[r , -1])         # Default: all variables, except time
 
   att   <- attributes(x)
   svar  <- att$lengthvar[1]   # number of state variables

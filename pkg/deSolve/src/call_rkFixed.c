@@ -63,7 +63,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
-  for (i = 0; i < 2; i++) timesteps[i] = 0;
+  for (i = 0; i < 2; i++) timesteps[i] = hini;    //Karline!!!
   
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/

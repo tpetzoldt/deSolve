@@ -11,16 +11,16 @@
 Plot the output of numeric integration routines.
 }
 \usage{
-\method{plot}{deSolve}(x, ..., which = NULL, ask = NULL, obs = NULL, 
-  obspar = list())
-\method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, ...)
+\method{plot}{deSolve}(x, \dots, which = NULL, ask = NULL, 
+              obs = NULL, obspar = list())
+\method{hist}{deSolve}(x, which = 1:(ncol(x)-1), ask = NULL, \dots)
 \method{image}{deSolve}(x, which = NULL, ask = NULL, 
-  add.contour = FALSE, grid = NULL, method = "image", legend = FALSE, 
-  ...)  
+              add.contour = FALSE, grid = NULL, 
+              method = "image", legend = FALSE, \dots)  
 \method{subset}{deSolve}(x, subset = NULL, select= NULL,
-  which = select, \dots)
+             which = select, \dots)
 
-plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, ...) 
+plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, \dots) 
 }
 
 \arguments{
@@ -64,15 +64,15 @@ plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, ...)
     observed data.
     
     By default the first column of an observed data set should contain 
-    the \code{time}-variable. An exception is when the first column of 
-    \code{obs} consists of factors, or characters (strings).
-    Then it is assumed that the data are presented in long (database) format,
-    where the first three columns contain (name, time, y).  
+    the \code{time}-variable.   The other columns contain the observed values
+    and they should have names that are known in \code{x}.
+    
+    If the first column of \code{obs} consists of factors or characters (strings),
+    then it is assumed that the data are presented in long (database) format,
+    where the first three columns contain (name, time, value).  
     
     If \code{obs} is not \code{NULL} and \code{which} is \code{NULL}, 
     then the variables, common to both \code{obs} and \code{x} will be plotted.
-
-
   }
   \item{obspar }{additional graphics arguments passed to \code{points}, for 
     plotting the observed data. If \code{obs} is a \code{list} containing multiple
@@ -287,7 +287,7 @@ image(out, grid = Distance, main = "Aphid model", ylab = "distance, m",
 FluxAphid <- subset(out, select = "Flux", subset = time < 50)
 
 \dontrun{
-  plot(out,ask = FALSE, mfrow = c(1, 1))
+  plot(out, ask = FALSE, mfrow = c(1, 1))
   plot.1D(out, ask = FALSE, type = "l", lwd = 2, xyswap = TRUE)
 }
 }
