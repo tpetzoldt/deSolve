@@ -308,8 +308,8 @@ For instance, the next statements will use integration method \code{radau}
 to solve the model, and set the tolerances to a higher value than the default. 
 Both statements are the same:
 <<>>=
-outb <- radau (state, times, Lorenz, parameters, atol = 1e-4, rtol = 1e-4)
-outc <- ode (state, times, Lorenz, parameters, method = "radau", 
+outb <- radau(state, times, Lorenz, parameters, atol = 1e-4, rtol = 1e-4)
+outc <- ode(state, times, Lorenz, parameters, method = "radau", 
              atol = 1e-4, rtol = 1e-4)
 @
 
@@ -405,21 +405,22 @@ method and the \code{rk4} method.
 
 They are implemented in two ways:
 \begin{itemize}
-\item as separate solvers \code{euler} and \code{rk4}. These implementations are 
-  rather simple. The timestep used is determined by the time
-  increment in the \code{times} argument.
-\item as a special method of \code{ode}. In this case the time step used can be
+\item as a \code{rkMethod} of the \textbf{general} \code{rk} solver. In this case the time step used can be
   specified independently from the \code{times} argument, by setting argument
-  \code{hini}. 
+  \code{hini}. Function \code{ode} uses this general code.}
+\item as \textbf{special} solver codes \code{euler} and \code{rk4}. These implementations are 
+  simplified and with less options to avoid overhead. The timestep used is determined by the time
+  increment in the \code{times} argument.
+
 \end{itemize}  
-For example, the next two statements both trigger the \code{euler} method, the former
-using a time step = 1, as imposed by the \code{times} argument, the latter
-using a time step set by \code{hini}. Unsurprisingly, the former solution method
+For example, the next two statements both trigger the Euler method, the former
+using the ``special'' code with a time step = 1, as imposed by the \code{times} argument, the latter
+using the generalized method with a time step set by \code{hini}. Unsurprisingly, the former solution method
 completely fails (the time step $= 1$ is much too large for this problem).
 
 \begin{verbatim}
-out <- euler (y = state, times = 0:40, func = Lorenz, parms = parameters)
-outb <- ode (y = state, times = 0:40, func = Lorenz, parms = parameters,
+out  <- euler(y = state, times = 0:40, func = Lorenz, parms = parameters)
+outb <- ode(y = state, times = 0:40, func = Lorenz, parms = parameters,
              method = "euler", hini = 0.01)
 \end{verbatim}
 
@@ -980,16 +981,16 @@ plot(out, which = "height", type = "l",lwd = 2,
 
 \section{Delay differential equations}
 
-As from deSolve version 1.7, time lags are supported, and a new
+As from \pkg{deSolve} version 1.7, time lags are supported, and a new
 general solver for delay differential equations, \code{dede} has been
 added.
-%% ThPe --> KS: Please add reference of Shampine & Thompson
+
 We implement the lemming model, example 6 from \citep{ST2000}.
 
 Function \code{lagvalue} calculates the value of the state variable at
-t-0.74.  As long a these lag values are not known, the value 19 is
+\code{t - 0.74}.  As long a these lag values are not known, the value 19 is
 assigned to the state variable. Note that the simulation starts at
-time = - 0.74.
+\code{time = - 0.74}.
 
 <<>>=
 library(deSolve)
@@ -1118,7 +1119,7 @@ where rats were dosed with CCl4.
 <<>>=
 head(ccl4data)
 @
-We select the data from animal "A":
+We select the data from animal ``A'':
 <<>>=
 obs <- subset (ccl4data, animal == "A", c(time, ChamberConc))
 names(obs) <- c("time", "CP")
@@ -1220,6 +1221,7 @@ The \code{image} function plots time versus x images for models solved with
 \code{ode.1D}, or generates x-y plots for models solved with \code{ode.2D}.
 
 \subsubsection{1-D model output}
+
 We exemplify its use by means of a Lotka-Volterra model, implemented in 1-D.
 The model describes a predator and its prey diffusing on a flat surface
 and in concentric circles. This is a 1-D model, solved in the cylindrical 
@@ -1336,11 +1338,12 @@ image(out, grid = r, which = c("PREY", "PREY"), mfrow = NULL,
 \end{figure}
 
 \subsubsection{2-D model output}
+
 When using  \code{image} with a 2-D model, then the 2-D values at all output 
 times will be plotted.
 
-Sometimes we want only output at a specific time value. We then use S3-method 
-\code{subset} to extract 2-D variables at suitable time-values and use R's
+Sometimes we want only output at a specific time value. We then use \proglang{S3}-method 
+\code{subset} to extract 2-D variables at suitable time-values and use \proglang{R}'s
 \code{image}, \code{filled.contour} or \code{contour} method to depict them.
 
 Consider the very simple 2-D model (100*100), containing just 1-st order
@@ -1371,14 +1374,14 @@ C <- matrix(nrow = nx, ncol = ny, 1)
 ODE3 <- ode.2D(y = C, times = 1:100, func = Simple2D, parms = NULL,
                dimens = c(nx, ny), names = "C", method = "ode45")
 @
-We print a summary, and extract the 2-D variable at time =50
+We print a summary, and extract the 2-D variable at \code{time = 50}
 <<>>=
 summary(ODE3)
-t50 <-  matrix (nrow = nx, ncol = ny, 
+t50 <-  matrix(nrow = nx, ncol = ny, 
      data = subset(ODE3, select = "C", subset = (time == 50)))
 @
 We use function \code{contour} to plot both the consumption rate and the 
-values of the state variables at time = 50.
+values of the state variables at \code{time = 50}.
 <<label=twoD,include=FALSE>>=
 par(mfrow = c(1, 2))
 contour(x, y,  r_x2y2, main = "consumption")
