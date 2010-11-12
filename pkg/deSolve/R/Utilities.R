@@ -1075,5 +1075,6 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...
        Out <- cbind(Out, x[ ,istart:istop])
     }
   }
+  if (length(Which) == ncol(Out)) colnames(Out) <- Which
   return(Out[r,])
 }

@@ -17,6 +17,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
 \newcommand{\R}{\proglang{R }}
 \newcommand{\ds}{\textbf{\textsf{deSolve }}}
+\newcommand{\bs}{\textbf{\textsf{bvpSolve }}}
+\newcommand{\rt}{\textbf{\textsf{ReacTran }}}
 \newcommand{\rb}[1]{\raisebox{1.5ex}{#1}}
 
 \title{Package \pkg{deSolve}: Solving Initial Value Differential
@@ -75,7 +77,11 @@ initial value problems, R}
   \citep{compiledCode}, deals with differential equations implemented
   in lower-level languages such as \proglang{FORTRAN}, \proglang{C},
   or \proglang{C++}, which are compiled into a dynamically linked
-  library (DLL) and loaded into \proglang{R} \citep{Rcore}.}
+  library (DLL) and loaded into \proglang{R} \citep{Rcore}.
+
+  Note that another package, \bs provides methods to solve boundary
+  values problems \citep{bvpSolve}.
+}
 
 %% The address of (at least) one author should be given
 %% in the following format:
@@ -445,7 +451,10 @@ As package \ds includes integrators that deal efficiently with
 arbitrarily sparse and banded Jacobians, it is especially well suited
 to solve initial value problems resulting from 1, 2 or 3-dimensional
 partial differential equations (PDE), using the method-of-lines approach. 
-The PDEs are first written as ODEs, using finite differences.
+The PDEs are first written as ODEs, using finite differences. This can be
+efficiently done with functions from R-package \rt \citep{ReacTran}. 
+However, here we will
+create the finite differences in R-code.
 
 Several special-purpose solvers are included in \pkg{deSolve}:
 
