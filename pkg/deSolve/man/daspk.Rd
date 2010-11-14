@@ -44,8 +44,9 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
     value of \code{times} must be the initial time; if only one step is
     to be taken; set \code{times} = \code{NULL}.
   }
-  \item{func }{cannot be used if the model is a DAE system. If an ODE
-    system, \code{func} should be an \R-function that computes the
+  \item{func }{to be used if the model is an ODE, or a DAE written in linearly
+    implicit form (M y' = f(t, y)). 
+    \code{func} should be an \R-function that computes the
     values of the derivatives in the ODE system (the \emph{model
     definition}) at time t.
   
