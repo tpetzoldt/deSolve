@@ -122,7 +122,8 @@ void rk_fixed(
       if (verbose) Rprintf("Max. number of steps exceeded\n");
       break;
     }
-  } while (t < tmax); /* end of rk main loop */
+    // !!! experimental hard coded tolerance to avoid rounding errors
+  } while (t < (tmax - 1e-12 * dt)); /* end of rk main loop */
   
   /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
