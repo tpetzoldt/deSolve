@@ -48,8 +48,8 @@ SEXP call_euler(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   //saved_ts  = timesteps;
   //my_ts     = (double *)R_alloc(2, sizeof(double));
   //timesteps = my_ts;
-  for (i = 0; i < 2; i++) timesteps[i] = 1;
-
+  for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0];
+    
   /*------------------------------------------------------------------------*/
   /* DLL, ipar, rpar (for compatibility with lsoda)                         */
   /*------------------------------------------------------------------------*/

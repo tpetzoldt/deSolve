@@ -50,7 +50,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   PROTECT(R_C = getListElement(Method, "c")); incr_N_Protect();
   if (length(R_C)) cc = REAL(R_C);
   
-    double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
+  double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
 
   PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
   tt = NUMERIC_POINTER(Times);
@@ -63,7 +63,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
-  for (i = 0; i < 2; i++) timesteps[i] = hini;    //Karline!!!
+  //for (i = 0; i < 2; i++) timesteps[i] = hini;  //Karline!!!  thpe: fragile!
+  for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0];
   
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/

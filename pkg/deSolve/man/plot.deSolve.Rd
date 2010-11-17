@@ -20,7 +20,7 @@ Plot the output of numeric integration routines.
 \method{subset}{deSolve}(x, subset = NULL, select= NULL,
              which = select, \dots)
 
-plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, \dots) 
+plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, delay=0, \dots) 
 }
 
 \arguments{
@@ -55,9 +55,12 @@ plot.1D (x, which = NULL, ask = NULL, grid = NULL, xyswap = FALSE, \dots)
     or the x- and y-grid, as a \code{list} (for output generated with 
     \code{ode.2D}).}
 
-  \item{xyswap }{ if \code{TRUE}, then x-and y-values are swapped and the 
+  \item{xyswap }{if \code{TRUE}, then x-and y-values are swapped and the 
     y-axis is from top to bottom. Useful for drawing vertical profiles.}
-
+  
+  \item{delay }{adds a delay (in milliseconds) between consecutive plots 
+    of \code{plot.1D} to enable animations.}
+    
   \item{obs }{a \code{data.frame} or \code{matrix} with "observed data" that 
     will be added as \code{points} to the plots. \code{obs} can also be a 
     \code{list} with multiple data.frames and/or matrices containing 

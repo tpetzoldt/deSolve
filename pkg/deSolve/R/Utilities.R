@@ -578,7 +578,7 @@ select2dvar <- function (which, var, att) {
 ### ============================================================================
 
 plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
-  xyswap = FALSE, ...) {
+  xyswap = FALSE, delay=0, ...) {
 
 ## Check settings of x
     att <- attributes(x)
@@ -625,16 +625,9 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
     Dots$main <- expanddots(Dots$main, paste("time",times), np)
     Dotsmain <- expanddots(dots$main, paste("time",times), length(times))
 
-    # xlim and ylim are special:
+    ## xlim and ylim are special:
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
-
-    ## thpe: additional check *before* the loop
-    # KS->ThPe: but out is not known yet
-#    if (! is.null(grid))
-#      Grid <- grid
-#    else
-#      Grid <- 1:length(out)
 
     xyswap <- rep(xyswap, length = np)
 
@@ -668,6 +661,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
           do.call("plot", c(alist(out, Grid), dots))
         }
        }
+       if (delay > 0) Sys.sleep(0.001 * delay)
      }
 }
 

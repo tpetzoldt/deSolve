@@ -63,8 +63,8 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
 
   if (is.character(func)) {   # function specified in a DLL
-    DLL <- checkDLL(func,jacfunc,dllname,
-                    initfunc,verbose,nout, outnames)
+    DLL <- checkDLL(func, jacfunc, dllname,
+                    initfunc, verbose, nout, outnames)
 
     ModelInit <- DLL$ModelInit
     Func    <- DLL$Func
