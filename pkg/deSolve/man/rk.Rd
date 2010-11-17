@@ -93,9 +93,10 @@ rk(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
   \item{hini }{initial step size to be attempted; if 0, the initial step
     size is determined automatically by solvers with flexible time step.
-    Setting \code{hini = 0} for fixed step methods forces setting of
+    For fixed step methods, setting \code{hini = 0} forces 
     internal time steps identically to external time steps provided by
-    \code{times}.
+    \code{times}. Similarly, internal time steps of non-interpolating
+    solvers cannot be bigger than external time steps specified in \code{times}.
   }
   \item{ynames }{if \code{FALSE}: names of state variables are not passed
     to function \code{func} ; this may speed up the simulation especially

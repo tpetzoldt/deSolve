@@ -64,9 +64,9 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
   if (hini > 0)
-    for (i = 0; i < 2; i++) timesteps[i] = hini; // Karline!!!; thpe: fragile!
+    for (i = 0; i < 2; i++) timesteps[i] = fmin(hini, tt[1] - tt[0]);
   else
-    for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0]; // thpe, hope it helps
+    for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0];
   
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
@@ -209,6 +209,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   	     Func, Parms, Rho
     );
   } else {
+  /* integrate until next time step and return */
    for (int j = 0; j < nt - 1; j++) {
        t = tt[j];
        tmax = fmin(tt[j + 1], tcrit);
@@ -216,12 +217,12 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
        if (isEvent) {
          updateevent(&t, y0, istate);
        }
-      rk_fixed(
+       rk_fixed(
          fsal, neq, stage, isDll, isForcing, verbose, nknots, interpolate, 
          maxsteps, nt,
   	     &iknots, &it, &it_ext, &it_tot,
          istate, ipar,
-  	     t, tmax, hini,
+  	     t, tmax, fmin(hini, dt),
   	     &dt,
   	     tt, y0, y1, dy1, f, y, Fj, tmp, FF, rr, A,
   	     out, bb1, cc, yknots,  yout,
