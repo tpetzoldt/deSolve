@@ -63,8 +63,10 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* timesteps (for advection computation in ReacTran)                      */
   /*------------------------------------------------------------------------*/
-  //for (i = 0; i < 2; i++) timesteps[i] = hini;  //Karline!!!  thpe: fragile!
-  for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0];
+  if (hini > 0)
+    for (i = 0; i < 2; i++) timesteps[i] = hini; // Karline!!!; thpe: fragile!
+  else
+    for (i = 0; i < 2; i++) timesteps[i] = tt[1] - tt[0]; // thpe, hope it helps
   
   /**************************************************************************/
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/

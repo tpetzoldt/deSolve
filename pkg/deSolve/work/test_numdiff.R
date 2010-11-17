@@ -5,13 +5,13 @@ dx  <- .1   # grid size
 v   <- 1     # velocity
 x   <- seq(dx/2, 100, by = dx)
 N   <- length(x)
-Ntimes <- 201   ## works
-Ntimes <- 101   ## works
-Ntimes <- 51    ## works
-Ntimes <- 21    ## works
-#Ntimes <- 401   ## FAIL: diffusion!
-#Ntimes <- 122   ## FAIL
 
+#Ntimes <- 201   ## works
+Ntimes <- 101   ## works
+#Ntimes <- 51    ## works
+#Ntimes <- 21    ## works
+#Ntimes <- 401   ## FAIL: diffusion!
+#Ntimes <- 122   ## FAIL: diffusion!
 
 times <- seq(0, 100, length=Ntimes)
 
@@ -30,19 +30,20 @@ transport <- function(t, Y, parms) {
 #xgrid <- setup.grid.1D(x.up=0, L=dx*N, N=N)
 
 transport <- function(t, Y, parms) {
-  #print(t)
+  cat(t, ": ", timestep(TRUE), " -- ", timestep(FALSE), "\n")
   #dY <- tran.1D(C=Y, C.up=1e-6, v=v,dx=dx)
-  dY <- advection.1D(C=Y, C.up=0, v=v,dx=dx, adv.method="up")
+  dY <- advection.1D(C=Y, C.up=0, v=v,dx=dx, adv.method="muscl")
   list(c(dY$dC))
 }
 
 
+## hini: NULL, 1, 0.5 works; 0.25: diffusion; other: diffusion or unstable
 system.time(
-out   <- ode.1D(y = Y0, times, transport, method="euler",
+out   <- ode.1D(y = Y0, times, transport, method="euler", hini=0.5,
   parms = NULL, nspec = 1, ynames=FALSE, rtol=1e-4, atol=1e-4)
 )
 
-## euler.1D uses "simple euler"
+## euler.1D uses "special euler" code
 system.time(
   out2   <- euler.1D(y = Y0, times, transport,  parms = NULL, nspec = 1)
 )
