@@ -191,6 +191,13 @@ checkDLL <- function (func,jacfunc,dllname,
     if (length(outnames) > nout)
       Nmtot$colnames <- outnames[1:nout] else
     Nmtot$colnames <- c(outnames,(length(outnames)+1):nout)
+    
+    cnames <- outnames
+    unames <- unique(outnames)
+    if (length(cnames) > length(unames))
+      Nmtot$lengthvar <- c(NA,
+        sapply (unames, FUN = function(x) length(which(cnames == x))))
+
    return(list(ModelInit = ModelInit, Func = Func, JacFunc = JacFunc,
      Nglobal = Nglobal, Nmtot = Nmtot))
 }
@@ -252,6 +259,8 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   }
   attr(out,"istate") <- istate
   attr(out, "rstate") <- rstate
+  if (! is.null(Nmtot$lengthvar))
+    if (is.na(Nmtot$lengthvar[1]))Nmtot$lengthvar[1] <- length(y) 
   attr(out, "lengthvar") <- Nmtot$lengthvar
   
   ii <- if (is.null(Nmtot$dimvar)) 

@@ -37,9 +37,9 @@ summary(out)
 plot(out, type="l", lwd=2, log="xy")  # this used to work! - 
                                       # we have to mimic the way log="xy" works...
 
-subset(out, 1:3) ->Out
+subset(out, which = 1:3) ->Out
 
-subset(out, c("time","y1","y2"),y1 > 1e-10)
+subset(out, which = c("time","y1","y2"),y1 > 1e-10)
 
 ###
 
@@ -70,7 +70,7 @@ parms3 <- parms
 parms3$r[2] <- 0.2
 out3 <- ode(y, times, LVmatrix, parms3)
 
-subset(out, c("prey1","prey2"), prey1>prey2)
+subset(out, which = c("prey1","prey2"), prey1>prey2)
 
 
 ## Basic line plot

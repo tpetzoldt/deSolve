@@ -309,10 +309,16 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
 
     if (length(ldots) > 0)
      for ( i in 1:length(ldots))
-      if ("deSolve" %in% class(ldots[[i]])) {
+      if ("deSolve" %in% class(ldots[[i]])) { # a deSolve object
         x2[[nother <- nother + 1]] <- ldots[[i]]
         names(x2)[nother] <- ndots[i]
-      } else if (! is.null(ldots[[i]])) {
+        # a list of deSolve objects 
+       } else if (is.list(ldots[[i]]) & "deSolve" %in% class(ldots[[i]][[1]])) {   
+        for (j in 1:length(ldots[[i]])) {
+          x2[[nother <- nother+1]] <- ldots[[i]][[j]]  
+          names(x2)[nother] <- names(ldots[[i]])[[j]]
+        }
+       } else if (! is.null(ldots[[i]])) {  # a graphical parameter
         dots[[nd <- nd+1]] <- ldots[[i]]
         names(dots)[nd] <- ndots[i]
       }
@@ -636,6 +642,13 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
         istart <- Select$istart[i]
         istop  <- Select$istop[i]
 
+        out <- x[j,istart:istop]
+
+        if (! is.null(grid))
+          Grid <- grid
+        else
+          Grid <- 1:length(out)
+          
         dots      <- extractdots(Dots, i)
         dots$main <- Dotsmain[j]
         if (! is.null(xxlim[[i]])) dots$xlim <- xxlim[[i]]
@@ -643,12 +656,6 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
         if (is.null(yylim[[i]]) & xyswap[i])
            dots$ylim <- rev(range(Grid))    # y-axis
 
-        out <- x[j,istart:istop]
-
-        if (! is.null(grid))
-          Grid <- grid
-        else
-          Grid <- 1:length(out)
 
         if (! xyswap[i]) {
           do.call("plot", c(alist(Grid, out), dots))
@@ -745,21 +752,32 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
       plt.or <- par(plt = parplt)
       on.exit(par(plt = plt.or))
    }
+# Check if grid is increasing...
+   if (! is.null(grid))
+      gridOK <- min(diff (grid)) >0
+   else
+      gridOK <- TRUE
+      
+   if (! gridOK) grid <- rev(grid)
+      
 ## for each output variable (plot)
    for (i in 1:np) {
 
       ii     <- which[i]
       istart <- Select$istart[i]
       istop  <- Select$istop[i]
-      out    <- x[ ,istart:istop]
-
+      if (gridOK)
+        out    <- x[ ,istart:istop]
+      else
+        out    <- x[ ,istop:istart]
+      
       dots      <- extractdots(Dots, i)
       if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
       if (! is.null(yylim)) dots$ylim <- yylim[[i]]
-      if (! is.null(zzlim)) dots$zlim <- zzlim[[i]]
+      if (! is.null(zzlim)) 
+        dots$zlim <- zzlim[[i]]
       else
         dots$zlim <- range(out, na.rm=TRUE)
-
       List <- alist(z = out, x = times)
       if (! is.null(grid)) List$y = grid
 
