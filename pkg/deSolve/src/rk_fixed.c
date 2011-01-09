@@ -47,7 +47,7 @@ void rk_fixed(
     timesteps[1] = dt;
 
     /******  Prepare Coefficients from Butcher table ******/
-    /* NOTE: must be given as subdiagonal here, not matrix !  */
+    /* NOTE: the fixed-step solver needs coefficients as, not matrix !  */
     for (j = 0; j < stage; j++) {
       if (j == 0) 
         for(i = 0; i < neq; i++) Fj[i] = 0;
@@ -122,8 +122,8 @@ void rk_fixed(
       if (verbose) Rprintf("Max. number of steps exceeded\n");
       break;
     }
-    // !!! experimental hard coded tolerance to avoid rounding errors
-  } while (t < (tmax - 1e-12 * dt)); /* end of rk main loop */
+    /* tolerance to avoid rounding errors */
+  } while (t < (tmax - 100.0 * DBL_EPSILON * dt)); /* end of rk main loop */
   
   /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;

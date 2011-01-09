@@ -208,7 +208,8 @@ void rk_implicit( double * alfa,  /* neq*stage * neq*stage */
       if (verbose) Rprintf("Max. number of steps exceeded\n");
       break;
     }
-  } while (t < tmax); /* end of rk main loop */
+    /* tolerance to avoid rounding errors */
+  } while (t < (tmax - 100.0 * DBL_EPSILON * dt)); /* end of rk main loop */
   
   /* return reference values */
   *_iknots = iknots; *_it = it; *_it_ext = it_ext; *_it_tot = it_tot;
