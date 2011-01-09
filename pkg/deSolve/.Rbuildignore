@@ -3,6 +3,6 @@ inst/doc/.*[.]dll
 inst/doc/.*[.]d
 inst/doc/.*[.]o
 inst/doc/.*[.]rc
-inst/doc/Rplots.pdf
+^Rplots.pdf$
 work
 todo.txt

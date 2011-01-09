@@ -48,7 +48,7 @@ setdots <- function(dots, n) lapply(dots, repdots, n)
 
 extractdots <- function(dots, index) {
   ret <- lapply(dots, "[", index)
-  ret <- lapply(ret, unlist) ## thpe: flatten list (experimental)
+  ret <- lapply(ret, unlist) # flatten list
   return(ret)
 }
 
@@ -144,7 +144,7 @@ setplotpar <- function(nmdots, dots, nv, ask) {
 selectvar <- function (which, var, NAallowed = FALSE) {
   if (!is.numeric(which)) {
     ln <- length(which)
-    # keep ordering...
+    ## keep ordering...
     Select <- NULL
     for ( i in 1:ln) {
       ss <- which(which[i]==var)
@@ -156,7 +156,7 @@ selectvar <- function (which, var, NAallowed = FALSE) {
         Select <- c(Select,ss)
     }
   } else {
-    Select <- which + 1  # "Select now refers to the column number
+    Select <- which + 1  # "Select" now refers to the column number
     if (max(Select) > length(var))
         stop("index in 'which' too large: ", max(Select)-1)
     if (min(Select) < 1)
@@ -205,7 +205,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
     xxlim <- expanddotslist(dots$xlim, np)
     yylim <- expanddotslist(dots$ylim, np)
 
-##
+## plotting
     for (ii in 1:np) {
         i <- which[ii]
         dots <- extractdots(Dots, ii)
@@ -218,7 +218,7 @@ hist.deSolve <- function (x, which = 1:(ncol(x)-1), ask = NULL, ...) {
 ### Image, filled.contour and persp plots
 ### ============================================================================
 image.deSolve <- function (x, which = NULL, ask = NULL,
-  add.contour = FALSE, grid=NULL, method="image", legend = FALSE, ...) {
+  add.contour = FALSE, grid = NULL, method = "image", legend = FALSE, ...) {
 
     dimens <- attributes(x)$dimens
     if (is.null(dimens))
@@ -312,10 +312,10 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
       if ("deSolve" %in% class(ldots[[i]])) { # a deSolve object
         x2[[nother <- nother + 1]] <- ldots[[i]]
         names(x2)[nother] <- ndots[i]
-        # a list of deSolve objects 
-       } else if (is.list(ldots[[i]]) & "deSolve" %in% class(ldots[[i]][[1]])) {   
+        # a list of deSolve objects
+       } else if (is.list(ldots[[i]]) & "deSolve" %in% class(ldots[[i]][[1]])) {
         for (j in 1:length(ldots[[i]])) {
-          x2[[nother <- nother+1]] <- ldots[[i]][[j]]  
+          x2[[nother <- nother+1]] <- ldots[[i]][[j]]
           names(x2)[nother] <- names(ldots[[i]])[[j]]
         }
        } else if (! is.null(ldots[[i]])) {  # a graphical parameter
@@ -389,7 +389,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
         Xlog  <- length(grep("x",Dotmain$log))
       }
 
-      # ranges
+      ## ranges
       if ( is.null (yylim[[i]])) {
         yrange <- Range(NULL, x[, ii], Ylog)
         if (nother>0)
@@ -412,7 +412,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
         Dotmain$xlim  <- xxlim[[i]]
 
 
-      # first deSolve object plotted (new plot created)
+      ## first deSolve object plotted (new plot created)
       do.call("plot", c(alist(x[, t], x[, ii]), Dotmain, Dotpoints))
 
       if (nother > 0)        # if other deSolve outputs
@@ -420,7 +420,7 @@ plot.deSolve <- function (x, ..., which = NULL, ask = NULL, obs = NULL,
           do.call("lines", c(alist(x2[[j-1]][, t], x2[[j-1]][, ii]),
                   extractdots(dotpoints, j)) )
 
-      # ks -> ThPe if observed variables: select correct pars
+      ## if observed variables: select correct pars
       if (! is.na(io))
            for (j in 1: nobs)
               if (length (i.obs <- obs.pos[j, 1]:obs.pos[j, 2]) > 0)
@@ -648,7 +648,7 @@ plot.1D <- function (x, which = NULL, ask = NULL, grid = NULL,
           Grid <- grid
         else
           Grid <- 1:length(out)
-          
+
         dots      <- extractdots(Dots, i)
         dots$main <- Dotsmain[j]
         if (! is.null(xxlim[[i]])) dots$xlim <- xxlim[[i]]
@@ -757,9 +757,9 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
       gridOK <- min(diff (grid)) >0
    else
       gridOK <- TRUE
-      
+
    if (! gridOK) grid <- rev(grid)
-      
+
 ## for each output variable (plot)
    for (i in 1:np) {
 
@@ -770,11 +770,11 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
         out    <- x[ ,istart:istop]
       else
         out    <- x[ ,istop:istart]
-      
+
       dots      <- extractdots(Dots, i)
       if (! is.null(xxlim)) dots$xlim <- xxlim[[i]]
       if (! is.null(yylim)) dots$ylim <- yylim[[i]]
-      if (! is.null(zzlim)) 
+      if (! is.null(zzlim))
         dots$zlim <- zzlim[[i]]
       else
         dots$zlim <- range(out, na.rm=TRUE)
@@ -1003,9 +1003,9 @@ summary.deSolve <- function(object, ...){
     else {
       Select <- selectvar(varnames[i], colnames(object), NAallowed = TRUE)
       if (is.na(Select))   # trick for composite names, e.g. "A.x" rather than "A"
-         Select <- cumsum(lvar)[i]      
+         Select <- cumsum(lvar)[i]
       out <- object[ ,Select]
-    }  
+    }
   Summ <- rbind(Summ, c(summary(out, ...), N = length(out), sd = sd(out)))
   }
   rownames(Summ) <- varnames  # rownames or an extra column?
@@ -1017,7 +1017,7 @@ summary.deSolve <- function(object, ...){
 ### ============================================================================
 
 subset.deSolve  <- function(x, subset = NULL, select = NULL, which = select, ...) {
-  
+
   Which <- which # for compatibility between plot.deSolve and subset
 
   if (missing(subset))
