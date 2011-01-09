@@ -79,15 +79,8 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* 
-       rpar is passed via "out" which may be seen as a hack.
-       However, such an approach was required for the Livermore solvers.
-       It would have been unwise to re-implement these highly efficient
-       codes from scratch again.
-       
-       out:  first nout elements of out are reserved for output variables
-       other elements are set via argument *rpar* 
-    */
+    /* out:  first nout elements of out are reserved for output variables
+       other elements are set via argument *rpar* */
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
@@ -192,7 +185,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       yout[j + nt * (1 + neq + i)] = out[i];
     }
   }
-  /* Attach essential internal information (codes are compatible to lsoda) */
+  /* Attach diagnostic information (codes are compatible to lsoda) */
   setIstate(R_yout, R_istate, istate, it, 4, 0, 4, 0);
 
   /* release R resources */

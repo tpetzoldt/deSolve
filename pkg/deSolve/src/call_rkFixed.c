@@ -99,15 +99,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   if (isDll == 1) {
     /* other elements of ipar are set in R-function lsodx via argument *ipar* */
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
-    /* 
-       rpar is passed via "out" which may be seen as a hack.
-       However, such an approach was required for the Livermore solvers.
-       It would have been unwise to re-implement these highly efficient
-       codes from scratch again.
-       
-       out:  first nout elements of out are reserved for output variables
-       other elements are set via argument *rpar* 
-    */
+    /* out:  first nout elements of out are reserved for output variables
+       other elements are set via argument *rpar*  */
     for (j = 0; j < nout; j++)         out[j] = 0.0;                
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
@@ -133,11 +126,8 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   PROTECT(R_nknots = getListElement(Method, "nknots")); incr_N_Protect();
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
-
   if (nknots < 2) {nknots=1; interpolate = FALSE;}
-  
   yknots = (double *) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
-
 
   /* matrix for holding states and global outputs */
   PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
@@ -239,7 +229,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* call derivs again to get global outputs                            */
   /* j = -1 suppresses unnecessary internal copying                     */
   /*====================================================================*/
-
   if(nout > 0) {
     for (int j = 0; j < nt; j++) {
       t = yout[j];
@@ -251,7 +240,7 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
 
-  /* attach essential internal information (codes are compatible to lsoda) */
+  /* attach diagnostic information (codes are compatible to lsoda) */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr, 0);
 
   /* release R resources */

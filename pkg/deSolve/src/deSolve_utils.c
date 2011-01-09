@@ -12,9 +12,9 @@ are PROTECTed, and UNPROTECTing them in the
 case of a FORTRAN stop.
 ==================================================*/
  
-long int N_Protected = 0; //initialize this with zero at the first time
+long int N_Protected = 0; /* initialize this with zero at the first time */
 
-int solver_locked = 0; /* prevent nested calls of odepack solvers */
+int solver_locked = 0;   /* prevent nested calls of odepack solvers */
 
 void init_N_Protect(void) { N_Protected = 0; }
 
@@ -130,7 +130,6 @@ SEXP getTimestep() {
   SEXP value;
   PROTECT(value = NEW_NUMERIC(2));
   if (timesteps == NULL) {         /* integration not yet started... */
-    //Rprintf("timesteps is NULL\n");
     for (int i = 0; i < 2; i++) 
       NUMERIC_POINTER(value)[i] = 0.0;
   } else

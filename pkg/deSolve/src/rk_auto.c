@@ -203,7 +203,7 @@ void rk_auto(
     } /* else rejected time step */
     dt = fmin(dtnew, tmax - t);
     if (it_ext > nt) {
-      Rprintf("error in rk_solvers.c - call_rkauto: output buffer overflow\n");
+      Rprintf("error in RK solver rk_auto.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {

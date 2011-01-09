@@ -2,8 +2,7 @@
 /* Runge-Kutta Solvers, (C) Th. Petzoldt, License: GPL >=2                  */
 /* General RK Solver for methods with adaptive step size                    */
 /*==========================================================================*/
-/* Karline: call to rk_auto, setIstate: + number of rejected steps it_rej  
-   dense output Cash-Karp : R_TD, densetype=2 : dense output method 2...           */
+
 #include "rk_util.h"
 
 SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
@@ -165,11 +164,8 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
   PROTECT(R_nknots = getListElement(Method, "nknots")); incr_N_Protect();
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
-
   if (nknots < 2) {nknots = 1; interpolate = FALSE;}
-  //if (dd || densetype > 0) interpolate = TRUE;
   if (densetype > 0) interpolate = TRUE;
-  
   yknots = (double*) R_alloc((neq + 1) * (nknots + 1), sizeof(double));
 
   /* matrix for holding states and global outputs */
@@ -272,7 +268,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
 
-
   /*====================================================================*/
   /* call derivs again to get global outputs                            */
   /* j = -1 suppresses unnecessary internal copying                     */
@@ -287,10 +282,9 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       }
     }
   }
-  /* attach essential internal information (codes are compatible to lsoda) */
 
+  /* attach diagnostic information (codes are compatible to lsoda) */
   setIstate(R_yout, R_istate, istate, it_tot, stage, fsal, qerr, it_rej);
-
   if (densetype == 2)   istate[12] = it_tot * stage + 2; /* number of function evaluations */
 
   /* release R resources */

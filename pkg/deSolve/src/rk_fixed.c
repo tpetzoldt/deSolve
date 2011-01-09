@@ -115,7 +115,7 @@ void rk_fixed(
     it++;
     for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in rk_solvers.c - call_rk4auto: output buffer overflow\n");
+      Rprintf("error in RK solver rk_fixed.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {

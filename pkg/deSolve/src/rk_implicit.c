@@ -201,7 +201,7 @@ void rk_implicit( double * alfa,  /* neq*stage * neq*stage */
     it++;
     for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in rk_implicit.c - call_rkImpicit: output buffer overflow\n");
+      Rprintf("error in RK solver rk_implicit.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {
