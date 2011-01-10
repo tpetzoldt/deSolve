@@ -134,14 +134,14 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
 		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,  
     SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar,
-    SEXP Ipar, SEXP flist, SEXP elag)
+    SEXP Ipar, SEXP flist, SEXP elag, SEXP eventfunc, SEXP elist)
 {
 /******************************************************************************/
 /******                   DECLARATION SECTION                            ******/
 /******************************************************************************/
 
   int    j, nt, ny, repcount, latol, lrtol, lrw, liw, isDll;
-  int    maxit, isForcing, islag;
+  int    maxit, isForcing, isEvent, islag, istate;
   double *xytmp,  *xdytmp, tin, tout, *Atol, *Rtol;
   double *delta=NULL, cj;
   int    *Info,  ninfo, idid, mflag, ires;
@@ -219,6 +219,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   initdaeglobals(nt, ntot);
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
+  isEvent = initEvents(elist, eventfunc);
   islag = initLags(elag, 0, 0);
  
  /* pointers to functions res_func, psol_func and daejac_func, 
@@ -275,7 +276,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   REAL(YOUT)[0] = REAL(times)[0];
   for (j = 0; j < n_eq; j++)
       REAL(YOUT)[j+1] = REAL(y)[j];
-      
+
   if (islag == 1) updatehistini(REAL(times)[0], xytmp, xdytmp, rwork, iwork);
     
   if (nout>0)
@@ -294,6 +295,13 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   {
       tin = REAL(times)[it];
       tout = REAL(times)[it+1];
+    if (isEvent) {
+      istate =  2;
+      updateevent(&tin, xytmp, &istate);
+      if (istate  == 1) Info[0] = 0;
+      Info[3] = 1;
+      rwork[0] = tout;
+    }
 
      repcount = 0;
      do  /* iterations in case maxsteps>500* or in case islag */

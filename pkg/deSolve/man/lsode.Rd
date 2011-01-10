@@ -451,6 +451,19 @@ par(ask = pa)
 
   Examples in both C and FORTRAN are in the \file{dynload} subdirectory
   of the \code{deSolve} package directory.
+
+  \code{lsode} can find the root of at least one of a set of constraint functions
+  \code{rootfunc} of the independent and dependent variables.  It then returns the
+  solution at the root if that occurs sooner than the specified stop
+  condition, and otherwise returns the solution according the specified
+  stop condition.
+
+  Caution:  Because of numerical errors in the function
+  \code{rootfun} due to roundoff and integration error, \code{lsode} may
+  return false roots, or return the same root at two or more
+  nearly equal values of \code{time}.
+
+
 }
 \seealso{
   \itemize{

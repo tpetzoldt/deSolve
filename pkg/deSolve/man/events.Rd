@@ -24,10 +24,14 @@
       code that specifies the event,
     }
     \item{data: }{a data.frame that specifies the variables, times, values and
-      types of the events,
+      types of the events, note that the event times must also
+      be part of the integration output times, else the event will not take
+      place. As from version 1.9.1, this will be checked by the solver,
     }
     \item{time: }{when events are specified by a function: the times at
-      which the events take place,
+      which the events take place, note that these event times must also
+      be part of the integration output times, else the event will not take
+      place. As from version 1.9.1, this will be checked by the solver,
     }
     \item{root: }{when events are specified by a function and triggered
       by a root, this logical should be set equal to \code{TRUE},
@@ -47,7 +51,8 @@
    requires either input of the time of the events, a vector in
    \code{events$time} OR the specification of a root function.  In the
    latter case, the model MUST be solved with integration routine
-   \code{\link{lsodar}}
+   \code{\link{lsodar}} or \code{\link{lsode}} the only integrators with
+   root-finding capability.
   
    The \R-function, must be defined as: \code{function(t, y, parms,
    ...)}.  \code{t} is the current time point in the integration,

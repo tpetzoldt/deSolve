@@ -168,6 +168,9 @@ checkevents <- function (events, times, vars, dllname, root=FALSE) {
       if (is.null(events$time)) 
         stop("'events$time' should be given and contain the times of the events, if 'events$func' is specified and no root function")
       Time <- as.double(events$time) 
+      # Karline: added this extra check ....
+      if (prod(Time %in% times) != 1)
+        stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
     } else Time <- min(times) - 1  # never reached....
       return (list (Time = Time, SVar = NULL, Value = NULL, 
         Method = NULL, Type = as.integer(Type), func = funevent,
@@ -207,6 +210,8 @@ checkevents <- function (events, times, vars, dllname, root=FALSE) {
   ii <- c(which(event[,2]<rt[1]),which(event[,2]>rt[2]))
   if (length(ii) > 0) 
     event <- event [-ii,]
+  if (prod(event[,2] %in% times) != 1)
+    stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
 
 
 ## 4th column: method; if not available: "replace" = method 1 - to date: 3 methods

@@ -72,14 +72,12 @@ checkFunc<- function (Func2, times, y, rho) {
     tmp <- eval(Func2(times[1], y), rho)
     if (!is.list(tmp))
       stop("Model function must return a list\n")
-
     if (length(tmp[[1]]) != length(y))
       stop(paste("The number of derivatives returned by func() (",
                  length(tmp[[1]]),
                  ") must equal the length of the initial conditions vector (",
                  length(y),")",sep=""))
-
-                                   # use "unlist" here because some output variables are vectors/arrays
+    # use "unlist" here because some output variables are vectors/arrays
     Nglobal <- if (length(tmp) > 1)
       length(unlist(tmp[-1]))  else 0
     # Karline: changed this: Nmtot is now a list with names, dimensions,... for 1-D, 2-D vars
@@ -91,7 +89,6 @@ checkFunc<- function (Func2, times, y, rho) {
       Nmtot$dimvar <- lapply(tmp[-1],dim)
     }
    return(list(Nglobal = Nglobal, Nmtot = Nmtot))
-
 }
 
 ## ========================================================================
@@ -101,7 +98,6 @@ checkFunc<- function (Func2, times, y, rho) {
 checkEventFunc<- function (Func, times, y, rho) {
     ## Call func once
     tmp <- eval(Func(times[1], y), rho)
-
     if (length(tmp) != length(y))
       stop(paste("The number of values returned by events$func() (",
                  length(tmp),
@@ -119,14 +115,12 @@ checkFuncEuler<- function (Func, times, y, parms, rho, Nstates) {
       ## Call func once to figure out whether and how many "global"
       ## results it wants to return and some other safety checks
       tmp <- eval(Func(times[1], y, parms), rho)
-
       if (!is.list(tmp)) stop("Model function must return a list\n")
       if (length(tmp[[1]]) != Nstates)
         stop(paste("The number of derivatives returned by func() (",
                    length(tmp[[1]]),
                    "must equal the length of the initial conditions vector (",
                    Nstates,")", sep=""))
-
       ## use "unlist" here because some output variables are vectors/arrays
       Nglobal <- if (length(tmp) > 1)
           length(unlist(tmp[-1]))  else 0
@@ -243,8 +237,12 @@ setIstate <- function(istate, iin, iout)
 
 saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   iin, iout, nr = 4) {
+  troot  <- attr(out,"troot")
   istate <- attr(out,"istate")
   istate <- setIstate(istate,iin,iout)
+
+  valroot  <- attr(out,"valroot")
+  indroot <- attr(out,"indroot")
 
   Rstate <- attr(out, "rstate")
   rstate <- rep(NA,5)
@@ -262,7 +260,10 @@ saveOut <- function (out, y, n, Nglobal, Nmtot, func, Func2,
   if (! is.null(Nmtot$lengthvar))
     if (is.na(Nmtot$lengthvar[1]))Nmtot$lengthvar[1] <- length(y) 
   attr(out, "lengthvar") <- Nmtot$lengthvar
-  
+  if (! is.null(troot)) attr(out,"troot") <-  troot
+  if (! is.null(valroot)) attr(out,"valroot") <- matrix(nr = n, valroot)
+  if (! is.null(indroot)) attr(out,"indroot") <- indroot
+
   ii <- if (is.null(Nmtot$dimvar)) 
     NULL else !(unlist(lapply(Nmtot$dimvar, is.null)))  # variables with dimension
   if (sum(ii) >0) 
@@ -296,6 +297,8 @@ saveOutrk <- function(out, y, n, Nglobal, Nmtot, iin, iout, transpose=FALSE)  {
   istate <- attr(out, "istate")
   istate <- setIstate(istate,iin, iout)
   attr(out,"istate") <- istate
+  if (! is.null(Nmtot$lengthvar))
+    if (is.na(Nmtot$lengthvar[1]))Nmtot$lengthvar[1] <- length(y)
   attr(out, "lengthvar") <- Nmtot$lengthvar
   
   ii <- if (is.null(Nmtot$dimvar)) 

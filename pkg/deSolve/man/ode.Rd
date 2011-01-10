@@ -10,7 +10,7 @@ around the implemented ODE solvers}
 \usage{ode(y, times, func, parms, 
 method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
            "euler", "rk4", "ode23", "ode45", "radau", 
-           "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"), ...)
+           "bdf", "bdf_d", "adams", "impAdams", "impAdams_d", "iteration"), ...)
 
 \method{print}{deSolve}(x, \dots)
 \method{summary}{deSolve}(object, \dots)
@@ -54,10 +54,17 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \code{"lsode"}, \code{"lsodes"},\code{"lsodar"},\code{"vode"},
     \code{"daspk"}, \code{"euler"}, \code{"rk4"},   \code{"ode23"},
     \code{"ode45"}, \code{"radau"}, \code{"bdf"},   \code{"bdf_d"}, \code{"adams"}, 
-    or \code{"impAdams"}).
-    The latter three are the backward differentiation formula, the (explicit)
-    Adams and the implicit Adams method respectively (see details).
+    \code{"impAdams"} or \code{"impAdams_d"}  ,"iteration").
+    Options "bdf", "bdf_d", "adams", "impAdams" or "impAdams_d" are the backward
+    differentiation formula, the bdf with diagonal representation of the Jacobian,
+    the (explicit) Adams and the implicit Adams method, and the implicit Adams
+    method with diagonal representation of the Jacobian respectively (see details).
     The default integrator used is \link{lsoda}.
+
+    Method \code{"iteration"} is special in that here the function \code{func} should
+  return the new value of the state variables rather than the rate of change.
+  This can be used for individual based models, for difference equations,
+  or in those cases where the integration is performed within \code{func})
   }
   \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be printed or to be subsetted.
@@ -119,6 +126,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
 
   For very stiff systems, \code{method = "daspk"} may outperform 
   \code{method = "bdf"}.
+  
 }
 
 \seealso{
@@ -225,5 +233,32 @@ plot(out[,"P"], out[,"C"], type = "l", lwd = 2, xlab = "producer",
   ylab = "consumer")
 par(mfrow = mf)
 
+## =======================================================================
+## Example3: Discrete time model - using method = "iteration"
+## =======================================================================
+# The host-parasitoid model from Soetaert and Herman, 2009, Springer - p. 284.
+
+Parasite <- function (t, y, ks) {
+  P <- y[1]
+  H <- y[2]
+  f    <- A * P / (ks +H)
+  Pnew <- H* (1-exp(-f))
+  Hnew <- H * exp(rH*(1.-H) - f)
+  
+  list (c(Pnew, Hnew))
+}
+rH <- 2.82 # rate of increase
+A  <- 100  # attack rate
+ks <- 15.   # half-saturation density
+
+out <- ode (func = Parasite, y = c(P = 0.5, H = 0.5), times = 0:50, parms = ks,
+            method = "iteration")
+            
+out2<- ode (func = Parasite, y = c(P = 0.5, H = 0.5), times = 0:50, parms = 25,
+            method = "iteration")
+
+out3<- ode (func = Parasite, y = c(P = 0.5, H = 0.5), times = 0:50, parms = 35,
+            method = "iteration")
+plot(out, out2, out3, lty = 1, lwd = 2)
 }
 

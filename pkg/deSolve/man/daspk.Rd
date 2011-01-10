@@ -32,7 +32,8 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   banddown = NULL, maxsteps = 5000, dllname = NULL,
   initfunc = dllname, initpar = parms, rpar = NULL,
   ipar = NULL, nout = 0, outnames = NULL,
-  forcings=NULL, initforc = NULL, fcontrol=NULL, lags = NULL, ...)
+  forcings=NULL, initforc = NULL, fcontrol=NULL,
+  events = NULL, lags = NULL, ...)
 }
 
 \arguments{
@@ -269,7 +270,10 @@ daspk(y, times, func = NULL, parms, dy = NULL, res = NULL,
   \item{fcontrol }{A list of control parameters for the forcing functions.
     See \link{forcings} or vignette \code{compiledCode}.
   }
-  \item{lags }{A list that specifies timelags, i.e. the number of steps 
+  \item{events }{A list that specifies events, i.e. when the value of a
+   state variable is suddenly changed. See \link{events} for more information.
+  }
+  \item{lags }{A list that specifies timelags, i.e. the number of steps
    that has to be kept. To be used for delay differential equations. 
    See \link{timelags}, \link{dede} for more information.
   }

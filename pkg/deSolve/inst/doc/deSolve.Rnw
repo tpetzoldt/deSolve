@@ -1052,8 +1052,68 @@ plot(yout[,2], yout[,3], xlab = "y", ylab = "dy", type = "l", lwd = 2)
 \caption{A delay differential equation model}
 \label{fig:dde}
 \end{figure}
-
 \clearpage
+
+\section{Discrete time models, difference equations}
+There is one special-purpose solver, triggered with \code{method = "iteration"}
+which can be used in cases where the new values of the state variables are
+estimated by the user, and need not be found by integration.
+
+This is for instance useful when the model consists of difference equations,
+or for 1-D models when transport is implemented by an implicit or a
+semi-implicit method.
+
+We give here an example of a discrete time model, represented by a difference
+equation: the Teasel model as from \citet[p287]{Soetaert08}.
+
+The dynamics of this plant is described by 6 stages and the transition from
+one stage to another is in a transition matrix:
+
+We define the stages and the transition matrix first:
+<<>>=
+Stages <- c("DS 1yr", "DS 2yr", "R small", "R medium", "R large", "F")
+
+NumStages   <- length(Stages)
+
+# Population matrix
+A <- matrix(nrow = NumStages, ncol = NumStages, byrow = TRUE, data = c(
+                   0,      0,      0,      0,      0,      322.38,
+                   0.966,  0,      0,      0,      0,      0     ,
+                   0.013,  0.01,   0.125,  0,      0,      3.448 ,
+                   0.007,  0,      0.125,  0.238,  0,      30.170,
+                   0.008,  0,      0.038,  0.245,  0.167,  0.862 ,
+                   0,      0,      0,      0.023,  0.75,   0      )  )
+@
+The difference function is defined as usual, but does not return the
+``rate of change'' but rather the new relative stage densities are returned.
+Thus, each time step, the updated values are divided by the summed densities:
+<<>>=
+Teasel <- function (t, y, p) {
+  yNew <-  A%*%y
+  list (yNew / sum(yNew))
+}
+@
+The model is solved using method ``iteration'':
+<<>>=
+out <- ode(func = Teasel, y = c(1, rep(0, 5) ), times = 0:50,
+           parms = 0, method = "iteration")
+@
+and plotted using R-function \code{plotmat}:
+<<label=difference,include=FALSE>>=
+matplot(out[,1], out[,-1], main = "Teasel stage distribution", type = "l")
+legend("topright", legend = Stages, lty = 1:6, col = 1:6)
+@
+\setkeys{Gin}{width=0.6\textwidth}
+\begin{figure}
+\begin{center}
+<<label=difference,fig=TRUE,echo=FALSE>>=
+<<difference>>
+@
+\end{center}
+\caption{A difference model solved with method = ``iteration''}
+\label{fig:difference}
+\end{figure}
+
 \section{Plotting deSolve Objects}
 
 There are S3 \code{plot} and \code{image} methods for plotting 0-D (plot), and

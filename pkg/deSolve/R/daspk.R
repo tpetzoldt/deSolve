@@ -15,7 +15,8 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     hmin=0, hmax=NULL, hini=0, ynames=TRUE, maxord =5, bandup=NULL,
     banddown=NULL, maxsteps=5000, dllname=NULL, initfunc=dllname,
     initpar=parms, rpar=NULL, ipar=NULL, nout=0, outnames=NULL,
-    forcings=NULL, initforc = NULL, fcontrol=NULL, lags = NULL, ...) {
+    forcings=NULL, initforc = NULL, fcontrol=NULL, events = NULL,
+    lags = NULL, ...) {
 
 ### check input 
   if (!is.numeric(y))
@@ -113,6 +114,8 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     
   ModelInit <- NULL
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
+  Eventfunc <- NULL
+  events <- checkevents(events, times, Ynames, dllname)
 
   if (!is.null(dllname))  {
    if (! is.null(initfunc))  # to allow absence of initfunc
@@ -186,7 +189,8 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
        ipar<-0
      if (is.null(rpar))
        rpar<-0
-  
+     Eventfunc <- events$func
+
 
   } else {
 
@@ -291,6 +295,18 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
        }
     } else JacRes <- NULL
          
+       if (! is.null(events$Type)) {
+         if (events$Type == 2)
+           Eventfunc <- function(time,state) {
+             if (ynames) {
+               attr(state,"names")  <- Ynames
+               attr(dy,"names") <- dYnames
+           }
+             events$func(time,state,parms,...)
+           }
+         if (events$Type == 2)
+           checkEventFunc(Eventfunc,times,y,rho)
+       }
     ## Call res once to figure out whether and how many "global"
     ## results it wants to return and some other safety checks
     tmp <- eval(Res2(times[1], y, dy), rho)
@@ -426,7 +442,8 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
       JacRes, ModelInit, PsolFunc, as.integer(verbose),as.integer(info),
       as.integer(iwork),as.double(rwork), as.integer(Nglobal),as.integer(maxIt),
       as.integer(bandup),as.integer(banddown),as.integer(nrowpd),
-      as.double (rpar), as.integer(ipar), flist, lags, PACKAGE = "deSolve")
+      as.double (rpar), as.integer(ipar), flist, lags,
+      Eventfunc, events, PACKAGE = "deSolve")
 
 
 ### saving results    

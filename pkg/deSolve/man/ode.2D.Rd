@@ -10,7 +10,7 @@
 }
 
 \usage{ode.2D(y, times, func, parms, nspec = NULL, dimens,
-  method= c("lsodes", "euler", "rk4", "ode23", "ode45", "adams"),
+  method= c("lsodes", "euler", "rk4", "ode23", "ode45", "adams", "iteration"),
   names = NULL, cyclicBnd = NULL, ...)}
 \arguments{
   \item{y }{the initial (state) values for the ODE system, a vector. If
@@ -61,6 +61,12 @@
      
      If  \code{"lsodes"} is used, then also the size of the work array should
      be specified (\code{lrw}) (see \link{lsodes}).
+     
+    Method \code{"iteration"} is special in that here the function \code{func} should
+  return the new value of the state variables rather than the rate of change.
+  This can be used for individual based models, for difference equations,
+  or in those cases where the integration is performed within \code{func})
+
   }
   \item{... }{additional arguments passed to \code{lsodes}.}
 }

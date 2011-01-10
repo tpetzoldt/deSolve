@@ -1,3 +1,13 @@
+
+Changes version 1.9+
+==========================
+Karline:
+  roots, events, lags in radau
+  roots in lsodes
+  lags in daspk
+  
+CHECK: dede and roots with lsodes....  lyh = iwork(20) ...
+  
 ================================================================================
 Questions/issues for this version
 
@@ -41,7 +51,7 @@ Karline + Thomas: add dopri 8(5,3) - Fortran??
 extend diagnostics: ?
   e.g. to return number of timesteps, number of ftion evaluations, etc...
 
-
+karline: document roots better
 Impossibilities...
 ==================
 resolve NaN warnings and termination of R 
