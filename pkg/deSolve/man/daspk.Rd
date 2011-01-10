@@ -362,8 +362,7 @@ Res_DAE <- function (t, y, yprime, pars)
 ## Based on the DAE formulation
 ## =======================================================================
 
-Mass_FUN <- function (t, y, pars)
-{
+Mass_FUN <- function (t, y, pars) {
   with (as.list(c(y, pars)), {
 
     ## as above, but without the 
@@ -377,7 +376,7 @@ Mass_FUN <- function (t, y, pars)
                 CONC = A+B+D))
   })
 }
-Mass <- matrix(nr=3, nc=3, byrow = TRUE, 
+Mass <- matrix(nrow = 3, ncol = 3, byrow = TRUE, 
   data=c(1,  0, 1,         # dA + 0 + dB
         -1,  1, 0,         # -dA + dB +0
          0,  0, 0))        # algebraic
@@ -435,7 +434,7 @@ jacres_DAE <- function (t, y, yprime, pars, cj)
    })
 }
 
-PD <- matrix(nc = 3, nr = 3, 0)
+PD <- matrix(ncol = 3, nrow = 3, 0)
 
 DAE2 <- daspk(y = y, dy = dy, times = times,
           res = Res_DAE, jacres = jacres_DAE, jactype = "fullusr",

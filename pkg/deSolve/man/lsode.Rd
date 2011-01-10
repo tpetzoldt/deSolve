@@ -307,7 +307,7 @@ out5  <- lsode(yini, times, f1, parms = 0, mf = 10)
 ## =======================================================================
 
 diffusion2D <- function(t, Y, par) {
-   y <- matrix(nr = n, nc = n, data = Y)
+   y <- matrix(nrow = n, ncol = n, data = Y)
    dY   <- r*y     # production
 
    ## diffusion in X-direction; boundaries = 0-concentration
@@ -328,7 +328,7 @@ r     <- 0.025     # production rate
 times <- c(0, 1)
 
 n  <- 50
-y  <- matrix(nr = n, nc = n, 0)
+y  <- matrix(nrow = n, ncol = n, 0)
 
 pa <- par(ask = FALSE)
 
@@ -354,7 +354,7 @@ print(system.time(
     out  <-  lsode(func = diffusion2D, y = as.vector(y), times = times,
               parms = NULL, jactype = "bandint", bandup = 1, banddown = 1)
 
-    filled.contour(matrix(nr = n, nc = n, out[2,-1]), zlim = c(0,1),
+    filled.contour(matrix(nrow = n, ncol = n, out[2,-1]), zlim = c(0,1),
                   color.palette = terrain.colors, main = i)
 
     y <- out[2, -1]

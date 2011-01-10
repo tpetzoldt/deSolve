@@ -113,9 +113,9 @@ diffusion3D <- function(t, Y, par) {
         data = c(Mat1, aperm(Array, c(1, 3, 2)), Mat2)), c(1, 3, 2))
   }
 
-  yy    <- array(dim=c(n,n,n),data=Y)  # vector to 3-D array
-  dY   <- -r*yy        # consumption
-  BND   <- matrix(nr=n,nc=n,data=1)   # boundary concentration
+  yy  <- array(dim=c(n, n, n), data = Y)      # vector to 3-D array
+  dY  <- -r*yy                                # consumption
+  BND <- matrix(nrow = n, ncol = n, data = 1) # boundary concentration
 
   ## diffusion in x-direction
   ## new array including boundary concentrations in X-direction

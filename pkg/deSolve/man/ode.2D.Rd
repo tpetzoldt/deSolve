@@ -109,8 +109,8 @@
 
 lvmod2D <- function (time, state, pars, N, Da, dx) {
   NN <- N*N
-  Prey <- matrix(nr = N,nc = N,state[1:NN])
-  Pred <- matrix(nr = N,nc = N,state[(NN+1):(2*NN)])
+  Prey <- matrix(nrow = N, ncol = N,state[1:NN])
+  Pred <- matrix(nrow = N, ncol = N,state[(NN+1):(2*NN)])
 
   with (as.list(pars), {
     ## Biology
@@ -176,7 +176,7 @@ summary(out)
 Col <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                           "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 for (i in seq(1, length(times), by = 1))
-   image(matrix(nr = N, nc = N, out[i, 2:(NN+1)]),
+   image(matrix(nrow = N, ncol = N, out[i, 2:(NN+1)]),
    col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
 
 ## similar:
@@ -254,7 +254,7 @@ persp(t10, theta = 30, border = NA, phi = 70,
 \dontrun{
 zlim <- range(ST3[, -1])
 for (i in 2:nrow(ST3)) {
-  y <- matrix(nr = nx, nc = ny, data = ST3[i, -1])
+  y <- matrix(nrow = nx, ncol = ny, data = ST3[i, -1])
   filled.contour(y, zlim = zlim, main = i)
 }
 }
