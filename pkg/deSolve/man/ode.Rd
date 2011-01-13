@@ -62,9 +62,10 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     The default integrator used is \link{lsoda}.
 
     Method \code{"iteration"} is special in that here the function \code{func} should
-  return the new value of the state variables rather than the rate of change.
-  This can be used for individual based models, for difference equations,
-  or in those cases where the integration is performed within \code{func})
+    return the new value of the state variables rather than the rate of change.
+    This can be used for individual based models, for difference equations,
+    or in those cases where the integration is performed within \code{func}).
+    See last example.
   }
   \item{x }{an object of class \code{deSolve}, as returned by the
     integrators, and to be printed or to be subsetted.
@@ -260,5 +261,13 @@ out2<- ode (func = Parasite, y = c(P = 0.5, H = 0.5), times = 0:50, parms = 25,
 out3<- ode (func = Parasite, y = c(P = 0.5, H = 0.5), times = 0:50, parms = 35,
             method = "iteration")
 plot(out, out2, out3, lty = 1, lwd = 2)
+
+# Same, but output every two steps...
+# hini=1 ensures that the same timestep of 1 is used
+
+outb <- ode (func = Parasite, y = c(P = 0.5, H = 0.5),
+             times = seq(0, 50, 2), hini = 1, parms = ks,
+             method = "iteration")
+plot(out, outb, type = c("l","p"))
 }
 

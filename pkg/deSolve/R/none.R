@@ -17,7 +17,7 @@ none <- function(y, times, func, parms, hini = NULL,
     if (nsteps == 0)
       stop (" hini should be smaller than times interval ")
 
-    if (nsteps * dt != hini)
+    if (nsteps * hini != dt)
       warning(" hini recalculated as integer fraction of times interval ",dt/nsteps)
 
     ## check input
