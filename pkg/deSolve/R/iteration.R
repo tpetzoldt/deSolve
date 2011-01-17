@@ -3,7 +3,7 @@
 ### with fixed step size and without interpolation, see helpfile for details.
 ### ============================================================================
 
-none <- function(y, times, func, parms, hini = NULL,
+iteration <- function(y, times, func, parms, hini = NULL,
   verbose = FALSE, ynames = TRUE,
   dllname = NULL, initfunc = dllname, initpar = parms,
   rpar = NULL,  ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
@@ -71,7 +71,7 @@ none <- function(y, times, func, parms, hini = NULL,
 
     ## the CALL to the integrator
     on.exit(.C("unlock_solver"))
-    out <- .Call("call_none", as.double(y), as.double(times), nsteps,
+    out <- .Call("call_iteration", as.double(y), as.double(times), nsteps,
                  Func, Initfunc, parms, as.integer(Nglobal), rho, as.integer(verbose),
                  as.double(rpar), as.integer(ipar), flist, PACKAGE = "deSolve")
 
@@ -79,7 +79,7 @@ none <- function(y, times, func, parms, hini = NULL,
     out <- saveOutrk(out, y, n, Nglobal, Nmtot,
                      iin = c(1, 12, 13, 15), iout = c(1:3, 18))
     if (verbose) diagnostics(out)
-    attr(out, "type") <- "none"
+    attr(out, "type") <- "iteration"
     out
 }
 

@@ -54,7 +54,7 @@ ode    <- function (y, times, func, parms,
       adams = lsode(y, times, func, parms, mf = 10, ...),
       impAdams = lsode(y, times, func, parms, mf = 12, ...),
       impAdams_d = lsode(y, times, func, parms, mf = 13, ...),
-      iteration = none(y, times, func, parms, ...)
+      iteration = iteration(y, times, func, parms, ...)
     )
 
   return(out)
@@ -150,7 +150,7 @@ ode.1D    <- function (y, times, func, parms, nspec = NULL,
      else if (method == "adams" && iscomplex)
       out <- zvode(y, times, func, parms, mf = 10, ...)
      else if (method == "iteration")
-      out <- none(y, times, func, parms, ...)
+      out <- iteration(y, times, func, parms, ...)
 
 # an implicit method that needs restructuring...
   } else {
@@ -300,7 +300,7 @@ ode.2D    <- function (y, times, func, parms, nspec=NULL, dimens,
      else if (method == "adams")
       out <- lsode(y, times, func, parms, mf = 10, ...)
      else if (method == "iteration")
-      out <- none(y, times, func, parms, ...)
+      out <- iteration(y, times, func, parms, ...)
 
   } else {
       stop ("cannot run ode.2D: not a valid 'method'")
@@ -381,7 +381,7 @@ ode.3D    <- function (y, times, func, parms, nspec=NULL, dimens,
     else if (method == "adams")
       out <- lsode(y, times, func, parms, mf = 10, ...)
     else if (method == "iteration")
-      out <- none(y, times, func, parms, ...)
+      out <- iteration(y, times, func, parms, ...)
 
   } else {
       stop ("cannot run ode.3D: not a valid 'method'")
