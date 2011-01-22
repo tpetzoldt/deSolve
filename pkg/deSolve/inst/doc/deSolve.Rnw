@@ -208,7 +208,7 @@ be called by the \R routine that solves the differential equations
 The code is most readable if we can address the parameters and state
 variables by their names.  As both parameters and state variables are
 `vectors', they are converted into a list. The statement
-\code{with(as.list(c(state,parameters)), {...})}  then makes available
+\code{with(as.list(c(state, parameters)), {...})}  then makes available
 the names of this list.
 
 The main part of the model calculates the rate of change of the state
@@ -241,7 +241,7 @@ We run the model for 100 days, and give output at 0.01 daily
 intervals. R's function \code{seq()} creates the time sequence:
 
 <<>>=
-times     <- seq(0, 100, by = 0.01)
+times <- seq(0, 100, by = 0.01)
 @
 
 \subsubsection{Model integration}
@@ -374,7 +374,7 @@ Here \code{varstep} informs whether the method uses a variable time-step;
 \code{FSAL} whether the first same as last strategy is used, while
 \code{stage} and \code{Qerr} give the number of function evaluations needed
 for one step, and the order of the local truncation error.
-\code{A,b1,b2,c} are the coefficients of the Butcher table. Two formulae
+\code{A, b1, b2, c} are the coefficients of the Butcher table. Two formulae
 (\code{rk45dp7, rk45ck}) support dense output.
 
 It is also possible to modify the parameters of a method (be very
@@ -655,8 +655,8 @@ dyini <- c(1, 0)
 times <- seq(0, 10, 0.1)
 
 ## solver
-print(system.time(out <- daspk(y = yini, dy = dyini,
-                           times = times, res = daefun, parms = 0)))
+system.time(out <- daspk(y = yini, dy = dyini,
+                         times = times, res = daefun, parms = 0))
 @
 <<label=dae,include=FALSE>>=
 matplot(out[,1], out[,2:3], type = "l", lwd = 2,
@@ -1089,7 +1089,7 @@ The difference function is defined as usual, but does not return the
 Thus, each time step, the updated values are divided by the summed densities:
 <<>>=
 Teasel <- function (t, y, p) {
-  yNew <-  A%*%y
+  yNew <-  A %*% y
   list (yNew / sum(yNew))
 }
 @
@@ -1098,7 +1098,7 @@ The model is solved using method ``iteration'':
 out <- ode(func = Teasel, y = c(1, rep(0, 5) ), times = 0:50,
            parms = 0, method = "iteration")
 @
-and plotted using R-function \code{plotmat}:
+and plotted using R-function \code{matplot}:
 <<label=difference,include=FALSE>>=
 matplot(out[,1], out[,-1], main = "Teasel stage distribution", type = "l")
 legend("topright", legend = Stages, lty = 1:6, col = 1:6)
@@ -1116,7 +1116,7 @@ legend("topright", legend = Stages, lty = 1:6, col = 1:6)
 
 \section{Plotting deSolve Objects}
 
-There are S3 \code{plot} and \code{image} methods for plotting 0-D (plot), and
+There are \proglang{S3} \code{plot} and \code{image} methods for plotting 0-D (plot), and
 1-D and 2-D model output (image) as
 generated with \code{ode}, \code{ode.1D}, \code{ode.2D}.
 
@@ -1124,8 +1124,6 @@ How to use it and examples can be found by typing \code{?plot.deSolve}.
 
 \subsection{Plotting Multiple Scenario's}
 
-%% HERE SOME TEXT!
-%% thpe:
 The \code{plot} method for \code{deSolve} objects can also be used to compare
 different scenarios, e.g from the same model but with different sets of parameters
 or initial values, with one single call to \code{plot}.
@@ -1364,7 +1362,7 @@ print(system.time(
                 N = N, rr = r, ri = ri, dr = dr, dri = dri)
 ))
 @
-The \code{summary} method provides summaries for both 1-Dimensional state variables:
+The \code{summary} method provides summaries for both 1-dimensional state variables:
 <<>>=
 summary(out)
 @
@@ -1375,7 +1373,7 @@ p10 <- subset(out, select = "PREY", subset = time == 10)
 head(p10)
 @
 
-We first plot both 1-Dimensional state variables at once; we specify that
+We first plot both 1-dimensional state variables at once; we specify that
 the figures are arranged in two rows, and 2 columns; when we call \code{image},
 we overrule the default mfrow setting (\code{mfrow = NULL}).
 Next we plot "PREY" again, once with the default xlim and ylim, and next
@@ -1420,8 +1418,8 @@ consumption, at a rate \code{r_x2y2}, where \code{r_x2y2} depends on the
 position along the grid. First the derivative function is defined:
 <<>>=
 Simple2D <- function(t, Y, par) {
-  y    <- matrix(nrow = nx, ncol = ny, data = Y)  # vector to 2-D matrix
-  dY   <- - r_x2y2 * y   # consumption
+  y  <- matrix(nrow = nx, ncol = ny, data = Y)  # vector to 2-D matrix
+  dY <- - r_x2y2 * y                            # consumption
   return(list(dY))
 }
 @
@@ -1497,7 +1495,7 @@ parms  <- c(c = 5, d = 0.1, e = 0.1, f = 0.1)
 @
 
 After specification of initial conditions and output times, the model
-is solved - using \code{lsoda}:
+is solved -- using \code{lsoda}:
 
 <<>>=
 xstart <- c(P = 0.5, C = 1)
@@ -1576,7 +1574,7 @@ e.g. \url{r-help@r-project.org} or, more specific,
 
 \subsection{Making sense of deSolve's error messages}
 
-As many of \pkg{deSolve}'s functions are wrappers around existing FORTRAN codes,
+As many of \pkg{deSolve}'s functions are wrappers around existing \proglang{FORTRAN} codes,
 the warning and error messages are derived from these codes.
 Whereas these codes are highly robust, well tested, and efficient, they are
 not always as user-friendly as we would like.
@@ -1587,12 +1585,12 @@ Consider the first example on the \code{ode} function:
 <<>>=
 LVmod <- function(Time, State, Pars) {
   with(as.list(c(State, Pars)), {
-    Ingestion    <- rIng  * Prey*Predator
-    GrowthPrey   <- rGrow * Prey*(1-Prey/K)
+    Ingestion    <- rIng  * Prey * Predator
+    GrowthPrey   <- rGrow * Prey * (1 - Prey/K)
     MortPredator <- rMort * Predator
 
     dPrey        <- GrowthPrey - Ingestion
-    dPredator    <- Ingestion*assEff -MortPredator
+    dPredator    <- Ingestion * assEff - MortPredator
 
     return(list(c(dPrey, dPredator)))
   })
@@ -1646,14 +1644,15 @@ Warning messages:
 2: In lsoda(y, times, func, parms, ...) :
   Returning early. Results are accurate, as far as they go
 \end{verbatim}
-The first sentence tells us that at T=0.8562448350331e+02, the solver used a step size H= 0.3273781304624e-17.
-This step size is so small that it cannot tell the difference between T and T+H. Nevertheless, the solver tried again.
+
+The first sentence tells us that at T = 0.8562448350331e+02, the solver used a step size H = 0.3273781304624e-17.
+This step size is so small that it cannot tell the difference between T and T + H. Nevertheless, the solver tried again.
 
 The second sentence tells that, as this warning has been occurring 10 times, it will not be outputted again.
 
 As expected, this error did not go away, so soon the maximal number of steps (5000) has been exceeded. This is indeed what the next message is about:
 
-The third sentence tells that at T=0.8562448350331e+02, maxstep =5000 steps have been done.
+The third sentence tells that at T = 0.8562448350331e+02, maxstep = 5000 steps have been done.
 
 The one before last message tells why the solver returned prematurely, and suggests a solution.
 
@@ -1662,6 +1661,17 @@ It makes more sense to first see if the output tells what happens:
 <<label=err,include=FALSE>>=
 plot(out2, type = "l", lwd = 2, main = "corrupt Lotka-Volterra model")
 @
+
+%% ThPe -> KS: What do you think about the following?
+You may, of course, consider to use another solver:
+
+<<include=FALSE,results=hide>>=
+pars["rIng"] <- 100
+out3 <- ode(func = LVmod, y = yini, parms = pars, 
+          times = times, method = "ode45", atol = 1e-14, rtol = 1e-14)
+@
+
+but don't forget to think about thism too. We leave this open as an exercise to the reader.
 
 \setkeys{Gin}{width=\textwidth}
 \begin{figure}

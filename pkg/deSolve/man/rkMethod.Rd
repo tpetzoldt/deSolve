@@ -27,7 +27,7 @@ rkMethod(method = NULL, ...)
 \details{
   This function supplies \code{method} settings for \code{\link{rk}} or
   \code{\link{ode}}. If called without arguments, the names of all
-  implemented solvers of the Runge-Kutta family are returned.
+  currently implemented solvers of the Runge-Kutta family are returned.
   
   The following comparison gives an idea how the algorithms of \pkg{deSolve}
   are related to similar algorithms of other simulation languages:
@@ -62,7 +62,7 @@ rkMethod(method = NULL, ...)
   specific and efficient built-in interpolation schemes (dense output).
 
   As an alternative, Neville-Aitken polynomials can be used to interpolate between
-  time steps. This is available for all methods and may be useful to speed
+  time steps. This is available for all RK methods and may be useful to speed
   up computation if no dense-output formula is available. Note however, that 
   this can introduce considerable local error; it is disabled by default 
   (see \code{nknots} below).
@@ -103,7 +103,8 @@ rkMethod(method = NULL, ...)
     are also supported by the general \code{rk} interface, however their
     implementation is still experimental.  Instead of this you may
     consider \code{\link{radau}} for a specific full implementation of an
-    implicit Runge-Kutta method.  }
+    implicit Runge-Kutta method.  
+}
    
 \value{
   A list with the following elements:
@@ -166,7 +167,7 @@ rkMethod(method = NULL, ...)
     \eqn{1/Qerr} (for \code{beta} = 0).}
 
   \item{beta}{optional tuning parameter for stepsize adjustment. Typical
-    values are \eqn{0} (default) or \eqn{0.4/Qerr}
+    values are \eqn{0} (default) or \eqn{0.4/Qerr}.
   }
 
 }
@@ -229,51 +230,70 @@ times  <- seq(0, 200, length = 101)
 parms  <- c(a = 0.1, b = 0.1, c = 0.1)
 x <- c(P = 2, C = 1)
 
-ode(x, times, func, parms, method = rkMethod("rk4"))
+## rk using ode45 as the default method
+out <- rk(x, times, func, parms)
 
-ode(x, times, func, parms, method = "ode45")
+## all methods can be called also from 'ode' by using rkMethod
+out <- ode(x, times, func, parms, method = rkMethod("rk4"))
 
-o0 <- ode(x, times, func, parms, method = "lsoda")
-o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"))
+## 'ode' has aliases for the most common RK methods
+out <- ode(x, times, func, parms, method = "ode45")
+
+##===========================================================================
+## Comparison of local error from different interpolation methods
+##===========================================================================
+
+## lsoda with lower tolerances (1e-10) used as reference
+o0 <- ode(x, times, func, parms, method = "lsoda", atol = 1e-10, rtol = 1e-10)
+
+## rk45dp7 with hmax = 10 > delta_t  = 2
+o1 <- ode(x, times, func, parms, method = rkMethod("rk45dp7"), hmax = 10)
 
 ## disable dense-output interpolation
-## and use Neville-Aitken polynomials only
+## and use only Neville-Aitken polynomials instead
 o2 <- ode(x, times, func, parms, 
-  method = rkMethod("rk45dp7", densetype = NULL, nknots=5))
+  method = rkMethod("rk45dp7", densetype = NULL, nknots = 5), hmax = 10)
 
-## show differences between methods
-par(mfrow=c(3,1))
-matplot(o1[,1], o1[,-1], type="l", xlab="Time", main="State Variables")
-matplot(o1[,1], o2[,-1], type="p", pch=16, add=TRUE)
-matplot(o0[,1], o1[,-1]-o0[,-1], type="l", lty="solid", xlab="Time",
-  main="Difference: rk45dp7 - lsoda")
-matplot(o1[,1], o2[,-1]-o1[,-1], type="l", lty="dashed", xlab="Time",
-  main="difference: Neville-Aitken - Dense Output")
-abline(h=0, col="grey")
-
-## disable interpolation completely
+## stop and go: disable interpolation completely
 ## and integrate explicitly between external time steps
 o3 <- ode(x, times, func, parms, 
-  method = rkMethod("rk45dp7", densetype = NULL, nknots = 0))
+  method = rkMethod("rk45dp7", densetype = NULL, nknots = 0, hmax=10))
+  
+## compare different interpolation methods with lsoda
+mf <- par("mfrow" = c(4, 1))
+matplot(o1[,1], o1[,-1], type = "l", xlab = "Time", main = "State Variables")
+matplot(o0[,1], o0[,-1] - o1[,-1], type = "l", 
+  main="Difference between lsoda and ode45 with dense output")
+abline(h = 0, col = "grey")
+matplot(o0[,1], o0[,-1] - o2[,-1], type = "l", 
+  main="Difference between lsoda and ode45 with Neville-Aitken")
+abline(h = 0, col = "grey")
+matplot(o0[,1], o0[,-1] - o3[,-1], type = "l", 
+  main="Difference between lsoda and ode45 in 'stop and go' mode")
+abline(h = 0, col = "grey")
+par(mf)
 
-## define and use a new rk method
-ode(x, times, func, parms, 
-  method = rkMethod(ID = "midpoint",
-    varstep = FALSE,
-    A      = c(0, 1/2),
-    b1      = c(0, 1),
-    c       = c(0, 1/2),
-    stage   = 2,
-    Qerr    = 1
-  )
-)
+##===========================================================================
+## rkMethod allows to define user-specified Runge-Kutta methods
+##===========================================================================
+out <- ode(x, times, func, parms, 
+          method = rkMethod(ID = "midpoint",
+            varstep = FALSE,
+            A      = c(0, 1/2),
+            b1      = c(0, 1),
+            c       = c(0, 1/2),
+            stage   = 2,
+            Qerr    = 1
+          )
+        )
+plot(out)
 
 ## compare method diagnostics
 times  <- seq(0, 200, length = 10)
 o1 <- ode(x, times, func, parms, method = rkMethod("rk45ck"))
-o1b <- ode(x, times, func, parms, method = rkMethod("rk78dp"))
+o2 <- ode(x, times, func, parms, method = rkMethod("rk78dp"))
 diagnostics(o1)
-diagnostics(o1b)
+diagnostics(o2)
 
 }
 
