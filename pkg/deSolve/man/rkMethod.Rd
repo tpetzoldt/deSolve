@@ -137,9 +137,9 @@ rkMethod(method = NULL, ...)
   }
   
   \item{densetype}{optional integer value specifying the dense output formula;
-    currently \code{densetype = 1} for \code{rk45dp7} (Dormand-Prince)
-    and \code{densetype = 2} for \code{rk45ck} (Cash-Karp). Undefined values
-    (e.g., \code{densetype = NULL}) disable dense output.
+    currently only \code{densetype = 1} for \code{rk45dp7} (Dormand-Prince)
+    and \code{densetype = 2} for \code{rk45ck} (Cash-Karp) are supported. 
+    Undefined values (e.g., \code{densetype = NULL}) disable dense output.
   }
   
   \item{stage}{number of function evaluations needed (corresponds to
@@ -156,7 +156,7 @@ rkMethod(method = NULL, ...)
 
     If \code{nknots} is between 3 and 8, Neville-Aitken polynomials
     are used, which need at least \code{nknots + 1} internal time steps.
-    Local interpolation may speed up integration but can lead to local
+    Interpolation may speed up integration but can lead to local
     errors higher than the tolerance, especially if external and
     internal time steps are very different.
   }
@@ -261,14 +261,15 @@ o3 <- ode(x, times, func, parms,
   
 ## compare different interpolation methods with lsoda
 mf <- par("mfrow" = c(4, 1))
-matplot(o1[,1], o1[,-1], type = "l", xlab = "Time", main = "State Variables")
-matplot(o0[,1], o0[,-1] - o1[,-1], type = "l", 
+matplot(o1[,1], o1[,-1], type = "l", xlab = "Time", main = "State Variables",
+  ylab = "P, C")
+matplot(o0[,1], o0[,-1] - o1[,-1], type = "l", xlab = "Time", ylab = "Diff.",
   main="Difference between lsoda and ode45 with dense output")
 abline(h = 0, col = "grey")
-matplot(o0[,1], o0[,-1] - o2[,-1], type = "l", 
+matplot(o0[,1], o0[,-1] - o2[,-1], type = "l", xlab = "Time", ylab = "Diff.", 
   main="Difference between lsoda and ode45 with Neville-Aitken")
 abline(h = 0, col = "grey")
-matplot(o0[,1], o0[,-1] - o3[,-1], type = "l", 
+matplot(o0[,1], o0[,-1] - o3[,-1], type = "l", xlab = "Time", ylab = "Diff.",
   main="Difference between lsoda and ode45 in 'stop and go' mode")
 abline(h = 0, col = "grey")
 par(mf)
