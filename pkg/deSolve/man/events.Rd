@@ -30,8 +30,11 @@
     }
     \item{time: }{when events are specified by a function: the times at
       which the events take place, note that these event times must also
-      be part of the integration output times, else the event will not take
-      place. As from version 1.9.1, this will be checked by the solver,
+      be part of the integration output times <b>exactly</b>, else the event 
+      would not take place. As from version 1.9.1 the solver will theck for 
+      this and produce an error message if event times are missing in times; 
+      see also \code{\link{\checkEventTimes}} for a utility function 
+      to check and solve such issues.
     }
     \item{root: }{when events are specified by a function and triggered
       by a root, this logical should be set equal to \code{TRUE},
@@ -168,7 +171,7 @@ times <- seq(0, 10, by = 0.1)
 
 out <- ode(func = eventmod, y = yini, times = times, parms = NULL, 
   events = list(func = eventfun, time = 1:9) )
-plot(out, type="l")
+plot(out, type = "l")
 
 ## =============================================================================
 ## EVENTS triggered by a root function
@@ -179,7 +182,7 @@ func <- function(t, y, pars) {
   return(list(-0.1 * y))
 }
 
-## event triggered if state variable =0.5
+## event triggered if state variable = 0.5
 rootfun <- function (t, y, pars) {
   return(y - 0.5)
 }

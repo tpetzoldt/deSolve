@@ -32,9 +32,9 @@ checkEventTimes(events, times, eps = 1e-12, reldist = TRUE, silent = FALSE)
 \value{
   Returns a list with two elements:
   \itemize{
-    \item[value] {that is \code{TRUE} if all events where in times and
+    \item{value}{that is \code{TRUE} if all events where in times and
       \code{FALSE} otherwise,}
-    \item[times] {the vector with the new time steps containing all
+    \item{times}{the vector with the new time steps containing all
       events, but without such time steps that 
       are very close (specified by \code{eps} to any event).}
   }
