@@ -1,6 +1,7 @@
 checkTimes <- function (times, events, eps = 1e-14, reldist = FALSE, silent=FALSE) {
+  events  <- unique(events) # remove double events first
   nevents <- length(events)
-  ntimes <- length(times)
+  ntimes  <- length(times)
   
   if (events[1] <= times[1]) stop("first time step must occur before first event")
   if (events[nevents] >= times[ntimes]) stop("last time step must occur after last event")
