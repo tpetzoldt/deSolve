@@ -10,7 +10,7 @@ checkEventTimes <- function (events, times, eps = 1e-12, reldist = TRUE, silent 
   if (any(!(events %in% times))) {
     value <- FALSE
     if (! silent) {
-      warning ("Times did not contain all events, so they where be included.")
+      warning ("Times did not contain all events, so they were included.")
     }
     x <- numeric(length(times)) # reserve memory for output
     ## this .C function finds nearest event for each value in times

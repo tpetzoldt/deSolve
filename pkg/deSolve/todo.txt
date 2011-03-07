@@ -1,44 +1,7 @@
-
-Changes version 1.9+
+Changes version 1.10
 ==========================
 Karline:
-  roots, events, lags in radau
-  roots in lsodes
-  lags in daspk
-  
-CHECK: dede and roots with lsodes....  lyh = iwork(20) ...
-  
-================================================================================
-Questions/issues for this version
-
-plot-function
-==============
-
-Plotting 1-D variable in 0-D model and so on. 
-ks->ThPe: leave it for now
-
-subset.deSolve
-==============
-
-- argument which (or select) should have a useful default value
-- ks->ThPe: returns all variables, except time.
-
-plot.1D
-=======
-
-- in case of ask=FALSE thpe would like to have an additional argument "delay" 
-  for animations.
-- ks->ThPe: can you do this?  
-
-Vignette
-========
-
-- deSolve.pdf is now rather big and in the end blows up the
-  package. Is there a possibility to reduce the size of the included
-  figures?
-  
-- karline->ThPe: (some) Large figures now made offline - is this enough? 
-
+  compiled code using mass in daspk
 
 ================================================================================
 TODOs, Ideas/wishes (ThPe/karline):  for future versions???
@@ -51,28 +14,40 @@ Karline + Thomas: add dopri 8(5,3) - Fortran??
 extend diagnostics: ?
   e.g. to return number of timesteps, number of ftion evaluations, etc...
 
-karline: document roots better
+document rootfinding better
+
+Plotting 1-D variable in 0-D model and so on.
+
+
 Impossibilities...
 ==================
-resolve NaN warnings and termination of R 
+resolve NaN warnings and termination of R
 - KS does not see how this can be resolved
 
-Delay differential equations in compiled code 
-- KS: not at all easy, and who will use that?! 
+Delay differential equations in compiled code
+- KS: not at all easy, and who will use that?!
 
 ================================================================================
+================================================================================
+
+
+Changes version 1.9+
+==========================
+Karline:
+  roots, events, lags in radau
+  roots in lsodes
+  lags in daspk
+  ode (method = "iteration")
+
 Changes version 1.9
 ==========================
 (Thomas + Karline)
 
 summary.deSolve
-
 subset.deSolve
-
 plotting deSolve objects improved:
    -> plot more than one output in same figures (scenarios), 
    -> add observations
-
 vignette improved
 
 fixed bug in 'timesteps'
@@ -85,30 +60,21 @@ fixed compiler warning C-code (Woody)
 
 Changes version 1.8 Thomas:
 ==========================
-
-dopri8(7) 
+dopri8(7)
 - coefficients use now common instead of decimal fractions
 
 
 Changes version 1.8 Karline:
 ============================
-
-Runge-kuttas: 
+Runge-kuttas:
 1. extra output: number of failed steps (see also 2)
-
 2. number of function evaluations + 1 for initial condition
-
 3. dense output for cash-karp
-
-4. dopri8(7) added 
-
+4. dopri8(7) added
 5. radau added!! implicit runge kutta, solves also DAE up to index 3!
-
 6. image function for ode.2-D added.
-
 7. changed warning printing in FORTRAN code
-
-8. common interface for radau and daspk: 
+8. common interface for radau and daspk:
    both can solve systems written as M*dy = f(x,y).
    dasp can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
    

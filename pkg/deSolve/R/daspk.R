@@ -30,8 +30,8 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     stop("either `func' OR 'res' must be specified, not both")
   if (!is.null(jacres) && !is.null(jacfunc))
     stop("either `jacfunc' OR 'jacres' must be specified, not both")
-  if (!is.null(func) && !is.function(func))
-    stop("`func' must be a function or NULL")
+  if (!is.null(func) && !is.function(func) && !is.character(func))
+    stop("`func' must be a function, a character vectgor or NULL")
   if (!is.null(res) && !is.function(res) && !is.character(res))
     stop("`res' must be NULL, a function or character vector")
   if (is.character(res) && (is.null(dllname) || !is.character(dllname)))
@@ -106,12 +106,12 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     stop("`dy' must be numeric")
 
 ### model and Jacobian function
-  Ynames  <- attr(y,"names")
-  dYnames <- attr(dy,"names")
-  Res     <- NULL
-  JacRes  <- NULL
-  PsolFunc<- NULL
-
+  Ynames    <- attr(y,"names")
+  dYnames   <- attr(dy,"names")
+  Res       <- NULL
+  JacRes    <- NULL
+  PsolFunc  <- NULL
+  funtype  <- 1
   ModelInit <- NULL
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   Eventfunc <- NULL
@@ -130,16 +130,25 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
     if (is.null(initfunc)) ModelInit <- NA
   }
 
-  ## If res is a character vector, then
-  ## check to make sure it describes
-  ## a function in a loaded dll
   psolfunc <- NULL  # not yet supported
-  if (is.character(res)) {
-     resname <- res
-     if (is.loaded(resname, PACKAGE = dllname)) {
-       Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
-     } else stop(paste("cannot integrate: res function not loaded",resname))
 
+  ## If res or func is a character vector,  make sure it describes
+  ## a function in a loaded dll
+  if (is.character(res) || is.character(func)) {
+    if (is.character(res)){
+      resname <- res
+      if (is.loaded(resname, PACKAGE = dllname)) {
+        Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
+      } else stop(paste("cannot integrate: res function not loaded",resname))
+
+    } else if (is.character(func)) {
+      funtype <- 2
+      resname <- func
+      if (is.loaded(resname, PACKAGE = dllname)) {
+        Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
+      } else stop(paste("cannot integrate: derivs function not loaded",resname))
+      if (!is.null(mass)) funtype <- 3
+    }
 #        if (is.null(kryltype))
 #        {
      if (!is.null(jacres))   {
@@ -328,8 +337,9 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 ### work arrays INFO, iwork, rwork
 
 ## the INFO vector
-  info   <- vector("integer",20)
+  info   <- vector("integer",20)   # KARLINE: used INFO 20
   info[] <- 0
+  info[20] <- funtype   # 1 for a res in DLL, 2 for func in DLL
   if (length(atol)==n) {
     if (length(rtol) != n)    rtol <- rep(rtol,len=n)
   } else if (length(rtol)==n) atol <- rep(atol,len=n)
@@ -401,7 +411,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 
   if(! is.null(tcrit)) {info[4]<-1;rwork[1] <- tcrit}
 
-  if(info[6] == 1) {iwork[1]<-banddown;iwork[2]<-bandup}
+  if(info[6] == 1) {iwork[1]<-banddown; iwork[2]<-bandup}
   if(info[7] == 1) rwork[2] <- hmax
   if(info[8] == 1) rwork[3] <- hini
   if(info[9] == 1) iwork[3] <- maxord
@@ -443,7 +453,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
       as.integer(iwork),as.double(rwork), as.integer(Nglobal),as.integer(maxIt),
       as.integer(bandup),as.integer(banddown),as.integer(nrowpd),
       as.double (rpar), as.integer(ipar), flist, lags,
-      Eventfunc, events, PACKAGE = "deSolve")
+      Eventfunc, events, as.double(mass), PACKAGE = "deSolve")
 
 
 ### saving results

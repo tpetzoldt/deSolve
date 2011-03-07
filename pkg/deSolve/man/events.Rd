@@ -33,7 +33,7 @@
       be part of the integration output times <b>exactly</b>, else the event 
       would not take place. As from version 1.9.1 the solver will theck for 
       this and produce an error message if event times are missing in times; 
-      see also \code{\link{\checkEventTimes}} for a utility function 
+      see also \code{\link{checkEventTimes}} for a utility function
       to check and solve such issues.
     }
     \item{root: }{when events are specified by a function and triggered

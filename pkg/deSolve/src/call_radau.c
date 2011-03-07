@@ -17,6 +17,7 @@
    version 1.9.1: added time lags -> delay differential equations
                   added root function
                   added events
+   version 1.10: mass matrix for func in a DLL
    karline soetaert
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -312,7 +313,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 		SEXP rho, SEXP initfunc, SEXP verbose, SEXP rWork, SEXP iWork, 
     SEXP nOut, SEXP lRw, SEXP lIw, 
     SEXP Rpar, SEXP Ipar, SEXP Hini, SEXP flist, SEXP elag, SEXP Type,
-    SEXP rootfunc, SEXP nRoot, SEXP eventfunc, SEXP elist)
+    SEXP rootfunc, SEXP nRoot, SEXP eventfunc, SEXP elist )
 
 {
 /******************************************************************************/

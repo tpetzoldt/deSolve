@@ -64,9 +64,12 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   JacFunc <- NULL
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   ModelInit <- NULL
+
   Eventfunc <- NULL
   events <- checkevents(events, times, Ynames, dllname) 
-
+  # KS: added...
+  if (! is.null(events$newTimes)) times <- events$newTimes
+  
   if (jt == 4 && banddown>0)
     erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
 

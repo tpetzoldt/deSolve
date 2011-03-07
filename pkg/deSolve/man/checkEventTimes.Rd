@@ -83,7 +83,7 @@ eventmod <- function(t, var, parms) {
 yini <- c(v1 = 1, v2 = 2)
 
 ## assume a vector of times with a small numerical error
-times <- seq(0, 10, by = 0.1) + 1e - 12
+times <- seq(0, 10, by = 0.1) + 1e-12
 
 ## events that contains the 'exact' event times
 eventdat <- data.frame(var = c("v1", "v2", "v2", "v1"),

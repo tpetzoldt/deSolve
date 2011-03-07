@@ -138,13 +138,13 @@ checklags <- function (lags, dllname) {
     if (is.null(lags$mxhist))
        lags$mxhist <- 1e4
     if (lags$mxhist <1)
-      lags$mxhist <- 1e4 
-    lags$mxhist<-as.integer(lags$mxhist)   
+      lags$mxhist <- 1e4
+    lags$mxhist<-as.integer(lags$mxhist)
     if (is.null(lags$interpol))   # 1= hermitian, 2 = higher order interpolation
        lags$interpol <- 1
-    lags$interpol<-as.integer(lags$interpol)  
-    lags$isfun <- as.integer(0) 
-  } else 
+    lags$interpol<-as.integer(lags$interpol)
+    lags$isfun <- as.integer(0)
+  } else
     lags$islag=as.integer(0)
   return(lags)
-}   
+}
