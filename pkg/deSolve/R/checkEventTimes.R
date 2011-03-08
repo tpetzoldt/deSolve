@@ -4,8 +4,10 @@ checkEventTimes <- function (events, times, eps = 1e-12, reldist = TRUE, silent 
   ntimes  <- length(times)
   value   <- TRUE # assume, all events are in times
 
-  if (events[1] <= times[1]) stop("first time step must occur before first event")
-  if (events[nevents] >= times[ntimes]) stop("last time step must occur after last event")
+  if (events[1] <= times[1])
+      stop("first time step must be less or equal then first event")
+  if (events[nevents] >= times[ntimes])
+      stop("last time step must be equal or greater then last event")
 
   if (any(!(events %in% times))) {
     value <- FALSE

@@ -31,7 +31,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   if (!is.null(jacres) && !is.null(jacfunc))
     stop("either `jacfunc' OR 'jacres' must be specified, not both")
   if (!is.null(func) && !is.function(func) && !is.character(func))
-    stop("`func' must be a function, a character vectgor or NULL")
+    stop("`func' must be a function, a character vector or NULL")
   if (!is.null(res) && !is.function(res) && !is.character(res))
     stop("`res' must be NULL, a function or character vector")
   if (is.character(res) && (is.null(dllname) || !is.character(dllname)))
