@@ -66,7 +66,7 @@ data.frame(times=times, nearest=nearest)
 ## typical usage: include all events in times after removing values that
 ## are numerically close together, events have priority 
 times
-unique_times <- removeTooClose(times, events)
+unique_times <- cleanEventTimes(times, events)
 newtimes <- sort(c(unique_times, events))
 newtimes
 }

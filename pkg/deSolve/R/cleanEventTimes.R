@@ -14,7 +14,7 @@ nearestEvent <- function(times, events) {
 }
 
 ## remove times that are too close to an event
-removeTooClose <- function(times, events, eps = .Machine$double.eps  * 10) {
+cleanEventTimes <- function(times, events, eps = .Machine$double.eps  * 10) {
   ## sorting does not cost much if already sorted
   ## sort times to ensure match of returned "nearest" value
   times <- sort(times)

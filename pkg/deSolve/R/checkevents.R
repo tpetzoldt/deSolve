@@ -39,8 +39,15 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
         stop("'events$time' should be given and contain the times of the events, if 'events$func' is specified and no root function")
       Time <- as.double(events$time) 
       # Karline: added this extra check ....
-      if (prod(Time %in% times) != 1)
-        stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
+      #if (prod(Time %in% times) != 1)
+      if (any(!(Time %in% times))) {      #thpe changed "prod" test to "any ..."
+        #stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
+        warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
+        uniqueTimes <- cleanEventTimes(times, Time)
+        if (length(uniqueTimes) < length(times))
+          warning("Some time steps were very close to events - only the event times are used in these cases.")
+        times <- sort(c(uniqueTimes, Time))
+      }
     } else Time <- min(times) - 1  # never reached....
       return (list (Time = Time, SVar = NULL, Value = NULL, 
         Method = NULL, Type = as.integer(Type), func = funevent,
@@ -77,11 +84,19 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 
 ## Times in 'event' should be embraced by 'times'
   rt <- range(times)
-  ii <- c(which(event[,2]<rt[1]),which(event[,2]>rt[2]))
+  ii <- c(which(event[,2] < rt[1]), which(event[,2] > rt[2]))
   if (length(ii) > 0) 
     event <- event [-ii,]
-  if (prod(event[,2] %in% times) != 1)
-    stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
+  #if (prod(event[,2] %in% times) != 1)
+  #  stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
+  if (any(!(event[,2] %in% times))) {      #thpe changed "prod" test to "any ..."
+        #stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
+        warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
+        uniqueTimes <- cleanEventTimes(times, event[,2])
+        if (length(uniqueTimes) < length(times))
+          warning("Some time steps were very close to events - only the event times are used in these cases.")
+        times <- sort(c(uniqueTimes, event[,2]))
+      }  
 
 
 ## 4th column: method; if not available: "replace" = method 1 - to date: 3 methods
@@ -110,7 +125,7 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   if (!identical(con$ties, "ordered")) { # see approx code
 
 ## first order with respect to time (2nd col), then to variable (1st col)
-    if(length(x<-unique(event[,1:2])) < nrow(event)){
+    if(length(x <- unique(event[,1:2])) < nrow(event)){
          ties <- mean
          if (missing(ties))
            warning("collapsing to unique 'x' values")
@@ -121,6 +136,6 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   return (list (Time = as.double(event[,2]), SVar = as.integer(event[,1]), 
     Value = as.double(event[,3]), Method = as.integer(event[,4]), 
     Rootsave = as.integer(Rootsave), 
-    Type = as.integer(1), Root = Root))
+    Type = as.integer(1), Root = Root, times = times))
 }
 
