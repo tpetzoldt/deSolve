@@ -30,10 +30,10 @@
     }
     \item{time: }{when events are specified by a function: the times at
       which the events take place, note that these event times must also
-      be part of the integration output times <b>exactly</b>, else the event 
+      be part of the integration output times exactly, else the event 
       would not take place. As from version 1.9.1 the solver will theck for 
       this and produce an error message if event times are missing in times; 
-      see also \code{\link{checkEventTimes}} for a utility function
+      see also \code{\link{cleanEventTimes}} for utility functions
       to check and solve such issues.
     }
     \item{root: }{when events are specified by a function and triggered

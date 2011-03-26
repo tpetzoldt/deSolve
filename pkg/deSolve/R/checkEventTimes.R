@@ -25,8 +25,8 @@ checkEventTimes <- function (events, times, eps = 1e-12, reldist = TRUE, silent 
             as.integer(reldist), # relative = TRUE, absolute = FALSE
             x=as.double(x))$x
     ## thpe: code for debugging, remove later
-    # df <- data.frame(times=times, xout=xout) # see how it works
-    # View(df)
+    df <- data.frame(times=times, xout=xout) # see how it works
+    View(df)
     times <- sort(c(times[xout > eps], events))
   } else {
     ## else return times unchanged
