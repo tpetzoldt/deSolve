@@ -116,6 +116,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   Eventfunc <- NULL
   events <- checkevents(events, times, Ynames, dllname)
+  if (! is.null(events$newTimes)) times <- events$newTimes
 
   if (!is.null(dllname))  {
    if (! is.null(initfunc))  # to allow absence of initfunc

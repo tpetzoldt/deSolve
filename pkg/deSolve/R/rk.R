@@ -69,6 +69,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     Initfunc <- NULL
     Eventfunc <- NULL
     events <- checkevents(events, times, Ynames, dllname)
+    if (! is.null(events$newTimes)) times <- events$newTimes    
 
     flist    <-list(fmat = 0, tmat = 0, imat = 0, ModelForc = NULL)
     Nstates <- length(y) # assume length of states is correct

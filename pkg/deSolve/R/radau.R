@@ -73,7 +73,8 @@ radau <- function(y, times, func, parms, nind = c(length(y),0,0),
   RootFunc <- NULL
   Eventfunc <- NULL
   events <- checkevents(events, times, Ynames, dllname, TRUE)
-
+  if (! is.null(events$newTimes)) times <- events$newTimes
+  
   if (is.character(func)) {   # function specified in a DLL
     DLL <- checkDLL(func,jacfunc,dllname,
                     initfunc,verbose,nout, outnames)

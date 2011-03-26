@@ -136,6 +136,6 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   return (list (Time = as.double(event[,2]), SVar = as.integer(event[,1]), 
     Value = as.double(event[,3]), Method = as.integer(event[,4]), 
     Rootsave = as.integer(Rootsave), 
-    Type = as.integer(1), Root = Root, times = times))
+    Type = as.integer(1), Root = Root, newTimes = times))
 }
 
