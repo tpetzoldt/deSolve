@@ -28,9 +28,9 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
        funevent <- getNativeSymbolInfo(funevent, PACKAGE = dllname)$address
      } else
        stop(paste("'events$func' should be loaded ",funevent))
-     Type = 3  
+       Type <- 3  
     } else {
-      Type = 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
+      Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
        stop("'events$func' should be a string, events specified in compiled code if 'dllname' is not NULL")
     }
@@ -62,17 +62,25 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 
   if (!is.data.frame(event)) 
     stop("'event' should be a data.frame with 3(4) columns: state variable, time, value, (method)")
+    
+  ## thpe: added the following check; makes check < 3 columns obsolete
+  evtcols <-  c("var", "time", "value", "method")
+  if (!all(evtcols %in% names(eventdat)))
+    stop("structure of events does not match specification, see help('events')")
+  
+  ## thpe: make sure that event data frame has correct order
+  eventdat <- eventdat[evtcols]
 
 ## variables, 1st column should be present
   if (is.factor(event[,1])) 
     event[,1] <- as.character(event[,1])
 
   if (is.character(event[,1]))  {
-    vv <- match(event[,1],vars)
+    vv <- match(event[,1], vars)
     if (any(is.na(vv)))
-      stop("unknown state variable in 'event': ", paste(event[,1][which(is.na(vv))],","))
+      stop("unknown state variable in 'event': ", paste(event[,1][which(is.na(vv))], ","))
     event[,1] <- vv  
-  } else if (max(event[,1])>length(vars))
+  } else if (max(event[,1]) > length(vars))
       stop("too many state variables in 'event'; should be < ", paste(length(vars)))
 
 ## 2nd and 3rd columns should be numeric
@@ -87,16 +95,14 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   ii <- c(which(event[,2] < rt[1]), which(event[,2] > rt[2]))
   if (length(ii) > 0) 
     event <- event [-ii,]
-  #if (prod(event[,2] %in% times) != 1)
-  #  stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
-  if (any(!(event[,2] %in% times))) {      #thpe changed "prod" test to "any ..."
-        #stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
-        warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
-        uniqueTimes <- cleanEventTimes(times, event[,2])
-        if (length(uniqueTimes) < length(times))
-          warning("Some time steps were very close to events - only the event times are used in these cases.")
-        times <- sort(c(uniqueTimes, event[,2]))
-      }  
+
+  if (any(!(event[,2] %in% times))) {
+    warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
+    uniqueTimes <- cleanEventTimes(times, event[,2])
+    if (length(uniqueTimes) < length(times))
+      warning("Some time steps were very close to events - only the event times are used in these cases.")
+    times <- sort(c(uniqueTimes, event[,2]))
+  }  
 
 
 ## 4th column: method; if not available: "replace" = method 1 - to date: 3 methods
@@ -106,7 +112,7 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       if (max(event[,4]) > 3 | min(event[,4]) < 1)
         stop("unknown method in 'event': should be >0 and < 4") 
   } else {
-    vv <- charmatch(event[,4],c("replace","add","multiply"))
+    vv <- charmatch(event[,4],c("replace", "add", "multiply"))
     if (any(is.na(vv)))
       stop("unknown method in 'event': ", paste(event[,3][which(is.na(vv))],","),
         " should be one of 'replace', 'add', 'multiply'")
@@ -114,7 +120,7 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   }
 
 ## Check the other events elements (see optim code)
-  con <- list(ties = "notordered", time = NULL, data=NULL, func = NULL, root = NULL)
+  con <- list(ties = "notordered", time = NULL, data = NULL, func = NULL, root = NULL)
   nmsC <- names(con)
   con[(namc <- names(events))] <- events
   if (length(noNms <- namc[!namc %in% nmsC]) > 0)
@@ -126,10 +132,10 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 
 ## first order with respect to time (2nd col), then to variable (1st col)
     if(length(x <- unique(event[,1:2])) < nrow(event)){
-         ties <- mean
-         if (missing(ties))
-           warning("collapsing to unique 'x' values")
-          event <- aggregate(event[,c(3,4)], event[,c(1,2)], ties)
+      ties <- mean
+      if (missing(ties))
+        warning("collapsing to unique 'x' values")
+      event <- aggregate(event[,c(3, 4)], event[,c(1, 2)], ties)
     }
   }
 
