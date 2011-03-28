@@ -6,19 +6,22 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 
   if (is.null(events)) return(list())
   if (is.null(events$data) && is.null(events$func)) return(list())
-  # only effective if lsodar, lsode,... "root" triggers an event, does not stop 
+
   if (root) {  # check if root should trigger an event...
     Root <- events$root
     if (is.null(Root)) Root <- 0
     Root <- as.integer(Root)
   } else Root <- as.integer(0)
 
-  Rootsave <- events$maxroot
-  if (is.null(Rootsave)) Rootsave <- 100  # number of roots to save.
-  if (Rootsave < 0)
-    stop("events$Rootsave should be > 0 in events")
+  maxroot <- events$maxroot
+  if (is.null(maxroot)) maxroot <- 100  # number of roots to save.
+  if (maxroot < 0)
+    stop("events$maxroot should be > 0 in events")
 
   funevent <- events$func
+## ----------------------
+## event in a function
+## ----------------------
   if (!is.null(funevent)) {
     if (is.character(funevent)){ 
      if (is.null(dllname))
@@ -29,6 +32,7 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
      } else
        stop(paste("'events$func' should be loaded ",funevent))
        Type <- 3  
+     Type = 3
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
@@ -37,30 +41,31 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
     if (Root == 0) {
       if (is.null(events$time)) 
         stop("'events$time' should be given and contain the times of the events, if 'events$func' is specified and no root function")
-      Time <- as.double(events$time) 
-      # Karline: added this extra check ....
-      #if (prod(Time %in% times) != 1)
-      if (any(!(Time %in% times))) {      #thpe changed "prod" test to "any ..."
-        #stop ("Not all event times 'events$times' are in output 'times'; include event$times in 'times'")
-        warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
-        uniqueTimes <- cleanEventTimes(times, Time)
+      eventtime <- as.double(events$time)
+
+      if (any(!(eventtime %in% times))) {
+        warning("Not all event times 'events$time' are in output 'times' so they are automatically included.")
+        uniqueTimes <- cleanEventTimes(times, eventtime)
         if (length(uniqueTimes) < length(times))
           warning("Some time steps were very close to events - only the event times are used in these cases.")
-        times <- sort(c(uniqueTimes, Time))
+        times <- sort(c(uniqueTimes, eventtime))
       }
-    } else Time <- min(times) - 1  # never reached....
-      return (list (Time = Time, SVar = NULL, Value = NULL, 
+    } else eventtime <- min(times) - 1  # never reached....
+      return (list (Time = eventtime, SVar = NULL, Value = NULL,
         Method = NULL, Type = as.integer(Type), func = funevent,
-        Rootsave = as.integer(Rootsave), Root = Root))
+        Rootsave = as.integer(maxroot), Root = Root))
 
-  }  ## Check the event data series
-  event <- events$data
-  if (is.matrix(event)) event <- as.data.frame(event) 
+  }
+## ----------------------
+## event as a data series
+## ----------------------
+  eventdata <- events$data
+  if (is.matrix(eventdata)) eventdata <- as.data.frame(eventdata)
 
-  if (ncol(event) < 3) 
+  if (ncol(eventdata) < 3)
     stop("'event' should have at least 3 columns: state variable, time, value")
 
-  if (!is.data.frame(event)) 
+  if (!is.data.frame(eventdata))
     stop("'event' should be a data.frame with 3(4) columns: state variable, time, value, (method)")
     
   ## thpe: added the following check; makes check < 3 columns obsolete
@@ -72,29 +77,41 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   event <- event[evtcols]
 
 ## variables, 1st column should be present
-  if (is.factor(event[,1])) 
-    event[,1] <- as.character(event[,1])
+  if (is.factor(eventdata[,1]))
+    eventdata[,1] <- as.character(eventdata[,1])
 
   if (is.character(event[,1]))  {
     vv <- match(event[,1], vars)
+  if (is.character(eventdata[,1]))  {
+    vv <- match(eventdata[,1],vars)
     if (any(is.na(vv)))
       stop("unknown state variable in 'event': ", paste(event[,1][which(is.na(vv))], ","))
     event[,1] <- vv  
   } else if (max(event[,1]) > length(vars))
+      stop("unknown state variable in 'event': ", paste(eventdata[,1][which(is.na(vv))],","))
+    eventdata[,1] <- vv
+  } else if (max(eventdata[,1])>length(vars))
       stop("too many state variables in 'event'; should be < ", paste(length(vars)))
 
 ## 2nd and 3rd columns should be numeric
-  if (!is.numeric(event[,2])) 
+  if (!is.numeric(eventdata[,2]))
       stop("times in 'event', 2nd column should be numeric")
 
-  if (!is.numeric(event[,3]))  
+  if (!is.numeric(eventdata[,3]))
       stop("values in 'event', 3rd column should be numeric")
 
 ## Times in 'event' should be embraced by 'times'
   rt <- range(times)
-  ii <- c(which(event[,2] < rt[1]), which(event[,2] > rt[2]))
+  ii <- c(which(eventdata[,2] < rt[1]), which(eventdata[,2] > rt[2]))
   if (length(ii) > 0) 
-    event <- event [-ii,]
+    eventdata <- eventdata [-ii,]
+  if (any(!(eventdata[,2] %in% times))) {
+        warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
+        uniqueTimes <- cleanEventTimes(times, eventdata[,2])
+        if (length(uniqueTimes) < length(times))
+          warning("Some time steps were very close to events - only the event times are used in these cases.")
+        times <- sort(c(uniqueTimes, eventdata[,2]))
+      }  
 
   if (any(!(event[,2] %in% times))) {
     warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
@@ -106,17 +123,18 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 
 
 ## 4th column: method; if not available: "replace" = method 1 - to date: 3 methods
-  if (ncol(event) ==3) 
-    event$method <- rep(1,nrow(event))
-  else if (is.numeric(event[,4])) { 
-      if (max(event[,4]) > 3 | min(event[,4]) < 1)
+  if (ncol(eventdata) ==3)
+    eventdata$method <- rep(1,nrow(eventdata))
+  else if (is.numeric(eventdata[,4])) {
+      if (max(eventdata[,4]) > 3 | min(eventdata[,4]) < 1)
         stop("unknown method in 'event': should be >0 and < 4") 
   } else {
     vv <- charmatch(event[,4],c("replace", "add", "multiply"))
+    vv <- charmatch(eventdata[,4],c("replace","add","multiply"))
     if (any(is.na(vv)))
-      stop("unknown method in 'event': ", paste(event[,3][which(is.na(vv))],","),
+      stop("unknown method in 'event': ", paste(eventdata[,3][which(is.na(vv))],","),
         " should be one of 'replace', 'add', 'multiply'")
-    event$method <- vv
+    eventdata$method <- vv
   }
 
 ## Check the other events elements (see optim code)
@@ -131,17 +149,22 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   if (!identical(con$ties, "ordered")) { # see approx code
 
 ## first order with respect to time (2nd col), then to variable (1st col)
-    if(length(x <- unique(event[,1:2])) < nrow(event)){
+    if(length(x <- unique(eventdata[,1:2])) < nrow(eventdata)){
       ties <- mean
       if (missing(ties))
         warning("collapsing to unique 'x' values")
       event <- aggregate(event[,c(3, 4)], event[,c(1, 2)], ties)
+         ties <- mean
+         if (missing(ties))
+           warning("collapsing to unique 'x' values")
+          eventdata <- aggregate(eventdata[,c(3,4)], eventdata[,c(1,2)], ties)
     }
   }
 
-  return (list (Time = as.double(event[,2]), SVar = as.integer(event[,1]), 
-    Value = as.double(event[,3]), Method = as.integer(event[,4]), 
-    Rootsave = as.integer(Rootsave), 
+  return (list (Time = as.double(eventdata[,2]), SVar = as.integer(eventdata[,1]),
+    Value = as.double(eventdata[,3]), Method = as.integer(eventdata[,4]),
+    Rootsave = as.integer(maxroot),
     Type = as.integer(1), Root = Root, newTimes = times))
 }
+
 

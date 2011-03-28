@@ -1265,9 +1265,9 @@ C ----------------------------------------------------------
         RES=CONT(I)+S*(CONT(I+NN)+(S-C2M1)*(CONT(I+NN2)
      &     +(S-C1M1)*CONT(I+NN3)))
       ELSE                    ! derivative....
-        RES=1.d0/HSOL*CONT(I+NN)-C2M1*CONT(I+NN2)+C2M1*C1M1*CONT(I+NN3)  
-     &       + 2*S*(CONT(I+NN2)-CONT(I+NN3)*C2M1-CONT(I+NN3)*C1M1) 
-     &       + 3*S*S*CONT(I+NN3)
+       RES=1.d0/HSOL*(CONT(I+NN)-C2M1*CONT(I+NN2)+C2M1*C1M1*CONT(I+NN3)  
+     &      + 2*S*(CONT(I+NN2)-CONT(I+NN3)*C2M1-CONT(I+NN3)*C1M1) 
+     &      + 3*S*S*CONT(I+NN3) )
       ENDIF
 
       RETURN

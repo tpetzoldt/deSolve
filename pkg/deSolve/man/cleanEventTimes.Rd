@@ -10,13 +10,13 @@ These functions can be used for checking time steps and events used by
 ode solver functions. They are normally called internally within the solvers. 
 }
 \usage{
-nearestEvent(times, events)
-cleanEventTimes(times, events, eps = .Machine$double.eps * 10)
+nearestEvent(times, eventtimes)
+cleanEventTimes(times, eventtimes, eps = .Machine$double.eps * 10)
 }
 \arguments{
-  \item{times}{the vector of time steps,
+  \item{times}{the vector of output times,
 }
-  \item{events}{a vector with the events,
+  \item{eventtimes}{a vector with the event times,
 }
   \item{eps}{relative tolerance value below which two numbers are assumed 
     to be numerically equal.
@@ -24,16 +24,18 @@ cleanEventTimes(times, events, eps = .Machine$double.eps * 10)
 }
 \details{
   In floating point arithmetics, problems can occur if values have to be
-  compared for 'equality' but only close to each other and not exactly
+  compared for 'equality' but are only close to each other and not exactly
   the same.
   
-  The utility functions can be used to add all \code{events} events to
-  the times vector, but without such time steps that are very close to
-  an event. This means that all values of \code{events} are contained
-  but only the subset of \code{times} that have no close neighbors in
-  \code{events}.
+  The utility functions can be used to add all \code{eventtimes} to
+  the output \code{times} vector, but without including times that are
+  very close to an event.
 
-  These checks are normally performed internally by the solvers.
+  This means that all values of \code{eventtimes} are contained
+  but only the subset of \code{times} that have no close neighbors in
+  \code{eventtimes}.
+
+  These checks are normally performed internally by the integration solvers.
 }
 \value{
   \itemize{
@@ -41,7 +43,7 @@ cleanEventTimes(times, events, eps = .Machine$double.eps * 10)
     \item for \code{nearestEvent} a vector with the closest events for
       each time step,
   
-    \item for \code{cleanEventTimes} a vector with the time steps
+    \item for \code{cleanEventTimes} a vector with the output times
       without all those that are 'very close' to an event.
   }
 }
