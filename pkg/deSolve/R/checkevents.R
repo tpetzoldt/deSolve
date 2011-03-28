@@ -24,15 +24,15 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
 ## ----------------------
   if (!is.null(funevent)) {
     if (is.character(funevent)){ 
-     if (is.null(dllname))
-       stop("'dllname' should be given if 'events$func' is a string")
-     if (is.loaded(funevent, PACKAGE = dllname, type = "") ||
-     is.loaded(funevent, PACKAGE = dllname, type = "Fortran")) {
-       funevent <- getNativeSymbolInfo(funevent, PACKAGE = dllname)$address
-     } else
-       stop(paste("'events$func' should be loaded ",funevent))
-       Type <- 3  
-     Type = 3
+      if (is.null(dllname))
+        stop("'dllname' should be given if 'events$func' is a string")
+      if (is.loaded(funevent, PACKAGE = dllname, type = "") ||
+      is.loaded(funevent, PACKAGE = dllname, type = "Fortran")) {
+        funevent <- getNativeSymbolInfo(funevent, PACKAGE = dllname)$address
+      } else
+        stop(paste("'events$func' should be loaded ",funevent))
+      Type <- 3  
+      # Type = 3 # thpe: removed 2nd time, because redundant
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
@@ -70,11 +70,11 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
     
   ## thpe: added the following check; makes check < 3 columns obsolete
   evtcols <-  c("var", "time", "value", "method")
-  if (!all(evtcols %in% names(eventdat)))
+  if (!all(evtcols %in% names(eventdata)))
     stop("structure of events does not match specification, see help('events')")
   
   ## thpe: make sure that event data frame has correct order
-  eventdat <- eventdat[evtcols]
+  eventdata <- eventdata[evtcols]
 
 ## variables, 1st column should be present
   if (is.factor(eventdata[,1]))
@@ -126,8 +126,8 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   if (ncol(eventdata) ==3)
     eventdata$method <- rep(1,nrow(eventdata))
   else if (is.numeric(eventdata[,4])) {
-      if (max(eventdata[,4]) > 3 | min(eventdata[,4]) < 1)
-        stop("unknown method in 'event': should be >0 and < 4") 
+    if (max(eventdata[,4]) > 3 | min(eventdata[,4]) < 1)
+      stop("unknown method in 'event': should be >0 and < 4") 
   } else {
     vv <- charmatch(eventdata[,4],c("replace","add","multiply"))
     if (any(is.na(vv)))
