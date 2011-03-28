@@ -32,6 +32,7 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
      } else
        stop(paste("'events$func' should be loaded ",funevent))
        Type <- 3  
+     Type = 3
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
@@ -53,8 +54,8 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       return (list (Time = eventtime, SVar = NULL, Value = NULL,
         Method = NULL, Type = as.integer(Type), func = funevent,
         Rootsave = as.integer(maxroot), Root = Root))
-  }
 
+  }
 ## ----------------------
 ## event as a data series
 ## ----------------------
@@ -69,24 +70,24 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
     
   ## thpe: added the following check; makes check < 3 columns obsolete
   evtcols <-  c("var", "time", "value", "method")
-  if (!all(evtcols %in% names(event)))
-    stop("structure of 'event' does not match specification, see help('events')")
+  if (!all(evtcols %in% names(eventdat)))
+    stop("structure of events does not match specification, see help('events')")
   
   ## thpe: make sure that event data frame has correct order
-  event <- event[evtcols]
+  eventdat <- eventdat[evtcols]
 
 ## variables, 1st column should be present
   if (is.factor(eventdata[,1]))
     eventdata[,1] <- as.character(eventdata[,1])
 
-  if (is.character(event[,1]))  {
-    vv <- match(event[,1], vars)
+  if (is.character(eventdata[,1]))  {
+    vv <- match(eventdata[,1], vars)
   if (is.character(eventdata[,1]))  {
     vv <- match(eventdata[,1],vars)
     if (any(is.na(vv)))
-      stop("unknown state variable in 'event': ", paste(event[,1][which(is.na(vv))], ","))
-    event[,1] <- vv  
-  } else if (max(event[,1]) > length(vars))
+      stop("unknown state variable in 'event': ", paste(eventdata[,1][which(is.na(vv))], ","))
+    eventdata[,1] <- vv
+  } else if (max(eventdata[,1]) > length(vars))
       stop("unknown state variable in 'event': ", paste(eventdata[,1][which(is.na(vv))],","))
     eventdata[,1] <- vv
   } else if (max(eventdata[,1])>length(vars))
@@ -112,12 +113,12 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
         times <- sort(c(uniqueTimes, eventdata[,2]))
       }  
 
-  if (any(!(event[,2] %in% times))) {
+  if (any(!(eventdata[,2] %in% times))) {
     warning("Not all event times 'events$times' where in output 'times' so they are automatically included.")
-    uniqueTimes <- cleanEventTimes(times, event[,2])
+    uniqueTimes <- cleanEventTimes(times, eventdata[,2])
     if (length(uniqueTimes) < length(times))
       warning("Some time steps were very close to events - only the event times are used in these cases.")
-    times <- sort(c(uniqueTimes, event[,2]))
+    times <- sort(c(uniqueTimes, eventdata[,2]))
   }  
 
 
@@ -128,7 +129,6 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       if (max(eventdata[,4]) > 3 | min(eventdata[,4]) < 1)
         stop("unknown method in 'event': should be >0 and < 4") 
   } else {
-    vv <- charmatch(event[,4],c("replace", "add", "multiply"))
     vv <- charmatch(eventdata[,4],c("replace","add","multiply"))
     if (any(is.na(vv)))
       stop("unknown method in 'event': ", paste(eventdata[,3][which(is.na(vv))],","),
@@ -152,11 +152,11 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       ties <- mean
       if (missing(ties))
         warning("collapsing to unique 'x' values")
-      event <- aggregate(event[,c(3, 4)], event[,c(1, 2)], ties)
-      ties <- mean
-      if (missing(ties))
-        warning("collapsing to unique 'x' values")
-      eventdata <- aggregate(eventdata[,c(3,4)], eventdata[,c(1,2)], ties)
+      eventdata <- aggregate(eventdata[,c(3, 4)], eventdata[,c(1, 2)], ties)
+         ties <- mean
+         if (missing(ties))
+           warning("collapsing to unique 'x' values")
+          eventdata <- aggregate(eventdata[,c(3,4)], eventdata[,c(1,2)], ties)
     }
   }
 
