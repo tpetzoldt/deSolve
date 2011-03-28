@@ -65,11 +65,11 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
     
   ## thpe: added the following check; makes check < 3 columns obsolete
   evtcols <-  c("var", "time", "value", "method")
-  if (!all(evtcols %in% names(eventdat)))
-    stop("structure of events does not match specification, see help('events')")
+  if (!all(evtcols %in% names(event)))
+    stop("structure of 'event' does not match specification, see help('events')")
   
   ## thpe: make sure that event data frame has correct order
-  eventdat <- eventdat[evtcols]
+  event <- event[evtcols]
 
 ## variables, 1st column should be present
   if (is.factor(event[,1])) 
