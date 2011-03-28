@@ -32,7 +32,6 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
      } else
        stop(paste("'events$func' should be loaded ",funevent))
        Type <- 3  
-     Type = 3
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
@@ -54,8 +53,8 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       return (list (Time = eventtime, SVar = NULL, Value = NULL,
         Method = NULL, Type = as.integer(Type), func = funevent,
         Rootsave = as.integer(maxroot), Root = Root))
-
   }
+
 ## ----------------------
 ## event as a data series
 ## ----------------------
@@ -154,10 +153,10 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       if (missing(ties))
         warning("collapsing to unique 'x' values")
       event <- aggregate(event[,c(3, 4)], event[,c(1, 2)], ties)
-         ties <- mean
-         if (missing(ties))
-           warning("collapsing to unique 'x' values")
-          eventdata <- aggregate(eventdata[,c(3,4)], eventdata[,c(1,2)], ties)
+      ties <- mean
+      if (missing(ties))
+        warning("collapsing to unique 'x' values")
+      eventdata <- aggregate(eventdata[,c(3,4)], eventdata[,c(1,2)], ties)
     }
   }
 
