@@ -216,11 +216,10 @@ times <- seq(0, 12, len = 1000)
 ##-----------------------------
 ## solve the model  
 ##-----------------------------
-## use lsodar because of root and event function
-## Note: NOT adding method = "lsodar" or method = "lsode" will give a 
-## strange warning ...
+## Note: use a solver that supports both root finding and events, 
+##       e.g. lsodar, lsode, lsoda, adams, bdf
 yout <- dede(y = yinit, times = times, func = derivs, parms = NULL,  
-  method = "lsodar", rootfun = root, events = list(func = event,root = TRUE))
+  method = "lsodar", rootfun = root, events = list(func = event, root = TRUE))
 
 ##-----------------------------
 ## display, plot results

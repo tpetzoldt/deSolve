@@ -27,7 +27,7 @@
       types of the events. Note that the event times must also
       be part of the integration output times, else the event will not take
       place. As from version 1.9.1, this is checked by the solver,
-      and an error message produced if event times are missing in times;
+      and a warning message is produced if event times are missing in times;
       see also \code{\link{cleanEventTimes}} for utility functions
       to check and solve such issues.
     }
