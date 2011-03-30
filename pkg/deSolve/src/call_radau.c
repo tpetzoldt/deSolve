@@ -310,9 +310,9 @@ typedef void C_jac_func_type_rad(int *, double *, double *, int *,
 SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
     SEXP parms, SEXP rtol, SEXP atol, 
     SEXP Nrjac, SEXP Nrmas,
-		SEXP rho, SEXP initfunc, SEXP verbose, SEXP rWork, SEXP iWork, 
+		SEXP rho, SEXP initfunc, SEXP rWork, SEXP iWork,
     SEXP nOut, SEXP lRw, SEXP lIw, 
-    SEXP Rpar, SEXP Ipar, SEXP Hini, SEXP flist, SEXP elag, SEXP Type,
+    SEXP Rpar, SEXP Ipar, SEXP Hini, SEXP flist, SEXP elag,
     SEXP rootfunc, SEXP nRoot, SEXP eventfunc, SEXP elist )
 
 {
@@ -352,7 +352,6 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   for (j = 0; j < nt; j++) tt[j] = REAL(times)[j];
   
   mflag = INTEGER(verbose)[0];
-  type  = INTEGER(Type)[0];     /* 1 = dopri 8, 2 = dopri5 */
 
   ijac  = INTEGER(Nrjac)[0]; 
   mljac = INTEGER(Nrjac)[1]; 

@@ -228,6 +228,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));
    for (j = 0; j < ninfo; j++) Info[j] = INTEGER(info)[j];  
+  if (mflag == 1) Info[17] = 1;
   
   xytmp = (double *) R_alloc(n_eq, sizeof(double));
    for (j = 0; j < n_eq; j++) xytmp[j] = REAL(y)[j];

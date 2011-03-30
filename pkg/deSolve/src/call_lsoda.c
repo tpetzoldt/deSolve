@@ -231,7 +231,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   int  maxit, solver, isForcing, isEvent, islag;
   double *xytmp, tin, tout, *Atol, *Rtol, *dy=NULL, ss, pt;
   int itol, itask, istate, iopt, jt, mflag,  is;
-  int nroot, *jroot=NULL, isroot,  isDll, type;
+  int nroot, *jroot=NULL, isDll, type;
   
   int    *iwork, it, ntot, nout, iroot, *evals =NULL;   
   double *rwork;
@@ -561,7 +561,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if (istate == -20) INTEGER(ISTATE)[0] = 3;      
 
   if (istate == -20 && nroot > 0)  {
-    isroot = 1   ;
     PROTECT(IROOT = allocVector(INTSXP, nroot));incr_N_Protect();
     for (k = 0;k<nroot;k++) INTEGER(IROOT)[k] = jroot[k];
     setAttrib(YOUT2, install("iroot"), IROOT);

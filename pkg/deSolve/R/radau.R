@@ -275,11 +275,11 @@ radau <- function(y, times, func, parms, nind = c(length(y),0,0),
   on.exit(.C("unlock_solver"))
   out <- .Call("call_radau",y,times,Func,MassFunc,JacFunc,initpar,
                rtol, atol, nrjac, nrmas, rho, ModelInit,
-               as.integer(verbose), as.double(rwork),
+               as.double(rwork),
                as.integer(iwork), as.integer(Nglobal),
                as.integer(lrw),as.integer(liw),
                as.double (rpar), as.integer(ipar), as.double(hini),
-               flist, lags, as.integer(1), RootFunc, as.integer(nroot),
+               flist, lags, RootFunc, as.integer(nroot),
                Eventfunc, events, PACKAGE="deSolve")
 
 ### saving results

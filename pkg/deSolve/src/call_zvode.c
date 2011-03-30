@@ -94,7 +94,7 @@ typedef void C_zjac_func_type(int *, double *, Rcomplex *, int *,
 
 SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 		SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
-		SEXP verbose, SEXP iTask, SEXP rWork, SEXP iWork, SEXP jT, SEXP nOut, 
+		SEXP iTask, SEXP rWork, SEXP iWork, SEXP jT, SEXP nOut,
     SEXP lZw, SEXP lRw, SEXP lIw, SEXP Rpar, SEXP Ipar, SEXP flist)
     
 {
@@ -127,7 +127,6 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   neq = LENGTH(y);
   nt = LENGTH(times);
 
-  mflag = INTEGER(verbose)[0];
   nout  = INTEGER(nOut)[0];
   
 /* The output:

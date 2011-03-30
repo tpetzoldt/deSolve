@@ -338,7 +338,7 @@ daspk   <- function(y, times, func=NULL, parms, dy=NULL, res=NULL,
 ### work arrays INFO, iwork, rwork
 
 ## the INFO vector
-  info   <- vector("integer",20)   # KARLINE: used INFO 20
+  info   <- vector("integer",20)
   info[] <- 0
   info[20] <- funtype   # 1 for a res in DLL, 2 for func in DLL
   if (length(atol)==n) {
