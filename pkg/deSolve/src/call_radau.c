@@ -324,7 +324,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
        ijac, mljac, mujac, imas, mlmas, mumas;
   int  isForcing;
   double *xytmp, tout, *Atol, *Rtol, hini=0;
-  int itol, iout, idid, mflag;
+  int itol, iout, idid;
 
   SEXP TROOT, NROOT, VROOT, IROOT;
 
@@ -350,8 +350,6 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   
   tt = (double *) R_alloc(nt, sizeof(double));
   for (j = 0; j < nt; j++) tt[j] = REAL(times)[j];
-  
-  mflag = INTEGER(verbose)[0];
 
   ijac  = INTEGER(Nrjac)[0]; 
   mljac = INTEGER(Nrjac)[1]; 
