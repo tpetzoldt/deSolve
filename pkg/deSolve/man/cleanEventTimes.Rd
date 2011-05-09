@@ -3,7 +3,7 @@
 \alias{nearestEvent}
 
 \title{
-Find Nearest Event for Each Time Step and Clean Time steps to Avoid Doubles
+Find Nearest Event for Each Time Step and Clean Time Steps to Avoid Doubles
 }
 \description{
 These functions can be used for checking time steps and events used by 

@@ -32,7 +32,6 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       } else
         stop(paste("'events$func' should be loaded ",funevent))
       Type <- 3  
-      # Type = 3 # thpe: removed 2nd time, because redundant
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
       if (!is.null(dllname))
@@ -68,12 +67,12 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
   if (!is.data.frame(eventdata))
     stop("'event' should be a data.frame with 3(4) columns: state variable, time, value, (method)")
     
-  ## thpe: added the following check; makes check < 3 columns obsolete
+  ## this should make check < 3 columns obsolete
   evtcols <-  c("var", "time", "value", "method")
   if (!all(evtcols %in% names(eventdata)))
     stop("structure of events does not match specification, see help('events')")
   
-  ## thpe: make sure that event data frame has correct order
+  ## make sure that event data frame has correct order
   eventdata <- eventdata[evtcols]
 
 ## variables, 1st column should be present

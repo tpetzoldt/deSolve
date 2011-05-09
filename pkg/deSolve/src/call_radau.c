@@ -503,7 +503,6 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
     returnearly (0, it, ntot);
     idid = -2;
   }
-//  Rprintf("Till here");
 /*                   ####   returning output   ####                           */    
   rwork[0] = hini;
   rwork[1] = tin ; 
