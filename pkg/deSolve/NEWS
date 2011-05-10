@@ -1,62 +1,54 @@
 Changes version 1.10-1
 ==========================
+ o remove several redundant variables from C code
+ o add NEWS file
 
+Changes version 1.10 (Karline, Thomas)
+======================================
+ o compiled code using mass in daspk
+ o cleanEventTimes
 
+Changes version 1.9+ (Karline)
+==============================
+ o roots, events, lags in radau
+ o roots in lsodes
+ o lags in daspk
+ o ode (method = "iteration")
 
-Changes version 1.10
-==========================
-Karline:
-  compiled code using mass in daspk
+Changes version 1.9 (Karline, Thomas)
+=====================================
+ o summary.deSolve
+ o subset.deSolve
+ o plotting deSolve objects improved:
+   - plot more than one output in same figures (scenarios), 
+   - add observations
+ o vignette improved
+ o fixed bug in 'timesteps'
 
-Thomas:
-  cleanEventTimes
+Changes version 1.8.1 (Thomas, Woody, Karline)
+==============================================
+ o fixed compiler warnings using valgrind
+ o fixed compiler warning C-code
 
-Changes version 1.9+
-==========================
-Karline:
-  roots, events, lags in radau
-  roots in lsodes
-  lags in daspk
-  ode (method = "iteration")
-
-Changes version 1.9
-==========================
-(Thomas + Karline)
-
-summary.deSolve
-subset.deSolve
-plotting deSolve objects improved:
-   -> plot more than one output in same figures (scenarios), 
-   -> add observations
-vignette improved
-
-fixed bug in 'timesteps'
-Timesteps OK if called outside of ODE
-
-Changes version 1.8.1:
-==========================
-fixed compiler warnings using valgrind (Thomas and Karline)
-fixed compiler warning C-code (Woody)
-
-Changes version 1.8 Thomas:
-==========================
-dopri8(7)
-- coefficients use now common instead of decimal fractions
-
-
-Changes version 1.8 Karline:
+Changes version 1.8 (Thomas)
 ============================
-Runge-kuttas:
-1. extra output: number of failed steps (see also 2)
-2. number of function evaluations + 1 for initial condition
-3. dense output for cash-karp
-4. dopri8(7) added
-5. radau added!! implicit runge kutta, solves also DAE up to index 3!
-6. image function for ode.2-D added.
-7. changed warning printing in FORTRAN code
-8. common interface for radau and daspk:
-   both can solve systems written as M*dy = f(x,y).
-   dasp can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
+ o Dormand-Prince 8(7) coefficients use now common 
+   instead of decimal fractions
+
+
+Changes version 1.8 (Karline)
+=============================
+ o Runge-Kuttas:
+   - extra output: number of failed steps (see also 2)
+   - number of function evaluations + 1 for initial condition
+   - dense output for cash-karp
+   - dopri8(7) added
+   - radau added!! implicit runge kutta, solves also DAE up to index 3!
+   - image function for ode.2-D added.
+   - changed warning printing in FORTRAN code
+   - common interface for radau and daspk:
+     both can solve systems written as M*dy = f(x,y).
+     dasp can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
    
 
 
