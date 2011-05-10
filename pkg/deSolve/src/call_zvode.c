@@ -104,7 +104,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   int    i, j, k, nt, latol, lrtol, lrw, liw, lzw;
   double tin, tout, *Atol, *Rtol, ss;
-  int    neq, itol, itask, istate, iopt, jt, mflag, 
+  int    neq, itol, itask, istate, iopt, jt, //mflag, 
          is, isDll, isForcing;
   Rcomplex  *xytmp, *dy = NULL, *zwork;
   int    *iwork, it, ntot, nout;   

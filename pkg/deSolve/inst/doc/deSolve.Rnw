@@ -1,5 +1,5 @@
 \documentclass[article,nojss]{jss}
-\DeclareGraphicsExtensions{.pdf,.eps, .jpeg}
+\DeclareGraphicsExtensions{.pdf, .eps, .png, .jpeg}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add-on packages and fonts
 \usepackage{graphicx}
@@ -587,7 +587,7 @@ image(out, method = "filled.contour", grid = Distance,
 %%<<label=aphidfig,fig=TRUE,echo=FALSE>>=
 %%<<aphid>>
 %%@
-\includegraphics{aphid.jpeg}
+\includegraphics{aphid.png}
 \end{center}
 \caption{Solution of the 1-dimensional aphid model - see text for \R-code}
 \label{fig:aphid}
@@ -1503,7 +1503,7 @@ image(out, grid = r, which = c("PREY", "PREY"), mfrow = NULL,
 %%<<label=plotimg,fig=TRUE,echo=FALSE>>=
 %%<<img>>
 %%@
-\includegraphics{image1D.jpeg}
+\includegraphics{image1D.png}
 \end{center}
 \caption{image plots}
 \label{fig:plotimg}
