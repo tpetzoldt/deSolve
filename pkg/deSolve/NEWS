@@ -1,4 +1,9 @@
-Changes version 1.10-1
+Changes version 1.10-2 (Karline)
+==========================
+ o remove NAs from forcing functions - when used in DLL (file forcings.R)
+ o new argument "restructure" in ode.1D, for use with implicit solvers not in deSolve
+ 
+Changes version 1.10-1 (Thomas)
 ==========================
  o remove several redundant variables from C code
  o add NEWS file
@@ -44,11 +49,12 @@ Changes version 1.8 (Karline)
    - dense output for cash-karp
    - dopri8(7) added
    - radau added!! implicit runge kutta, solves also DAE up to index 3!
+ o other:
    - image function for ode.2-D added.
    - changed warning printing in FORTRAN code
    - common interface for radau and daspk:
      both can solve systems written as M*dy = f(x,y).
-     dasp can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
+     daspk can also solve systems written as 0 = g(x,y,dy) (=default for daspk)
    
 
 
