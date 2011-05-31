@@ -770,6 +770,7 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
     isub <- r & !is.na(r)
   } else isub <- 1:nrow(x)
 
+  grid <- expanddotslist(grid, np)
 
   for (ip in 1:np) {
     
@@ -781,9 +782,8 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
     if (sum (isub) == 1)
       out <- matrix (out)
 
-    if (! is.null(grid))
-      Grid <- grid
-    else
+    Grid <- grid[[ip]]
+    if (is.null(Grid))
       Grid <- 1:nrow(out)
     
     dotmain      <- extractdots(Dotmain, ip)
@@ -888,6 +888,9 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
     on.exit(devAskNewPage(oask))
   }
   Dots <- splitdots(ldots, colnames(x))
+  # for time-moving figures; number of plots should = mfrow settings
+  prodx <- prod(par("mfrow"))
+  if (np < prodx) eplot <- prodx - np else eplot <- 0
 
   nother <- Dots$nother
   x2     <- Dots$x2
@@ -911,6 +914,8 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
   xyswap <- rep(xyswap, length = np)
   vertical <- rep(vertical, length = np)
 
+  grid <- expanddotslist(grid, np)
+
   if (!missing(subset)){
     e <- substitute(subset)
     r <- eval(e, as.data.frame(x), parent.frame())
@@ -926,10 +931,8 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
       io <- obs$Which[ip]
 
       out <- x[j,istart:istop]
-
-      if (! is.null(grid))
-        Grid <- grid
-      else
+      Grid <- grid[[ip]]
+      if (is.null(Grid))
         Grid <- 1:length(out)
 
       dotmain      <- extractdots(Dotmain, ip)
@@ -988,6 +991,8 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
           
       }
     } # end loop ip
+      if (eplot > 0)
+        for (i in 1:eplot) plot(0, type ="n", axes = FALSE, xlab="", ylab="")
     if (delay > 0) Sys.sleep(0.001 * delay)
   }
 }
