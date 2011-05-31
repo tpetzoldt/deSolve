@@ -555,7 +555,7 @@ elapsed in seconds to solve this 60 state-variable model is estimated
 <<>>=
 times <-seq(0, 200, by = 1)
 print(system.time(
-  out <- ode.1D(state, times, Aphid, parms = 0, nspec = 1)
+  out <- ode.1D(state, times, Aphid, parms = 0, nspec = 1, names = "Aphid")
 ))
 @
 
@@ -597,6 +597,34 @@ As this is a 1-D model, it is best solved with
 \ds function \code{ode.1D}.  A multi-species IVP example can be
 found in \citet{Soetaert08}.  For 2-D and 3-D problems, we refer to the
 help-files of functions \code{ode.2D} and \code{ode.3D}.
+
+The output of one-dimensional models can also be plotted using S3-method 
+\code{plot.1D} and \code{matplot.1D}. In both cases, we can simply take
+a \code{subset} of the output, and add observations.
+<<>>=
+data <- cbind(dist  = c(0,10, 20,  30,  40, 50, 60), 
+              Aphid = c(0,0.1,0.25,0.5,0.25,0.1,0))
+@
+<<label=matplot1d,include=FALSE>>=
+par (mfrow = c(1,2))
+matplot.1D(out, grid = Distance, type = "l", mfrow = NULL,
+    subset = time %in% seq(0, 200, by = 10), 
+   obs = data, obspar = list(pch = 18, cex = 2, col="red"))
+plot.1D(out, grid = Distance, type = "l", mfrow = NULL,
+    subset = time == 100, 
+   obs = data, obspar = list(pch = 18, cex = 2, col="red"))
+@
+\setkeys{Gin}{width=1.0\textwidth}
+\begin{figure}
+\begin{center}
+<<label=matplot1d,fig=TRUE,echo=FALSE, height = 6, width = 10>>=
+<<matplot1d>>
+@
+\end{center}
+\caption{Solution of the Aphid model - plotted with matplot.1D, plot.1D - 
+  see text for R-code}
+\label{fig:matplot1d}
+\end{figure}
 
 \clearpage
 
