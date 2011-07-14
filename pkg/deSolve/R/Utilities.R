@@ -412,10 +412,12 @@ SetRange <- function(lim, x, x2, isub, ix, obs, io, Log) {
 
 plotObs <- function (obs, io, xyswap = FALSE) {
   if (! xyswap) {
-    for (j in 1: obs$length)
-      if (length (i.obs <- obs$pos[j, 1]:obs$pos[j, 2]) > 0)
+    for (j in 1: obs$length) {
+      i.obs <- obs$pos[j, 1] : obs$pos[j, 2]
+      if (length (i.obs) > 0)
         do.call("points", c(alist(obs$dat[i.obs, 1], obs$dat[i.obs, io]),
                 extractdots(obs$par, j) ))
+       }         
   } else {
     for (j in 1: obs$length)
       if (length (i.obs <- obs$pos[j, 1]:obs$pos[j, 2]) > 0)
@@ -447,8 +449,8 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
 
   # Position of variables in "obs" (NA = not observed)
   obs <- updateObs(obs, varnames, xWhich)
-  obs$par <- obspar
-
+  obs$par <- lapply(obspar, repdots, obs$length)
+  
   # The ellipsis
   ldots   <- list(...)
 
@@ -510,7 +512,7 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
       Ylog  <- length(grep("y",dotmain$log))
       Xlog  <- length(grep("x",dotmain$log))
     }
-
+                                                           
     dotmain$ylim <- SetRange(yylim[[ip]], x, x2, isub, ix, obs, io, Ylog)
     dotmain$xlim <- SetRange(xxlim[[ip]], x, x2, isub,  t, obs,  1, Xlog)
 
@@ -533,6 +535,7 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
 drawlegend <- function (parleg, dots) {
   Plt <- par(plt = parleg)
   par(new = TRUE)
+  usr <- par("usr")
   ix <- 1
   minz <- dots$zlim[1]
   maxz <- dots$zlim[2]
@@ -546,6 +549,8 @@ drawlegend <- function (parleg, dots) {
   do.call("axis", list(side = 4, mgp = c(3, 1, 0), las = 2))
 
   par(plt = Plt)
+  par(usr = usr)
+  par(new = FALSE)
 }
 
 ## =============================================================================
@@ -731,7 +736,7 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
 
   # add Position of variables to be plotted in "obs"
   obs <- updateObs (obs, varnames, xWhich)
-  obs$par <- obspar
+  obs$par <- lapply(obspar, repdots, obs$length)
 
   # the ellipsis
   ldots <- list(...)
@@ -779,7 +784,7 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
     io <- obs$Which[ip]
 
     out <- t(x[ isub, istart:istop])
-    if (sum (isub) == 1)
+    if (length (isub) > 1 & sum (isub) == 1)
       out <- matrix (out)
 
     Grid <- grid[[ip]]
@@ -876,7 +881,7 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
 
   # add Position of variables to be plotted in "obs"
   obs <- updateObs (obs, varnames, xWhich)
-  obs$par <- obspar
+  obs$par <- lapply(obspar, repdots, obs$length)         # karline: small bug fixed here
 
   # the ellipsis
   ldots <- list(...)
@@ -903,9 +908,6 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
   Dotmain$xlab <- expanddots(ldots$xlab,  "x", np)
   Dotmain$ylab <- expanddots(ldots$ylab,  varnames[xWhich], np)
 
-  # allow individual xlab and ylab (vectorized)
-  times <- x[,1]
-  Dotsmain <- expanddots(Dotmain$main, paste("time", times), length(times))
 
   # xlim and ylim are special:
   xxlim <- expanddotslist(ldots$xlim, np)
@@ -922,7 +924,11 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
     if (!is.logical(r))
         stop("'subset' must evaluate to logical")
     isub <- which(r & !is.na(r))
-  } else isub <- 1:length(times)
+  } else isub <- 1:nrow(x)  # Karline: this was a bug; said 'times'
+
+  # allow individual xlab and ylab (vectorized)
+  times <- x[isub,1]
+  Dotsmain <- expanddots(Dotmain$main, paste("time", times), length(times))
 
   for (j in isub) {
     for (ip in 1:np) {
@@ -1188,7 +1194,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
   }
   Dotmain  <- setdots(ldots, N)  # expand dots to np values (no defaults)
 
-  # different from the default
+  # different from the default 
   Dotmain$main <- expanddots(ldots$main, varnames[Which], N)
   Dotmain$xlab <- expanddots(ldots$xlab,  "x"  , N)
   Dotmain$ylab <- expanddots(ldots$ylab,  "y"  , N)
@@ -1220,6 +1226,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
     on.exit(par(plt = plt.or))
   }
   x <- x[isub,]
+  if (length(isub) > 1 & sum (isub) == 1)
+      x <- matrix (nrow = 1, data =x)
+
   for (nt in 1:nrow(x)) {
     for (ip in 1:np) {
       i       <- i+1
@@ -1274,7 +1283,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
         drawlegend(parleg, dotmain)
       }
     }
-  }
+  }                                    
   if (sum(par("mfrow") - c(1, 1)) == 0)
      mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]),
            cex = 1.5, line = -1.5)
@@ -1284,7 +1293,8 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
 ### Summaries of ode variables
 ### ============================================================================
 
-summary.deSolve <- function(object, ...){
+summary.deSolve <- function(object, select = NULL, which = select, 
+   subset = NULL, ...){
 
   att  <- attributes(object)
   svar <- att$lengthvar[1]   # number of state variables
@@ -1316,6 +1326,15 @@ summary.deSolve <- function(object, ...){
   else
     lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables
 
+  if (!missing(subset)){
+      e <- substitute(subset)
+      r <- eval(e, as.data.frame(object), parent.frame())
+      if (!is.logical(r))
+          stop("'subset' must evaluate to logical")
+      isub <- r & !is.na(r)
+      object <- object[isub,]
+  } 
+  
   # summaries for all variables
   Summ <- NULL
   for (i in 1:length(lvar)) {
@@ -1331,6 +1350,8 @@ summary.deSolve <- function(object, ...){
   Summ <- rbind(Summ, c(summary(out, ...), N = length(out), sd = sd(out)))
   }
   rownames(Summ) <- varnames  # rownames or an extra column?
+  if (! is.null(which))
+    Summ <- Summ[which,]
   data.frame(t(Summ))         # like this or not transposed?
 }
 

@@ -1,5 +1,6 @@
 ### ============================================================================
 ### Check events data set 
+### Changes version 1.11: event can be an R-function, even if DLL model
 ### ============================================================================
 
 checkevents <- function (events, times, vars, dllname, root = FALSE) {
@@ -34,8 +35,8 @@ checkevents <- function (events, times, vars, dllname, root = FALSE) {
       Type <- 3  
     } else {
       Type <- 2  # SHOULD ALSO CHECK THE FUNCTION if R-function....
-      if (!is.null(dllname))
-       stop("'events$func' should be a string, events specified in compiled code if 'dllname' is not NULL")
+#      if (!is.null(dllname))      KARLINE: removed that 02/07/2011
+#       stop("'events$func' should be a string, events specified in compiled code if 'dllname' is not NULL")
     }
     if (Root == 0) {
       if (is.null(events$time)) 
