@@ -598,20 +598,20 @@ As this is a 1-D model, it is best solved with
 found in \citet{Soetaert08}.  For 2-D and 3-D problems, we refer to the
 help-files of functions \code{ode.2D} and \code{ode.3D}.
 
-The output of one-dimensional models can also be plotted using S3-method 
+The output of one-dimensional models can also be plotted using S3-method
 \code{plot.1D} and \code{matplot.1D}. In both cases, we can simply take
 a \code{subset} of the output, and add observations.
 <<>>=
-data <- cbind(dist  = c(0,10, 20,  30,  40, 50, 60), 
+data <- cbind(dist  = c(0,10, 20,  30,  40, 50, 60),
               Aphid = c(0,0.1,0.25,0.5,0.25,0.1,0))
 @
 <<label=matplot1d,include=FALSE>>=
 par (mfrow = c(1,2))
 matplot.1D(out, grid = Distance, type = "l", mfrow = NULL,
-    subset = time %in% seq(0, 200, by = 10), 
+    subset = time %in% seq(0, 200, by = 10),
    obs = data, obspar = list(pch = 18, cex = 2, col="red"))
 plot.1D(out, grid = Distance, type = "l", mfrow = NULL,
-    subset = time == 100, 
+    subset = time == 100,
    obs = data, obspar = list(pch = 18, cex = 2, col="red"))
 @
 \setkeys{Gin}{width=1.0\textwidth}
@@ -621,7 +621,7 @@ plot.1D(out, grid = Distance, type = "l", mfrow = NULL,
 <<matplot1d>>
 @
 \end{center}
-\caption{Solution of the Aphid model - plotted with matplot.1D, plot.1D - 
+\caption{Solution of the Aphid model - plotted with matplot.1D, plot.1D -
   see text for R-code}
 \label{fig:matplot1d}
 \end{figure}
@@ -915,16 +915,16 @@ the values of state variables are instantaneously changed.
 They can be specified as a \code{data.frame}, or in a function. Events can
 also be triggered by a root function.
 
-Several integrators (\code{lsoda}, \code{lsodar},  \code{lsode}, \code{lsodes} and \code{radau}) 
-can estimate the root of one or more functions. 
-For the first 4 integration methods, the root finding algorithm is based on 
-the algorithm in solver LSODAR, and implemented in FORTRAN. 
-For \code{radau}, the root solving algorithm is written in C-code, and it 
-works slightly different. 
-Thus, some problems involving roots may be more efficient to solve with either 
-\code{lsoda, lsode}, or \code{lsodes}, 
+Several integrators (\code{lsoda}, \code{lsodar},  \code{lsode}, \code{lsodes} and \code{radau})
+can estimate the root of one or more functions.
+For the first 4 integration methods, the root finding algorithm is based on
+the algorithm in solver LSODAR, and implemented in FORTRAN.
+For \code{radau}, the root solving algorithm is written in C-code, and it
+works slightly different.
+Thus, some problems involving roots may be more efficient to solve with either
+\code{lsoda, lsode}, or \code{lsodes},
 while other problems are more efficiently solved with \code{radau}.
- 
+
 If a root is found, then the integration will be terminated, unless an event function is defined.
 
 A help file with information on roots and events can be opened by typing
@@ -1040,7 +1040,7 @@ easy but sometimes problems can occur due to the limited accuracy of
 floating point arithmetics of the computer. To make things work as
 excpected, two requirements have to be fulfilled:
 
-\begin{enumerate} 
+\begin{enumerate}
   \item all event times have to be contained \textbf{exactly} in
     times, i.e. with the maximum possible accuracy of floating point
     arithmetics.
@@ -1060,7 +1060,7 @@ Instead of relying on this automatism, matching times and eventtimes
 can also be managed by the user, either by appropriate rounding or by
 using function \code{cleanEventTimes} shown below.
 
-Let's assume we have a vector of time steps \code{times} and another vector 
+Let's assume we have a vector of time steps \code{times} and another vector
 of event times \code{eventtimes}:
 
 <<>>=
@@ -1815,7 +1815,7 @@ You may, of course, consider to use another solver:
 
 <<include=FALSE,results=hide>>=
 pars["rIng"] <- 100
-out3 <- ode(func = LVmod, y = yini, parms = pars, 
+out3 <- ode(func = LVmod, y = yini, parms = pars,
           times = times, method = "ode45", atol = 1e-14, rtol = 1e-14)
 @
 
@@ -1847,7 +1847,7 @@ but don't forget to think about this too. We leave this open as an exercise to t
 \code{ode.band}             & integrates systems of ODEs resulting from unicomponent 1-dimensional reaction-transport problems             \\ \hline
 \code{dede}                 & integrates systems of delay differential equations                                                           \\ \hline
 \code{daspk}                & solves systems of differential algebraic equations, assumes a full or banded  Jacobian                       \\ \hline
-\code{radau}                & solves systems of ordinary or differential algebraic equations, assumes a full or banded  Jacobian,. Includes a root solving procedure                       \\ \hline
+\code{radau}                & solves systems of ordinary or differential algebraic equations, assumes a full or banded  Jacobian; includes a root solving procedure                       \\ \hline
 \code{lsoda}                & integrates ODEs, automatically chooses method for stiff or non-stiff problems, assumes a full or banded Jacobian   \\ \hline
 \code{lsodar}               & same as \code{lsoda}, but includes a root-solving procedure                                                  \\ \hline
 \code{lsode} or \code{vode} & integrates ODEs, user must specify if stiff or non-stiff assumes a full or banded Jacobian;

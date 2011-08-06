@@ -13,7 +13,7 @@
   that specifies at which time and how a certain state variable is altered,
   or via an event function.
   
-  Roots occur when a rootfunction becomes zero. By default when a root is 
+  Roots occur when a root function becomes zero. By default when a root is 
   found, the simulation either stops (no event), or triggers an event.
 }
 \details{
@@ -247,19 +247,19 @@ Rotate <- function(t, x, p )
   list(c( x[2],
          -x[1]  ))
 
-# Root = when second state variable = 0
+## Root = when second state variable = 0
 rootfun <- function(t, x, p) x[2]
 
-# "event" returns state variables unchanged
+## "event" returns state variables unchanged
 eventfun <- function(t, x, p) x
 times <- seq(from = 0, to = 15, by = 0.1)
 
-# 1. No event: stops at first root
+## 1. No event: stops at first root
 out1 <- ode(func = Rotate, y = c(5, 5), parms = 0,
            times = times, rootfun = rootfun)
 tail(out1)
 
-# 2. Continues till end of times and records the roots           
+## 2. Continues till end of times and records the roots           
 out <- ode(func = Rotate, y = c(5, 5), parms = 0,
            times = times, rootfun = rootfun,
            events = list(func = eventfun, root = TRUE) )
@@ -283,7 +283,7 @@ points(troot, rep(0, length (troot)), col = indroot, pch = 18, cex = 2)
 ## Multiple roots and stop at first time root 1.
 out3 <- ode(func = Rotate, y = c(5, 5), parms = 0,
       times = times, rootfun = root2,
-      events = list(func = eventfun, root = TRUE, terminalroot = 1) )
+      events = list(func = eventfun, root = TRUE, terminalroot = 1))
 
 
 ## =============================================================================
@@ -294,16 +294,16 @@ Rotate <- function(t, x, p )
          -x[1],
          0  ))
 
-# Root = when second state variable = 0
+## Root = when second state variable = 0
 root3  <- function(t, x, p)  c(x[2], x[3] - 5)
 event3 <- function (t, x, p) c(x[1:2], x[3]+1)
 times <- seq(0, 15, 0.1)
 out3 <- ode(func = Rotate, y = c(x1 = 5, x2 = 5, nroot = 0), 
-      parms = 0,  method = "radau",
+      parms = 0, method = "radau",
       times = times, rootfun = root3,
-      events = list(func = event3, root = TRUE, terminalroot = 2) )
+      events = list(func = event3, root = TRUE, terminalroot = 2))
 plot(out3)
-attributes(out3)[c("troot","nroot","indroot")]
+attributes(out3)[c("troot", "nroot", "indroot")]
 }
 
 \keyword{utilities}
