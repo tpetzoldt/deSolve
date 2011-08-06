@@ -1,3 +1,10 @@
+Changes latest version (Karline)
+==========================
+o rwork and iwrk in lsodes from Fortran -> C (to remove compiler warnings)
+o roots + events - now certain roots can stop simulation + fixed bug in radau root
+o improved events\roots help file
+o diagnostics(out) gave error in case method=iteration (no rstate) now fixed
+
 Changes version 1.10-2 (Karline)
 ==========================
  o remove NAs from forcing functions - when used in DLL (file forcings.R)

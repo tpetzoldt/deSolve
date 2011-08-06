@@ -1163,13 +1163,13 @@ C***FIRST EXECUTABLE STATEMENT  DVNORM
 C----------------------- END OF FUNCTION DVNORM ------------------------
       END
 *DECK DIPREP
-      SUBROUTINE DIPREP (NEQ, Y, RWORK, IA, JA, IPFLAG, F, JAC,
+      SUBROUTINE DIPREP (NEQ, Y, RWORK, IWK, IA, JA, IPFLAG, F, JAC,
      &rpar,ipar)
       EXTERNAL F, JAC
 CKS: added rpar,ipar
       integer ipar(*)
       double precision rpar(*)      
-      INTEGER NEQ, IA, JA, IPFLAG
+      INTEGER NEQ, IA, JA, IPFLAG, IWK(*)
       DOUBLE PRECISION Y, RWORK
       DIMENSION NEQ(*), Y(*), RWORK(*), IA(*), JA(*)
       INTEGER IOWND, IOWNS,
@@ -1211,7 +1211,7 @@ C-----------------------------------------------------------------------
       IPFLAG = 0
 C Call DPREP to do matrix preprocessing operations. --------------------
       CALL DPREP (NEQ, Y, RWORK(LYH), RWORK(LSAVF), RWORK(LEWT),
-     1   RWORK(LACOR), IA, JA, RWORK(LWM), RWORK(LWM), IPFLAG, F, JAC,
+     1   RWORK(LACOR),IA,JA,RWORK(LWM),IWK(2*LWM-1),IPFLAG, F, JAC,
      &   rpar,ipar)
       LENWK = MAX(LREQ,LWMIN)
       IF (IPFLAG .LT. 0) RETURN
