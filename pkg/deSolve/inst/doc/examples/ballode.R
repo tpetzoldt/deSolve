@@ -28,7 +28,7 @@ event <- function(t, y, parms) {
 # initial values and times
 #-----------------------------
 yini  <- c(height = 0, v = 20)
-times <- seq(0, 200, 0.01)
+times <- seq(0, 40, 0.01)
 
 #-----------------------------
 # solve the model
