@@ -62,7 +62,7 @@
      }
    }
   
-   In case the events are specified by means of an \R \emph{**FUNCTION**}
+   In case the events are specified by means of an \R \bold{function}
    (argument \code{events$func}),
    it must be defined as: \code{function(t, y, parms, ...)}.
    \code{t} is the current time point in the integration,
@@ -92,7 +92,7 @@
    setting \code{events$root} equal to \code{TRUE}.
  
   
-   If the evenst are specified by a **\code{data.frame}**
+   If the evenst are specified by a \bold{data frame}
    (argument \code{events$data}), this should
    contain the following columns (and in that order):
   \enumerate{
@@ -103,19 +103,19 @@
     \item{value }{the value, magnitude of the event}
     \item{method }{which event is to take place; should be one of ("replace", 
       "add", "multiply"); also allowed is to specify the number 
-      (1=replace, 2=add, 3=multiply)
+      (1 = replace, 2 = add, 3 = multiply)
     }
   }
 
   For instance, the following line 
   
-  "v1"  10  2  "add"
+  \code{"v1"  10  2  "add"}
   
-  will cause the value 2 to be added to a state variable, called "v1" at 
-  time = 10.
+  will cause the value 2 to be added to a state variable, called \code{"v1"} at 
+  \code{time = 10}.
   
 
-   From deSolve version 1.9.1 the following routines have **root-finding** capability:
+   From deSolve version 1.9.1 the following routines have \bold{root-finding} capability:
    \link{lsoda}, \link{lsode}, \link{lsodes}, and \link{radau}. 
    For the first 3 integration methods, the 
    root finding algorithm is based on the algorithm in solver LSODAR, and is 
