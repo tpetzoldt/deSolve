@@ -35,16 +35,11 @@ cleanEventTimes(times, eventtimes, eps = .Machine$double.eps * 10)
   These checks are normally performed internally by the integration solvers.
 }
 \value{
-
-  If used explicitly, then the return values are
-  \itemize{
-    
-    \item for function \code{nearestEvent}: a vector with the closest events for
+    \code{nearestEvent} returns a vector with the closest events for
       each time step and
   
-    \item for function \code{cleanEventTimes}: a vector with the output times
+    \code{cleanEventTimes} returns a vector with the output times
       without all those that are 'very close' to an event.
-  }
 }
 
 \author{

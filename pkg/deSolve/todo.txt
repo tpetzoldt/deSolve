@@ -9,6 +9,7 @@ Thomas:
 
 Karline + Thomas: 
 - issue with \itemize [\item] in value section of eventtimes
+--> solved (thpe)
 
 - add dopri 8(5,3) - Fortran??
 
