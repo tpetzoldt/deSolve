@@ -6,7 +6,7 @@ Title: General solvers for initial value problems of ordinary differential equat
 Author: Karline Soetaert <k.soetaert@nioo.knaw.nl>, 
         Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>, 
         R. Woodrow Setzer <setzer.woodrow@epa.gov> 
-Maintainer: R. Woodrow Setzer <setzer.woodrow@epa.gov> 
+Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
 Depends: R (>= 2.6.0)
 Description: Functions that solve initial value problems of a system of
              first-order ordinary differential equations (ODE), of partial
