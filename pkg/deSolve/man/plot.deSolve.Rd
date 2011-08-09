@@ -44,7 +44,7 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   \item{select }{which variable/columns to be selected.
   }
   \item{subset }{logical expression indicating elements or rows to keep in 
-    \code{select}: missing values are taken as \code{false}
+    \code{select}: missing values are taken as \code{FALSE}
   }
   \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
     each plot, if \code{NULL} the user is only asked if more than one
