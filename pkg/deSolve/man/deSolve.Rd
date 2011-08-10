@@ -48,7 +48,7 @@
 \author{
   Karline Soetaert,
   
-  Thomas Petzoldt (Maintainer),
+  Thomas Petzoldt,
 
   R. Woodrow Setzer
 }
