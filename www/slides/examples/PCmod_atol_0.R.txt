@@ -1,0 +1,50 @@
+################################################################################
+##
+## Example for setting absolute tolerance (atol) to zero
+## - see deSolve vignette:
+## Soetaert, K, Petzoldt, T, Setzer, W: "Solving Initial Value Differential
+## Equations in R". http://cran.r-project.org/package=deSolve
+##
+################################################################################
+
+library(deSolve)
+
+## A Lotka-Volterra model with producer (P) and consumer (C)
+PCmod <- function(t, x, parms)  {
+  with(as.list(c(parms, x)), {
+    dP <- c*P   - d*C*P      # producer
+    dC <- e*P*C - f*C        # consumer
+    res <- c(dP, dC)
+    list(res)
+  })
+}
+
+xstart <- c(P = 0.5, C = 1)
+times  <- seq(0, 190, 0.1)
+parms  <- c(c = 0.1, d = 0.1, e = 0.1, f = 0.1)
+
+out <- ode(xstart, times, PCmod, parms)
+plot(out)
+## normal solution
+
+## now we set a rather extreme parameter set
+parms  <- c(c = 5, d = 0.1, e = 0.1, f = 0.1)
+
+out <- ode(xstart, times, PCmod, parms)
+tail(out)
+## we get NaN for both state variables!!!
+
+plot(out)
+## shows that the solution was unstable
+
+diagnostics(out)
+## the solver method did not even detect that there was something wrong
+
+## reduce absolute tolerance to a very small value (zero)
+## so that only relative tolerances are allowed
+out <- ode(xstart, times, PCmod, parms, atol = 0)
+
+plot(out)
+## shows steep peaks but is solved without problems
+
+## Note that it makes absolutely no sense to set both, atol and rtol to zero
