@@ -1,8 +1,13 @@
       subroutine rprint(msg)
       character (len=*) msg
-            call dblepr(msg, 80, 0, 0)
+           call dblepr(msg, 80, 0, 0)
       end subroutine 
 
+      subroutine rprint2(msg)
+	  implicit none
+      character (len = *) msg
+            call dblepr(msg, 61, 0, 0)
+      end subroutine 
 
 
 *DECK XERRWD

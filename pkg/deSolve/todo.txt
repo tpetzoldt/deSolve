@@ -2,10 +2,13 @@
 ================================================================================
 TODOs, Ideas/Wishes for future versions
 ================================================================================
+
 Karline:
+- check reverted time vector for Livermore solvers
 
 Thomas: 
 - add timelags and root finding to Runge-Kutta solvers
+- allow reverted time vector for dense output methods
 
 Karline + Thomas: 
 

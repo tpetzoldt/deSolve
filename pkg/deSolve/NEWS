@@ -1,8 +1,15 @@
 Changes version 1.10-4 (Thomas, Karline)
 ================================
  o allow reverted time vector for fixed step solvers
- o todo: find solution for dense output methods,
- o check Livermore solvers
+ o todo: find solution for dense output methods, and Livermore solvers
+ o all solvers now have default atol = 1e-6; before this daspk and vode had 1e-8.
+ o multiple warnings from daspk if num steps = 500 toggled off.
+ o added input argument "nind" to daspk, to make it compatible with radau.
+   this also changes the way the variables are weighed, 
+   hence this differs from the original daspk2.0 code.
+ o improved warning printing in daspk and vode 
+ o extended sparse jacobian input in lsodes. (2-D and 3-D sparsity with mapping var
+   and arbitrary sparsity in ian/jan format).
 
 Changes version 1.10-3 (Karline)
 ================================
