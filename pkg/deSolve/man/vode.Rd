@@ -449,7 +449,7 @@ plot(out, out2, out3)
   \code{\link{diagnostics}} to print diagnostic messages.
 }
 \note{
-From version 1.10.3, the default of \code{atol} was changed from 1e-8 to 1e-6,
+From version 1.10.4, the default of \code{atol} was changed from 1e-8 to 1e-6,
     to be consistent with the other solvers.
 }
 \keyword{math}

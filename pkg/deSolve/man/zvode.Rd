@@ -297,13 +297,13 @@ tail(cbind(out[,2], analytical[,1]))
   Netlib: \url{http://www.netlib.org}
 }
 \details{
-    see \code{\link{vode}}, the double precision version, for details .
+    see \code{\link{vode}}, the double precision version, for details.
     }
 \note{
-From version 1.10.3, the default of atol was changed from 1e-8 to 1e-6,
+From version 1.10.4, the default of atol was changed from 1e-8 to 1e-6,
     to be consistent with the other solvers.
 
-(this text adapted from the zvode.f source code):
+The following text is adapted from the zvode.f source code:
 
 When using \code{zvode} for a stiff system, it should only be used for
 the case in which the function f is analytic, that is, when each f(i)

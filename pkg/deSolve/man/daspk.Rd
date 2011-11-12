@@ -616,19 +616,21 @@ plot(ODE_dll, which = c("Prod", "D"), xlab = "time",
 \note{
   In this version, the Krylov method is not (yet) supported.
 
-  From \code{deSolve} version higher than 1.10.3, the following changes were made
+  From \code{deSolve} version 1.10.4 and above, the following changes were made
   
-  1. the argument list to \code{daspk} 
+  \enumerate{
+  \item the argument list to \code{daspk} 
   now also includes \code{nind}, the index of each variable. 
   This is used to scale the variables, such that \code{daspk} in R can also solve
   certain index 2 or index 3 problems, which the original Fortran version 
   may not be able to solve.
 
-  2. the default of \code{atol} was changed from 1e-8 to 1e-6,
+  \item the default of \code{atol} was changed from 1e-8 to 1e-6,
     to be consistent with the other solvers.
 
-  3. the multiple warnings from daspk when the number of steps exceed 500
+  \item the multiple warnings from daspk when the number of steps exceed 500
   were toggled off unless \code{verbose} is \code{TRUE}
+  }
 }
 \keyword{math}
 

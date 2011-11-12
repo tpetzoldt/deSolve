@@ -425,13 +425,13 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
   \code{lsodes} is applied for stiff problems, where the Jacobian has a
   sparse structure.
   
-  There are several choices depending on whether \code{jacvec} and
+  There are several choices depending on whether \code{jacvec}
   is specified and depending on the setting of \code{sparsetype}.
   
   If function \code{jacvec} is present, then it should return the j-th
   column of the Jacobian matrix.
   
-  There are several choices for the sparsity specification, selected by
+  There are also several choices for the sparsity specification, selected by
   argument \code{sparsetype}.
   \itemize{
     \item \code{sparsetype} = \code{"sparseint"}.  The sparsity is estimated
@@ -454,7 +454,7 @@ out4 <- lsodes(func = chemistry, y = y, parms = parms, times = times,
       Elements of \code{ian} should be the first \code{n+1} elements of this vector, and 
       contain the starting locations in \code{jan} of columns 1.. n. 
       \code{jan} contains the row indices of the nonzero locations of           
-      the jacobian, reading in columnwise order.
+      the Jacobian, reading in columnwise order.
       The number of nonzeros \code{nnz} will be set equal to the length of \code{inz} - (n+1).
     \item \code{sparsetype} = \code{"1D"}, \code{"2D"}, \code{"3D"}. 
       The sparsity is estimated by the solver, based on numerical differences.
