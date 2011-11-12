@@ -28,7 +28,7 @@
                       3. output variables now in C-code -> lsodeSr (fortran code)
             improving names
    karline: version 1.9.1: root finding in lsodes
-            version 1.10.3: 2D with mapping - still in testing phase, undocumented
+            version 1.10.4: 2D with mapping - still in testing phase, undocumented
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 /* definition of the calls to the FORTRAN functions - in file opkdmain.f
