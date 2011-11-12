@@ -339,7 +339,7 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
 ### work arrays INFO, iwork, rwork
 
 ## the INFO vector
-  info   <- vector("integer",25)   # Changed to account for the index of variables
+  info   <- vector("integer", 25)   # Changed to account for the index of variables
   info[] <- 0
   info[20] <- funtype   # 1 for a res in DLL, 2 for func in DLL
   if (length(atol)==n) {
@@ -399,7 +399,7 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
 
 ### index
   if (length(nind) != 3)
-    stop("length of `nind' must be =3")
+    stop("length of `nind' must be = 3")
   if (sum(nind) != n)
     stop("sum of of `nind' must equal n, the number of equations")
   info[21:23] <- nind

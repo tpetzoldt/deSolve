@@ -14,7 +14,7 @@
 ### sooner than the specified stop condition, and otherwise returns
 ### the solution according the specified stop condition.
 ###
-### Karline: version 1.10.3: 
+### Karline: version 1.10.4: 
 ###    added 2-D with mapping - still in testing phase, undocumented
 ### ============================================================================
 

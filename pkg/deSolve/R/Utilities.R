@@ -1246,9 +1246,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
       if (map) {
         out <- rep (NA, length = prod(Select$dim[[ip]]))
         ii <- which (! is.na(Mask))
-        out[ii] <- x[nt,istart:istop] 
+        out[ii] <- x[nt, istart:istop] 
       } else 
-        out <- x[nt,istart:istop]
+        out <- x[nt, istart:istop]
       
       dim(out) <- Select$dim[[ip]]
 
