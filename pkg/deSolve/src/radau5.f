@@ -27,6 +27,7 @@ C SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 C------------------------------------------------------------------------
 
 C KS: write statements rewritten
+C Francesca Mazzia: small changes to avoid overflow
 
       SUBROUTINE RADAU5(N,FCN,X,Y,XEND,H,
      &                  RTOL,ATOL,ITOL,
@@ -957,10 +958,14 @@ C *** *** *** *** *** *** ***
 C  LOOP FOR THE SIMPLIFIED NEWTON ITERATION
 C *** *** *** *** *** *** ***
             NEWT=0
+C--- December, 2011 FRANCESCA MAZZIA added this line to avoid owerflow
+            DYNO = 1.0d0
             FACCON=MAX(FACCON,UROUND)**0.8D0
             THETA=ABS(THET)
   40        CONTINUE
             IF (NEWT.GE.NIT) GOTO 78
+C--- December, 2011 FRANCESCA MAZZIA added this line to avoid owerflow
+            IF ( .NOT. (DYNO .GT. 0.0d0) ) GOTO 78
 C ---     COMPUTE THE RIGHT-HAND SIDE
             DO I=1,N
                CONT(I)=Y(I)+Z1(I)
