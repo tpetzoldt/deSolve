@@ -124,7 +124,7 @@ static void C_deriv_func (int *neq, double *t, double *y,
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
-  my_unprotect(2);
+  my_unprotect(2);  
 }
 
 /* deriv output function  */

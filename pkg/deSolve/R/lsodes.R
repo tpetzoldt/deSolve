@@ -103,7 +103,7 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (sparsetype == "3D") {    
       Type   <- c(4,nnz)
       nnz    <- n*(6+nspec*bandwidth)-2*nspec*(sum(dimens))
-    } else {                      ## Karline: changes for 2D map
+    } else {                      ## Karline: changes for 3D map
       Type   <- c(40, nnz)   #type=40 for 3Dmap
       nnz    <- (nspec*prod(dimens))*(6+nspec*bandwidth)-2*nspec*(sum(dimens))
     }
