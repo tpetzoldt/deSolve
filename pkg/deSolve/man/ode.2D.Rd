@@ -98,7 +98,7 @@ ode.2D(y, times, func, parms, nspec = NULL, dimens,
 
   Do \bold{not} use this method for problems that are not 2D!
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
+\author{Karline Soetaert <karline.soetaert@nioz.nl>}
 \examples{
 ## =======================================================================
 ## A Lotka-Volterra predator-prey model with predator and prey

@@ -3,7 +3,7 @@ Version: 1.10-4
 Title: General solvers for initial value problems of ordinary differential equations
        (ODE), partial differential equations (PDE), differential algebraic equations (DAE),
        and delay differential equations (DDE). 
-Author: Karline Soetaert <k.soetaert@nioo.knaw.nl>, 
+Author: Karline Soetaert <karline.soetaert@nioz.nl>, 
         Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>, 
         R. Woodrow Setzer <setzer.woodrow@epa.gov> 
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>

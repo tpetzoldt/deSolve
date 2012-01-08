@@ -240,7 +240,7 @@ DLSODES- RWORK length is insufficient to proceed.
   returns with an unrecoverable error. If \code{y} has a names
   attribute, it will be used to label the columns of the output value.
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
+\author{Karline Soetaert <karline.soetaert@nioz.nl>}
 \examples{
 ## Various ways to solve the same model.
 

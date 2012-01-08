@@ -309,7 +309,7 @@ daspk(y, times, func = NULL, parms, nind = c(length(y), 0, 0),
   of the output value.
       
 }
-\author{Karline Soetaert <k.soetaert@nioo.knaw.nl>}
+\author{Karline Soetaert <karline.soetaert@nioz.nl>}
 \examples{
 ## =======================================================================
 ## Coupled chemical reactions including an equilibrium
