@@ -86,7 +86,7 @@ initial value problems, R}
 \Address{
   Karline Soetaert\\
   Centre for Estuarine and Marine Ecology (CEME)\\
-  Netherlands Institute of Ecology (NIOO)\\
+  Royal Netherlands Institute of Sea Research (NIOZ)\\
   4401 NT Yerseke, Netherlands \\
   E-mail: \email{karline.soetaert@nioz.nl}\\
   URL: \url{http://www.nioz.nl}\\
