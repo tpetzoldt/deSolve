@@ -3,6 +3,8 @@ inst/doc/.*[.]dll
 inst/doc/.*[.]d
 inst/doc/.*[.]o
 inst/doc/.*[.]rc
+inst/doc/jss.cls
+inst/doc/jss.bst
 ^Rplots.pdf$
 work
 todo.txt
