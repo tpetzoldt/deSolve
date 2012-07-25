@@ -1372,11 +1372,12 @@ C
 C***FIRST EXECUTABLE STATEMENT  DDASPK
 C
 C
-      IF(INFO(1).NE.0) GO TO 100
 C Karline: the index of each variable
       DO I = 1, 3
         NIND(I) = INFO(20+I) 
       ENDDO
+
+      IF(INFO(1).NE.0) GO TO 100
 C
 C-----------------------------------------------------------------------
 C     This block is executed for the initial call only.
