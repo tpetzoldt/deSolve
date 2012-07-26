@@ -38,7 +38,8 @@ initial value problems, R}
 
 \author{
   Karline Soetaert\\
-  Royal Netherlands Institute of Sea Research (NIOZ)\\
+  Royal Netherlands Institute\\
+  of Sea Research (NIOZ)\\
   Yerseke, The Netherlands
   \And
   Thomas Petzoldt\\
