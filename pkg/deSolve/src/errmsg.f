@@ -89,24 +89,25 @@ C
 
 
       IF (NI .EQ. 1) THEN
-       call intpr('In above message, I = ', 22, I1, 1)
+       call intpr('In above message, I1 = ', 26, I1, 1)
       ENDIF
 
       IF (NI .EQ. 2) THEN 
        IVEC(1) = I1
        IVEC(2) = I2
-       call intpr('In above message, I = ', 22, IVEC, 2)
+       call intpr('In above message, I1, I2 = ', 26, IVEC, 2)
       ENDIF
 
       IF (NR .EQ. 1) THEN
-       call dblepr('In above message, R = ', 22, R1, 1)
+       call dblepr('In above message, R1 = ', 26, R1, 1)
       ENDIF
 
       IF (NR .EQ. 2) THEN
        RVEC(1) = R1
        RVEC(2) = R2
-       call dblepr('In above message, R = ', 22, RVEC, 2)
+       call dblepr('In above message, R1, R2 = ', 26, RVEC, 2)
       ENDIF
+
 
 C  Abort the run if LEVEL = 2.
        if (level .eq. 2) call rexit ("fatal error")
