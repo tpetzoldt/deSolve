@@ -85,27 +85,44 @@ C
       INTEGER LUNIT, IXSAV, MESFLG
       
       dummy = 0.d0
-      call dblepr(MSG, NMES, dummy, 0)
+C      call dblepr(MSG, NMES, dummy, 0)
+      call rprintf(MSG)
 
 
       IF (NI .EQ. 1) THEN
-       call intpr('In above message, I = ', 22, I1, 1)
+C       call intpr('In above message, I = ', 22, I1, 1)
+        MSG = 'In above message, I = %d'
+        call rprintfi1(MSG, I1)
+        MSG = ' '
+        call rprintf(MSG)
       ENDIF
 
       IF (NI .EQ. 2) THEN 
        IVEC(1) = I1
        IVEC(2) = I2
-       call intpr('In above message, I = ', 22, IVEC, 2)
+C       call intpr('In above message, I = ', 22, IVEC, 2)
+        MSG = 'In above message, I1 = %d, I2 = %d'
+        call rprintfi2(MSG, I1, I2)
+        MSG = ' '
+        call rprintf(MSG)
       ENDIF
 
       IF (NR .EQ. 1) THEN
-       call dblepr('In above message, R = ', 22, R1, 1)
+C       call dblepr('In above message, R = ', 22, R1, 1)
+        MSG = 'In above message, R = %g'
+        call rprintfd1(MSG, R1)
+        MSG = ' '
+        call rprintf(MSG)
       ENDIF
 
       IF (NR .EQ. 2) THEN
        RVEC(1) = R1
        RVEC(2) = R2
-       call dblepr('In above message, R = ', 22, RVEC, 2)
+C       call dblepr('In above message, R = ', 22, RVEC, 2)
+        MSG = 'In above message, R1 = %g, R2 = %g'
+        call rprintfd1(MSG, R1, R2)
+        MSG = ' '
+        call rprintf(MSG)
       ENDIF
 
 C  Abort the run if LEVEL = 2.
