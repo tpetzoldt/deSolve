@@ -1,3 +1,8 @@
+Changes version 1.10.5 (Karline)
+================================
+ o extended subset.deSolve with argument arr, when TRUE returns an array for >2-D output
+ o fixed the R compiler notes
+
 Changes version 1.10-4 (Thomas, Karline)
 ================================
  o allow reverted time vector for fixed step solvers

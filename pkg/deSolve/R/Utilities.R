@@ -1384,9 +1384,12 @@ summary.deSolve <- function(object, select = NULL, which = select,
 ### ============================================================================
 
 subset.deSolve  <- function(x, subset = NULL, select = NULL,
-  which = select, ...) {
+  which = select, arr = FALSE, ...) {
 
   Which <- which # for compatibility between plot.deSolve and subset
+
+  if (arr & length(Which) > 1)
+    stop("cannot combine 'arr = TRUE' when more than one variable is selected")
 
   if (missing(subset))
     r <- TRUE
@@ -1409,9 +1412,12 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL,
   lvar  <- att$lengthvar[-1]  # length of other variables
   nspec <- att$nspec          # for models solved with ode.1D, ode.2D
 
+  dimens <- att$dimens
+  if (arr & length(dimens) <= 1    ) 
+    warning("does not make sense to have 'arr = TRUE' when output is not 2D or 3D")
+  
   if (is.null(svar)) svar <- att$dim[2]-1  # models solved as DLL
   if(is.null(nspec)) nspec <- svar
-  dimens <- att$dimens
 
   # variable names: information for state and ordinary variables is different
   if (is.null(att$ynames))
@@ -1456,5 +1462,14 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL,
     }
   }
   if (length(Which) == ncol(Out)) colnames(Out) <- Which
-  return(Out[r,])
+  OO    <- Out[r, ]
+  if(is.vector(OO)) OO <- matrix(ncol = ncol(Out), data = OO)
+  times <- x[r,1]
+  
+  if (arr & length(dimens) > 1 & ncol(OO) == prod(dimens)) {
+     Nr <- nrow(OO)
+     OO <- array(dim = c(dimens, Nr) , data = t(OO))
+  }
+   attr(OO, "times") <- times
+   return(OO)
 }

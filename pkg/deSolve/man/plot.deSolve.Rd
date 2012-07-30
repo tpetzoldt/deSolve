@@ -20,7 +20,7 @@ Plot the output of numeric integration routines.
               add.contour = FALSE, grid = NULL, 
               method = "image", legend = FALSE, subset = NULL, \dots)
 \method{subset}{deSolve}(x, subset = NULL, select = NULL,
-             which = select, \dots)
+             which = select, arr = FALSE, \dots)
 
 plot.1D (x, \dots, select = NULL, which = select, ask = NULL, 
          obs = NULL, obspar = list(), grid = NULL,
@@ -41,7 +41,8 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   \item{which }{the name(s) or the index to the variables that should be
     plotted or selected.  Default = all variables, except \code{time}. }
 
-  \item{select }{which variable/columns to be selected.
+  \item{select }{which variable/columns to be selected.  This is added for
+    consistency with the R-function \code{subset}.
   }
   \item{subset }{logical expression indicating elements or rows to keep in 
     \code{select}: missing values are taken as \code{FALSE}
@@ -98,6 +99,12 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   \item{legend }{if \code{TRUE}, a color legend will be drawn on the right 
     of each image.
   }
+  \item{arr }{if \code{TRUE}, and the output is from a 2-D or 3-D model, 
+    an array will be returned with dimension = 
+    c(dimension of selected variable, nrow(x)). 
+    When \code{arr=TRUE} then only one variable can be selected.
+    When the output is from a 0-D or 1-D model, then this argument is ignored.
+  }
   \item{\dots}{additional arguments.
   
     The graphical arguments are passed to
@@ -111,6 +118,22 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
     
     For \code{plot.deSolve}, the arguments after \ldots must be matched exactly.     
   } 
+}
+
+\value{
+  
+  Function \code{subset} called with \code{arr = FALSE} will return a 
+    matrix with up to as many rows as selected by \code{subset} and as
+    many columns as selected variables.
+    
+  When \code{arr = TRUE} then an array will be outputted with dimensions
+  equal to the dimension of the selected variable, augmented with the number
+  of rows selected by \code{subset}.  This means that the last dimension points
+  to \code{times}. 
+  
+  Function \code{subset} also has an attribute that contains the \code{times}
+  selected. 
+
 }
 
 \details{
@@ -153,6 +176,9 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
 
 \seealso{
  \code{\link{print.deSolve}}, \code{\link{ode}},  \code{\link{deSolve}}  
+
+ \code{\link{ode.2D}},  for an example of using \code{subset} with 
+ \code{arr = TRUE}.  
 }
 \examples{
 ## =======================================================================
