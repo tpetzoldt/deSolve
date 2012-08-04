@@ -1,7 +1,10 @@
-Changes version 1.10.5 (Karline)
+Changes version 1.10.5 (Karline, THomas)
 ================================
  o extended subset.deSolve with argument arr, when TRUE returns an array for >2-D output
  o fixed the R compiler notes
+ o add data type check for external outputs in rk_util.c
+
+
 
 Changes version 1.10-4 (Thomas, Karline)
 ================================
