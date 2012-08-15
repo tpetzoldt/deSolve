@@ -217,11 +217,15 @@ hist.deSolve <- function (x, select = 1:(ncol(x)-1), which = select, ask = NULL,
   yylim <- expanddotslist(ldots$ylim, np)
 
   if (!missing(subset)){
-      e <- substitute(subset)
-      r <- eval(e, as.data.frame(x), parent.frame())
+     e <- substitute(subset)
+     r <- eval(e, as.data.frame(x), parent.frame())
+     if (is.numeric(r)) { 
+       isub <- r
+     } else {
       if (!is.logical(r))
-          stop("'subset' must evaluate to logical")
+          stop("'subset' must evaluate to logical or be a vector with integers")
       isub <- r & !is.na(r)
+    }
   } else isub <- TRUE
 
   ## plotting
@@ -243,11 +247,15 @@ image.deSolve <- function (x, select = NULL, which = select, ask = NULL,
     legend = FALSE, subset = NULL, ...) {
 
   if (!missing(subset)){
-      e <- substitute(subset)
-      r <- eval(e, as.data.frame(x), parent.frame())
+     e <- substitute(subset)
+     r <- eval(e, as.data.frame(x), parent.frame())
+     if (is.numeric(r)) { 
+       isub <- r
+     } else {
       if (!is.logical(r))
-          stop("'subset' must evaluate to logical")
+          stop("'subset' must evaluate to logical or be a vector with integers")
       isub <- r & !is.na(r)
+     }
   } else isub <- TRUE
 
   dimens <- attributes(x)$dimens
@@ -488,11 +496,16 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
   Dotpoints$bg   <- expanddots(ldots$bg,  1:nx, nx)
 
   if (!missing(subset)){
-      e <- substitute(subset)
-      r <- eval(e, as.data.frame(x), parent.frame())
+
+    e <- substitute(subset)
+    r <- eval(e, as.data.frame(x), parent.frame())
+    if (is.numeric(r)) { 
+       isub <- r
+     } else {
       if (!is.logical(r))
-          stop("'subset' must evaluate to logical")
+          stop("'subset' must evaluate to logical or be a vector with integers")
       isub <- r & !is.na(r)
+    }
   } else isub <- TRUE
 
 
@@ -774,11 +787,16 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
   vertical <- rep(vertical, length = np)
 
   if (!missing(subset)){
-    e <- substitute(subset)
-    r <- eval(e, as.data.frame(x), parent.frame())
+
+   e <- substitute(subset)
+   r <- eval(e, as.data.frame(x), parent.frame())
+   if (is.numeric(r)) { 
+       isub <- r
+   } else {
     if (!is.logical(r))
-      stop("'subset' must evaluate to logical")
+      stop("'subset' must evaluate to logical or be a vector with integers")
     isub <- r & !is.na(r)
+   }
   } else isub <- 1:nrow(x)
 
   grid <- expanddotslist(grid, np)
@@ -925,11 +943,16 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
   grid <- expanddotslist(grid, np)
 
   if (!missing(subset)){
-    e <- substitute(subset)
-    r <- eval(e, as.data.frame(x), parent.frame())
+
+   e <- substitute(subset)
+   r <- eval(e, as.data.frame(x), parent.frame())
+   if (is.numeric(r)) { 
+       isub <- r
+     } else {
     if (!is.logical(r))
-        stop("'subset' must evaluate to logical")
+        stop("'subset' must evaluate to logical or be a vector with integers")
     isub <- which(r & !is.na(r))
+   }
   } else isub <- 1:nrow(x)  # Karline: this was a bug; said 'times'
 
   # allow individual xlab and ylab (vectorized)
@@ -1086,7 +1109,7 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
     parplt <- par("plt") - c(0,0.07,0,0)
     parleg <- c(parplt[2]+0.02, parplt[2]+0.05, parplt[3], parplt[4])
     plt.or <- par(plt = parplt)
-    on.exit(par(plt = plt.or))
+#    on.exit(par(plt = plt.or)) 
   }
   # Check if grid is increasing...
   if (! is.null(grid))
@@ -1142,6 +1165,8 @@ plot.ode1D <- function (x, which, ask, add.contour, grid,
       if (is.null(dotmain$zlim)) dotmain$zlim <- range(out, na.rm=TRUE)
 
       drawlegend(parleg, dotmain)
+      par(plt = plt.or)
+      par(mar = par("mar")) # TRICK TO PREVENT R FROM SETTING DEFAULTPLOT = FALSE
     }
   }
 }
@@ -1184,6 +1209,9 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
   Which <- Select$Which
 
   ldots <- list(...)
+  Mtext <- ldots$mtext
+  ldots$mtext <- NULL
+  
 
   # number of figures in a row and interactively wait if remaining figures
   Ask <- setplotpar(ldots, np, ask)
@@ -1232,11 +1260,14 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
     parplt <- par("plt") - c(0, 0.05, 0, 0)
     parleg <- c(parplt[2] + 0.02, parplt[2] + 0.05, parplt[3], parplt[4])
     plt.or <- par(plt = parplt)
-    on.exit(par(plt = plt.or))
+#    on.exit(par(plt = plt.or))
   }
   x <- x[isub,]
   if (length(isub) > 1 & sum (isub) == 1)
       x <- matrix (nrow = 1, data =x)
+
+  if (! is.null(Mtext))
+    Mtext <- rep(Mtext, length.out = nrow(x))
 
   for (nt in 1:nrow(x)) {
     for (ip in 1:np) {
@@ -1292,7 +1323,7 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
         dotmain$color.palette <- dotscolorpalette
 
       do.call(method, c(List, dotmain))
-      if (method != "persp") box()
+      if (! method %in% c("persp", "filled.contour")) box()
       if (add.contour) do.call("contour", c(List, add = TRUE))
 
       if (legend) {
@@ -1305,12 +1336,20 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
           dotmain$zlim <- range(out, na.rm=TRUE)
 
         drawlegend(parleg, dotmain)
+        par(plt = plt.or)  
+        par(mar = par("mar")) # TRICK TO PREVENT R FROM SETTING DEFAULTPLOT = FALSE
       }
     }
-  }                                    
-  if (sum(par("mfrow") - c(1, 1)) == 0)
-     mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]),
-           cex = 1.5, line = -1.5)
+    if (! is.null(Mtext))
+      mtext(outer = TRUE, side = 3, Mtext[nt],
+             cex = 1.5, line = par("oma")[3]-1.5)
+
+  } 
+  # karline: ???   removed that... make it an argument?                 
+
+  #  if (sum(par("mfrow") - c(1, 1)) == 0 )
+  #   mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]),
+  #         cex = 1.5, line = -1.5)
 }
 
 ### ============================================================================
@@ -1351,12 +1390,17 @@ summary.deSolve <- function(object, select = NULL, which = select,
     lvar <- c(rep(prod(dimens), nspec), lvar) # multi-D state variables
 
   if (!missing(subset)){
-      e <- substitute(subset)
-      r <- eval(e, as.data.frame(object), parent.frame())
+
+   e <- substitute(subset)
+   r <- eval(e, as.data.frame(object), parent.frame())
+   if (is.numeric(r)) { 
+       isub <- r
+   } else {
       if (!is.logical(r))
-          stop("'subset' must evaluate to logical")
+          stop("'subset' must evaluate to logical or be a vector with integers")
       isub <- r & !is.na(r)
       object <- object[isub,]
+    }
   } 
   
   # summaries for all variables
@@ -1396,9 +1440,13 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL,
   else {
     e <- substitute(subset)
     r <- eval(e, as.data.frame(x), parent.frame())
+   if (is.numeric(r)) { 
+       isub <- r
+     } else {
     if (!is.logical(r))
-       stop("'subset' must evaluate to logical")
+       stop("'subset' must evaluate to logical or be a vector with integers")
     r <- r & !is.na(r)
+  } 
   }
 
   if (is.numeric(Which))

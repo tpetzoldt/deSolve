@@ -3668,7 +3668,7 @@ C-----------------------------------------------------------------------
       GO TO 700
  617  MSG = 'DLSODES- RWORK length is insufficient to proceed. '
       CALL XERRWD (MSG, 50, 17, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
-      MSG='        Length needed is .ge. LENRW (=I1), exceeds LRW (=I2)'
+      MSG=' set argument lrw larger than LENRW (=I1), is now: LRW (=I2)'
       CALL XERRWD (MSG, 60, 17, 0, 2, LENRW, LRW, 0, 0.0D0, 0.0D0)
       GO TO 700
  618  MSG = 'DLSODES- IWORK length is insufficient to proceed. '

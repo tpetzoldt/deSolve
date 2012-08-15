@@ -101,7 +101,7 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     
     If the Jacobian is banded, \code{jacfunc} should return a matrix
     containing only the nonzero bands of the Jacobian, rotated
-    row-wise. See first example of \code{lsode}.
+    row-wise. See first example of \link{lsode}.
   }
   \item{jactype }{the structure of the Jacobian, one of \code{"fullint"},
     \code{"fullusr"}, \code{"bandusr"} or \code{"bandint"} - either

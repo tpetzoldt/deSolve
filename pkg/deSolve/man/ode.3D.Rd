@@ -192,7 +192,7 @@ DLSODES- RWORK length is insufficient to proceed.
 }      
   set \code{lrw} equal to 27627 or a higher value.
     
-  See \code{lsodes} for the additional options.
+  See \link{lsodes} for the additional options.
 }
 \seealso{
   \itemize{

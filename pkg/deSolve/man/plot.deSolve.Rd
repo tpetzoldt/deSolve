@@ -44,8 +44,9 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   \item{select }{which variable/columns to be selected.  This is added for
     consistency with the R-function \code{subset}.
   }
-  \item{subset }{logical expression indicating elements or rows to keep in 
-    \code{select}: missing values are taken as \code{FALSE}
+  \item{subset }{either a logical expression indicating elements or rows to keep in 
+    \code{select}, or a vector or integers denoting the indices of the elements 
+    over which to loop. Missing  values are taken as \code{FALSE}
   }
   \item{ask }{logical; if \code{TRUE}, the user is \emph{ask}ed before
     each plot, if \code{NULL} the user is only asked if more than one
@@ -161,9 +162,12 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   Image plots will only work for 1-D and 2-D variables, as solved with
   \code{\link{ode.1D}} and \code{\link{ode.2D}}. In the first case, an
   image with \code{times} as x- and \code{the grid} as y-axis will be
-  created.  in second case, an x-y plot will be created, for all
+  created.  In the second case, an x-y plot will be created, for all
   times. Unless \code{ask = FALSE}, the user will be asked to confirm
-  page changes.  For images, it is possible to pass an argument
+  page changes.  Via argument \code{mtext}, it is possible to label each page
+  in case of 2D output. 
+  
+  For images, it is possible to pass an argument
   \code{method} which can take the values "image" (default),
   "filled.contour", "contour" or "persp", in order to use the respective
   plotting method.
@@ -348,6 +352,8 @@ matplot.1D(out, type = "l", lwd = 2, xyswap = TRUE, lty = 1,
   plot(out, ask = FALSE, mfrow = c(1, 1))
   plot.1D(out, ask = FALSE, type = "l", lwd = 2, xyswap = TRUE)
 }
+
+## see help file for ode.2D for images of 2D variables
 }
 
 \keyword{ hplot }

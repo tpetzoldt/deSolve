@@ -188,9 +188,14 @@ for (i in seq(1, length(times), by = 1))
    image(Prey[ , ,i],
    col = Col(100), xlab = , zlim = range(out[,2:(NN+1)]))
 
-## similar, but both:
-image(out, xlab = "x", ylab = "y")
+## similar, plotting both and adding a margin text with times:
+image(out, xlab = "x", ylab = "y", mtext = paste("time = ", times))
 }
+
+select <- c(1, 40)
+image(out, xlab = "x", ylab = "y", mtext = "Lotka-Volterra in 2-D",
+      subset = select, mfrow = c(2,2), legend =  TRUE)
+
 
 # plot prey and pred at t = 10; first use subset to select data
 prey10 <-  matrix (nrow = N, ncol = N, 
@@ -320,7 +325,7 @@ DLSODES- RWORK length is insufficient to proceed.
 }      
   set \code{lrw} equal to 27627 or a higher value.
 
-  See \code{lsodes} for the additional options.
+  See \link{lsodes} for the additional options.
   
 }
 \seealso{
