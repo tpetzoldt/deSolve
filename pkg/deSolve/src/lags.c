@@ -1,6 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include "deSolve.h"
+//#include <Rinternals.h> // thpe, for Rprintf
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    time lags and delay-differential equations; from deSolve version 1.7
@@ -191,6 +192,8 @@ void updatehistini(double t, double *y, double *dY, double *rwork, int *iwork){
 void updatehist(double t, double *y, double *dY, double *rwork, int *iwork) {
   int j, ii;
   double ss[2];
+  
+//  Rprintf("updatehist called at t = %g \n", t); // thpe testing
 
   indexhist = nexthist(indexhist);
   ii = indexhist * offset;     
@@ -406,6 +409,10 @@ SEXP getLagValue(SEXP T, SEXP nr)
 		NUMERIC_POINTER(value)[i] = past(INTEGER(nr)[i]-1, interval, t, 1);
 	  }
 	}
+	
+//	double *x; x = REAL(value);
+//  Rprintf("lag value is = %g \n", *x);  // thpe testing
+	
 	UNPROTECT(1);
 	return(value);
 }
@@ -474,5 +481,11 @@ int initLags(SEXP elag, int solver, int nroot) {
 /* =========================================================================== */
 
 
+// thpe, testing !!!
 
+void initglobal(int NEQ, int INTERPOLMETHOD, int OFFSET) {
+  n_eq = NEQ;
+  interpolMethod = INTERPOLMETHOD;
+  offset = OFFSET;
+}
 
