@@ -9,19 +9,6 @@ static double parms[2];
 #define k parms[1]
 
 /* Interface to dede utility functions in package deSolve */
-SEXP getLagValue(SEXP T, SEXP nr) {
-  static SEXP(*fun)(SEXP, SEXP) = NULL;
-  if (fun == NULL)
-    fun =  (SEXP(*)(SEXP, SEXP))R_GetCCallable("deSolve", "getLagValue");
-  return fun(T, nr);
-}  
-
-SEXP getLagDeriv(SEXP T, SEXP nr) {
-  static SEXP(*fun)(SEXP, SEXP) = NULL;
-  if (fun == NULL)
-    fun =  (SEXP(*)(SEXP, SEXP))R_GetCCallable("deSolve", "getLagDeriv");
-  return fun(T, nr);
-}  
 
 void getlagvalue(double *T, int *nr, int N, double *yout) {
   static void(*fun)(double*, int*, int, double*) = NULL;
@@ -47,20 +34,17 @@ void initmod(void (* odeparms)(int *, double *)) {
 void derivs (int *neq, double *t, double *y, double *ydot,
              double *yout, int *ip) {
 
-
-
   if (ip[0] < 1) error("nout should be at least 1");
 
+  int Nout = 1;               // number of returned lags  ( <= n_eq !!)
+  int nr[1] = {0};            // which lags are needed?
+                              // numbering starts from zero !
+  double ytau[1] = {1.0};     // array; initialize with default values !
+
   double T = *t - tau;
-  int nr[1] = {0};             // array
-  double ytau[1] = {1.0};      // array
-
-
   if (*t > tau) {
-
-    getlagvalue(&T, nr, 1, ytau);
+    getlagvalue(&T, nr, Nout, ytau);
     Rprintf("test %g %g %g \n", T, y[0], ytau[0]);
-
   }
 
   yout[0] = ytau[0];

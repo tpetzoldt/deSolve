@@ -5,29 +5,22 @@
 
 SEXP get_deSolve_gparms(void);
 
-SEXP getLagValue(SEXP T, SEXP nr);
-
-SEXP getLagDeriv(SEXP T, SEXP nr);
-
 void getlagvalue(double *T, int* nr, int N, double* yout);
 
 void getlagderiv(double *T, int* nr, int N, double* yout);
 
-
 double glob_timesteps[] = {0, 0};
 
 void R_init_deSolve(DllInfo *info) {
-  // R_RegisterCCallable("deSolve", "get_deSolve_gparms", (DL_FUNC) get_deSolve_gparms);
+// R_RegisterCCallable("deSolve", "get_deSolve_gparms", (DL_FUNC) get_deSolve_gparms);
 
-  // thpe: macro from package Matrix
-#define RREGDEF(name)  R_RegisterCCallable("deSolve", #name, (DL_FUNC) name)
+ // thpe: macro from package Matrix
+ #define RREGDEF(name)  R_RegisterCCallable("deSolve", #name, (DL_FUNC) name)
 
   RREGDEF(get_deSolve_gparms);
-  RREGDEF(getLagValue);   // R SEXP version
-  RREGDEF(getLagDeriv);  
 
-  RREGDEF(getlagvalue);  // C pointer version
-  RREGDEF(getlagderiv);  // C pointer version
+  RREGDEF(getlagvalue);
+  RREGDEF(getlagderiv);
 
   /* initialize global variables */
   timesteps = glob_timesteps;

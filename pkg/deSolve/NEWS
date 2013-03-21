@@ -8,6 +8,7 @@ Changes version 1.10.5 (Karline, Thomas)
  o image with legend = TRUE changed size of plot in different layouts - now solved
    (by adding par(mar = par("mar")) )
  o add data type check for external outputs in rk_util.c
+ o add interface for compiled dede models
 
 Changes version 1.10-4 (Thomas, Karline)
 ================================

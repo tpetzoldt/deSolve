@@ -480,8 +480,9 @@ int initLags(SEXP elag, int solver, int nroot) {
 }
 /* =========================================================================== */
 
+/* Interface to be used in DLL nodels */
 
-// thpe, testing !!!
+// thpe 2013-03-21, needs still testing !!!
 
 void getlagvalue(double *T, int *nr, int N, double *yout) {
   int i, interval;
@@ -509,34 +510,3 @@ void getlagderiv(double *T, int *nr, int N, double *yout) {
   for(i = 0; i < N; i++)  yout[i] = past(nr[i], interval, t, 2);
 }
 
-
-// calls C/R function; nr-array not correctly implemented; unnecessary !!!
-void getlagvalue1(double *T, int *nr, int N, double *yout) {
-
-  SEXP R_T, R_nr, R_ret;
-  int i;
-
-  PROTECT(R_T   = NEW_NUMERIC(1));
-  PROTECT(R_nr  = NEW_INTEGER(N));
-  PROTECT(R_ret = NEW_NUMERIC(N));
-
-  double  *c_T   = NULL;
-  int     *c_nr  = NULL;
-  double  *c_ret = NULL;
-
-  c_T   = REAL(R_T);
-  c_nr  = INTEGER(R_nr);
-
-  *c_T  = *T;
-  
-  for (i = 0; i < N; i ++) c_nr[i] = nr[i];
-
-  R_ret = getLagValue(R_T, R_nr);
-  c_ret = REAL(R_ret);
-  
-  for (i = 0; i < N; i++)
-    yout[i] = c_ret[i];
-
-  unprotect(3);
-
-}

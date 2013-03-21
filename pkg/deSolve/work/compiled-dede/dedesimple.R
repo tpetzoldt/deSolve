@@ -18,18 +18,17 @@ yinit <- 1
 times <- seq(0, 30, 0.1)
 parms <- c(tau = 1, k = -1)
 
-yout <- dede(y = yinit, times = times, func = derivs, parms = parms)
+#yout <- dede(y = yinit, times = times, func = derivs, parms = parms)
 
-plot(yout, main = c("dy/dt = -y(t-1)", "ytau"))
+#plot(yout, main = c("dy/dt = -y(t-1)", "ytau"))
 
 
 system("R CMD SHLIB dedesimple.c")
 dyn.load("dedesimple.dll")
 
 yout2 <- dede(yinit, times = times, func = "derivs", parms = parms,
-  dllname = "dedesimple", initfunc = "initmod", nout = 1)
+  dllname = "dedesimple", initfunc = "initmod", nout = 1, method="lsodes")
 
 dyn.unload("dedesimple.dll")
 
-windows()
 plot(yout2, main=c("y", "ytau"))
