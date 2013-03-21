@@ -5,9 +5,9 @@
 
 SEXP get_deSolve_gparms(void);
 
-void getlagvalue(double *T, int* nr, int N, double* yout);
+void lagvalue(double *T, int* nr, int N, double* yout);
 
-void getlagderiv(double *T, int* nr, int N, double* yout);
+void lagderiv(double *T, int* nr, int N, double* yout);
 
 double glob_timesteps[] = {0, 0};
 
@@ -19,8 +19,8 @@ void R_init_deSolve(DllInfo *info) {
 
   RREGDEF(get_deSolve_gparms);
 
-  RREGDEF(getlagvalue);
-  RREGDEF(getlagderiv);
+  RREGDEF(lagvalue);
+  RREGDEF(lagderiv);
 
   /* initialize global variables */
   timesteps = glob_timesteps;

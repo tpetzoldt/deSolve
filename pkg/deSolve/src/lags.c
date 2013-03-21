@@ -484,7 +484,7 @@ int initLags(SEXP elag, int solver, int nroot) {
 
 // thpe 2013-03-21, needs still testing !!!
 
-void getlagvalue(double *T, int *nr, int N, double *yout) {
+void lagvalue(double *T, int *nr, int N, double *yout) {
   int i, interval;
   double t;
 
@@ -497,7 +497,7 @@ void getlagvalue(double *T, int *nr, int N, double *yout) {
   for(i = 0; i < N; i++)  yout[i] = past(nr[i], interval, t, 1);
 }
 
-void getlagderiv(double *T, int *nr, int N, double *yout) {
+void lagderiv(double *T, int *nr, int N, double *yout) {
   int i, interval;
   double t;
 

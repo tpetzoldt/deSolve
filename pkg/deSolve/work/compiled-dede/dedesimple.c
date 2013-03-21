@@ -10,17 +10,17 @@ static double parms[2];
 
 /* Interface to dede utility functions in package deSolve */
 
-void getlagvalue(double *T, int *nr, int N, double *yout) {
+void lagvalue(double *T, int *nr, int N, double *yout) {
   static void(*fun)(double*, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "getlagvalue");
+    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
   return fun(T, nr, N, yout);
 }
 
-void getlagderiv(double *T, int *nr, int N, double *yout) {
+void lagderiv(double *T, int *nr, int N, double *yout) {
   static void(*fun)(double*, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "getlagvalue");
+    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
   return fun(T, nr, N, yout);
 }
 
@@ -43,7 +43,7 @@ void derivs (int *neq, double *t, double *y, double *ydot,
 
   double T = *t - tau;
   if (*t > tau) {
-    getlagvalue(&T, nr, Nout, ytau);
+    lagvalue(&T, nr, Nout, ytau);
     Rprintf("test %g %g %g \n", T, y[0], ytau[0]);
   }
 
