@@ -23,6 +23,19 @@ SEXP getLagDeriv(SEXP T, SEXP nr) {
   return fun(T, nr);
 }  
 
+void getlagvalue(double *T, int *nr, int N, double *yout) {
+  static void(*fun)(double*, int*, int, double*) = NULL;
+  if (fun == NULL)
+    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "getlagvalue");
+  return fun(T, nr, N, yout);
+}
+
+void getlagderiv(double *T, int *nr, int N, double *yout) {
+  static void(*fun)(double*, int*, int, double*) = NULL;
+  if (fun == NULL)
+    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "getlagvalue");
+  return fun(T, nr, N, yout);
+}
 
 /* Initializer  */
 void initmod(void (* odeparms)(int *, double *)) {
@@ -34,31 +47,23 @@ void initmod(void (* odeparms)(int *, double *)) {
 void derivs (int *neq, double *t, double *y, double *ydot,
              double *yout, int *ip) {
 
-  SEXP R_T, R_nr;
-  double  *T   = NULL;
-  int     *nr  = NULL;
 
-  double ytau = 1.0;
 
   if (ip[0] < 1) error("nout should be at least 1");
 
-  PROTECT(R_T   = NEW_NUMERIC(1));
-  PROTECT(R_nr  = NEW_INTEGER(1));
+  double T = *t - tau;
+  int nr[1] = {0};             // array
+  double ytau[1] = {1.0};      // array
 
-  T  = REAL(R_T);
-  nr = INTEGER(R_nr);
-
-  *T = *t - tau;
-  *nr = 0;
 
   if (*t > tau) {
-    ytau = *REAL(getLagValue(R_T, R_nr));
-    //Rprintf("test %g %g %g \n", *t, y[0], ytau);
+
+    getlagvalue(&T, nr, 1, ytau);
+    Rprintf("test %g %g %g \n", T, y[0], ytau[0]);
+
   }
 
-  yout[0] = ytau;
+  yout[0] = ytau[0];
+  ydot[0] = k * ytau[0];
 
-  ydot[0] = k * ytau;
-
-  unprotect(2);
 }

@@ -9,23 +9,25 @@ SEXP getLagValue(SEXP T, SEXP nr);
 
 SEXP getLagDeriv(SEXP T, SEXP nr);
 
-void initglobal(int neq, int interpolMethod, int offset); 
+void getlagvalue(double *T, int* nr, int N, double* yout);
+
+void getlagderiv(double *T, int* nr, int N, double* yout);
 
 
 double glob_timesteps[] = {0, 0};
 
 void R_init_deSolve(DllInfo *info) {
-  R_RegisterCCallable("deSolve", "get_deSolve_gparms", (DL_FUNC) get_deSolve_gparms);
+  // R_RegisterCCallable("deSolve", "get_deSolve_gparms", (DL_FUNC) get_deSolve_gparms);
 
   // thpe: macro from package Matrix
 #define RREGDEF(name)  R_RegisterCCallable("deSolve", #name, (DL_FUNC) name)
 
-  RREGDEF(inithist);          //deSolve.h
-  RREGDEF(updatehistini);   //deSolve.h
-  RREGDEF(updatehist);      //deSolve.h
-  RREGDEF(initglobal);      // thpe: for testing. rename if really necessary
-  RREGDEF(getLagValue);
-  RREGDEF(getLagDeriv);
+  RREGDEF(get_deSolve_gparms);
+  RREGDEF(getLagValue);   // R SEXP version
+  RREGDEF(getLagDeriv);  
+
+  RREGDEF(getlagvalue);  // C pointer version
+  RREGDEF(getlagderiv);  // C pointer version
 
   /* initialize global variables */
   timesteps = glob_timesteps;

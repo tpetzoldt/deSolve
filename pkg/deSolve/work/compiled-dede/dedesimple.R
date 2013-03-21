@@ -10,7 +10,7 @@ derivs <- function(t, y, parms) {
       ytau <- lagvalue(t - tau)
 
     dy <- k * ytau
-    list(c(dy))
+    list(c(dy), ytau=ytau)
   })
 }
 
@@ -18,9 +18,9 @@ yinit <- 1
 times <- seq(0, 30, 0.1)
 parms <- c(tau = 1, k = -1)
 
-#yout <- dede(y = yinit, times = times, func = derivs, parms = parms)
+yout <- dede(y = yinit, times = times, func = derivs, parms = parms)
 
-#plot(yout, main = "dy/dt = -y(t-1)")
+plot(yout, main = c("dy/dt = -y(t-1)", "ytau"))
 
 
 system("R CMD SHLIB dedesimple.c")
@@ -31,5 +31,5 @@ yout2 <- dede(yinit, times = times, func = "derivs", parms = parms,
 
 dyn.unload("dedesimple.dll")
 
-
+windows()
 plot(yout2, main=c("y", "ytau"))
