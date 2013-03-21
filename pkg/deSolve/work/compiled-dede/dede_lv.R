@@ -28,7 +28,7 @@ plot(yout)
 
 
 system("R CMD SHLIB dede_lv.c")
-dyn.load(paste("dede_lv"), .Platform$dynlib.ext, sep=""))
+dyn.load(paste("dede_lv", .Platform$dynlib.ext, sep=""))
 
 ## 100 runs
 system.time( for (i in 1:100)
@@ -36,7 +36,7 @@ system.time( for (i in 1:100)
     dllname = "dede_lv", initfunc = "initmod", nout = 2)
 )
 
-dyn.unload("dede_lv.dll")
+dyn.unload(paste("dede_lv", .Platform$dynlib.ext, sep=""))
 
 plot(yout2, main=c("y", "ytau"))
 
