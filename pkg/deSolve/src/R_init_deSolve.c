@@ -5,9 +5,9 @@
 
 SEXP get_deSolve_gparms(void);
 
-void lagvalue(double *T, int* nr, int N, double* yout);
+void lagvalue(double T, int* nr, int N, double* ytau);
 
-void lagderiv(double *T, int* nr, int N, double* yout);
+void lagderiv(double T, int* nr, int N, double* ytau);
 
 double glob_timesteps[] = {0, 0};
 

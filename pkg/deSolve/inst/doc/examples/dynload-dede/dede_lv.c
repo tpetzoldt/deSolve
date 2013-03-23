@@ -13,18 +13,19 @@ static double parms[5];
 
 /* Interface to dede utility functions in package deSolve */
 
-void lagvalue(double *T, int *nr, int N, double *yout) {
-  static void(*fun)(double*, int*, int, double*) = NULL;
+
+void lagvalue(double T, int *nr, int N, double *ytau) {
+  static void(*fun)(double, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
-  return fun(T, nr, N, yout);
+    fun =  (void(*)(double, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
+  return fun(T, nr, N, ytau);
 }
 
-void lagderiv(double *T, int *nr, int N, double *yout) {
-  static void(*fun)(double*, int*, int, double*) = NULL;
+void lagderiv(double T, int *nr, int N, double *ytau) {
+  static void(*fun)(double, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
-  return fun(T, nr, N, yout);
+    fun =  (void(*)(double, int*, int, double*))R_GetCCallable("deSolve", "lagderiv");
+  return fun(T, nr, N, ytau);
 }
 
 /* Initializer  */
@@ -48,8 +49,9 @@ void derivs (int *neq, double *t, double *y, double *ydot,
   double ytau[2] = {1.0, 1.0};    // array; initialize with default values !
 
   double T = *t - tau;
+  
   if (*t > tau) {
-    lagvalue(&T, nr, Nout, ytau);
+    lagvalue(T, nr, Nout, ytau);
     //Rprintf("test %g %g %g \n", T, y[0], ytau[0]);
   }
 

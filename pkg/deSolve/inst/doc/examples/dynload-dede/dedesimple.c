@@ -10,18 +10,18 @@ static double parms[2];
 
 /* Interface to dede utility functions in package deSolve */
 
-void lagvalue(double *T, int *nr, int N, double *yout) {
-  static void(*fun)(double*, int*, int, double*) = NULL;
+void lagvalue(double T, int *nr, int N, double *ytau) {
+  static void(*fun)(double, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
-  return fun(T, nr, N, yout);
+    fun =  (void(*)(double, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
+  return fun(T, nr, N, ytau);
 }
 
-void lagderiv(double *T, int *nr, int N, double *yout) {
-  static void(*fun)(double*, int*, int, double*) = NULL;
+void lagderiv(double T, int *nr, int N, double *ytau) {
+  static void(*fun)(double, int*, int, double*) = NULL;
   if (fun == NULL)
-    fun =  (void(*)(double*, int*, int, double*))R_GetCCallable("deSolve", "lagvalue");
-  return fun(T, nr, N, yout);
+    fun =  (void(*)(double, int*, int, double*))R_GetCCallable("deSolve", "lagderiv");
+  return fun(T, nr, N, ytau);
 }
 
 /* Initializer  */
@@ -36,14 +36,13 @@ void derivs (int *neq, double *t, double *y, double *ydot,
 
   if (ip[0] < 1) error("nout should be at least 1");
 
-  int Nout = 1;               // number of returned lags  ( <= n_eq !!)
   int nr[1] = {0};            // which lags are needed?
                               // numbering starts from zero !
   double ytau[1] = {1.0};     // array; initialize with default values !
-
   double T = *t - tau;
+  
   if (*t > tau) {
-    lagvalue(&T, nr, Nout, ytau);
+    lagvalue(T, nr, 1, ytau);
     //Rprintf("test %g %g %g \n", T, y[0], ytau[0]);
   }
 
