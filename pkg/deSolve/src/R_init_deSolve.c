@@ -18,7 +18,6 @@ void R_init_deSolve(DllInfo *info) {
  #define RREGDEF(name)  R_RegisterCCallable("deSolve", #name, (DL_FUNC) name)
 
   RREGDEF(get_deSolve_gparms);
-
   RREGDEF(lagvalue);
   RREGDEF(lagderiv);
 

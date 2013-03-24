@@ -496,18 +496,18 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
   Dotpoints$bg   <- expanddots(ldots$bg,  1:nx, nx)
 
   if (!missing(subset)){
-
     e <- substitute(subset)
     r <- eval(e, as.data.frame(x), parent.frame())
     if (is.numeric(r)) { 
-       isub <- r
-     } else {
+      isub <- r
+    } else {
       if (!is.logical(r))
-          stop("'subset' must evaluate to logical or be a vector with integers")
+        stop("'subset' must evaluate to logical or be a vector with integers")
       isub <- r & !is.na(r)
     }
-  } else isub <- TRUE
-
+  } else {
+    isub <- TRUE
+  }
 
   # LOOP for each output variable (plot)
    
@@ -788,15 +788,15 @@ matplot.1D <- function (x, select= NULL, which = select, ask = NULL,
 
   if (!missing(subset)){
 
-   e <- substitute(subset)
-   r <- eval(e, as.data.frame(x), parent.frame())
-   if (is.numeric(r)) { 
-       isub <- r
-   } else {
+  e <- substitute(subset)
+  r <- eval(e, as.data.frame(x), parent.frame())
+  if (is.numeric(r)) { 
+     isub <- r
+  } else {
     if (!is.logical(r))
       stop("'subset' must evaluate to logical or be a vector with integers")
     isub <- r & !is.na(r)
-   }
+  }
   } else isub <- 1:nrow(x)
 
   grid <- expanddotslist(grid, np)
@@ -943,18 +943,18 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
   grid <- expanddotslist(grid, np)
 
   if (!missing(subset)){
-
-   e <- substitute(subset)
-   r <- eval(e, as.data.frame(x), parent.frame())
-   if (is.numeric(r)) { 
-       isub <- r
-     } else {
-    if (!is.logical(r))
+    e <- substitute(subset)
+    r <- eval(e, as.data.frame(x), parent.frame())
+    if (is.numeric(r)) { 
+      isub <- r
+    } else {
+      if (!is.logical(r))
         stop("'subset' must evaluate to logical or be a vector with integers")
-    isub <- which(r & !is.na(r))
-   }
-  } else isub <- 1:nrow(x)  # Karline: this was a bug; said 'times'
-
+      isub <- which(r & !is.na(r))
+    }
+  } else {
+    isub <- 1:nrow(x)
+  }
   # allow individual xlab and ylab (vectorized)
   times <- x[isub,1]
   Dotsmain <- expanddots(Dotmain$main, paste("time", times), length(times))
@@ -1440,13 +1440,13 @@ subset.deSolve  <- function(x, subset = NULL, select = NULL,
   else {
     e <- substitute(subset)
     r <- eval(e, as.data.frame(x), parent.frame())
-   if (is.numeric(r)) { 
-       isub <- r
-     } else {
-    if (!is.logical(r))
-       stop("'subset' must evaluate to logical or be a vector with integers")
-    r <- r & !is.na(r)
-  } 
+    if (is.numeric(r)) { 
+      isub <- r
+    } else {
+      if (!is.logical(r))
+        stop("'subset' must evaluate to logical or be a vector with integers")
+      r <- r & !is.na(r)
+    } 
   }
 
   if (is.numeric(Which))

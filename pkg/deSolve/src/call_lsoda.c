@@ -476,10 +476,10 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
         F77_CALL(dlsodesr) (deriv_func, &n_eq, xytmp, &tin, &tout,
                &itol, Rtol, Atol, &itask, &istate, &iopt, rwork,
                &lrw, iwork, &liw, rwork, jac_vec, &jt, root_func, &nroot, jroot, /*rwork: iwk in fortran*/
-			         out, ipar);
-			  lyh = iwork[21];
+               out, ipar);
+        lyh = iwork[21];
       }
-	  /* in case size of timesteps is called for */
+    /* in case size of timesteps is called for */
       timesteps [0] = rwork[10];
       timesteps [1] = rwork[11];
 
