@@ -70,10 +70,6 @@ checkFunc<- function (Func2, times, y, rho) {
     ## Call func once to figure out whether and how many "global"
     ## results it wants to return and some other safety checks
     tmp <- eval(Func2(times[1], y), rho)
-    ## patch provided by Ben Bolker to check naming
-    if (!all(names(tmp[[1]]) == names(y)))
-      warning('name mismatch between y and return value of func()')
-
     if (!is.list(tmp))
       stop("Model function must return a list\n")
     if (length(tmp[[1]]) != length(y))
@@ -81,6 +77,11 @@ checkFunc<- function (Func2, times, y, rho) {
                  length(tmp[[1]]),
                  ") must equal the length of the initial conditions vector (",
                  length(y), ")", sep = ""))
+
+    ## patch provided by Ben Bolker to check naming
+    if (!all(names(tmp[[1]]) == names(y)))
+      warning('name mismatch between y and return value of func()')
+
     ## use "unlist" here because some output variables are vectors/arrays
     Nglobal <- if (length(tmp) > 1)
       length(unlist(tmp[-1]))  else 0
