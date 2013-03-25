@@ -9,6 +9,7 @@ Changes version 1.10.5 (Karline, Thomas)
    (by adding par(mar = par("mar")) )
  o add data type check for external outputs in rk_util.c
  o add interface for compiled dede models
+ o check consistency of order between y and func (suggestion of Ben Bolker)
 
 Changes version 1.10-4 (Thomas, Karline)
 ================================
