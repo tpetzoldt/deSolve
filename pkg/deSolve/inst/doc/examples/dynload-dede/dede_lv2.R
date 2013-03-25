@@ -1,4 +1,4 @@
-### Simple DDE, adapted version of ?dede example from package deSolve
+### Lotka-Volterra system with delay
 
 library(deSolve)
 
@@ -20,7 +20,7 @@ derivs <- function(t, y, parms) {
 
 yinit <- c(N=1, P=1)
 times <- seq(0, 500)
-parms <- c(f=0.1, g=0.2, e=0.1, m=0.1, tau1 = .2, tau2 = 1)
+parms <- c(f=0.1, g=0.2, e=0.1, m=0.1, tau1 = 0.2, tau2 = 50)
 
 ## one single run
 system.time(
@@ -28,7 +28,6 @@ system.time(
 )
 
 plot(yout)
-
 
 system("R CMD SHLIB dede_lv2.c")
 dyn.load(paste("dede_lv2", .Platform$dynlib.ext, sep=""))
@@ -39,8 +38,19 @@ system.time( for (i in 1:100)
     dllname = "dede_lv2", initfunc = "initmod", nout = 2)
 )
 
+## version "derivs2" (different if tau1 != tau2; respects individual tau
+system.time( for (i in 1:100)
+  yout3 <- dede(yinit, times = times, func = "derivs2", parms = parms,
+    dllname = "dede_lv2", initfunc = "initmod", nout = 2)
+)
+
+plot(yout2, yout3) # identical if tau1=tau2
+
+
 dyn.unload(paste("dede_lv2", .Platform$dynlib.ext, sep=""))
 
-plot(yout2, main=c("y", "ytau"))
+# should be zero
+summary(as.vector(yout) - as.vector(yout2))
 
-#summary(as.vector(yout)-as.vector(yout2))
+# can be different from zero
+summary(as.vector(yout) - as.vector(yout3))
