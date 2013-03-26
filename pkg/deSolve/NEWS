@@ -7,6 +7,7 @@ Changes version 1.10.5 (Karline, Thomas)
  o subset can also be a vector with indices in addition to logical
  o image with legend = TRUE changed size of plot in different layouts - now solved
    (by adding par(mar = par("mar")) )
+ o new method to output warnings and error messages 
  o add data type check for external outputs in rk_util.c
  o add interface for compiled dede models
  o check consistency of order between y and func (suggestion of Ben Bolker)
