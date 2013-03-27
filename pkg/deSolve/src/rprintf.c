@@ -23,7 +23,7 @@ void F77_SUB(rprintfdi)(char* msg, double *d, int *i) {
 }
 
 void F77_SUB(rprintfdid)(char* msg, double *d1, int *i, double *d2) {
-    Rprintf(msg, *d1, *i, *d2);
+   Rprintf(msg, *d1, *i, *d2);
    Rprintf("\n");
 }
 
