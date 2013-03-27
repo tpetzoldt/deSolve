@@ -121,7 +121,7 @@ C       call dblepr('In above message, R = ', 22, R1, 1)
        RVEC(2) = R2
 C       call dblepr('In above message, R = ', 22, RVEC, 2)
         MSG = 'In above message, R1 = %g, R2 = %g' // char(0)
-        call rprintfd1(MSG, R1, R2)
+        call rprintfd2(MSG, R1, R2)
         MSG = ' ' // char(0)
         call rprintf(MSG)
       ENDIF
