@@ -10,7 +10,8 @@ Changes version 1.10.5 (Karline, Thomas)
  o new method to output warnings and error messages 
  o add data type check for external outputs in rk_util.c
  o add interface for compiled dede models
- o check consistency of order between y and func (suggestion of Ben Bolker)
+ o emphasize consistent order of states in y and return value of func
+ o changes of Fortran error messages (to be continued)
 
 Changes version 1.10-4 (Thomas, Karline)
 ================================
