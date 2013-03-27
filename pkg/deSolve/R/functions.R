@@ -79,8 +79,8 @@ checkFunc<- function (Func2, times, y, rho) {
                  length(y), ")", sep = ""))
 
     ## patch provided by Ben Bolker to check naming
-    if (!all(names(tmp[[1]]) == names(y)))
-      warning('name mismatch between y and return value of func()')
+    #if (!all(names(tmp[[1]]) == names(y)))
+    #  warning('name mismatch between y and return value of func()')
 
     ## use "unlist" here because some output variables are vectors/arrays
     Nglobal <- if (length(tmp) > 1)
@@ -127,7 +127,12 @@ checkFuncEuler<- function (Func, times, y, parms, rho, Nstates) {
                    length(tmp[[1]]),
                    "must equal the length of the initial conditions vector (",
                    Nstates, ")", sep=""))
-      ## use "unlist" here because some output variables are vectors/arrays
+
+      ## patch provided by Ben Bolker to check naming
+      #if (!all(names(tmp[[1]]) == names(y)))
+      #  warning('name mismatch between y and return value of func()')
+
+      ## use "unlist" because output variables can be vectors/arrays
       Nglobal <- if (length(tmp) > 1)
         length(unlist(tmp[-1])) else 0
       Nmtot <- list()
