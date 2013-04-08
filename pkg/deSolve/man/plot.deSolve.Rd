@@ -144,28 +144,29 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   Set \code{mfrow} equal to \code{NULL} to avoid the plotting function to 
   change user-defined \code{mfrow} or \code{mfcol} settings.
 
-  Other graphical parameters can be passed as well. Parameters
-  are vectorized, either according to the number of plots 
-  (\code{xlab, ylab}, \code{main, sub}, \code{xlim, ylim}, \code{log},
-   \code{asp, ann, axes, frame.plot},\code{panel.first,panel.last},
-   \code{cex.lab,cex.axis,cex.main}) or 
-  according to the number of lines within one plot (other parameters 
-  e.g. \code{col}, \code{lty}, \code{lwd} etc.) so it is possible to
-  assign specific axis labels to individual plots, resp. different plotting 
-  style. Plotting parameter \code{ylim}, or \code{xlim} can also be a list 
-  to assign different axis limits to individual plots.
+  Other graphical parameters can be passed as well. Parameters are
+  vectorized, either according to the number of plots (\code{xlab},
+  \code{ylab}, \code{main}, \code{sub}, \code{xlim}, \code{ylim},
+  \code{log}, \code{asp}, \code{ann}, \code{axes}, \code{frame.plot},
+  \code{panel.first}, \code{panel.last}, \code{cex.lab},
+  \code{cex.axis}, \code{cex.main}) or according to the number of lines
+  within one plot (other parameters e.g. \code{col}, \code{lty},
+  \code{lwd} etc.) so it is possible to assign specific axis labels to
+  individual plots, resp. different plotting style. Plotting parameter
+  \code{ylim}, or \code{xlim} can also be a list to assign different
+  axis limits to individual plots.
   
-  Similarly, the graphical parameters for observed data, as passed by 
-  \code{obspar} can be vectorized, according to the number of observed 
+  Similarly, the graphical parameters for observed data, as passed by
+  \code{obspar} can be vectorized, according to the number of observed
   data sets.
   
   Image plots will only work for 1-D and 2-D variables, as solved with
   \code{\link{ode.1D}} and \code{\link{ode.2D}}. In the first case, an
-  image with \code{times} as x- and \code{the grid} as y-axis will be
+  image with \code{times} as x- and the \code{grid} as y-axis will be
   created.  In the second case, an x-y plot will be created, for all
   times. Unless \code{ask = FALSE}, the user will be asked to confirm
-  page changes.  Via argument \code{mtext}, it is possible to label each page
-  in case of 2D output. 
+  page changes.  Via argument \code{mtext}, it is possible to label each
+  page in case of 2D output.
   
   For images, it is possible to pass an argument
   \code{method} which can take the values "image" (default),
@@ -265,11 +266,11 @@ obs2 <- as.data.frame(out2[out2[,1] \%in\% seq(10, 500, by = 50), ])
 ## manual xlim, log
 plot(out, out2, type = "l", obs = list(obs, obs2), col = c("red", "blue"),
       obspar = list(pch = 18:19, cex = 2, col = c("red", "blue")),
-      log = c("y",""), which = c("prey1", "prey1"),
+      log = c("y", ""), which = c("prey1", "prey1"),
       xlim = list(c(100, 500), c(0, 400)))
 
 ## data in 'long' format
-OBS <- data.frame(name = c(rep("prey1",3), rep("prey2",2)), 
+OBS <- data.frame(name = c(rep("prey1", 3), rep("prey2", 2)), 
                   time = c(10, 100, 250, 10, 400), 
                   value = c(0.05, 0.04, 0.7, 0.5, 1))
 OBS
@@ -331,7 +332,7 @@ out   <- ode.1D(state, times, Aphid, parms = 0, nspec = 1, names = "Aphid")
 image(out, grid = Distance, main = "Aphid model", ylab = "distance, m", 
   legend = TRUE)
 
-# restricting time
+## restricting time
 image(out, grid = Distance, main = "Aphid model", ylab = "distance, m",
   legend = TRUE, subset = time < 100)
   
