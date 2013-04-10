@@ -334,6 +334,7 @@ plot(out1, out2, out3, which = c("S", "P", "C"),
      main = c ("Substrate", "Producer", "Consumer"),
      col =c("black", "red", "green"), 
      lty = c("solid", "dotted", "dotted"), lwd = c(1, 2, 1))
+
 ## user-specified plot function
 plot (out1[,"P"], out1[,"C"], type = "l", xlab = "Producer", ylab = "Consumer")
 lines(out2[,"P"], out2[,"C"], col = "red",   lty = "dotted", lwd = 2)
