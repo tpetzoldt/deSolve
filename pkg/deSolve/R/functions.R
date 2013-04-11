@@ -78,10 +78,6 @@ checkFunc<- function (Func2, times, y, rho) {
                  ") must equal the length of the initial conditions vector (",
                  length(y), ")", sep = ""))
 
-    ## patch provided by Ben Bolker to check naming
-    #if (!all(names(tmp[[1]]) == names(y)))
-    #  warning('name mismatch between y and return value of func()')
-
     ## use "unlist" here because some output variables are vectors/arrays
     Nglobal <- if (length(tmp) > 1)
       length(unlist(tmp[-1]))  else 0
@@ -128,10 +124,6 @@ checkFuncEuler<- function (Func, times, y, parms, rho, Nstates) {
                    "must equal the length of the initial conditions vector (",
                    Nstates, ")", sep=""))
 
-      ## patch provided by Ben Bolker to check naming
-      #if (!all(names(tmp[[1]]) == names(y)))
-      #  warning('name mismatch between y and return value of func()')
-
       ## use "unlist" because output variables can be vectors/arrays
       Nglobal <- if (length(tmp) > 1)
         length(unlist(tmp[-1])) else 0
@@ -162,7 +154,7 @@ checkDLL <- function (func, jacfunc, dllname,
       } else if (initfunc != dllname && ! is.null(initfunc))
         stop(paste("'initfunc' not loaded ", initfunc))
 
-    # Easier to deal with NA in C-code
+    ## Easier to deal with NA in C-code
     if (is.null(initfunc)) ModelInit <- NA
 
     ## copy value of func to funcname
