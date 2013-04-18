@@ -121,7 +121,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /* Main Loop                                                              */
   /*------------------------------------------------------------------------*/
   t = tt[0];
-  for (it = 0; it < nt ; it++) {
+  for (it = 0; it < nt - 1; it++) {
     dt = (tt[it + 1] - t)/nsteps;
     timesteps[0] = timesteps[1];
     timesteps[1] = dt;
