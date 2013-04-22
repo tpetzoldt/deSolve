@@ -1,7 +1,12 @@
 Changes version 1.10.6 (Thomas) 
 ================================
  o change declaration of variable dimensions from (1) to (*) in legacy
-   Fortran code to pass automatic bounds check.
+   Fortran code to pass automatic bounds check
+ o remove the Jacobian examples from ?ode because banddown=0 can
+   lead to problems on some systems; examples will com back in the
+   next release
+ o fix bug in the "iteration" solver
+ o small documentation updates
 
 Changes version 1.10.5 (Karline, Thomas)
 ================================
