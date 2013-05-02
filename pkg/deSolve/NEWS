@@ -1,3 +1,7 @@
+Changes version 1.10.7
+================================
+o Fortran examples of compiled dede models (Woody)
+
 Changes version 1.10.6 (Thomas) 
 ================================
  o change declaration of variable dimensions from (1) to (*) in legacy
