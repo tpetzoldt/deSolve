@@ -1,9 +1,9 @@
 Package: deSolve
 Version: 1.10-7
-Title:  General solvers for initial value problems of ordinary
-        differential equations (ODE), partial differential equations
-        (PDE), differential algebraic equations (DAE), and delay
-        differential equations (DDE)
+Title:  General Solvers for Initial Value Problems of Ordinary
+        Differential Equations (ODE), Partial Differential Equations
+        (PDE), Differential Algebraic Equations (DAE), and Delay
+        Differential Equations (DDE)
 Authors@R: c(person("Karline","Soetaert", role = c("aut","cre"), 
                      email = "karline.soetaert@nioz.nl"),
              person("Thomas","Petzoldt", role = c("aut", "cre"),
