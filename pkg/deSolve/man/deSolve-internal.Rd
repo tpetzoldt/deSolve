@@ -23,7 +23,7 @@ timestep(prev = TRUE)
   circumstances and should not be used by the end user.
 
   Instead of this, please see the example below for a pure
-  \proglang{R} solution.  
+  \R solution.  
 }
 
 \seealso{
