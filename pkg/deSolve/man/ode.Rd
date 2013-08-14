@@ -153,7 +153,7 @@ method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
     \item \code{\link{lsoda}}, \code{\link{lsode}},
       \code{\link{lsodes}}, \code{\link{lsodar}}, \code{\link{vode}},
       \code{\link{daspk}}, \code{\link{radau}},
-    \item  \code{\link{rk}}, \code{\link{rkMethod} for additional
+    \item  \code{\link{rk}}, \code{\link{rkMethod}} for additional
        Runge-Kutta methods,
     \item \code{\link{forcings}} and \code{\link{events}},
     \item  \code{\link{diagnostics}} to print diagnostic messages.  
