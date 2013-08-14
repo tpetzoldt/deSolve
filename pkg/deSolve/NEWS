@@ -3,6 +3,8 @@ Changes version 1.10.7
  o Fortran examples of compiled dede models (Woody)
  o vignettes moved to /vignettes
  o roles of authors (Authors@R)
+ o function timestep is now internal
+ o small documentation updates
 
 
 Changes version 1.10.6 (Thomas) 
