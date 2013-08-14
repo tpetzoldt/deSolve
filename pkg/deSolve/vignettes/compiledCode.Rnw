@@ -74,7 +74,7 @@ performance, FORTRAN, C}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% R/Sweave specific LaTeX commands.
 %% need no \usepackage{Sweave}
-%\VignetteIndexEntry{deSolve: Writing Code in Compiled Languages}
+%\VignetteIndexEntry{R Package deSolve: Writing Code in Compiled Languages}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin of the document
 \begin{document}
