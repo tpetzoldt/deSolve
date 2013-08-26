@@ -1,3 +1,7 @@
+Changes version 1.10.8
+================================
+ o remove redundant .R files from inst/doc
+
 Changes version 1.10.7
 ================================
  o Fortran examples of compiled dede models (Woody)
