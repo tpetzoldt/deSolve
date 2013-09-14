@@ -1,6 +1,7 @@
 Changes version 1.10.8
 ================================
  o remove redundant .R files from inst/doc
+ o fixed bug in event code
 
 Changes version 1.10.7
 ================================
