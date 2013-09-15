@@ -3,8 +3,8 @@ inst/doc/.*[.]dll
 inst/doc/.*[.]d
 inst/doc/.*[.]o
 inst/doc/.*[.]rc
-inst/doc/jss.cls
-inst/doc/jss.bst
+vignettes/jss.cls
+vignettes/jss.bst
 inst/doc/.*[.]R
 ^Rplots.pdf$
 work

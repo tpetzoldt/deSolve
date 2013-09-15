@@ -30,7 +30,7 @@
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
     Version: \tab 1.10-8\cr
-    Date:    \tab 2013-08-26\cr
+    Date:    \tab 2013-09-15\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
