@@ -20,5 +20,14 @@
  .firstcol{text-align: left; font-size:100%; background: #FFFFAA} /* class="citation"*/
  div.right {font-family: sans-serif; text-align: right}
  div.footnoteright {font-size: 70%; text-align: right}
+
+hr {color: #FF9900; background-color: #FF9900; border:none; height:2px}
+
+li {
+  color: #FF9900; /* bullet color */
+}
+li span {
+  color: black; /* text color */
+}
  
 </STYLE>
