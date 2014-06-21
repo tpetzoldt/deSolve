@@ -16,7 +16,7 @@
    id="svg5061"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="fitting_sozi.svg">
+   sodipodi:docname="fit_twocomp.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -6676,7 +6676,8 @@
        id="path20782-0"
        inkscape:connector-curvature="0" />
     <a
-       xlink:href="twocomp_final.R"
+       xlink:href="twocomp_final.R.txt"
+       transform="matrix(0.76384951,0,0,0.57297835,525.29476,-36.082193)"
        id="a20898">
       <text
          sodipodi:linespacing="125%"
@@ -6692,8 +6693,8 @@
            sodipodi:role="line">twocomp_final.R</tspan></text>
     </a>
     <path
-       style="fill:#0000ff;stroke:#0000ff;stroke-width:2.5872581;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 2000.6586,-60.069921 c 221.1337,-1.188692 221.1337,-1.188692 221.1337,-1.188692"
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:1.71164131;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 2053.4969,-70.500957 c 168.9128,-0.681095 168.9128,-0.681095 168.9128,-0.681095"
        id="path20782-06"
        inkscape:connector-curvature="0" />
   </g>
