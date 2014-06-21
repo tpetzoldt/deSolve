@@ -1,0 +1,122 @@
+library(deSolve)
+library(FME)
+library(Cairo)
+
+## A two compartment pharmacokinetic model
+twocomp <- function (time, y, parms, ...) {
+  with(as.list(c(parms, y)), {
+    dCL <- kFL * CF - kLF * CL - ke * CL  # concentration in liver
+    dCF <-    kLF * CL  - kFL * CF        # concentration in fat
+    list(c(dCL, dCF))
+  })
+}
+parms <- c(ke = 0.2,	kFL = 0.1,	kLF = 0.05)
+times <- seq(0, 40, length=200)
+y0      <-  c(CL = 1, CF = 0)
+out <- ode(y0, times, twocomp, parms)
+
+
+## Data
+dat <- data.frame(
+  time = seq(0, 28, 4),
+  CL = c(1.31,  0.61,  0.49, 0.41,  0.20,  0.12,  0.16,  0.21),
+  CF = c(1e-03, 0.041, 0.05, 0.039, 0.031, 0.025, 0.017, 0.012)
+)
+
+## simulate and plot the model and the data
+out <- ode(y0, times, twocomp, parms)
+plot(out, obs=dat, obspar=list(pch=16, col="red"))
+
+
+## === fit the model =================================================
+
+## define a cost function
+cost <- function(p) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, dat, weight = "none") # try "std" od "mean" for weight
+}
+
+## Note: initial parameters taken from above, may be adjusted manually
+fit <- modFit(f = cost, p = parms)
+summary(fit)
+
+## Now plot original and fitted models and data
+out1 <- ode(y0, times, twocomp, parms)
+out2 <- ode(y0, times, twocomp, coef(fit))
+plot(out1, out2, obs=dat, obspar=list(pch=16, col="red"))
+
+################################################################################
+### More examples
+################################################################################
+
+## -----------------------------------------------------------------------------
+## data in database format
+## -----------------------------------------------------------------------------
+dat2 <- data.frame(
+  label = rep(c("CL", "CF"), each=8),  # must be the first column
+  time = rep(seq(0, 28, 4), 2),
+  value = c(1.31,  0.61,  0.49,  0.41,  0.20,  0.12,  0.16,  0.21,
+            0.001, 0.041, 0.050, 0.039, 0.031, 0.025, 0.017, 0.012)
+)
+
+cost <- function(p) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, dat2, y="value")
+}
+
+fit2 <- modFit(f = cost, p = parms)
+summary(fit2)
+
+## this format allows to have different number of data
+## or missing data for the state variables
+
+dat3 <- dat2[-(2:7),] # only 1st and last value available for liver
+
+
+## data in "long format" (data base)
+cost <- function(p) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, dat3, y="value")
+}
+
+
+## fit the model
+fit3 <- modFit(f = cost, p = parms)
+summary(fit3)
+
+
+out3 <- ode(y0, times, twocomp, coef(fit3))
+
+plot(out1, out2, out3, obs=dat3)
+
+
+## -----------------------------------------------------------------------------
+## make the cost function more flexible
+## -----------------------------------------------------------------------------
+cost <- function(p, data) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, data, y="value")
+}
+
+## fit the model
+fit2a <- modFit(f = cost, p = parms, data=dat2)
+fit3a <- modFit(f = cost, p = parms, data=dat3)
+out2a <- ode(y0, times, twocomp, coef(fit2a))
+out3a <- ode(y0, times, twocomp, coef(fit3a))
+
+plot(out1, out2a, out3a, obs=dat3)
+
+
+## -----------------------------------------------------------------------------
+## weighting ...
+## -----------------------------------------------------------------------------
+
+cost <- function(p, data, ...) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, data, y="value", ...)
+}
+
+## fit the model
+fit4 <- modFit(f = cost, p = parms, data=dat3, weight="std")
+out4 <- ode(y0, times, twocomp, coef(fit4))
+plot(out1, out2, out3, out4, obs=dat3)
