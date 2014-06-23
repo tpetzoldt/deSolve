@@ -7,13 +7,13 @@ Title:  General Solvers for Initial Value Problems of Ordinary
 Authors@R: c(person("Karline","Soetaert", role = c("aut","cre"), 
                      email = "karline.soetaert@nioz.nl"),
              person("Thomas","Petzoldt", role = c("aut", "cre"),
-                     email = "Thomas.Petzoldt@TU-Dresden.de"),
-             person("Woodrow","Setzer", role = c("aut", "cre"),
+                     email = "thomas.petzoldt@tu-dresden.de"),
+             person("R. Woodrow","Setzer", role = c("aut", "cre"),
                      email = "setzer.woodrow@epa.gov"),
              person("odepack authors", role = "cph"))
-Author: Karline Soetaert and Thomas Petzoldt and R. Woodrow Setzer
+Author: Karline Soetaert and Thomas Petzoldt and R. Woodrow Setzer and odepack authors
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
-Depends: R (>= 2.6.0)
+Depends: R (>= 3.1.0)
 Description: Functions that solve initial value problems of a system
         of first-order ordinary differential equations (ODE), of
         partial differential equations (PDE), of differential
