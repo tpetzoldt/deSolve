@@ -11,7 +11,10 @@ Authors@R: c(person("Karline","Soetaert", role = c("aut"),
              person("R. Woodrow","Setzer", role = c("aut"),
                      email = "setzer.woodrow@epa.gov"),
              person("odepack authors", role = "cph"))
-Author: Karline Soetaert and Thomas Petzoldt and R. Woodrow Setzer and odepack authors
+Author: Karline Soetaert [aut],  
+        Thomas Petzoldt [aut, cre],  
+        R. Woodrow Setzer [aut], 
+        odepack authors [cph]
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
 Depends: R (>= 3.1.0)
 Description: Functions that solve initial value problems of a system
