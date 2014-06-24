@@ -17,6 +17,7 @@ Author: Karline Soetaert [aut],
         odepack authors [cph]
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
 Depends: R (>= 3.1.0)
+Suggests: scatterplot3d
 Description: Functions that solve initial value problems of a system
         of first-order ordinary differential equations (ODE), of
         partial differential equations (PDE), of differential
