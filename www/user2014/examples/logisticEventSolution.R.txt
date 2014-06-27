@@ -1,0 +1,43 @@
+## =============================================================================
+## Logistic growth with harvesting
+## =============================================================================
+
+require(deSolve)
+
+derivs <- function(t, y, parms) 
+  list(r * y * (1-y/K))
+
+r <- 1 
+K <- 10
+yini <- c(y = 2)
+times <- seq(from = 0, to = 20, by = 0.1)
+
+# First run: unharvested
+out1 <- ode(y = yini, times = times, func = derivs, parms = NULL)
+
+# Second run: harvest at preset times
+
+harvest <- data.frame(var = "y",
+                    time =  seq(2, 20, by = 2),
+                    value = 0.5,
+                    method = "multiply")
+                    
+out2 <- ode(y = yini, times = times, func = derivs, parms = NULL,
+            events = list(data = harvest))
+
+# Third run: harvest when critical density is reached
+
+rootfunc  <- function(t, y, p) 
+  return(y - 0.8*K)
+
+eventfunc <- function(t, y, p) 
+  return(y * 0.5)
+
+out3 <- ode(y = yini, times = times, func = derivs, parms = NULL,
+            rootfun = rootfunc, events = list(func = eventfunc, root = TRUE))
+
+# Plot different scenarios
+
+plot(out1, out2, out3, lwd = 2, col = "black")
+legend ("bottomright", lwd = 2, lty = 1:3,
+    legend = c("unharvested", "2-day harvest", "harvest at 80% of K"))

@@ -1,0 +1,79 @@
+library(deSolve)
+library(FME)
+
+## A two compartment pharmacokinetic model
+twocomp <- function (time, y, parms, ...) {
+  with(as.list(c(parms, y)), {
+    dCL <- kFL * CF - kLF * CL - ke * CL  # concentration in liver
+    dCF <-    kLF * CL  - kFL * CF        # concentration in fat
+    list(c(dCL, dCF))
+  })
+}
+parms <- c(ke = 0.2,	kFL = 0.1,	kLF = 0.05)
+times <- seq(0, 40, length=200)
+y0      <-  c(CL = 1, CF = 0)
+out <- ode(y0, times, twocomp, parms)
+
+## -----------------------------------------------------------------------------
+## data in database format
+## -----------------------------------------------------------------------------
+dat2 <- data.frame(
+  label = rep(c("CL", "CF"), each=8),  # must be the first column
+  time = rep(seq(0, 28, 4), 2),
+  value = c(1.31,  0.61,  0.49,  0.41,  0.20,  0.12,  0.16,  0.21,
+            0.001, 0.041, 0.050, 0.039, 0.031, 0.025, 0.017, 0.012)
+)
+
+## === fit the model =================================================
+## define a cost function
+cost <- function(p, data) {
+ out  <-  ode(y0, times, twocomp, p)
+ modCost(out, data, y="value", weight = "none") # try "std" od "mean" for weight
+}
+
+## Note: initial parameters taken from above, may be adjusted manually
+fit <- modFit(f = cost, p = parms, data=dat2)
+summary(fit)
+
+## Now plot original and fitted models and data
+out1 <- ode(y0, times, twocomp, parms)
+out2 <- ode(y0, times, twocomp, coef(fit))
+plot(out1, out2, obs=dat2, obspar=list(pch=16, col="red"))
+
+## -----------------------------------------------------------------------------
+## Exercise: fit start values
+## -----------------------------------------------------------------------------
+
+parms <- c(CL = 1.0, CF = 0.0, ke = 0.2,	kFL = 0.1,	kLF = 0.05)
+#parms <- c(CL = 1.0, CF = 0.0, coef(fit))
+
+cost <- function(p, data, ...) {
+ yy <- p[c("CL", "CF")]
+ pp <-  p[c("ke", "kFL", "kLF")]
+ out  <-  ode(yy, times, twocomp, pp)
+ modCost(out, data, y="value", ...)
+}
+
+## fit the model
+fit5 <- modFit(f = cost, p = parms, data=dat2, weight="std",
+        lower=rep(0, 5), upper=c(2,2,1,1,1), method="Marq")
+## default algorithm "Marq" fails in this case        
+        
+## try another algorithm, e.g. CG, BFGS of Port        
+fit6  <- modFit(f = cost, p = parms, data=dat2, weight="std",
+        lower=rep(0, 5), upper=c(2,2,1,1,1), method="Port")
+        
+summary(fit5)        
+y0 <- coef(fit5)[c("CL", "CF")]
+pp <- coef(fit5)[c("ke", "kFL", "kLF")]
+out5 <- ode(y0, times, twocomp, pp)
+
+summary(fit6)        
+y0 <- coef(fit6)[c("CL", "CF")]
+pp <- coef(fit6)[c("ke", "kFL", "kLF")]
+out6 <- ode(y0, times, twocomp, pp)
+
+
+plot(out1, out2, out6, obs=dat2)
+
+
