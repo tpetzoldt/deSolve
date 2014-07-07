@@ -330,6 +330,7 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     printM("\n--------------------")
     printM("Integration method")
     printM("--------------------\n")
+    txt <- ""    # to avoid txt being not defined...
     if (imp == 21)
       txt <- "  The user has supplied indices to nonzero elements of Jacobian,
       and a Jacobian function"  else
