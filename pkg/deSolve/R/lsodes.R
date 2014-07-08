@@ -260,7 +260,7 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (sparsetype == "1D") lrw <- lrw*1.2 # increase to be sure it is enough...
   }
 
-  if (is.null(liw)) {         # make a guess of itneger work space needed
+  if (is.null(liw)) {         # make a guess of integer work space needed
     if (moss == 0 && miter %in% c(1,2)) liw <- 31+n+nnz +30 else  # extra 30
                                         liw <- 30
   }
