@@ -324,7 +324,7 @@ nonzero <-  matrix(nc = 2, byrow = TRUE, data = c(
 #              inz = nonzero, atol = atol,rtol = rtol)  #gives warning
 out2 <- lsodes(func = chemistry, y = y, parms = parms, times = times, 
             sparsetype = "sparseusr", inz = nonzero,   
-             atol = atol, rtol = rtol, verbose = TRUE, lrw = 351)
+             atol = atol, rtol = rtol, verbose = TRUE, lrw = 353)
                             
 ## =======================================================================
 ## application 3. lsodes estimates the structure of the Jacobian
