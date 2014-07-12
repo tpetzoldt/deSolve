@@ -260,12 +260,12 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     if (sparsetype == "1D") lrw <- lrw*1.2 # increase to be sure it is enough...
   }
 
-#  if (is.null(liw)) {         # make a guess of integer work space needed
+#  if (is.null(liw)) {         # make a guess of integer work space needed   KS->THOMAS: if not NULL, should be large enoug!
     if (moss == 0 && miter %in% c(1,2)) liw <- max(liw, 31+n+nnz +30) else  # extra 30
                                         liw <- max(liw, 30)
 #  }
   
-  lrw <- lrw + 3*nroot
+  lrw <- max(20, lrw) + 3*nroot
   # 2. Allocate and set values
   # only first 20 elements of rwork passed to solver;
   # other elements will be allocated in C-code
