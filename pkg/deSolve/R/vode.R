@@ -85,7 +85,7 @@ vode  <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   events <- checkevents(events, times, Ynames, dllname)
   if (! is.null(events$newTimes)) times <- events$newTimes  
 
-  if (is.character(func)) {   # function specified in a DLL
+  if (is.character(func) | class(func) == "CFunc") {   # function specified in a DLL
     DLL <- checkDLL(func,jacfunc,dllname,
                     initfunc,verbose,nout, outnames)
 
