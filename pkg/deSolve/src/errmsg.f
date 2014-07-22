@@ -86,7 +86,7 @@ C
       
       dummy = 0.d0
 C      call dblepr(MSG, NMES, dummy, 0)
-      MSG = MSG(1:len_trim(MSG)) // char(0)
+      MSG = MSG(1:NMES) // char(0)
       call rprintf(MSG)
 
 
