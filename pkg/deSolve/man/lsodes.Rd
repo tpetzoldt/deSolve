@@ -98,7 +98,7 @@ lsodes(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   }
   \item{inz }{if \code{sparsetype} equal to "sparseusr", a two-columned matrix
     with the (row, column) indices to the nonzero elements in the sparse
-    Jacobian. If \code{sparsetype} = "sparsejan", a vecotr with the elements 
+    Jacobian. If \code{sparsetype} = "sparsejan", a vector with the elements 
     ian followed by he elements jan as used in the lsodes code. See details.
     In all other cases, ignored.
   }
