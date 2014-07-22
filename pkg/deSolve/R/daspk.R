@@ -20,6 +20,25 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
     lags = NULL, ...) {
 
 ### check input
+  if (is.list(func)) {            ### IF a list
+      if (!is.null(jacfunc) & "jacfunc" %in% names(func))
+         stop("If 'func' is a list that contains jacfunc, argument 'jacfunc' should be NULL")
+      if (!is.null(res) & "res" %in% names(func))
+         stop("If 'func' is a list that contains res, argument 'res' should be NULL")
+      if (!is.null(jacres) & "jacres" %in% names(func))
+         stop("If 'func' is a list that contains jacres, argument 'jacres' should be NULL")
+      if (!is.null(initfunc) & "initfunc" %in% names(func))
+         stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(initforc) & "initforc" %in% names(func))
+         stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+     jacfunc <- func$jacfunc
+     res <- func$func
+     jacres <- func$jacres
+     initfunc <- func$initfunc
+     initforc <- func$initforc
+     func <- func$func
+  }
+
   if (!is.numeric(y))
     stop("`y' must be numeric")
   n <- length(y)
@@ -31,10 +50,10 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
     stop("either `func' OR 'res' must be specified, not both")
   if (!is.null(jacres) && !is.null(jacfunc))
     stop("either `jacfunc' OR 'jacres' must be specified, not both")
-  if (!is.null(func) && !is.function(func) && !is.character(func))
-    stop("`func' must be a function, a character vector or NULL")
-  if (!is.null(res) && !is.function(res) && !is.character(res))
-    stop("`res' must be NULL, a function or character vector")
+  if (!is.null(func) && !is.function(func) && !is.character(func) && ! class(func) == "CFunc")
+    stop("`func' must be a function, a character vector, of class 'CFunc' or NULL")
+  if (!is.null(res) && !is.function(res) && !is.character(res) && ! class(res) == "CFunc")
+    stop("`res' must be NULL, a function or character vector or of class 'CFunc'")
   if (is.character(res) && (is.null(dllname) || !is.character(dllname)))
     stop("You need to specify the name of the dll or shared library where res can be found (without extension)")
   if (!is.numeric(rtol))
@@ -46,7 +65,7 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
   if (!is.null(jacfunc) && !(is.function(jacfunc) ))
     stop("`jacfunc' must be a function or NULL")
   if (!is.null(jacres) && !(is.function(jacres) || is.character(jacres)))
-    stop("`jacres' must be a function or character vector")
+    stop("`jacres' must be a function or character vector or of class 'CFunc'")
   if (length(atol) > 1 && length(atol) != n)
     stop("`atol' must either be a scalar, or as long as `y'")
   if (length(rtol) > 1 && length(rtol) != n)
@@ -136,13 +155,14 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
 
   ## If res or func is a character vector,  make sure it describes
   ## a function in a loaded dll
-  if (is.character(res) || is.character(func)) {
+  if (is.character(res) || is.character(func) || class(res) == "CFunc" || class(func) == "CFunc") {
     if (is.character(res)){
       resname <- res
       if (is.loaded(resname, PACKAGE = dllname)) {
         Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
       } else stop(paste("cannot integrate: res function not loaded",resname))
-
+    } else if (class(res) == "CFunc") {
+      Res <- body(res)[[2]]
     } else if (is.character(func)) {
       funtype <- 2
       resname <- func
@@ -150,22 +170,31 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
         Res <- getNativeSymbolInfo(resname, PACKAGE = dllname)$address
       } else stop(paste("cannot integrate: derivs function not loaded",resname))
       if (!is.null(mass)) funtype <- 3
+    } else if (class(func) == "CFunc") {
+      funtype <- 2
+      Res <- body(func)[[2]]
     }
+      
 #        if (is.null(kryltype))
 #        {
-     if (!is.null(jacres))   {
-       if (!is.character(jacres))
+     if (!is.null(jacres) )   {
+       if (!is.character(jacres) & class(jacres) != "CFunc" )
           stop("If 'res' is dynloaded, so must 'jacres' be")
        jacname <- jacres
-       if (is.loaded(jacname, PACKAGE = dllname)) {
+       if (class(jacres) == "CFunc")
+          JacRes <- body(jacres)[[2]]
+        
+       else if (is.loaded(jacname, PACKAGE = dllname)) {
          JacRes <- getNativeSymbolInfo(jacname, PACKAGE = dllname)$address
        } else
          stop(paste("cannot integrate: Jacobian function jacres not loaded ",jacres))
      }
 
      if (!is.null(psolfunc)) {
-        if (!is.character(psolfunc))
+        if (!is.character(psolfunc)& class(psolfunc) != "CFunc" )
             stop("If 'res' is dynloaded, so must 'psolfunc' be")
+       if (class(psolfunc) == "CFunc")
+          PsolFunc <- body(psolfunc)[[2]]
         if (is.loaded(psolfunc, PACKAGE = dllname)) {
           PsolFunc <- getNativeSymbolInfo(psolfunc, PACKAGE = dllname)$address
         } else

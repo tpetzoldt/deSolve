@@ -10,6 +10,15 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   rpar = NULL,  ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
   initforc = NULL, fcontrol = NULL, events = NULL, ...) {
 
+  if (is.list(func)) {            ### IF a list
+      if (!is.null(initfunc) & "initfunc" %in% names(func))
+         stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(initforc) & "initforc" %in% names(func))
+         stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+     initfunc <- func$initfunc
+     initforc <- func$initforc
+     func <- func$func
+  }
     if (is.character(method)) method <- rkMethod(method)
     varstep <- method$varstep
     if (!varstep & (hmin != 0 | !is.null(hmax)))
@@ -81,7 +90,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     flist    <-list(fmat = 0, tmat = 0, imat = 0, ModelForc = NULL)
     Nstates <- length(y) # assume length of states is correct
 
-    if (is.character(func)) { # function specified in a DLL
+    if (is.character(func) | class(func) == "CFunc") {   # function specified in a DLL or inline compiled
       DLL <- checkDLL(func, NULL, dllname,
                       initfunc, verbose, nout, outnames)
 

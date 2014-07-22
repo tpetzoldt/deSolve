@@ -28,8 +28,25 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   initforc = NULL, fcontrol = NULL, events = NULL, lags = NULL, ...)  {
 
 ### check input
+  if (is.list(func)) {            ### IF a list
+      if (!is.null(jacvec) & "jacvec" %in% names(func))
+         stop("If 'func' is a list that contains jacvec, argument 'jacvec' should be NULL")
+      if (!is.null(rootfunc) & "rootfunc" %in% names(func))
+         stop("If 'func' is a list that contains rootfunc, argument 'rootfunc' should be NULL")         
+      if (!is.null(initfunc) & "initfunc" %in% names(func))
+         stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(initforc) & "initforc" %in% names(func))
+         stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+     jacvec <- func$jacvec
+     rootfunc <- func$rootfunc
+     initfunc <- func$initfunc
+     initforc <- func$initforc
+     func <- func$func
+  }
+
   hmax <- checkInput (y, times, func, rtol, atol,
     jacvec, tcrit, hmin, hmax, hini, dllname,"jacvec")
+
 
   n <- length(y)
 
@@ -141,16 +158,19 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   events <- checkevents(events, times, Ynames, dllname,TRUE)
   if (! is.null(events$newTimes)) times <- events$newTimes  
 
-  if (is.character(func)) {   # function specified in a DLL
+  if (is.character(func) | class(func) == "CFunc") {   # function specified in a DLL or inline compiled
     DLL <- checkDLL(func,jacvec,dllname,
                     initfunc,verbose,nout, outnames, JT=2)
 
     ## Is there a root function?
     if (!is.null(rootfunc)) {
-      if (!is.character(rootfunc))
+      if (!is.character(rootfunc) & class(rootfunc) != "CFunc")
         stop("If 'func' is dynloaded, so must 'rootfunc' be")
       rootfuncname <- rootfunc
-      if (is.loaded(rootfuncname, PACKAGE = dllname))  {
+      if (class(rootfunc) == "CFunc")
+        RootFunc <- body(rootfunc)[[2]]
+
+      else if (is.loaded(rootfuncname, PACKAGE = dllname))  {
         RootFunc <- getNativeSymbolInfo(rootfuncname, PACKAGE = dllname)$address
       } else
         stop(paste("root function not loaded in DLL",rootfunc))
