@@ -10,11 +10,19 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   rpar = NULL,  ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
   initforc = NULL, fcontrol = NULL, events = NULL, ...) {
 
-  if (is.list(func)) {            ### IF a list
+  if (is.list(func)) {            # a list of compiled functions
       if (!is.null(initfunc) & "initfunc" %in% names(func))
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+      if (!is.null(events$func) & "eventfunc" %in% names(func))
+         stop("If 'func' is a list that contains eventfunc, argument 'events$func' should be NULL")
+      if ("eventfunc" %in% names(func)) {
+         if (! is.null(events))
+           events$func <- func$eventfunc
+         else
+           events <- list(func = func$eventfunc)  
+      }
      initfunc <- func$initfunc
      initforc <- func$initforc
      func <- func$func

@@ -23,6 +23,14 @@ radau <- function(y, times, func, parms, nind = c(length(y), 0, 0),
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+      if (!is.null(events$func) & "eventfunc" %in% names(func))
+         stop("If 'func' is a list that contains eventfunc, argument 'events$func' should be NULL")
+      if ("eventfunc" %in% names(func)) {
+         if (! is.null(events))
+           events$func <- func$eventfunc
+         else
+           events <- list(func = func$eventfunc)  
+      }
      jacfunc <- func$jacfunc
      rootfunc <- func$rootfunc
      initfunc <- func$initfunc

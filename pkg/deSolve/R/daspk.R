@@ -20,34 +20,57 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
     lags = NULL, ...) {
 
 ### check input
-  if (is.list(func)) {            ### IF a list
+  if (is.null(res) && is.null(func))
+    stop("either `func' or 'res' must be specified")
+  if (!is.null(res) && !is.null(func))
+    stop("either `func' OR 'res' must be specified, not both")
+
+  if (is.list(func)) {            # a list of compiled codes
       if (!is.null(jacfunc) & "jacfunc" %in% names(func))
          stop("If 'func' is a list that contains jacfunc, argument 'jacfunc' should be NULL")
-      if (!is.null(res) & "res" %in% names(func))
-         stop("If 'func' is a list that contains res, argument 'res' should be NULL")
-      if (!is.null(jacres) & "jacres" %in% names(func))
-         stop("If 'func' is a list that contains jacres, argument 'jacres' should be NULL")
       if (!is.null(initfunc) & "initfunc" %in% names(func))
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
+      if (!is.null(events$func) & "eventfunc" %in% names(func))
+         stop("If 'func' is a list that contains eventfunc, argument 'events$func' should be NULL")
+      if ("eventfunc" %in% names(func)) {
+         if (! is.null(events))
+           events$func <- func$eventfunc
+         else
+           events <- list(func = func$eventfunc)  
+      }
      jacfunc <- func$jacfunc
-     res <- func$func
-     jacres <- func$jacres
      initfunc <- func$initfunc
      initforc <- func$initforc
      func <- func$func
   }
 
+  if (is.list(res)) {            #
+      if (!is.null(jacres) & "jacres" %in% names(res))
+         stop("If 'res' is a list that contains jacres, argument 'jacres' should be NULL")
+      if (!is.null(initfunc) & "initfunc" %in% names(res))
+         stop("If 'res' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(initforc) & "initforc" %in% names(res))
+         stop("If 'res' is a list that contains initforc, argument 'initforc' should be NULL")
+      if (!is.null(events$func) & "eventfunc" %in% names(res))
+         stop("If 'res' is a list that contains eventfunc, argument 'events$func' should be NULL")
+      if ("eventfunc" %in% names(res)) {
+         if (! is.null(events))
+           events$func <- res$eventfunc
+         else
+           events <- list(func = res$eventfunc)  
+      }
+     jacres <- res$jacres
+     initfunc <- res$initfunc
+     initforc <- res$initforc
+     res <- res$res
+  }
   if (!is.numeric(y))
     stop("`y' must be numeric")
   n <- length(y)
   if (! is.null(times)&&!is.numeric(times))
     stop("`times' must be NULL or numeric")
-  if (is.null(res) && is.null(func))
-    stop("either `func' or 'res' must be specified")
-  if (!is.null(res) && !is.null(func))
-    stop("either `func' OR 'res' must be specified, not both")
   if (!is.null(jacres) && !is.null(jacfunc))
     stop("either `jacfunc' OR 'jacres' must be specified, not both")
   if (!is.null(func) && !is.function(func) && !is.character(func) && ! class(func) == "CFunc")
@@ -131,25 +154,33 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
   Res       <- NULL
   JacRes    <- NULL
   PsolFunc  <- NULL
-  funtype  <- 1
+  funtype   <- 1
   ModelInit <- NULL
   flist<-list(fmat=0,tmat=0,imat=0,ModelForc=NULL)
   Eventfunc <- NULL
   events <- checkevents(events, times, Ynames, dllname)
   if (! is.null(events$newTimes)) times <- events$newTimes
 
-  if (!is.null(dllname))  {
-   if (! is.null(initfunc))  # to allow absence of initfunc
-    if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
+  if (!is.null(dllname))  
+   # Karline.... to avoid wrong address to initfunc ... added 24/7/2014
+    if (sum(duplicated (c(func, initfunc, jacfunc, res, jacres))) > 0)
+      stop("func, initfunc, jacfunc, res, jacres cannot share the same name")
+
+  if (!is.null(dllname) | class(func) == "CFunc" | class(res) == "CFunc")  {
+  
+    if (class(initfunc) == "CFunc")
+      ModelInit <- body(initfunc)[[2]]
+    else if (is.character(initfunc))  # to allow absence of initfunc
+     if (is.loaded(initfunc, PACKAGE = dllname, type = "") ||
         is.loaded(initfunc, PACKAGE = dllname, type = "Fortran")) {
       ModelInit <- getNativeSymbolInfo(initfunc, PACKAGE = dllname)$address
-    } else if (initfunc != dllname && ! is.null(initfunc))
+     } else if (initfunc != dllname)
        stop(paste("cannot integrate: initfunc not loaded ",initfunc))
     if (! is.null(forcings))
       flist <- checkforcings(forcings,times,dllname,initforc,verbose,fcontrol)
    # Easier to deal with NA in C-code
     if (is.null(initfunc)) ModelInit <- NA
-  }
+  } 
 
   psolfunc <- NULL  # not yet supported
 
@@ -173,6 +204,7 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
     } else if (class(func) == "CFunc") {
       funtype <- 2
       Res <- body(func)[[2]]
+      if (!is.null(mass)) funtype <- 3
     }
       
 #        if (is.null(kryltype))

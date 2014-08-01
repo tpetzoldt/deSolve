@@ -184,8 +184,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   int    j, nt, ny, repcount, latol, lrtol, lrw, liw, isDll;
   int    maxit, isForcing, isEvent, islag, istate;
   double *xytmp,  *xdytmp, tin, tout, *Atol, *Rtol;
-  double *delta=NULL, cj;
-  int    *Info,  ninfo, idid, mflag, ires;
+  double *delta=NULL, cj = 0.;
+  int    *Info,  ninfo, idid, mflag, ires = 0;
   int    *iwork, it, ntot= 0, nout, funtype;
   double *rwork;
   
