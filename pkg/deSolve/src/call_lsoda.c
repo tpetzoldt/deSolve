@@ -239,7 +239,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   SEXP TROOT, NROOT, VROOT; /* IROOT is in deSolve.h*/
   
   /* pointers to functions passed to FORTRAN */
-  C_deriv_func_type *deriv_func;
+  C_deriv_func_type *deriv_func;    
   C_jac_func_type   *jac_func=NULL;
   C_jac_vec_type    *jac_vec=NULL;
   C_root_func_type  *root_func=NULL;
