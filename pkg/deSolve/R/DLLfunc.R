@@ -144,7 +144,7 @@ DLLres <- function (res, times, y, dy, parms,
         Res <- body(res)[[2]]
     else if (!is.character(res))
             stop("`res' must be a *name* referring to a function in a dll")
-    if(is.loaded(res, PACKAGE = dllname)) {
+    else if (is.loaded(res, PACKAGE = dllname)) {
         Res <- getNativeSymbolInfo(res, PACKAGE = dllname)$address
         } else stop(paste("cannot run DLLres: res function not loaded: ",res))
 
