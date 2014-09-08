@@ -20,9 +20,9 @@ DLLfunc <- function (func, times, y,
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
 
-      dllname <- func$dllname
-      initfunc <- func$initfunc
-      initforc <- func$initforc
+      if (!is.null(func$initfunc)) initfunc <- func$initfunc
+      if (!is.null(func$initforc)) initforc <- func$initforc
+      if (!is.null(func$dllname))  dllname <- func$dllname
       func <- func$func
    }
 

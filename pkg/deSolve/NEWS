@@ -1,3 +1,9 @@
+Changes version 1.10.10
+================================
+ o compiledCode vignette now with dede example
+ o warning and error bug resolved
+ o CFunc compatibility (compiled code)
+
 Changes version 1.10.9
 ================================
  o documentation updates, hyperlinks to examples and vignettes

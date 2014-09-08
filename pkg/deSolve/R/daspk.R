@@ -30,6 +30,8 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
          stop("If 'func' is a list that contains jacfunc, argument 'jacfunc' should be NULL")
       if (!is.null(initfunc) & "initfunc" %in% names(func))
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(dllname) & "dllname" %in% names(func))
+         stop("If 'func' is a list that contains dllname, argument 'dllname' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
       if (!is.null(events$func) & "eventfunc" %in% names(func))
@@ -40,9 +42,10 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
          else
            events <- list(func = func$eventfunc)  
       }
-     jacfunc <- func$jacfunc
-     initfunc <- func$initfunc
-     initforc <- func$initforc
+     if (!is.null(func$jacfunc))  jacfunc <- func$jacfunc
+     if (!is.null(func$initfunc)) initfunc <- func$initfunc
+     if (!is.null(func$initforc)) initforc <- func$initforc
+     if (!is.null(func$dllname))  dllname <- func$dllname
      func <- func$func
   }
 
@@ -51,6 +54,8 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
          stop("If 'res' is a list that contains jacres, argument 'jacres' should be NULL")
       if (!is.null(initfunc) & "initfunc" %in% names(res))
          stop("If 'res' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(dllname) & "dllname" %in% names(res))
+         stop("If 'res' is a list that contains dllname, argument 'dllname' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(res))
          stop("If 'res' is a list that contains initforc, argument 'initforc' should be NULL")
       if (!is.null(events$func) & "eventfunc" %in% names(res))
@@ -61,9 +66,10 @@ daspk   <- function(y, times, func=NULL, parms, nind = c(length(y), 0, 0),
          else
            events <- list(func = res$eventfunc)  
       }
-     jacres <- res$jacres
-     initfunc <- res$initfunc
-     initforc <- res$initforc
+     if (!is.null(res$jacres)) jacres <- res$jacres
+     if (!is.null(res$initfunc)) initfunc <- res$initfunc
+     if (!is.null(res$initforc)) initforc <- res$initforc
+     if (!is.null(res$dllname)) dllname <- res$dllname
      res <- res$res
   }
   if (!is.numeric(y))

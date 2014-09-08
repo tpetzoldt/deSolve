@@ -35,6 +35,8 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
          stop("If 'func' is a list that contains rootfunc, argument 'rootfunc' should be NULL")         
       if (!is.null(initfunc) & "initfunc" %in% names(func))
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
+      if (!is.null(dllname) & "dllname" %in% names(func))
+         stop("If 'func' is a list that contains dllname, argument 'dllname' should be NULL")
       if (!is.null(initforc) & "initforc" %in% names(func))
          stop("If 'func' is a list that contains initforc, argument 'initforc' should be NULL")
       if (!is.null(events$func) & "eventfunc" %in% names(func))
@@ -45,10 +47,11 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
          else
            events <- list(func = func$eventfunc)  
       }
-     jacvec <- func$jacvec
-     rootfunc <- func$rootfunc
-     initfunc <- func$initfunc
-     initforc <- func$initforc
+     if (!is.null(func$jacvec))   jacvec <- func$jacvec
+     if (!is.null(func$rootfunc)) rootfunc <- func$rootfunc
+     if (!is.null(func$initfunc)) initfunc <- func$initfunc
+     if (!is.null(func$dllname))  dllname <- func$dllname
+     if (!is.null(func$initforc)) initforc <- func$initforc
      func <- func$func
   }
 
