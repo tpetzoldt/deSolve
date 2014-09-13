@@ -1555,14 +1555,16 @@ the consumer removed every 10 days - see text for R-code}
 \label{fig:lv2}
 \end{figure}
 
-\section{delay differential equations}
+\section{Delay differential equations}
+
 It is now also very simple to implement delay 
 differential equations in compiled code and solve them with \code{dede}.
 In order to do so, you need to get access to the R-functions \code{lagvalue} and \code{lagderiv}
 that will give you the past value of the state variable or its derivative 
 respectively.
 
-\subsection{delays implemented in Fortran}
+\subsection{Delays implemented in Fortran}
+
 If you use \proglang{Fortran}, then the easiest way is to link your code with a file called 
 \code{dedeUtils.c} that you will find in the packages subdirectory \code{inst/doc/dynload-dede}. 
 This file contains Fortran-callable interfaces to the delay-differential utility
@@ -1585,6 +1587,7 @@ void F77_SUB(lagderiv)(double *T, int *nr, int *N, double *ytau) {
   return;
 }
 \end{verbatim}
+
 Here \code{T} is the time at which the value needs to be retrieved, 
 \code{nr} is an integer that defines the number of the state variable or its
 derivative whose delay we want, \code{N} is the total number of state variabes 
@@ -1615,6 +1618,7 @@ parms <- c(f = 0.1, g = 0.2, e = 0.1, m = 0.1, tau = .2)
 yout <- dede(y = yinit, times = times, func = derivs, parms = parms)
 head(yout)
 @
+
 In Fortran the code looks like this:
 \begin{verbatim}
 !  file dede_lfF.f
@@ -1660,8 +1664,9 @@ In Fortran the code looks like this:
       return
       end
 \end{verbatim}
-During compilation, we need to also compile the file dedeUtils.c. Assuming that the
-above fortran code is in file \code{dede_lvF.f}, which is found in the working directory that 
+
+During compilation, we need to also compile the file \code{dedeUtils.c}. Assuming that the
+above \proglang{Fortran} code is in file \code{dede_lvF.f}, which is found in the working directory that 
 also contains file \code{dedeUtils.c}, the problem is compiled and run as:
 \begin{verbatim}
 system("R CMD SHLIB dede_lvF.f dedeUtils.c")
@@ -1669,9 +1674,11 @@ dyn.load(paste("dede_lvF", .Platform$dynlib.ext, sep=""))
 yout3 <- dede(yinit, times = times, func = "derivs", parms = parms,
     dllname = "dede_lvF", initfunc = "initmod", nout = 2)
 \end{verbatim}
-\subsection{delays implemented in C}
 
-We now give the same example in C-code (you will find this in directory \code{inst/doc/dynload-dede/dede_lv.c}).
+\subsection{Delays implemented in C}
+
+We now give the same example in \proglang{C}-code (you will find this in directory \code{inst/doc/dynload-dede/dede_lv.c}).
+
 \begin{verbatim}
 #include <R.h>
 #include <Rinternals.h>
@@ -1734,6 +1741,7 @@ void derivs (int *neq, double *t, double *y, double *ydot,
 
 }
 \end{verbatim}
+
 Assuming this code is in a file called \code{dede_lv.c}, which is in the working
 directory, this file is then compiled and run as:
 \begin{verbatim}
