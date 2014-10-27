@@ -1,5 +1,5 @@
 Package: deSolve
-Version: 1.10-10
+Version: 1.11
 Title:  General Solvers for Initial Value Problems of Ordinary
         Differential Equations (ODE), Partial Differential Equations
         (PDE), Differential Algebraic Equations (DAE), and Delay
@@ -16,7 +16,7 @@ Author: Karline Soetaert [aut],
         R. Woodrow Setzer [aut], 
         odepack authors [cph]
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
-Depends: R (>= 3.0.0)
+Depends: R (>= 2.15.0)
 Suggests: scatterplot3d
 Description: Functions that solve initial value problems of a system
         of first-order ordinary differential equations (ODE), of
