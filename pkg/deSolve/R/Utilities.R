@@ -1337,8 +1337,6 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
           dotmain$zlim <- range(out, na.rm=TRUE)
 
         drawlegend(parleg, dotmain)
-        par(plt = plt.or)  
-        par(mar = par("mar")) # TRICK TO PREVENT R FROM SETTING DEFAULTPLOT = FALSE
       }
     }
     if (! is.null(Mtext))
@@ -1346,7 +1344,11 @@ plot.ode2D <- function (x, which, ask, add.contour, grid, method = "image",
              cex = 1.5, line = par("oma")[3]-1.5)
 
   } 
-  # karline: ???   removed that... make it an argument?                 
+  if (legend) {
+        par(plt = plt.or)
+        par(mar = par("mar")) # TRICK TO PREVENT R FROM SETTING DEFAULTPLOT = FALSE
+  }
+  # karline: ???   removed that... make it an argument?
 
   #  if (sum(par("mfrow") - c(1, 1)) == 0 )
   #   mtext(outer = TRUE, side = 3, paste("time ", x[nt, 1]),
