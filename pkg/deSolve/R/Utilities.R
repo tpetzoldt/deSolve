@@ -390,6 +390,9 @@ updateObs <- function (obs, varnames, xWhich) {
   if (obs$length > 0 ) {
     obs$Which <- selectvar(varnames[xWhich], obs$name, NAallowed = TRUE)
     obs$Which [ obs$Which > ncol(obs$dat)] <- NA
+    if (nrow(obs$pos) != length(obs$Which))
+      obs$pos <- matrix(nrow = length(obs$Which), ncol = ncol(obs$pos),
+        byrow = TRUE, data =obs$pos[1,])
   } else
     obs$Which <- rep(NA, length(xWhich))
   return(obs)
@@ -540,6 +543,211 @@ plot.deSolve <- function (x, ..., select = NULL, which = select, ask = NULL,
     if (! is.na(io)) plotObs(obs, io)   # add observed variables
   }
 }
+
+## =============================================================================
+##  S3 matplot method  - it is not generic...
+## =============================================================================
+matplot <- function (x, ...) UseMethod("matplot")
+matplot.default <- function (x, ...) {
+if ("deSolve" %in% class (x))
+  matplot.deSolve(x,...)
+else
+  graphics::matplot(x,...)
+#nextmethod()
+}
+
+matplot.deSolve <- function(x, ..., select = NULL, which = select,
+  obs = NULL, obspar = list(), subset = NULL,
+  legend = list(x = "topright")) {      # legend can be a list
+
+  t       <- 1     # column with independent variable "times"
+
+  # Set the observed data
+  obs <- SetData(obs)
+
+  # variables to be plotted and their position in "x"
+  varnames <- colnames(x)
+  xWhich <- NULL
+  lW <- length(which)
+
+  WhichVar <- function(xWhich, obs, varnames) {
+
+   if (is.null(xWhich) & is.null(obs$dat))  # All variables plotted
+    Which <- 2 : length(varnames)
+
+   else if (is.null(xWhich)) {     # All common variables in x and obs plotted
+     Which <- which(varnames %in% obs$name)
+     Which <- Which [Which > 1]
+   } else if (is.character(xWhich)) {
+     Which <- which(varnames %in% xWhich)
+     if (length(Which) != length(xWhich))
+       stop ("unknown variable", paste(xWhich, collapse = ","))
+   }
+   else
+     Which <- xWhich + 1
+   return(Which)
+  }
+
+  if (lW & is.list(which))
+    xWhich <- lapply(which, FUN = function (x) WhichVar(x, obs, varnames))
+  else if (lW)
+    xWhich <- list(WhichVar(which, obs, varnames))
+  else
+    xWhich <- list(2:length(varnames))
+
+  vn  <- lapply(xWhich, FUN = function(x) paste(varnames[x], collapse = ","))
+  vn2 <- unlist(lapply(xWhich, FUN = function(x) paste(varnames[x])))
+
+  np <- length(xWhich)            # number of y-axes
+  nx <- length(unlist(xWhich))    # number of y-variables
+
+  # add Position of variables to be plotted in "obs"
+  obs <- updateObs (obs, varnames, unlist(xWhich))
+
+  # The ellipsis
+  ldots  <- list(...)
+  Dots   <- splitdots(ldots, varnames)
+
+  if (Dots$nother > 1)
+    stop ("can plot only one deSolve output object at a time with matplot")
+
+  Dotmain <- setdots(Dots$main, np)
+
+  # these are different from the default
+  Dotmain$xlab <- expanddots(ldots$xlab, varnames[t]                , np)
+  Dotmain$ylab <- expanddots(ldots$ylab, vn                         , np)
+  Dotmain$main <- expanddots(ldots$main, as.character(substitute(x)), np)
+
+  # ylim and xlim can be lists and are at least two values
+  yylim  <- expanddotslist(ldots$ylim, np)
+  xxlim  <- expanddotslist(ldots$xlim, np)
+
+  Dotpoints <- setdots(Dots$points, nx)   # expand all dots to nx values
+
+  # these are different from default
+  Dotpoints$type <- expanddots(ldots$type, "l", nx)
+  Dotpoints$lty  <- expanddots(ldots$lty, 1:nx, nx)
+  Dotpoints$pch  <- expanddots(ldots$pch, 1:nx, nx)
+  Dotpoints$col  <- expanddots(ldots$col, 1:nx, nx)
+  Dotpoints$bg   <- expanddots(ldots$bg,  1:nx, nx)
+
+  if (! is.null(obs)) {
+
+    ii <- which(unlist(xWhich) %in% unlist(obs$Which))
+    ii <- ii[! is.na(ii)]
+    if (is.null(obs$par))
+     obs$par <- list()
+    else
+     obs$par <- lapply(obspar, repdots, obs$length)
+
+    if (is.null(obs$par$pch))
+      obs$par$pch <- Dotpoints$pch[ii]
+    if (is.null(obs$par$cex))
+      obs$par$cex <- Dotpoints$cex[ii]
+    if (is.null(obs$par$col))
+      obs$par$col <- Dotpoints$col[ii]
+    if (is.null(obs$par$bg))
+      obs$par$bg  <- Dotpoints$bg[ii]
+  }
+  if (!missing(subset)){
+    e <- substitute(subset)
+    r <- eval(e, as.data.frame(x), parent.frame())
+    if (is.numeric(r)) {
+      isub <- r
+    } else {
+      if (!is.logical(r))
+        stop("'subset' must evaluate to logical or be a vector with integers")
+      isub <- r & !is.na(r)
+    }
+  } else {
+    isub <- TRUE
+  }
+
+  # LOOP for each (set of) output variables (and y-axes)
+  if (np > 1)
+    par(mar = c(5.1, 4.1, 4.1, 2.1) + c(0, (np-1)*4, 0, 0))
+
+  ii <- 1
+  for (ip in 1 : np) {
+
+    ix  <- xWhich[[ip]]     # position of y-variables in 'x'
+    iL  <- length(ix)
+    iip <- ii:(ii+iL-1)     # for dotpoints
+    ii  <- ii + iL
+    io <- obs$Which[iip]
+
+    # plotting parameters for matplot and axes
+    dotmain   <- extractdots(Dotmain, ip)
+    if (is.null(dotmain$axes))       dotmain$axes <- FALSE
+    if (is.null(dotmain$frame.plot)) dotmain$frame.plot <- TRUE
+
+    dotpoints <- extractdots(Dotpoints, iip)    # for all variables
+
+    Xlog <- Ylog <- FALSE
+    if (! is.null(dotmain$log)) {
+      Ylog  <- length(grep("y",dotmain$log))
+      Xlog  <- length(grep("x",dotmain$log))
+    }
+
+    SetRangeMat <- function(lim, x, isub, ix, obs, io, Log) {
+
+     if ( is.null (lim)) {
+      yrange <- Range(NULL, as.vector(x[isub, ix]), Log)
+      if (! is.na(io[1])) yrange <- Range(yrange, as.vector(obs$dat[,io]), Log)
+     } else
+       yrange  <- lim
+
+    return(yrange)
+    }
+
+    dotmain$ylim <- SetRangeMat(yylim[[ip]], x, isub, ix, obs, io, Ylog)
+    dotmain$xlim <- SetRangeMat(xxlim[[ip]], x, isub,  t, obs, io, Xlog)
+
+    Ylab <- dotmain$ylab
+    dotmain$ylab <- ""
+    if (ip > 1) {
+      par(new = TRUE)
+      dotmain$xlab <- dotmain$main <- ""
+    }
+
+    do.call("matplot", c(alist(x[isub, t], x[isub, ix]), dotmain, dotpoints))
+    if (ip == 1)
+      axis(1, cex = dotmain$cex.axis)
+
+    cex <- ifelse (is.null(dotmain$cex.lab), 0.9, 0.9*dotmain$cex.lab)
+    bL <- 4*(ip-1)
+    axis(side = 2, line = bL, cex = dotmain$cex.axis)
+    mtext(side = 2, line = bL+2, Ylab, cex = cex)
+    if (! is.na(io[1]))
+      for (j in 1: length(io)) {
+        i <- which (obs$Which == io[j])
+        if (length (i.obs <- obs$pos[i, 1]:obs$pos[i, 2]) > 0)
+          do.call("points", c(alist(obs$dat[i.obs, 1], obs$dat[i.obs, io[j]]),
+                extractdots(obs$par, j) ))
+      }
+  }
+
+  if (is.null(legend))
+    legend <- list(x = "topright")
+
+  if (is.list(legend)){  # can also be FALSE
+    if (length(legend$legend))
+      L <- legend$legend
+    else
+      L <- vn2
+    legend$legend <- NULL
+    if (is.null(legend$x))
+      legend$x <- "topright"
+    lty <- Dotpoints$lty
+    pch <- Dotpoints$pch
+    lty[Dotpoints$type == "p"] <- NA
+    pch[Dotpoints$type == "l"] <- NA
+    do.call ("legend", c(legend, alist(lty = lty, lwd = Dotpoints$lwd,
+             pch =pch, col = Dotpoints$col, pt.bg =Dotpoints$bg,
+             legend = L)))
+  }
+}
+
 
 ## =============================================================================
 ##  to draw a legend
