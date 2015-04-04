@@ -1,7 +1,7 @@
 \name{plot.deSolve}
 \alias{plot.deSolve}
 \alias{plot.1D}
-\alias{matplot.deSolve}
+\alias{matplot}
 \alias{matplot.1D}
 \alias{hist.deSolve}
 \alias{image.deSolve}
@@ -59,9 +59,6 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
     page of plots is necessary and the current graphics device is set
     interactive, see \code{\link{par}(ask)} and
     \code{\link{dev.interactive}}.}
-  \item{legend }{a \code{list} with arguments passed to R-function \link{legend}.
-  }
-
   \item{add.contour }{if \code{TRUE}, will add contours to the image plot.}
 
   \item{method }{the name of the plotting method to use, one of "image", 
@@ -107,6 +104,8 @@ matplot.1D (x, select = NULL, which = select, ask = NULL,
   }
   \item{legend }{if \code{TRUE}, a color legend will be drawn on the right 
     of each image.
+    For use with \code{matplot}:
+    a \code{list} with arguments passed to R-function \link{legend}.
   }
   \item{arr }{if \code{TRUE}, and the output is from a 2-D or 3-D model, 
     an array will be returned with dimension = 
