@@ -318,7 +318,7 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     # column indices should be sorted...
     rr  <- inz[,2]
     if (min(rr[2:nnz]-rr[1:(nnz-1)])<0)
-      stop ("cannot proceed: row indices in inz should be sorted")
+      stop ("cannot proceed: column indices (2nd column of inz) should be sorted")
 
     for(i in 1:n)  {
       ii <- which (rr==i)
