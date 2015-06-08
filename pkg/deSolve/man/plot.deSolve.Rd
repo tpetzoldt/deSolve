@@ -2,6 +2,7 @@
 \alias{plot.deSolve}
 \alias{plot.1D}
 \alias{matplot}
+\alias{matplot.deSolve}
 \alias{matplot.1D}
 \alias{hist.deSolve}
 \alias{image.deSolve}
@@ -30,7 +31,7 @@ plot.1D (x, \dots, select = NULL, which = select, ask = NULL,
          obs = NULL, obspar = list(), grid = NULL,
          xyswap = FALSE, delay = 0, vertical = FALSE, subset = NULL)
 
-matplot.1D (x, select = NULL, which = select, ask = NULL,
+\method{matplot}{1D}(x, select = NULL, which = select, ask = NULL,
          obs = NULL, obspar = list(), grid = NULL,
          xyswap = FALSE, vertical = FALSE, subset = NULL, \dots)
 }
