@@ -13,7 +13,7 @@ Author: Karline Soetaert [aut],
         R. Woodrow Setzer [aut], 
         odepack authors [cph]
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
-Depends: R (>= 2.15.0)
+Depends: R (>= 2.15.0), methods
 Suggests: scatterplot3d
 Description: Functions that solve initial value problems of a system
         of first-order ordinary differential equations (ODE), of

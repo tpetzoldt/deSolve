@@ -4,6 +4,7 @@
 \alias{matplot}
 \alias{matplot.deSolve}
 \alias{matplot.1D}
+\alias{matplot,deSolve-method}
 \alias{hist.deSolve}
 \alias{image.deSolve}
 \alias{subset.deSolve}
@@ -31,7 +32,7 @@ plot.1D (x, \dots, select = NULL, which = select, ask = NULL,
          obs = NULL, obspar = list(), grid = NULL,
          xyswap = FALSE, delay = 0, vertical = FALSE, subset = NULL)
 
-\method{matplot}{1D}(x, select = NULL, which = select, ask = NULL,
+matplot.1D(x, select = NULL, which = select, ask = NULL,
          obs = NULL, obspar = list(), grid = NULL,
          xyswap = FALSE, vertical = FALSE, subset = NULL, \dots)
 }
@@ -189,9 +190,15 @@ plot.1D (x, \dots, select = NULL, which = select, ask = NULL,
 }
 
 \seealso{
- \code{\link{print.deSolve}}, \code{\link{ode}},  \code{\link{deSolve}}  
+ \code{\link{deSolve}}, \code{\link{ode}}, \code{\link{print.deSolve}},
 
- \code{\link{ode.2D}},  for an example of using \code{subset} with 
+ \code{\link[graphics]{hist}}
+ \code{\link[graphics]{image}}
+ \code{\link[graphics]{matplot}},
+ \code{\link[graphics]{plot}.default}
+ for the underlying functions from package \pkg{graphics},
+ 
+ \code{\link{ode.2D}}, for an example of using \code{subset} with
  \code{arr = TRUE}.  
 }
 \examples{
