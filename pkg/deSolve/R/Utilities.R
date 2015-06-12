@@ -754,9 +754,6 @@ plot.1D <- function (x, ... , select= NULL, which = select, ask = NULL,
 
   np <- length(Which)
 
-  if (! is.null(att$lengthvar))
-    varnames <- c(varnames, names(att$lengthvar)[-1])
-
   Select <- select1dvar(Which, varnames, att)
   xWhich <- Select$Which
 
