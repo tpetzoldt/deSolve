@@ -219,7 +219,7 @@ int initEvents(SEXP elist, SEXP eventfunc, int nroot) {
      i = LENGTH(Time);
      timeevent = (double *) R_alloc((int) i+1, sizeof(double));
      for (j = 0; j < i; j++) timeevent[j] = REAL(Time)[j];
-     timeevent[i] = 0;
+     timeevent[i] = timeevent[0] - 1; /* cap the event timer with an event that can't possibly be reached */
       
      if (typeevent == 1) {  
        /* specified in a data.frame */
@@ -267,7 +267,7 @@ void updateevent(double *t, double *y, int *istate) {
           else if (method == 3) 
             y[svar] = y[svar] * value;
           tEvent = timeevent[++iEvent]; 
-        } while ((tEvent == *t) && (iEvent < nEvent));
+        } while (tEvent == *t);
       } else {                  /* a root event or specific times */
         event_func(&n_eq, t, y);
         if (!rootevent)
