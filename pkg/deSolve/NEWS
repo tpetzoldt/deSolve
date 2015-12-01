@@ -1,3 +1,8 @@
+Changes version 1.13
+================================
+ o fix bug related to negative event time
+   (patch supplied by J. Stott)
+
 Changes version 1.12
 ================================
  o new functions matplot.deSolve and matplot.1D
