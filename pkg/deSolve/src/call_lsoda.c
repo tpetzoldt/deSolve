@@ -431,8 +431,13 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     tin = REAL(times)[it];
     tout = REAL(times)[it+1];
     if (isEvent) { 
-      rwork[0] = tout;
       updateevent(&tin, xytmp, &istate);
+      // check tEvent > tout to account for root events
+      if ((iEvent < nEvent)&&(tEvent > tout)) {
+        rwork[0] = tEvent;
+      } else {
+        rwork[0] = REAL(times)[nt-1];
+      }
     }
     repcount = 0;
     do  {
