@@ -202,7 +202,7 @@ yini <- c(v1 = 1, v2 = 2)
 times <- seq(0, 10, by = 0.1)
 
 out <- ode(func = derivs, y = yini, times = times, parms = NULL,
-           events = list(func = eventfun, time = 1:9) )
+           events = list(func = eventfun, time = c(1:9, 2.2, 2.4)) )
 plot(out, type = "l")
 
 ## =============================================================================
