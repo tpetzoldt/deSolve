@@ -116,6 +116,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
       if (is.null(ipar)) ipar <- 0
       if (is.null(rpar)) rpar <- 0
+      ## preparation for events in R if function is a DLL (added by KS)
       if (is.function(Eventfunc))
         rho <- environment(Eventfunc)
       else
