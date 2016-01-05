@@ -348,7 +348,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       /* needed to communicate with R */
       R_deriv_func = derivfunc;
   }
-      R_envir = rho;           /* karline: this to allow merging compiled and R-code (e.g. events)*/
+  R_envir = rho;           /* karline: this to allow merging compiled and R-code (e.g. events)*/
 
   if (!isNull(jacfunc) && solver != 3 && solver != 7) { /* lsodes uses jac_vec */
     if (isDll)
