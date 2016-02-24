@@ -9,3 +9,5 @@ vignettes/jss.bst
 work
 incoming
 todo.txt
+^.*\.Rproj$
+^\.Rproj\.user$

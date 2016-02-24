@@ -23,7 +23,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
          if (! is.null(events))
            events$func <- func$eventfunc
          else
-           events <- list(func = func$eventfunc)  
+           events <- list(func = func$eventfunc)
       }
      if (!is.null(func$initfunc)) initfunc <- func$initfunc
      if (!is.null(func$dllname))  dllname <- func$dllname
@@ -43,7 +43,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     n <- length(y)
 
     if (maxsteps < 0)       stop("maxsteps must be positive")
-    if (!is.finite(maxsteps)) maxsteps <- .Machine$integer.max
+    if (!is.finite(maxsteps)) maxsteps <- .Machine$integer.max - 1
     if (is.null(tcrit)) tcrit <- max(times)
 
     ## ToDo: check for nonsense-combinations of densetype and d
@@ -60,7 +60,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     ## - starting from deSolve >= 1.7 this interpolation method
     ##   is disabled by default.
     ## - Dense output for special RK methods is enabled and
-    ## all others adjust internal time steps to hit external time steps
+    ##   all others adjust internal time steps to hit external time steps
     if (is.null(method$nknots)) {
       method$nknots <- 0L
     } else {
@@ -95,13 +95,14 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     Initfunc <- NULL
     Eventfunc <- NULL
     events <- checkevents(events, times, Ynames, dllname)
-    if (! is.null(events$newTimes)) times <- events$newTimes    
+    if (! is.null(events$newTimes)) times <- events$newTimes
 
     ## dummy forcings
     flist    <-list(fmat = 0, tmat = 0, imat = 0, ModelForc = NULL)
     Nstates <- length(y) # assume length of states is correct
 
-    if (is.character(func) | class(func) == "CFunc") {   # function specified in a DLL or inline compiled
+    ## function specified in a DLL or inline compiled
+    if (is.character(func) | class(func) == "CFunc") {
       DLL <- checkDLL(func, NULL, dllname,
                       initfunc, verbose, nout, outnames)
 
@@ -124,7 +125,7 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
 
     } else {
       ## parameter initialisation not needed if function is not a DLL
-      initpar <- NULL 
+      initpar <- NULL
       rho <- environment(func)
 
       ## func is overruled, either including ynames, or not
@@ -168,7 +169,16 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     rtol <- rep(rtol, length.out = Nstates)
 
     ## Number of steps until the solver gives up
-    nsteps  <- min(.Machine$integer.max, maxsteps * length(times))
+    # nsteps  <- min(.Machine$integer.max -1, maxsteps * length(times))
+
+    ## changed in v.1.13: total number of time steps is set to
+    ## average number per time step * number of time steps
+    ## but not less than required for the largest time step with given hini
+
+    nsteps  <- min(.Machine$integer.max - 1,
+                   max(maxsteps * length(times),    # max. total number of steps
+                       max(diff(times))/hini + 1)   # but not less than required
+               )
 
     vrb <- FALSE # TRUE forces some internal debugging output of the C code
     ## Implicit methods
