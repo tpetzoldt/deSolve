@@ -10,6 +10,17 @@ rk <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   rpar = NULL,  ipar = NULL, nout = 0, outnames = NULL, forcings = NULL,
   initforc = NULL, fcontrol = NULL, events = NULL, ...) {
 
+  ## check for unsupported solver options
+  dots   <- list(...); nmdots <- names(dots)
+  if(any(c("jacfunc", "jactype", "mf", "bandup", "banddown") %in% nmdots)) {
+    warning("Euler and Runge-Kutta solvers make no use of a Jacobian,\n",
+            "  ('jacfunc', 'jactype', 'mf', 'bandup' and 'banddown' are ignored).\n")
+  }
+  if(any(c("lags") %in% nmdots)) {
+    warning("lags are not yet implemented for Euler and Runge-Kutta solvers,\n",
+            "  (argument 'lags' is ignored).\n")
+  }
+
   if (is.list(func)) {            # a list of compiled functions
       if (!is.null(initfunc) & "initfunc" %in% names(func))
          stop("If 'func' is a list that contains initfunc, argument 'initfunc' should be NULL")
