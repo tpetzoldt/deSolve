@@ -29,7 +29,7 @@
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
     Version: \tab 1.13\cr
-    Date:    \tab 2016-02-24\cr
+    Date:    \tab 2016-02-29\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
@@ -72,7 +72,7 @@
   Karline Soetaert, Thomas Petzoldt (2011): Solving ODEs, DAEs, DDEs and
   PDEs in R. Journal of Numerical Analysis, Industrial and Applied
   Mathematics (JNAIAM) 6(1-2),
-  51-65. \href{http://jnaiam.org/uploads/jnaiam_6_4.pdf}{pdf}
+  51-65. %\href{http://jnaiam.org/uploads/jnaiam_6_4.pdf}{pdf}
 
   Karline Soetaert, Jeff Cash, Francesca Mazzia, (2012):
   Solving Differential Equations in R. Springer, 248 pp.
