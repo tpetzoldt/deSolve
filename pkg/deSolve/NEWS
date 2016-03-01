@@ -1,14 +1,14 @@
 Changes version 1.13
 ================================
- o observed data and plot.deSolve / matplot for multiple outputs  (karline)
- o combining compiled code function with R code event function (karline)
-   - currently only for odepack solvers,
-   - experimental: rk solvers
- o check sorting of event times (karline)
+ o observed data and plot.deSolve / matplot for multiple outputs  (Karline)
+ o combining compiled code function with R code event function (Karline)
+ o check sorting of event times (Karline)
  o fix bug related to negative event time (patch supplied by J. Stott)
+ o relax setting of tcrit to make integration with events slightly faster
+   (patch from J. Stott)
  o adapt maxstep calculation for rk methods,
    print a warning if maxsteps is exceeded, fix diagnostics (Thomas)
- o more argument checking for rk solvers
+ o more argument checking for rk solvers (Thomas)
  o add reference to book of Soetaert, Cash and Mazzia (2012)
 
 Changes version 1.12
