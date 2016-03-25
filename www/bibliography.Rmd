@@ -1,0 +1,57 @@
+---
+title: "deSolve Bibliography"
+output: html_document
+bibliography: deSolve.bib
+---
+
+<head><base target="_top" /></head>
+
+The following bibliography may serve as a starting point for further reading. 
+It can be downloaded as bibtex <a href="deSolve.bib", target="_top">.bib</a> file.
+
+### From the package authors:
+
+* Manuals: @deSolve-Manual,@deSolve-introduction,@compiledCode
+
+* Papers: @Soetaert2010-JSS-deSolve,@Soetaert2010-JSS-FME,@Soetaert2010-RJournal
+
+* Papers of related software: @Mazzia2014-bvpSolve,@Soetaert2012,@Setzer2001,@Soetaert2010-ReacTran
+
+* Books: @Soetaert2009-Book,@Soetaert2012-Book
+
+* Conferences: @Soetaert-Rennes,@Petzoldt-Rennes,@Petzoldt-UCLA,@Petzoldt-Warwick,
+@Soetaert-ICNAAM,@Soetaert-Tutorial-Warwick,@Soetaert2014,@Tutorial-UCLA,@Soetaert2010-AIP
+
+* Books from other authors: @Ellner2006,Stevens2009
+
+
+### References to the Original Algorithms
+
+
+
+### Related Software
+
+* Related packages from the authors of deSolve: 
+[rootSolve](http://cran.r-project.org/package=rootSolve), 
+[bvpSolve](http://cran.r-project.org/package=bvpSolve), 
+[FME](http://fme.r-forge.r-project.org/), 
+[ReacTran](http://cran.r-project.org/package=ReacTran), 
+[marelac](http://cran.r-project.org/package=marelac), 
+[simecol](http://simecol.r-forge.r-project.org), 
+[ccSolve](https://github.com/karlines/ccSolve), 
+[rodeo](https://github.com/dkneis/rodeo)
+
+* The [CRAN Task View **Differential Equations**](https://cran.r-project.org/web/views/DifferentialEquations.html)
+gives an even more comprehensive listing, including related work of other authors. 
+
+
+### Papers citing deSolve
+
+* Ask [Google Scholar](https://scholar.google.de/scholar?cites=7659476596233292461) who is citing @Soetaert2010-JSS-deSolve.
+
+
+## Bibliography
+
+
+
+

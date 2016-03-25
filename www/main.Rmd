@@ -1,0 +1,79 @@
+---
+title: "Package deSolve"
+author: "Karline Soetaert, R. Woodrow Setzer and Thomas Petzoldt"
+output: html_document
+bibliography: deSolve.bib
+---
+
+Package **deSolve** is an add-on package for the open source data analysis system 
+<a href="http://www.r-project.org", target="_top">**R**</a> for the numerical treatment of systems of differential equations.
+
+The package contains functions that solve initial value problems of a system of first-order ordinary differential equations (ODE), of partial differential equations (PDE), of differential algebraic equations (DAE), and of delay differential equations (DDE). The functions provide an interface to the FORTRAN functions lsoda, lsodar, lsode, lsodes of the ODEPACK collection, to the FORTRAN functions dvode, zvode, daspk and radau5, and a C-implementation of solvers of the Runge-Kutta family with fixed or variable time steps. The package contains also routines designed for solving ODEs resulting from 1-D, 2-D and 3-D partial differential equations (PDE) that have been converted to ODEs by numerical differencing. 
+
+## Software Download
+
+* The package can be installed directly from within <a href="http://www.r-project.org", target="_top">**R**</a>  or <a href="http://www.rstudio.com", target="_top">**RStudio**</a>  like any other package. 
+
+* Source code and main documentation of the latest release are available from the *Comprehensive R Archive Network* 
+<a href="http://cran.r-project.org/web/packages/deSolve" target="_top">**(CRAN)**</a>. 
+
+* Source code of the development version is available from <a href="http://r-forge.r-project.org/projects/desolve/" target="_top">**R-Forge**</a>.
+
+## Documentation
+
+### Manuals
+
+The manuals are directly contained in the **deSolve** package::
+
+* [Reference Manual](http://cran.r-project.org/web/packages/deSolve/deSolve.pdf): help pages of all **deSolve** functions.
+* [Solving Initial Value Differential Equations in R](http://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf): introductory tutorial about using the package.
+* [Writing Code in Compiled Languages](http://cran.r-project.org/web/packages/deSolve/vignettes/compiledCode.pdf): explains how performance can be improved with C or Fortran codes.
+
+### Tutorials
+
+* The [slides](slides/tutorial.pdf) of our pre-conference tutorials at the UseR-conferences in Warwick (UK) and Los Angeles (USA) contain an overview and practical examples in a relatively compact form.
+
+
+### Papers and Books
+
+* Compact, citeable descriptions can be found in our 
+<a href="http://journal.r-project.org/archive/2010-2/RJournal_2010-2_Soetaert~et~al.pdf" target="_top">R Journal paper</a>, 
+in the 
+<a href="http://www.jstatsoft.org/v33/i09" target="_top">JSS (Journal of Statistical Software) paper</a> and in the 
+<a href="http://dx.doi.org/10.1063/1.3498463" target="_top">ICNAAM Conference Proceedings</a>
+
+* The following books about **deSolve** and related packages go more into the details. 
+Practical applications are described in <a href="http://www.springer.com/cn/book/9781402086236" target="_top">Soetaert and Hermann (2009)</a>, 
+while mathematical fundamentals of and many additional examples can be found in 
+<a href="http://www.springer.com/cn/book/9783642280696" target="_top">Soetaert, Cash and Mazzia (2012)</a>.
+
+* The bibliography and additional web links can be found [**here**](bibliography.html).
+
+
+### Citation
+
+A big amount of working hours and spare time went into this package. It is provided free of charge under the GPL 2 or GPL 3 license. Please cite our JSS paper and please don't forget the original authors of the original algorithms, especially ODEPACK. The bibliography can be found [**here**](bibliography.html).
+
+
+## Mailing List
+
+All questions related to **deSolve** and other related questions about dynamic modelling in **R** can be directed to the
+[R-sig-dynamic-models](https://stat.ethz.ch/mailman/listinfo/r-sig-dynamic-models) mailing list. Directing your questions to this list is recommended, as there is now a broad basis of users and developers that can help you, and your questions can contribute to the knowledge base.
+
+
+## Acknowledgments
+
+The authors of this package want to thank R. Woodrow Setzer who developed and to Martin Maechler, who contributed
+to the predecessor package **odesolve**. We are grateful to the R Core Team who made this possible and to the whole
+community for their tools, documentations, discussions and suggestions.
+
+----
+
+2016-03-25 The deSolve authors.
+
+
+
+
+
+
+
