@@ -1,18 +1,20 @@
 ---
 title: "Package deSolve"
 author: "Karline Soetaert, R. Woodrow Setzer and Thomas Petzoldt"
-output: html_document
+output: 
+  html_document:
+    theme: cosmo
 bibliography: deSolve.bib
 ---
 
-Package **deSolve** is an add-on package for the open source data analysis system 
-<a href="http://www.r-project.org", target="_top">**R**</a> for the numerical treatment of systems of differential equations.
+Package **deSolve** is an add-on package of the open source data analysis system 
+<a href="http://www.r-project.org" target="_top">**R**</a> for the numerical treatment of systems of differential equations.
 
 The package contains functions that solve initial value problems of a system of first-order ordinary differential equations (ODE), of partial differential equations (PDE), of differential algebraic equations (DAE), and of delay differential equations (DDE). The functions provide an interface to the FORTRAN functions lsoda, lsodar, lsode, lsodes of the ODEPACK collection, to the FORTRAN functions dvode, zvode, daspk and radau5, and a C-implementation of solvers of the Runge-Kutta family with fixed or variable time steps. The package contains also routines designed for solving ODEs resulting from 1-D, 2-D and 3-D partial differential equations (PDE) that have been converted to ODEs by numerical differencing. 
 
 ## Software Download
 
-* The package can be installed directly from within <a href="http://www.r-project.org", target="_top">**R**</a>  or <a href="http://www.rstudio.com", target="_top">**RStudio**</a>  like any other package. 
+* The package can be installed directly from within <a href="http://www.r-project.org" target="_top">**R**</a>  or <a href="http://www.rstudio.com" target="_top">**RStudio**</a>  like any other package. 
 
 * Source code and main documentation of the latest release are available from the *Comprehensive R Archive Network* 
 <a href="http://cran.r-project.org/web/packages/deSolve" target="_top">**(CRAN)**</a>. 
@@ -69,7 +71,7 @@ community for their tools, documentations, discussions and suggestions.
 
 ----
 
-2016-03-25 The deSolve authors.
+2016-04-07 The deSolve authors.
 
 
 

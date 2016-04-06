@@ -1,35 +1,45 @@
 ---
 title: "deSolve Bibliography"
-output: html_document
+output: 
+  html_document:
+    theme: cosmo
 bibliography: deSolve.bib
 ---
 
 <head><base target="_top" /></head>
 
 The following bibliography may serve as a starting point for further reading. 
-It can be downloaded as bibtex <a href="deSolve.bib", target="_top">.bib</a> file.
+It can be downloaded as bibtex [.bib-file](deSolve.bib).
 
-### From the package authors:
+### Package documentation
 
-* Manuals: @deSolve-Manual,@deSolve-introduction,@compiledCode
+* **Manuals:** @deSolve-Manual, @deSolve-introduction, @compiledCode
 
-* Papers: @Soetaert2010-JSS-deSolve,@Soetaert2010-JSS-FME,@Soetaert2010-RJournal
+* **Papers:** @Soetaert2010-JSS-deSolve, @Soetaert2010-JSS-FME, @Soetaert2010-RJournal
 
-* Papers of related software: @Mazzia2014-bvpSolve,@Soetaert2012,@Setzer2001,@Soetaert2010-ReacTran
+* **Books:** @Soetaert2009-Book, @Soetaert2012-Book
 
-* Books: @Soetaert2009-Book,@Soetaert2012-Book
+* **Conferences:** @Soetaert-Rennes, @Petzoldt-Rennes, @Petzoldt-UCLA, @Petzoldt-Warwick,
+@Soetaert-ICNAAM, @Soetaert-Tutorial-Warwick, @Soetaert2014, @Tutorial-UCLA, @Soetaert2010-AIP
 
-* Conferences: @Soetaert-Rennes,@Petzoldt-Rennes,@Petzoldt-UCLA,@Petzoldt-Warwick,
-@Soetaert-ICNAAM,@Soetaert-Tutorial-Warwick,@Soetaert2014,@Tutorial-UCLA,@Soetaert2010-AIP
+* **Papers about related software:** @Setzer2001, @Mazzia2014-bvpSolve, @Soetaert2012, @Soetaert2010-ReacTran
 
-* Books from other authors: @Ellner2006,Stevens2009
-
-
-### References to the Original Algorithms
+* **Some books from other authors:** @Ellner2006,Stevens2009
 
 
+### References of the original algorithms
 
-### Related Software
+* **Runge-Kutta algorithms:** @Kutta1901, @Fehlberg1967, @Dormand1980, 
+@Prince1981, @Butcher1987, @Bogacki1989, @Cash1990, @EngelnMuellges1996, @Press2007
+
+
+* **ODEPACK algorithms:** @Hindmarsh1983, @Petzold1983, @Petzold1983a, @Brown1989,
+@BrownHindmarsh1989, @Brown1994, @Brenan1996, @BrownHindmarshPetzold1998, @Hairer2009, @Hairer2010
+
+Please consult the original publications for gaining full
+understanding of the algorithms.
+
+### Related software
 
 * Related packages from the authors of deSolve: 
 [rootSolve](http://cran.r-project.org/package=rootSolve), 
@@ -47,7 +57,9 @@ gives an even more comprehensive listing, including related work of other author
 
 ### Papers citing deSolve
 
-* Ask [Google Scholar](https://scholar.google.de/scholar?cites=7659476596233292461) who is citing @Soetaert2010-JSS-deSolve.
+* Ask
+  [Google Scholar](https://scholar.google.de/scholar?cites=7659476596233292461)
+  who is citing our JSS paper
 
 
 ## Bibliography
