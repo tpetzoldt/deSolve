@@ -4,6 +4,7 @@ output:
   html_document:
     theme: cosmo
 bibliography: deSolve.bib
+csl: plos.csl
 ---
 
 <head><base target="_top" /></head>
@@ -24,7 +25,7 @@ It can be downloaded as bibtex [.bib-file](deSolve.bib).
 
 * **Papers about related software:** @Setzer2001, @Mazzia2014-bvpSolve, @Soetaert2012, @Soetaert2010-ReacTran
 
-* **Some books from other authors:** @Ellner2006,Stevens2009
+* **Some books from other authors:** @Ellner2006,@Stevens2009
 
 
 ### References of the original algorithms
