@@ -4,7 +4,7 @@
 \alias{matplot.0D}
 \alias{matplot.deSolve}
 \alias{matplot.1D}
-\alias{matplot,deSolve-method}
+%\alias{matplot,deSolve-method}
 \alias{hist.deSolve}
 \alias{image.deSolve}
 \alias{subset.deSolve}
@@ -17,9 +17,10 @@ Plot the output of numeric integration routines.
 \usage{
 \method{plot}{deSolve}(x, \dots, select = NULL, which = select, ask = NULL,
               obs = NULL, obspar = list(), subset = NULL)
-\method{matplot}{deSolve}(x, \dots, select = NULL, which = select,
-              obs = NULL, obspar = list(), subset = NULL,
-              legend = list(x = "topright"))
+%% thpe: since 1.14 not anymore exported
+%\method{matplot}{deSolve}(x, \dots, select = NULL, which = select,
+%              obs = NULL, obspar = list(), subset = NULL,
+%              legend = list(x = "topright"))
 \method{hist}{deSolve}(x, select = 1:(ncol(x)-1), which  = select, ask = NULL,
               subset = NULL, \dots)
 \method{image}{deSolve}(x, select = NULL, which = select, ask = NULL,

@@ -371,4 +371,4 @@ setMethod("matplot", list(x = "deSolve"), matplot.deSolve)
 ##   - do not anymore export matplot
 ##   - instead, use exported 'matplot.deSolve' or alias 'matplot.0D'
 
-matplot.0D <- matplot
+matplot.0D <- matplot.deSolve
