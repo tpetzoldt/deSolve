@@ -18,7 +18,7 @@ c performs the matrix by matrix product B = Diag * A  (in place)
 c-----------------------------------------------------------------------
 c on entry:
 c ---------
-c nrow	= integer. The row dimension of A
+c nrow  = integer. The row dimension of A
 c
 c job   = integer. job indicator. Job=0 means get array b only
 c         job = 1 means get b, and the integer arrays ib, jb.
@@ -34,7 +34,7 @@ c----------
 c
 c b,
 c jb,
-c ib	= resulting matrix B in compressed sparse row sparse format.
+c ib   = resulting matrix B in compressed sparse row sparse format.
 c
 c Notes:
 c-------
@@ -110,8 +110,8 @@ c this subroutine transposes a matrix stored in a, ja, ia format.
 c ---------------
 c on entry:
 c----------
-c n	= dimension of A.
-c job	= integer to indicate whether to fill the values (job.eq.1) of the
+c n     = dimension of A.
+c job   = integer to indicate whether to fill the values (job.eq.1) of the
 c         matrix ao or only the pattern., i.e.,ia, and ja (job .ne.1)
 c
 c ipos  = starting position in ao, jao of the transposed matrix.
@@ -119,21 +119,21 @@ c         the iao array takes this into account (thus iao(1) is set to ipos.)
 c         Note: this may be useful if one needs to append the data structure
 c         of the transpose to that of A. In this case use for example
 c                call csrcsc (n,1,ia(n+1),a,ja,ia,a,ja,ia(n+2))
-c	  for any other normal usage, enter ipos=1.
-c a	= real array of length nnz (nnz=number of nonzero elements in input
+c         for any other normal usage, enter ipos=1.
+c a     = real array of length nnz (nnz=number of nonzero elements in input
 c         matrix) containing the nonzero elements.
-c ja	= integer array of length nnz containing the column positions
-c 	  of the corresponding elements in a.
-c ia	= integer of size n+1. ia(k) contains the position in a, ja of
-c	  the beginning of the k-th row.
+c ja    = integer array of length nnz containing the column positions
+c         of the corresponding elements in a.
+c ia    = integer of size n+1. ia(k) contains the position in a, ja of
+c         the beginning of the k-th row.
 c
 c on return:
 c ----------
 c output arguments:
-c ao	= real array of size nzz containing the "a" part of the transpose
-c jao	= integer array of size nnz containing the column indices.
-c iao	= integer array of size n+1 containing the "ia" index array of
-c	  the transpose.
+c ao    = real array of size nzz containing the "a" part of the transpose
+c jao   = integer array of size nnz containing the column indices.
+c iao   = integer array of size n+1 containing the "ia" index array of
+c         the transpose.
 c
 c-----------------------------------------------------------------------
       call csrcsc2 (n,n,job,ipos,a,ja,ia,ao,jao,iao)
@@ -154,9 +154,9 @@ c this subroutine transposes a matrix stored in a, ja, ia format.
 c ---------------
 c on entry:
 c----------
-c n	= number of rows of CSR matrix.
+c n     = number of rows of CSR matrix.
 c n2    = number of columns of CSC matrix.
-c job	= integer to indicate whether to fill the values (job.eq.1) of the
+c job   = integer to indicate whether to fill the values (job.eq.1) of the
 c         matrix ao or only the pattern., i.e.,ia, and ja (job .ne.1)
 c
 c ipos  = starting position in ao, jao of the transposed matrix.
@@ -164,21 +164,21 @@ c         the iao array takes this into account (thus iao(1) is set to ipos.)
 c         Note: this may be useful if one needs to append the data structure
 c         of the transpose to that of A. In this case use for example
 c                call csrcsc2 (n,n,1,ia(n+1),a,ja,ia,a,ja,ia(n+2))
-c	  for any other normal usage, enter ipos=1.
-c a	= real array of length nnz (nnz=number of nonzero elements in input
+c         for any other normal usage, enter ipos=1.
+c a     = real array of length nnz (nnz=number of nonzero elements in input
 c         matrix) containing the nonzero elements.
-c ja	= integer array of length nnz containing the column positions
-c 	  of the corresponding elements in a.
-c ia	= integer of size n+1. ia(k) contains the position in a, ja of
-c	  the beginning of the k-th row.
+c ja    = integer array of length nnz containing the column positions
+c         of the corresponding elements in a.
+c ia    = integer of size n+1. ia(k) contains the position in a, ja of
+c         the beginning of the k-th row.
 c
 c on return:
 c ----------
 c output arguments:
-c ao	= real array of size nzz containing the "a" part of the transpose
-c jao	= integer array of size nnz containing the column indices.
-c iao	= integer array of size n+1 containing the "ia" index array of
-c	  the transpose.
+c ao    = real array of size nzz containing the "a" part of the transpose
+c jao   = integer array of size nnz containing the column indices.
+c iao   = integer array of size n+1 containing the "ia" index array of
+c         the transpose.
 c
 c-----------------------------------------------------------------------
 c----------------- compute lengths of rows of transp(A) ----------------
@@ -242,19 +242,19 @@ c Youcef Saad -- recoded Jan 28, 1991.
 c-----------------------------------------------------------------------
 c on entry:
 c----------
-c n 	= dimension of the matrix
+c n      = dimension of the matrix
 c a, ja, ia = input matrix in csr format
-c perm 	= integer array of length nrow containing the permutation arrays
-c	  for the rows: perm(i) is the destination of row i in the
-c         permuted matrix.
+c perm    = integer array of length nrow containing the permutation arrays
+c           for the rows: perm(i) is the destination of row i in the
+c           permuted matrix.
 c         ---> a(i,j) in the original matrix becomes a(perm(i),j)
 c         in the output  matrix.
 c
-c job	= integer indicating the work to be done:
-c 		job = 1	permute a, ja, ia into ao, jao, iao
+c job     = integer indicating the work to be done:
+c       job = 1   permute a, ja, ia into ao, jao, iao
 c                       (including the copying of real values ao and
 c                       the array iao).
-c 		job .ne. 1 :  ignore real values.
+c       job .ne. 1 :  ignore real values.
 c                     (in which case arrays a and ao are not needed nor
 c                      used).
 c
@@ -315,20 +315,20 @@ c Y. Saad, May 2, 1990 / modified Jan. 28, 1991.
 c-----------------------------------------------------------------------
 c on entry:
 c----------
-c nrow 	= row dimension of the matrix
+c nrow  = row dimension of the matrix
 c
 c a, ja, ia = input matrix in csr format.
 c
-c perm	= integer array of length ncol (number of columns of A
+c perm  = integer array of length ncol (number of columns of A
 c         containing the permutation array  the columns:
 c         a(i,j) in the original matrix becomes a(i,perm(j))
 c         in the output matrix.
 c
-c job	= integer indicating the work to be done:
-c 		job = 1	permute a, ja, ia into ao, jao, iao
+c job   = integer indicating the work to be done:
+c       job = 1   permute a, ja, ia into ao, jao, iao
 c                       (including the copying of real values ao and
 c                       the array iao).
-c 		job .ne. 1 :  ignore real values ao and ignore iao.
+c       job .ne. 1 :  ignore real values ao and ignore iao.
 c
 c------------
 c on return:
@@ -378,7 +378,7 @@ c-----------------------------------------------------------------------
 c on entry:
 c----------
 c
-c n	= integer. row dimension of the matrix a.
+c n     = integer. row dimension of the matrix a.
 c a,ja,
 c    ia = matrix stored compressed sparse row format. a array skipped.
 c
@@ -413,14 +413,14 @@ c does not assume that A is sorted.
 c-----------------------------------------------------------------------
 c on entry:
 c----------
-c n	= integer = the row dimension of the matrix
+c n = integer = the row dimension of the matrix
 c a, ja,
 c    ia = matrix in compressed sparse row format.
 c
 c on return:
 c-----------
-c ml	= integer. The bandwidth of the strict lower part of A
-c mu	= integer. The bandwidth of the strict upper part of A
+c ml   = integer. The bandwidth of the strict lower part of A
+c mu   = integer. The bandwidth of the strict upper part of A
 c
 c Notes:
 c ===== ml and mu are allowed to be negative or return. This may be
@@ -458,7 +458,7 @@ c it also outputs the number of nonzero diagonals found.
 c-----------------------------------------------------------------------
 c on entry:
 c----------
-c n	= dimension of the matrix a.
+c n     = dimension of the matrix a.
 c
 c a,    ..... not needed here.
 c ja,
@@ -505,7 +505,7 @@ c gets the norms of each row of A. (choice of three norms)
 c-----------------------------------------------------------------------
 c on entry:
 c ---------
-c nrow	= integer. The row dimension of A
+c nrow  = integer. The row dimension of A
 c
 c nrm   = integer. norm indicator. nrm = 1, means 1-norm, nrm =2
 c                  means the 2-nrm, nrm = 0 means max norm
