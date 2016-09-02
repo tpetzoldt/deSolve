@@ -3607,15 +3607,15 @@ C Code for both increments equal to 1
 
       subroutine zgesl(a,lda,n,ipvt,b,job)
       integer lda,n,ipvt(1),job
-      complex*16 a(lda,*),b(*)
+      COMPLEX(KIND=8) a(lda,*),b(*)
 c
-c     zgesl solves the complex*16 system
+c     zgesl solves the COMPLEX(KIND=8) system
 c     a * x = b  or  ctrans(a) * x = b
 c     using the factors computed by zgeco or zgefa.
 c
 c     on entry
 c
-c        a       complex*16(lda, n)
+c        a       COMPLEX(KIND=8)(lda, n)
 c                the output from zgeco or zgefa.
 c
 c        lda     integer
@@ -3627,7 +3627,7 @@ c
 c        ipvt    integer(n)
 c                the pivot vector from zgeco or zgefa.
 c
-c        b       complex*16(n)
+c        b       COMPLEX(KIND=8)(n)
 c                the right hand side vector.
 c
 c        job     integer
@@ -3666,10 +3666,10 @@ c     fortran dconjg
 c
 c     internal variables
 c
-      complex*16 zdotc,t
+      COMPLEX(KIND=8) zdotc,t
       integer k,kb,l,nm1
       double precision dreal,dimag
-      complex*16 zdumr,zdumi
+      COMPLEX(KIND=8) zdumr,zdumi
       dreal(zdumr) = zdumr
       dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 c
@@ -3730,16 +3730,16 @@ c
 
       subroutine zgbfa(abd,lda,n,ml,mu,ipvt,info)
       integer lda,n,ml,mu,ipvt(*),info
-      complex*16 abd(lda,*)
+      COMPLEX(KIND=8) abd(lda,*)
 c
-c     zgbfa factors a complex*16 band matrix by elimination.
+c     zgbfa factors a COMPLEX(KIND=8) band matrix by elimination.
 c
 c     zgbfa is usually called by zgbco, but it can be called
 c     directly with a saving in time if  rcond  is not needed.
 c
 c     on entry
 c
-c        abd     complex*16(lda, n)
+c        abd     COMPLEX(KIND=8)(lda, n)
 c                contains the matrix in band storage.  the columns
 c                of the matrix are stored in the columns of  abd  and
 c                the diagonals of the matrix are stored in rows
@@ -3814,13 +3814,13 @@ c     fortran dabs,max0,min0
 c
 c     internal variables
 c
-      complex*16 t
+      COMPLEX(KIND=8) t
       integer i,izamax,i0,j,ju,jz,j0,j1,k,kp1,l,lm,m,mm,nm1
 c
-      complex*16 zdum
+      COMPLEX(KIND=8) zdum
       double precision cabs1
       double precision dreal,dimag
-      complex*16 zdumr,zdumi
+      COMPLEX(KIND=8) zdumr,zdumi
       dreal(zdumr) = zdumr
       dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
       cabs1(zdum) = dabs(dreal(zdum)) + dabs(dimag(zdum))
@@ -3912,15 +3912,15 @@ c
 
       subroutine zgbsl(abd,lda,n,ml,mu,ipvt,b,job)
       integer lda,n,ml,mu,ipvt(1),job
-      complex*16 abd(lda,*),b(*)
+      COMPLEX(KIND=8) abd(lda,*),b(*)
 c
-c     zgbsl solves the complex*16 band system
+c     zgbsl solves the COMPLEX(KIND=8) band system
 c     a * x = b  or  ctrans(a) * x = b
 c     using the factors computed by zgbco or zgbfa.
 c
 c     on entry
 c
-c        abd     complex*16(lda, n)
+c        abd     COMPLEX(KIND=8)(lda, n)
 c                the output from zgbco or zgbfa.
 c
 c        lda     integer
@@ -3938,7 +3938,7 @@ c
 c        ipvt    integer(n)
 c                the pivot vector from zgbco or zgbfa.
 c
-c        b       complex*16(n)
+c        b       COMPLEX(KIND=8)(n)
 c                the right hand side vector.
 c
 c        job     integer
@@ -3977,10 +3977,10 @@ c     fortran dconjg,min0
 c
 c     internal variables
 c
-      complex*16 zdotc,t
+      COMPLEX(KIND=8) zdotc,t
       integer k,kb,l,la,lb,lm,m,nm1
       double precision dreal,dimag
-      complex*16 zdumr,zdumi
+      COMPLEX(KIND=8) zdumr,zdumi
       dreal(zdumr) = zdumr
       dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 c
@@ -4052,9 +4052,9 @@ c
 
       subroutine zgefa(a,lda,n,ipvt,info)
       integer lda,n,ipvt(*),info
-      complex*16 a(lda,*)
+      COMPLEX(KIND=8) a(lda,*)
 c
-c     zgefa factors a complex*16 matrix by gaussian elimination.
+c     zgefa factors a COMPLEX(KIND=8) matrix by gaussian elimination.
 c
 c     zgefa is usually called by zgeco, but it can be called
 c     directly with a saving in time if  rcond  is not needed.
@@ -4062,7 +4062,7 @@ c     (time for zgeco) = (1 + 9/n)*(time for zgefa) .
 c
 c     on entry
 c
-c        a       complex*16(lda, n)
+c        a       COMPLEX(KIND=8)(lda, n)
 c                the matrix to be factored.
 c
 c        lda     integer
@@ -4100,13 +4100,13 @@ c     fortran dabs
 c
 c     internal variables
 c
-      complex*16 t
+      COMPLEX(KIND=8) t
       integer izamax,j,k,kp1,l,nm1
 c
-      complex*16 zdum
+      COMPLEX(KIND=8) zdum
       double precision cabs1
       double precision dreal,dimag
-      complex*16 zdumr,zdumi
+      COMPLEX(KIND=8) zdumr,zdumi
       dreal(zdumr) = zdumr
       dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
       cabs1(zdum) = dabs(dreal(zdum)) + dabs(dimag(zdum))
