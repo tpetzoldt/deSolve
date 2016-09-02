@@ -3223,9 +3223,9 @@ C
       subroutine elmhes(nm,n,low,igh,a,int)
 C
       integer i,j,m,n,la,nm,igh,kp1,low,mm1,mp1
-      real*8 a(nm,n)
-      real*8 x,y
-      real*8 dabs
+      real(kind=8) a(nm,n)
+      real(kind=8) x,y
+      real(kind=8) dabs
       integer int(igh)
 C
 C     this subroutine is a translation of the algol procedure elmhes,
