@@ -3,7 +3,7 @@
      1            ISTATE, IOPT, ZWORK, LZW, RWORK, LRW, IWORK, LIW,
      2            JAC, MF, RPAR, IPAR)
       EXTERNAL F, JAC
-      DOUBLE COMPLEX Y, ZWORK
+      COMPLEX(KIND=8) Y, ZWORK
       DOUBLE PRECISION T, TOUT, RTOL, ATOL, RWORK
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LZW, LRW, IWORK, LIW,
      1        MF, IPAR
@@ -1703,7 +1703,7 @@ C----------------------- End of Subroutine ZVODE -----------------------
       SUBROUTINE ZVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,
      1   EWT, ITOL, ATOL, Y, TEMP, H0, NITER, IER)
       EXTERNAL F
-      DOUBLE COMPLEX Y0, YDOT, Y, TEMP
+      COMPLEX(KIND=8) Y0, YDOT, Y, TEMP
       DOUBLE PRECISION T0, TOUT, UROUND, EWT, ATOL, H0
       INTEGER N, IPAR, ITOL, NITER, IER
       DIMENSION Y0(*), YDOT(*), EWT(*), ATOL(*), Y(*),
@@ -1839,7 +1839,7 @@ C----------------------- End of Subroutine ZVHIN -----------------------
       END
 *DECK ZVINDY
       SUBROUTINE ZVINDY (T, K, YH, LDYH, DKY, IFLAG)
-      DOUBLE COMPLEX YH, DKY
+      COMPLEX(KIND=8) YH, DKY
       DOUBLE PRECISION T
       INTEGER K, LDYH, IFLAG
       DIMENSION YH(LDYH,*), DKY(*)
@@ -1965,7 +1965,7 @@ C----------------------- End of Subroutine ZVINDY ----------------------
       SUBROUTINE ZVSTEP (Y, YH, LDYH, YH1, EWT, SAVF, VSAV, ACOR,
      1                  WM, IWM, F, JAC, PSOL, VNLS, RPAR, IPAR)
       EXTERNAL F, JAC, PSOL, VNLS
-      DOUBLE COMPLEX Y, YH, YH1, SAVF, VSAV, ACOR, WM
+      COMPLEX(KIND=8) Y, YH, YH1, SAVF, VSAV, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IPAR
       DIMENSION Y(*), YH(LDYH,*), YH1(*), EWT(*), SAVF(*), VSAV(*),
@@ -2598,7 +2598,7 @@ C----------------------- End of Subroutine ZVSET -----------------------
       END
 *DECK ZVJUST
       SUBROUTINE ZVJUST (YH, LDYH, IORD)
-      DOUBLE COMPLEX YH
+      COMPLEX(KIND=8) YH
       INTEGER LDYH, IORD
       DIMENSION YH(LDYH,*)
 C-----------------------------------------------------------------------
@@ -2760,7 +2760,7 @@ C----------------------- End of Subroutine ZVJUST ----------------------
       SUBROUTINE ZVNLSD (Y, YH, LDYH, VSAV, SAVF, EWT, ACOR, IWM, WM,
      1                 F, JAC, PDUM, NFLAG, RPAR, IPAR)
       EXTERNAL F, JAC, PDUM
-      DOUBLE COMPLEX Y, YH, VSAV, SAVF, ACOR, WM
+      COMPLEX(KIND=8) Y, YH, VSAV, SAVF, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, NFLAG, IPAR
       DIMENSION Y(*), YH(LDYH,*), VSAV(*), SAVF(*), EWT(*), ACOR(*),
@@ -2990,7 +2990,7 @@ C----------------------- End of Subroutine ZVNLSD ----------------------
       SUBROUTINE ZVJAC (Y, YH, LDYH, EWT, FTEM, SAVF, WM, IWM, F, JAC,
      1                 IERPJ, RPAR, IPAR)
       EXTERNAL F, JAC
-      DOUBLE COMPLEX Y, YH, FTEM, SAVF, WM
+      COMPLEX(KIND=8) Y, YH, FTEM, SAVF, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IERPJ, IPAR
       DIMENSION Y(*), YH(LDYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -3066,7 +3066,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      DOUBLE COMPLEX DI, R1, YI, YJ, YJJ
+      COMPLEX(KIND=8) DI, R1, YI, YJ, YJJ
       DOUBLE PRECISION CON, FAC, ONE, PT1, R, R0, THOU, ZERO
       INTEGER I, I1, I2, IER, II, J, J1, JJ, JOK, LENP, MBA, MBAND,
      1        MEB1, MEBAND, ML, ML1, MU, NP1
@@ -3260,7 +3260,7 @@ C----------------------- End of Subroutine ZVJAC -----------------------
       END
 *DECK ZACOPY
       SUBROUTINE ZACOPY (NROW, NCOL, A, NROWA, B, NROWB)
-      DOUBLE COMPLEX A, B
+      COMPLEX(KIND=8) A, B
       INTEGER NROW, NCOL, NROWA, NROWB
       DIMENSION A(NROWA,NCOL), B(NROWB,NCOL)
 C-----------------------------------------------------------------------
@@ -3286,7 +3286,7 @@ C----------------------- End of Subroutine ZACOPY ----------------------
       END
 *DECK ZVSOL
       SUBROUTINE ZVSOL (WM, IWM, X, IERSL)
-      DOUBLE COMPLEX WM, X
+      COMPLEX(KIND=8) WM, X
       INTEGER IWM, IERSL
       DIMENSION WM(*), IWM(*), X(*)
 C-----------------------------------------------------------------------
@@ -3329,7 +3329,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      DOUBLE COMPLEX DI
+      COMPLEX(KIND=8) DI
       DOUBLE PRECISION ONE, PHRL1, R, ZERO
       INTEGER I, MEBAND, ML, MU
 C-----------------------------------------------------------------------
@@ -3457,7 +3457,7 @@ C***ROUTINES CALLED  (NONE)
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DEWSET of 930809.
 C***END PROLOGUE  ZEWSET
-      DOUBLE COMPLEX YCUR
+      COMPLEX(KIND=8) YCUR
       DOUBLE PRECISION RTOL, ATOL, EWT
       INTEGER N, ITOL
       INTEGER I
@@ -3503,7 +3503,7 @@ C***ROUTINES CALLED  ZABSSQ
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DVNORM of 930809.
 C***END PROLOGUE  ZVNORM
-      DOUBLE COMPLEX V
+      COMPLEX(KIND=8) V
       DOUBLE PRECISION W,   SUM, ZABSSQ
       INTEGER N,   I
       DIMENSION V(N), W(N)
@@ -3531,7 +3531,7 @@ C    ZABSSQ = DREAL(Z)**2 * DIMAG(Z)**2
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN.
 C***END PROLOGUE  ZABSSQ
-      DOUBLE COMPLEX Z
+      COMPLEX(KIND=8) Z
       ZABSSQ = DREAL(Z)**2 + DIMAG(Z)**2
       RETURN
 C----------------------- END OF FUNCTION ZABSSQ ------------------------
@@ -3549,7 +3549,7 @@ C  Minor modification of BLAS routine ZSCAL.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZSCAL
-      DOUBLE COMPLEX ZX(*)
+      COMPLEX(KIND=8) ZX(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,IX,N
 C
@@ -3580,7 +3580,7 @@ C  Minor modification of BLAS routine ZAXPY.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZAXPY
-      DOUBLE COMPLEX ZX(*),ZY(*)
+      COMPLEX(KIND=8) ZX(*),ZY(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,INCY,IX,IY,N
       IF(N.LE.0)RETURN
