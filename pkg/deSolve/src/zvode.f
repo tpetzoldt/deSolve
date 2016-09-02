@@ -1070,7 +1070,7 @@ C
       INTEGER I, IER, IFLAG, IMXER, JCO, KGO, LENIW, LENJ, LENP, LENZW,
      1   LENRW, LENWM, LF0, MBAND, MFA, ML, MORD, MU, MXHNL0, MXSTP0,
      2   NITER, NSLAST
-      CHARACTER*80 MSG
+      CHARACTER(LEN=80) MSG
 C
 C Type declaration for function subroutines called ---------------------
 C
@@ -1895,7 +1895,7 @@ C Type declarations for local variables --------------------------------
 C
       DOUBLE PRECISION C, HUN, R, S, TFUZZ, TN1, TP, ZERO
       INTEGER I, IC, J, JB, JB2, JJ, JJ1, JP1
-      CHARACTER*80 MSG
+      CHARACTER(LEN=80) MSG
 C-----------------------------------------------------------------------
 C The following Fortran-77 declaration is to cause the values of the
 C listed (local) variables to be saved between calls to this integrator.
