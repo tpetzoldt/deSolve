@@ -3256,7 +3256,7 @@ C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LEWT = MIN(LEWT,LRW)
       LACOR = MIN(LACOR,LRW)
 CKS
-      CALL DIPREP (NEQ,Y,RWORK,IWK,IWORK(LIA),IWORK(LJA), IPFLAG, F, JAC,
+      CALL DIPREP (NEQ,Y,RWORK,IWK,IWORK(LIA),IWORK(LJA),IPFLAG,F,JAC,
      & rpar, ipar )
       LENRW = LWM - 1 + LENWK + LREST
       IWORK(17) = LENRW
