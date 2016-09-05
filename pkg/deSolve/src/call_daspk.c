@@ -1,6 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include "deSolve.h"
+#include "externalptr.h"
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    Differential algebraic equation solver daspk.
@@ -270,14 +271,14 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   if (isDll == 1)  {       /* DLL address passed to FORTRAN */
       funtype = Info[19];
       if (funtype == 1) {   /* res is in DLL */
-        res_func = (C_res_func_type *) R_ExternalPtrAddr(resfunc);
+        res_func = (C_res_func_type *) R_ExternalPtrAddrFn_(resfunc);
         if(isForcing==1) {
-          DLL_res_func = (C_res_func_type *) R_ExternalPtrAddr(resfunc);
+          DLL_res_func = (C_res_func_type *) R_ExternalPtrAddrFn_(resfunc);
           res_func = (C_res_func_type *) DLL_forc_dae;
         }
       } else if (funtype <= 3){ /* func is in DLL, +- mass matrix */
         res_func = DLL_res_ode;
-        DLL_deriv_func = (C_deriv_func_type *) R_ExternalPtrAddr(resfunc);
+        DLL_deriv_func = (C_deriv_func_type *) R_ExternalPtrAddrFn_(resfunc);
         if(isForcing==1) {
           res_func = (C_res_func_type *) DLL_forc_dae2;
         }
@@ -308,9 +309,9 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
       if (inherits(jacfunc,"NativeSymbol"))
      	{
      	if (Info[11] ==0) {        /*ordinary jac*/
-	      daejac_func = (C_daejac_func_type *) R_ExternalPtrAddr(jacfunc);
+	      daejac_func = (C_daejac_func_type *) R_ExternalPtrAddrFn_(jacfunc);
 	      } else {                /*krylov*/
-	      kryljac_func = (C_kryljac_func_type *) R_ExternalPtrAddr(jacfunc);
+	      kryljac_func = (C_kryljac_func_type *) R_ExternalPtrAddrFn_(jacfunc);
 	      }
 	    }
       else  {
@@ -322,7 +323,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
     {
       if (inherits(psolfunc,"NativeSymbol"))
      	{
-	    psol_func = (C_psol_func_type *) R_ExternalPtrAddr(psolfunc);
+	    psol_func = (C_psol_func_type *) R_ExternalPtrAddrFn_(psolfunc);
 	    }
       else  {
 	    R_psol_func = psolfunc;

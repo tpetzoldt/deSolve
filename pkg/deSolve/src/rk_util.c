@@ -16,6 +16,8 @@
 #endif
 
 
+#include "externalptr.h"
+
 
 /*============================================================================*/
 /*   DLL specific functions                                                   */
@@ -126,7 +128,7 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     /*------------------------------------------------------------------------*/
     C_deriv_func_type *cderivs;
     if (isForcing) updatedeforc(&t); 
-    cderivs = (C_deriv_func_type *) R_ExternalPtrAddr(Func);
+    cderivs = (C_deriv_func_type *) R_ExternalPtrAddrFn_(Func);
     cderivs(&neq, &t, y, ytmp, yout, ipar);
     if (j >= 0)
       for (i = 0; i < neq; i++)  ydot[i + neq * j] = ytmp[i];
