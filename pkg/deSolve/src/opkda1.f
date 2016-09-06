@@ -126,7 +126,7 @@ C Form coefficients of p(x)*(x+nq-1). ----------------------------------
         DO 110 IB = 1,NQM1
           I = NQP1 - IB
           PC(I) = PC(I-1) + FNQM1*PC(I)
- 110    CONTINUE 
+ 110    CONTINUE
         PC(1) = FNQM1*PC(1)
 C Compute integral, -1 to 0, of p(x) and x*p(x). -----------------------
         PINT = PC(1)
@@ -136,7 +136,7 @@ C Compute integral, -1 to 0, of p(x) and x*p(x). -----------------------
           TSIGN = -TSIGN
           PINT = PINT + TSIGN*PC(I)/I
           XPIN = XPIN + TSIGN*PC(I)/(I+1)
- 120    CONTINUE 
+ 120    CONTINUE
 C Store coefficients in ELCO and TESCO. --------------------------------
         ELCO(1,NQ) = PINT*RQ1FAC
         ELCO(2,NQ) = 1.0D0
@@ -353,7 +353,7 @@ C**End
       EXTERNAL F, JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -390,7 +390,7 @@ C***FIRST EXECUTABLE STATEMENT  DPREPJ
         GOTO 400
       ELSE IF (MITER .EQ. 5) THEN
         GOTO 500
-      ENDIF  
+      ENDIF
 
 C      GO TO (100, 200, 300, 400, 500), MITER
 C If MITER = 1, call JAC and multiply by scalar. -----------------------
@@ -465,7 +465,7 @@ C If MITER = 4, call JAC and multiply by scalar. -----------------------
       LENP = MEBAND*N
       DO 410 I = 1,LENP
         WM(I+2) = 0.0D0
- 410  CONTINUE 
+ 410  CONTINUE
 CKS
       CALL JAC (NEQ, TN, Y, ML, MU, WM(ML3), MEBAND,RPAR,IPAR)
       CON = -HL0
@@ -718,7 +718,7 @@ C**End
       INTEGER NEQ, NYH, IWM
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
      1   ACOR(*), WM(*), IWM(*)
@@ -828,14 +828,14 @@ C-----------------------------------------------------------------------
       RC = RC*EL(1)/EL0
       EL0 = EL(1)
       CONIT = 0.5D0/(NQ+2)
-      
+
       IF (IRET .EQ. 1) THEN
         GOTO 160
       ELSE IF (IRET .EQ. 2) THEN
         GOTO 170
       ELSE IF (IRET .EQ. 3) THEN
         GOTO 200
-      ENDIF  
+      ENDIF
 C      GO TO (160, 170, 200), IRET
 C-----------------------------------------------------------------------
 C If H is being changed, the H ratio RH is checked against
@@ -1016,14 +1016,14 @@ C-----------------------------------------------------------------------
         DO 470 I = 1,N
           YH(I,J) = YH(I,J) + EL(J)*ACOR(I)
  470    CONTINUE
- 480  CONTINUE 
+ 480  CONTINUE
       IALTH = IALTH - 1
       IF (IALTH .EQ. 0) GO TO 520
       IF (IALTH .GT. 1) GO TO 700
       IF (L .EQ. LMAX) GO TO 700
       DO 490 I = 1,N
         YH(I,LMAX) = ACOR(I)
- 490  CONTINUE 
+ 490  CONTINUE
       GO TO 700
 C-----------------------------------------------------------------------
 C The error test failed.  KFLAG keeps track of multiple failures.
@@ -1040,7 +1040,7 @@ C-----------------------------------------------------------------------
 Cdir$ ivdep
         DO 510 I = I1,NQNYH
           YH1(I) = YH1(I) - YH1(I+NYH)
- 510    CONTINUE 
+ 510    CONTINUE
  515    CONTINUE
       RMAX = 2.0D0
       IF (ABS(H) .LE. HMIN*1.00001D0) GO TO 660
@@ -1148,7 +1148,7 @@ C-----------------------------------------------------------------------
  700  R = 1.0D0/TESCO(2,NQU)
       DO 710 I = 1,N
         ACOR(I) = ACOR(I)*R
- 710  CONTINUE 
+ 710  CONTINUE
  720  HOLD = H
       JSTART = 1
       RETURN
@@ -1191,17 +1191,17 @@ C***FIRST EXECUTABLE STATEMENT  DEWSET
         GOTO 30
       ELSE IF (ITOL .EQ. 4) THEN
         GOTO 40
-      ENDIF        
+      ENDIF
 C      GO TO (10, 20, 30, 40), ITOL
  10   CONTINUE
       DO 15 I = 1,N
         EWT(I) = RTOL(1)*ABS(YCUR(I)) + ATOL(1)
- 15   CONTINUE      
+ 15   CONTINUE
       RETURN
  20   CONTINUE
       DO 25 I = 1,N
         EWT(I) = RTOL(1)*ABS(YCUR(I)) + ATOL(I)
- 25   CONTINUE      
+ 25   CONTINUE
       RETURN
  30   CONTINUE
       DO 35 I = 1,N
@@ -1211,7 +1211,7 @@ C      GO TO (10, 20, 30, 40), ITOL
  40   CONTINUE
       DO 45 I = 1,N
         EWT(I) = RTOL(I)*ABS(YCUR(I)) + ATOL(I)
- 45   CONTINUE 
+ 45   CONTINUE
       RETURN
 C----------------------- END OF SUBROUTINE DEWSET ----------------------
       END
@@ -1246,7 +1246,7 @@ C***FIRST EXECUTABLE STATEMENT  DVNORM
       SUM = 0.0D0
       DO 10 I = 1,N
         SUM = SUM + (V(I)*W(I))**2
- 10   CONTINUE 
+ 10   CONTINUE
       DVNORM = SQRT(SUM/N)
       RETURN
 C----------------------- END OF FUNCTION DVNORM ------------------------
@@ -1257,7 +1257,7 @@ C----------------------- END OF FUNCTION DVNORM ------------------------
       EXTERNAL F, JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, IA, JA, IPFLAG, IWK(*)
       DOUBLE PRECISION Y, RWORK
       DIMENSION NEQ(*), Y(*), RWORK(*), IA(*), JA(*)
@@ -1312,7 +1312,7 @@ C If DPREP was successful, move YH to end of required space for WM. ----
       IMAX = LYHN - 1 + LENYHM
       DO 10 I = LYHN,IMAX
         RWORK(I) = RWORK(I+LYHD)
- 10   CONTINUE 
+ 10   CONTINUE
       LYH = LYHN
 C Reset pointers for SAVF, EWT, and ACOR. ------------------------------
  20   LSAVF = LYH + LENYH
@@ -1323,7 +1323,7 @@ C If ISTATE = 1, move EWT (left) to its new position. ------------------
       IF (LEWTN .GT. LEWT) RETURN
       DO 30 I = 1,N
         RWORK(I+LEWTN-1) = RWORK(I+LEWT-1)
- 30   CONTINUE 
+ 30   CONTINUE
  40   LEWT = LEWTN
       RETURN
 C----------------------- End of Subroutine DIPREP ----------------------
@@ -1334,7 +1334,7 @@ C----------------------- End of Subroutine DIPREP ----------------------
       EXTERNAL F,JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, IA, JA, IWK, IPPER
       DOUBLE PRECISION Y, YH, SAVF, EWT, FTEM, WK
       DIMENSION NEQ(*), Y(*), YH(*), SAVF(*), EWT(*), FTEM(*),
@@ -1415,10 +1415,10 @@ C ISTATE = 1 and MOSS .ne. 0.  Perturb Y for structure determination. --
         FAC = 1.0D0 + 1.0D0/(I + 1.0D0)
         Y(I) = Y(I) + FAC*SIGN(ERWT,Y(I))
  10     CONTINUE
- 
+
       IF (MOSS .EQ. 1) THEN
         GOTO 70
-      ELSE IF (MOSS .EQ. 2) THEN        
+      ELSE IF (MOSS .EQ. 2) THEN
         GOTO 100
       ENDIF
 C GO TO (70, 100), MOSS
@@ -1430,7 +1430,7 @@ C ISTATE = 3 and MOSS .ne. 0.  Load Y from YH(*,1). --------------------
  25   CONTINUE
       IF (MOSS .EQ. 1) THEN
         GOTO 70
-      ELSE IF (MOSS .EQ. 2) THEN        
+      ELSE IF (MOSS .EQ. 2) THEN
         GOTO 100
       ENDIF
 C      GO TO (70, 100), MOSS
@@ -1472,7 +1472,7 @@ CKS
         K = K + 1
         DO 75 I = 1,N
           SAVF(I) = 0.0D0
- 75     CONTINUE 
+ 75     CONTINUE
 CKS
         CALL JAC (NEQ, TN, Y, J, IWK(IPIAN), IWK(IPJAN), SAVF,
      &      rpar,ipar)
@@ -1519,7 +1519,7 @@ C
 C If ISTATE = 1 and MOSS .ne. 0, restore Y from YH. --------------------
       DO 145 I = 1,N
         Y(I) = YH(I)
- 145  CONTINUE 
+ 145  CONTINUE
  150  NNZ = IWK(IPIAN+N) - 1
       LENIGP = 0
       IPIGP = IPJAN + NNZ
@@ -1550,7 +1550,7 @@ C Compute new ordering of rows/columns of Jacobian. --------------------
       IBR = IPR - 1
       DO 170 I = 1,N
         IWK(IBR+I) = I
- 170  CONTINUE 
+ 170  CONTINUE
       NSP = LIWK + 1 - IPISP
       CALL ODRV (N, IWK(IPIAN), IWK(IPJAN), WK, IWK(IPR), IWK(IPIC),
      1   NSP, IWK(IPISP), 1, IYS)
@@ -1566,7 +1566,7 @@ C Reorder JAN and do symbolic LU factorization of matrix. --------------
       IBA = IPA - 1
       DO 180 I = 1,NNZ
         WK(IBA+I) = 0.0D0
- 180  CONTINUE 
+ 180  CONTINUE
       IPISP = LRAT*(IPRSP - 1) + 1
       CALL CDRV (N,IWK(IPR),IWK(IPC),IWK(IPIC),IWK(IPIAN),IWK(IPJAN),
      1   WK(IPA),WK(IPA),WK(IPA),NSP,IWK(IPISP),WK(IPRSP),IESP,5,IYS)
@@ -1642,7 +1642,7 @@ C
       IER = 0
       DO 10 J = 1,N
         JDONE(J) = 0
- 10   CONTINUE 
+ 10   CONTINUE
       NCOL = 1
       DO 60 NG = 1,MAXG
         IGP(NG) = NCOL
@@ -1728,9 +1728,9 @@ C
             GOTO 10
           ELSE IF (JA(J) - II .EQ. 0) THEN
             GOTO 40
-          ElSE 
+          ElSE
             GOTO 30
-          ENDIF  
+          ENDIF
 C          IF (JA(J) - II) 10, 40, 30
  10       JJ =JA(J)
           KMIN = IA(JJ)
@@ -1752,7 +1752,7 @@ C----------------------- End of Subroutine CNTNZU ----------------------
       EXTERNAL F,JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, NYH, IWK
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WK
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -1841,8 +1841,8 @@ C MITER = 1 or 2, and the Jacobian is to be reevaluated. ---------------
         GOTO 100
       ELSE IF (MITER .EQ. 2) THEN
         GOTO 200
-      ENDIF  
-        
+      ENDIF
+
 C      GO TO (100, 200), MITER
 C
 C If MITER = 1, call JAC, multiply by scalar, and add identity. --------
@@ -2023,9 +2023,9 @@ C-----------------------------------------------------------------------
         GOTO 100
       ELSE IF (MITER .EQ. 3) THEN
         GOTO 300
-      ENDIF  
+      ENDIF
 C      GO TO (100, 100, 300), MITER
-      
+
  100  CALL CDRV (N,IWK(IPR),IWK(IPC),IWK(IPIC),IWK(IPIAN),IWK(IPJAN),
      1   WK(IPA),X,X,NSP,IWK(IPISP),WK(IPRSP),IESP,4,IERSL)
       IF (IERSL .NE. 0) IERSL = -1
@@ -2365,7 +2365,7 @@ c----generate inverse permutation from permutation
    4  do 5 k=1,n
         next(k) = -next(k)
         last(next(k)) = k
-   5  continue  
+   5  continue
 c
       return
       end
@@ -2393,14 +2393,14 @@ c----for each nonzero entry a(vi,vj)
         if (jmin.gt.jmax)  go to 6
         do 5 j=jmin,jmax
           vj = ja(j)
-          
+
           if (vj-vi .LT. 0) then
             goto 2
           else if (vj-vi .EQ. 0) then
             goto 5
-          else 
+          else
             goto 4
-          endif  
+          endif
 c          if (vj-vi) 2, 5, 4
 c
 c------if a(vi,vj) is in strict lower triangle
@@ -3382,7 +3382,7 @@ c  ******  initialize column pointers for a  ***************************
         jra(k) = irac(jaiak)
         irac(jaiak) = k
         ira(k) = iak
-   2  continue   
+   2  continue
 c
 c  ******  for each column of l and row of u  **************************
       do 41 k=1,n
@@ -3551,13 +3551,13 @@ c  ******  if not, see if kth row can overlap the previous one  ********
   28    if (jumin .gt. juptr)  go to 32
         qm = q(qm)
         do 29 j=jumin,juptr
-          if (ju(j) - qm .LT. 0)  then 
+          if (ju(j) - qm .LT. 0)  then
             goto 29
-          else if (ju(j) - qm .EQ. 0) then 
-            goto 30 
+          else if (ju(j) - qm .EQ. 0) then
+            goto 30
           else if (ju(j) - qm .GT. 0) then
-            goto 32  
-          endif  
+            goto 32
+          endif
 C          if (ju(j) - qm)  29, 30, 32
   29      continue
         go to 32
@@ -3578,7 +3578,7 @@ c  ******  move row indices from q to ju, update vectors  **************
           do 33 j=jumin,juptr
             qm = q(qm)
             ju(j) = qm
-  33      CONTINUE  
+  33      CONTINUE
   34    iru(k) = iju(k)
         iu(k+1) = iu(k) + luk
 c
@@ -3703,7 +3703,7 @@ c  ******  set row to zero where u will fill in  ***********************
         if (jmin .gt. jmax) go to 5
         do 4 j=jmin,jmax
           row(ju(j)) = 0
-   4    CONTINUE   
+   4    CONTINUE
 c  ******  place kth row of a in row  **********************************
    5    rk = r(k)
         jmin = ia(rk)
@@ -3726,7 +3726,7 @@ c  ******  if l is not required, then comment out the following line  **
           mu = iju(i) - jmin
           do 8 j=jmin,jmax
             row(ju(mu+j)) = row(ju(mu+j)) + lki * u(j)
-   8      CONTINUE   
+   8      CONTINUE
    9      i = jrl(i)
           if (i .ne. 0) go to 7
 c
@@ -3742,7 +3742,7 @@ c  ******  assign kth row of u and diagonal d, set tmp(k)  *************
         mu = iju(k) - jmin
         do 11 j=jmin,jmax
           u(j) = row(ju(mu+j)) * dk
-  11    CONTINUE  
+  11    CONTINUE
   12    continue
 c
 c  ******  update irl and jrl, keeping jrl in decreasing order  ********
@@ -3776,11 +3776,11 @@ c  ******  solve  ux = tmp  by back substitution  **********************
         mu = iju(k) - jmin
         do 20 j=jmin,jmax
           sum = sum - u(j) * tmp(ju(mu+j))
-  20    CONTINUE  
+  20    CONTINUE
   21    tmp(k) =  sum
         z(c(k)) =  sum
         k = k-1
-  22  CONTINUE  
+  22  CONTINUE
       flag = 0
       return
 c
@@ -3819,7 +3819,7 @@ c
 c  ******  set tmp to reordered b  *************************************
       do 1 k=1,n
         tmp(k) = b(r(k))
-   1  CONTINUE   
+   1  CONTINUE
 c  ******  solve  ly = b  by forward substitution  *********************
       do 3 k=1,n
         jmin = il(k)
@@ -3830,7 +3830,7 @@ c  ******  solve  ly = b  by forward substitution  *********************
         ml = ijl(k) - jmin
         do 2 j=jmin,jmax
          tmp(jl(ml+j)) = tmp(jl(ml+j)) + tmpk * l(j)
-   2    CONTINUE   
+   2    CONTINUE
    3    continue
 c  ******  solve  ux = y  by back substitution  ************************
       k = n
@@ -3842,7 +3842,7 @@ c  ******  solve  ux = y  by back substitution  ************************
         mu = iju(k) - jmin
         do 4 j=jmin,jmax
           sum = sum + u(j) * tmp(ju(mu+j))
-   4    CONTINUE   
+   4    CONTINUE
    5    tmp(k) = -sum
         z(c(k)) = -sum
         k = k - 1
@@ -3875,7 +3875,7 @@ c
 c  ******  set tmp to reordered b  *************************************
       do 1 k=1,n
         tmp(k) = b(c(k))
-   1  CONTINUE   
+   1  CONTINUE
 c  ******  solve  ut y = b  by forward substitution  *******************
       do 3 k=1,n
         jmin = iu(k)
@@ -3885,7 +3885,7 @@ c  ******  solve  ut y = b  by forward substitution  *******************
         mu = iju(k) - jmin
         do 2 j=jmin,jmax
           tmp(ju(mu+j)) = tmp(ju(mu+j)) + tmpk * u(j)
-   2    CONTINUE   
+   2    CONTINUE
    3    continue
 c  ******  solve  lt x = y  by back substitution  **********************
       k = n
@@ -3897,7 +3897,7 @@ c  ******  solve  lt x = y  by back substitution  **********************
         ml = ijl(k) - jmin
         do 4 j=jmin,jmax
           sum = sum + l(j) * tmp(jl(ml+j))
-   4  CONTINUE   
+   4  CONTINUE
    5    tmp(k) = -sum * d(k)
         z(r(k)) = tmp(k)
         k = k - 1
@@ -3910,7 +3910,7 @@ c  ******  solve  lt x = y  by back substitution  **********************
       EXTERNAL F, JAC, PJAC, SLVS
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -4064,11 +4064,11 @@ C Initialize switching parameters.  METH = 1 is assumed initially. -----
       CALL DCFODE (2, ELCO, TESCO)
       DO 10 I = 1,5
         CM2(I) = TESCO(2,I)*ELCO(I+1,I)
- 10   CONTINUE 
+ 10   CONTINUE
       CALL DCFODE (1, ELCO, TESCO)
       DO 20 I = 1,12
         CM1(I) = TESCO(2,I)*ELCO(I+1,I)
- 20   CONTINUE 
+ 20   CONTINUE
       GO TO 150
 C-----------------------------------------------------------------------
 C The following block handles preliminaries needed when JSTART = -1.
@@ -4094,7 +4094,7 @@ C whenever the order NQ is changed, or at the start of the problem.
 C-----------------------------------------------------------------------
  150  DO 155 I = 1,L
         EL(I) = ELCO(I,NQ)
- 155  CONTINUE 
+ 155  CONTINUE
       NQNYH = NQ*NYH
       RC = RC*EL(1)/EL0
       EL0 = EL(1)
@@ -4106,7 +4106,7 @@ C-----------------------------------------------------------------------
       ELSE IF (IRET .EQ. 3) THEN
         GOTO 200
       ENDIF
-      
+
 C      GO TO (160, 170, 200), IRET
 C-----------------------------------------------------------------------
 C If H is being changed, the H ratio RH is checked against
@@ -4139,8 +4139,8 @@ C-----------------------------------------------------------------------
         R = R*RH
         DO 180 I = 1,N
           YH(I,J) = YH(I,J)*R
- 180    CONTINUE 
- 190  CONTINUE 
+ 180    CONTINUE
+ 190  CONTINUE
       H = H*RH
       RC = RC*RH
       IALTH = L
@@ -4162,7 +4162,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 210 I = I1,NQNYH
           YH1(I) = YH1(I) + YH1(I+NYH)
- 210    CONTINUE 
+ 210    CONTINUE
  215    CONTINUE
       PNORM = DMNORM (N, YH1, EWT)
 C-----------------------------------------------------------------------
@@ -4176,7 +4176,7 @@ C-----------------------------------------------------------------------
       DEL = 0.0D0
       DO 230 I = 1,N
         Y(I) = YH(I,1)
- 230  CONTINUE 
+ 230  CONTINUE
 CKS
       CALL F (NEQ, TN, Y, SAVF, rpar, ipar)
       NFE = NFE + 1
@@ -4187,7 +4187,7 @@ C preprocessed before starting the corrector iteration.  IPUP is set
 C to 0 as an indicator that this has been done.
 C-----------------------------------------------------------------------
 CKS
-      CALL PJAC (NEQ, Y, YH, NYH, EWT, ACOR, SAVF, WM, IWM, F, JAC, 
+      CALL PJAC (NEQ, Y, YH, NYH, EWT, ACOR, SAVF, WM, IWM, F, JAC,
      &rpar,ipar)
       IPUP = 0
       RC = 1.0D0
@@ -4196,7 +4196,7 @@ CKS
       IF (IERPJ .NE. 0) GO TO 430
  250  DO 260 I = 1,N
         ACOR(I) = 0.0D0
- 260  CONTINUE 
+ 260  CONTINUE
  270  IF (MITER .NE. 0) GO TO 350
 C-----------------------------------------------------------------------
 C In the case of functional iteration, update Y directly from
@@ -4205,12 +4205,12 @@ C-----------------------------------------------------------------------
       DO 290 I = 1,N
         SAVF(I) = H*SAVF(I) - YH(I,2)
         Y(I) = SAVF(I) - ACOR(I)
- 290  CONTINUE 
+ 290  CONTINUE
       DEL = DMNORM (N, Y, EWT)
       DO 300 I = 1,N
         Y(I) = YH(I,1) + EL(1)*SAVF(I)
         ACOR(I) = SAVF(I)
- 300  CONTINUE 
+ 300  CONTINUE
       GO TO 400
 C-----------------------------------------------------------------------
 C In the case of the chord method, compute the corrector error,
@@ -4219,7 +4219,7 @@ C P as coefficient matrix.
 C-----------------------------------------------------------------------
  350  DO 360 I = 1,N
         Y(I) = H*SAVF(I) - (YH(I,2) + ACOR(I))
- 360  CONTINUE 
+ 360  CONTINUE
       CALL SLVS (WM, IWM, Y, SAVF)
       IF (IERSL .LT. 0) GO TO 430
       IF (IERSL .GT. 0) GO TO 410
@@ -4227,7 +4227,7 @@ C-----------------------------------------------------------------------
       DO 380 I = 1,N
         ACOR(I) = ACOR(I) + Y(I)
         Y(I) = YH(I,1) + EL(1)*ACOR(I)
- 380  CONTINUE 
+ 380  CONTINUE
 C-----------------------------------------------------------------------
 C Test for convergence.  If M .gt. 0, an estimate of the convergence
 C rate constant is stored in CRATE, and this is used in the test.
@@ -4283,7 +4283,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 440 I = I1,NQNYH
           YH1(I) = YH1(I) - YH1(I+NYH)
- 440    CONTINUE 
+ 440    CONTINUE
  445    CONTINUE
       IF (IERPJ .LT. 0 .OR. IERSL .LT. 0) GO TO 680
       IF (ABS(H) .LE. HMIN*1.00001D0) GO TO 670
@@ -4324,8 +4324,8 @@ C-----------------------------------------------------------------------
       DO 465 J = 1,L
         DO 460 I = 1,N
           YH(I,J) = YH(I,J) + EL(J)*ACOR(I)
- 460    CONTINUE 
- 465  CONTINUE 
+ 460    CONTINUE
+ 465  CONTINUE
       ICOUNT = ICOUNT - 1
       IF (ICOUNT .GE. 0) GO TO 488
       IF (METH .EQ. 2) GO TO 480
@@ -4434,7 +4434,7 @@ C No method switch is being made.  Do the usual step/order selection. --
       IF (L .EQ. LMAX) GO TO 700
       DO 490 I = 1,N
         YH(I,LMAX) = ACOR(I)
- 490  CONTINUE 
+ 490  CONTINUE
       GO TO 700
 C-----------------------------------------------------------------------
 C The error test failed.  KFLAG keeps track of multiple failures.
@@ -4451,7 +4451,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 510 I = I1,NQNYH
           YH1(I) = YH1(I) - YH1(I+NYH)
- 510    CONTINUE 
+ 510    CONTINUE
  515    CONTINUE
       RMAX = 2.0D0
       IF (ABS(H) .LE. HMIN*1.00001D0) GO TO 660
@@ -4472,7 +4472,7 @@ C-----------------------------------------------------------------------
       IF (L .EQ. LMAX) GO TO 540
       DO 530 I = 1,N
         SAVF(I) = ACOR(I) - YH(I,LMAX)
- 530  CONTINUE 
+ 530  CONTINUE
       DUP = DMNORM (N, SAVF, EWT)/TESCO(3,NQ)
       EXUP = 1.0D0/(L+1)
       RHUP = 1.0D0/(1.4D0*DUP**EXUP + 0.0000014D0)
@@ -4507,7 +4507,7 @@ C If METH = 1, limit RH according to the stability region also. --------
       R = EL(L)/L
       DO 600 I = 1,N
         YH(I,NEWQ+1) = ACOR(I)*R
- 600  CONTINUE 
+ 600  CONTINUE
       GO TO 630
  610  IALTH = 3
       GO TO 700
@@ -4541,13 +4541,13 @@ C-----------------------------------------------------------------------
       H = H*RH
       DO 645 I = 1,N
         Y(I) = YH(I,1)
- 645  CONTINUE 
+ 645  CONTINUE
 CKS
       CALL F (NEQ, TN, Y, SAVF, rpar, ipar)
       NFE = NFE + 1
       DO 650 I = 1,N
         YH(I,2) = H*SAVF(I)
- 650  CONTINUE 
+ 650  CONTINUE
       IPUP = MITER
       IALTH = 5
       IF (NQ .EQ. 1) GO TO 200
@@ -4569,7 +4569,7 @@ C-----------------------------------------------------------------------
  700  R = 1.0D0/TESCO(2,NQU)
       DO 710 I = 1,N
         ACOR(I) = ACOR(I)*R
- 710  CONTINUE 
+ 710  CONTINUE
  720  HOLD = H
       JSTART = 1
       RETURN
@@ -4581,7 +4581,7 @@ C----------------------- End of Subroutine DSTODA ----------------------
       EXTERNAL F, JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -4654,19 +4654,19 @@ C-----------------------------------------------------------------------
         GOTO 400
       ELSE IF (MITER .EQ. 5) THEN
         GOTO 500
-      ENDIF 		
+      ENDIF
 C karline
 C      GO TO (100, 200, 300, 400, 500), MITER
 C If MITER = 1, call JAC and multiply by scalar. -----------------------
  100  LENP = N*N
       DO 110 I = 1,LENP
         WM(I+2) = 0.0D0
- 110  CONTINUE 
+ 110  CONTINUE
       CALL JAC (NEQ, TN, Y, 0, 0, WM(3), N,rpar,ipar)
       CON = -HL0
       DO 120 I = 1,LENP
         WM(I+2) = WM(I+2)*CON
- 120  CONTINUE 
+ 120  CONTINUE
       GO TO 240
 C If MITER = 2, make N calls to F to approximate J. --------------------
  200  FAC = DMNORM (N, SAVF, EWT)
@@ -4683,7 +4683,7 @@ CKS
         CALL F (NEQ, TN, Y, FTEM, rpar, ipar)
         DO 220 I = 1,N
           WM(I+J1) = (FTEM(I) - SAVF(I))*FAC
- 220    CONTINUE 
+ 220    CONTINUE
         Y(J) = YJ
         J1 = J1 + N
  230    CONTINUE
@@ -4697,7 +4697,7 @@ C Add identity matrix. -------------------------------------------------
       DO 250 I = 1,N
         WM(J) = WM(J) + 1.0D0
         J = J + NP1
- 250  CONTINUE 
+ 250  CONTINUE
 C Do LU decomposition on P. --------------------------------------------
       CALL DGEFA (WM(3), N, N, IWM(21), IER)
       IF (IER .NE. 0) IERPJ = 1
@@ -4713,12 +4713,12 @@ C If MITER = 4, call JAC and multiply by scalar. -----------------------
       LENP = MEBAND*N
       DO 410 I = 1,LENP
         WM(I+2) = 0.0D0
- 410  CONTINUE 
+ 410  CONTINUE
       CALL JAC (NEQ, TN, Y, ML, MU, WM(ML3), MEBAND,rpar,ipar)
       CON = -HL0
       DO 420 I = 1,LENP
         WM(I+2) = WM(I+2)*CON
- 420  CONTINUE 
+ 420  CONTINUE
       GO TO 570
 C If MITER = 5, make MBAND calls to F to approximate J. ----------------
  500  ML = IWM(1)
@@ -4749,7 +4749,7 @@ CKS
           II = JJ*MEB1 - ML + 2
           DO 540 I = I1,I2
             WM(II+I) = (FTEM(I) - SAVF(I))*FAC
- 540      CONTINUE 
+ 540      CONTINUE
  550      CONTINUE
  560    CONTINUE
       NFE = NFE + MBA
@@ -4761,7 +4761,7 @@ C Add identity matrix. -------------------------------------------------
       DO 580 I = 1,N
         WM(II) = WM(II) + 1.0D0
         II = II + MEBAND
- 580  CONTINUE 
+ 580  CONTINUE
 C Do LU decomposition of P. --------------------------------------------
       CALL DGBFA (WM(3), MEBAND, N, ML, MU, IWM(21), IER)
       IF (IER .NE. 0) IERPJ = 1
@@ -4782,7 +4782,7 @@ C-----------------------------------------------------------------------
       VM = 0.0D0
       DO 10 I = 1,N
         VM = MAX(VM,ABS(V(I))*W(I))
- 10   CONTINUE 
+ 10   CONTINUE
       DMNORM = VM
       RETURN
 C----------------------- End of Function DMNORM ------------------------
@@ -4803,7 +4803,7 @@ C-----------------------------------------------------------------------
         SUM = 0.0D0
         DO 10 J = 1,N
           SUM = SUM + ABS(A(I,J))/W(J)
- 10     CONTINUE 
+ 10     CONTINUE
         AN = MAX(AN,SUM*W(I))
  20     CONTINUE
       DFNORM = AN
@@ -4834,7 +4834,7 @@ C-----------------------------------------------------------------------
         JHI = MIN(I+MU,N)
         DO 10 J = JLO,JHI
           SUM = SUM + ABS(A(I1-J,J))/W(J)
- 10     CONTINUE 
+ 10     CONTINUE
         AN = MAX(AN,SUM*W(I))
  20     CONTINUE
       DBNORM = AN
@@ -4906,18 +4906,18 @@ C-----------------------------------------------------------------------
       IRT = 0
       DO 10 I = 1,NGC
         JROOT(I) = 0
- 10   CONTINUE  
+ 10   CONTINUE
       HMING = (ABS(TN) + ABS(H))*UROUND*100.0D0
 C
       IF (JOB .EQ. 1) THEN
         GOTO 100
       ELSE IF (JOB .EQ. 2) THEN
-        GOTO 200	  
+        GOTO 200
       ELSE IF (JOB .EQ. 3) THEN
-        GOTO 300	  
+        GOTO 300
       ENDIF
 C karline:
-C		GO TO (100, 200, 300), JOB
+C     GO TO (100, 200, 300), JOB
 C
 C Evaluate g at initial T, and check for zero values. ------------------
  100  CONTINUE
@@ -4927,7 +4927,7 @@ C Evaluate g at initial T, and check for zero values. ------------------
       ZROOT = .FALSE.
       DO 110 I = 1,NGC
         IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
- 110  CONTINUE 
+ 110  CONTINUE
       IF (.NOT. ZROOT) GO TO 190
 C g has a zero at T.  Look at g at T + (small increment). --------------
       TEMP2 = MAX(HMING/ABS(H), 0.1D0)
@@ -4935,13 +4935,13 @@ C g has a zero at T.  Look at g at T + (small increment). --------------
       T0 = T0 + TEMP1
       DO 120 I = 1,N
         Y(I) = Y(I) + TEMP2*YH(I,2)
- 120  CONTINUE 
+ 120  CONTINUE
       CALL G (NEQ, T0, Y, NGC, G0, rpar, ipar)
       NGE = NGE + 1
       ZROOT = .FALSE.
       DO 130 I = 1,NGC
         IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
- 130  CONTINUE 
+ 130  CONTINUE
       IF (.NOT. ZROOT) GO TO 190
 C g has a zero at T and also close to T.  Take error return. -----------
       IRT = -1
@@ -4960,7 +4960,7 @@ C If a root was found on the previous step, evaluate G0 = g(T0). -------
       ZROOT = .FALSE.
       DO 210 I = 1,NGC
         IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
- 210  CONTINUE 
+ 210  CONTINUE
       IF (.NOT. ZROOT) GO TO 260
 C g has a zero at T0.  Look at g at T + (small increment). -------------
       TEMP1 = SIGN(HMING,H)
@@ -4969,7 +4969,7 @@ C g has a zero at T0.  Look at g at T + (small increment). -------------
       TEMP2 = TEMP1/H
       DO 220 I = 1,N
         Y(I) = Y(I) + TEMP2*YH(I,2)
- 220  CONTINUE 
+ 220  CONTINUE
       GO TO 240
  230  CALL DINTDY (T0, 0, YH, NYH, Y, IFLAG)
  240  CALL G (NEQ, T0, Y, NGC, G0, rpar, ipar)
@@ -4998,7 +4998,7 @@ C Set T1 to TN or TOUTC, whichever comes first, and get g at T1. -------
  310  T1 = TN
       DO 320 I = 1,N
         Y(I) = YH(I,1)
- 320  CONTINUE 
+ 320  CONTINUE
  330  CALL G (NEQ, T1, Y, NGC, G1, rpar, ipar)
       NGE = NGE + 1
 C Call DROOTS to search for root in interval from T0 to T1. ------------
@@ -5249,7 +5249,7 @@ C----------------------- End of Subroutine DROOTS ----------------------
       EXTERNAL F, JAC, PSOL
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, NYH, IWM
       DOUBLE PRECISION Y, YH, YH1, EWT, SAVF, SAVX, ACOR, WM
       DIMENSION NEQ(*), Y(*), YH(NYH,*), YH1(*), EWT(*), SAVF(*),
@@ -5424,7 +5424,7 @@ C-----------------------------------------------------------------------
       L = LMAX
       DO 125 I = 1,L
         EL(I) = ELCO(I,NQ)
- 125  CONTINUE 
+ 125  CONTINUE
       NQNYH = NQ*NYH
       RC = RC*EL(1)/EL0
       EL0 = EL(1)
@@ -5447,7 +5447,7 @@ C-----------------------------------------------------------------------
  140  CALL DCFODE (METH, ELCO, TESCO)
  150  DO 155 I = 1,L
         EL(I) = ELCO(I,NQ)
- 155  CONTINUE    
+ 155  CONTINUE
       NQNYH = NQ*NYH
       RC = RC*EL(1)/EL0
       EL0 = EL(1)
@@ -5460,7 +5460,7 @@ C-----------------------------------------------------------------------
       ELSE IF (IRET .EQ. 3) THEN
         GOTO 200
       ENDIF
-C karline changed from		
+C karline changed from
 C      GO TO (160, 170, 200), IRET
 C-----------------------------------------------------------------------
 C If H is being changed, the H ratio RH is checked against
@@ -5481,8 +5481,8 @@ C-----------------------------------------------------------------------
         R = R*RH
         DO 180 I = 1,N
           YH(I,J) = YH(I,J)*R
- 180    CONTINUE 
- 190  CONTINUE 
+ 180    CONTINUE
+ 190  CONTINUE
       H = H*RH
       RC = RC*RH
       IALTH = L
@@ -5509,7 +5509,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 210 I = I1,NQNYH
           YH1(I) = YH1(I) + YH1(I+NYH)
- 210    CONTINUE 
+ 210    CONTINUE
  215    CONTINUE
 C-----------------------------------------------------------------------
 C Up to MAXCOR corrector iterations are taken.  A convergence test is
@@ -5521,7 +5521,7 @@ C-----------------------------------------------------------------------
       MNEWT = 0
       DO 230 I = 1,N
         Y(I) = YH(I,1)
- 230  CONTINUE 
+ 230  CONTINUE
 CKS
       CALL F (NEQ, TN, Y, SAVF, rpar, ipar)
       NFE = NFE + 1
@@ -5540,7 +5540,7 @@ C-----------------------------------------------------------------------
       IF (IERPJ .NE. 0) GO TO 430
  250  DO 260 I = 1,N
         ACOR(I) = 0.0D0
- 260  CONTINUE 
+ 260  CONTINUE
  270  IF (MITER .NE. 0) GO TO 350
 C-----------------------------------------------------------------------
 C In the case of functional iteration, update Y directly from
@@ -5549,12 +5549,12 @@ C-----------------------------------------------------------------------
       DO 290 I = 1,N
         SAVF(I) = H*SAVF(I) - YH(I,2)
         Y(I) = SAVF(I) - ACOR(I)
- 290  CONTINUE 
+ 290  CONTINUE
       DEL = DVNORM (N, Y, EWT)
       DO 300 I = 1,N
         Y(I) = YH(I,1) + EL(1)*SAVF(I)
         ACOR(I) = SAVF(I)
- 300  CONTINUE 
+ 300  CONTINUE
       GO TO 400
 C-----------------------------------------------------------------------
 C In the case of the chord method, compute the corrector error,
@@ -5563,7 +5563,7 @@ C P as coefficient matrix.
 C-----------------------------------------------------------------------
  350  DO 360 I = 1,N
         SAVX(I) = H*SAVF(I) - (YH(I,2) + ACOR(I))
- 360  CONTINUE 
+ 360  CONTINUE
       CALL DSOLPK (NEQ, Y, SAVF, SAVX, EWT, WM, IWM, F,PSOL,rpar,ipar)
       IF (IERSL .LT. 0) GO TO 430
       IF (IERSL .GT. 0) GO TO 410
@@ -5571,7 +5571,7 @@ C-----------------------------------------------------------------------
       DO 380 I = 1,N
         ACOR(I) = ACOR(I) + SAVX(I)
         Y(I) = YH(I,1) + EL(1)*ACOR(I)
- 380  CONTINUE 
+ 380  CONTINUE
 C-----------------------------------------------------------------------
 C Test for convergence.  If M .gt. 0, an estimate of the convergence
 C rate constant is stored in CRATE, and this is used in the test.
@@ -5610,7 +5610,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 440 I = I1,NQNYH
           YH1(I) = YH1(I) - YH1(I+NYH)
- 440    CONTINUE 
+ 440    CONTINUE
  445    CONTINUE
       IF (IERPJ .LT. 0 .OR. IERSL .LT. 0) GO TO 680
       IF (ABS(H) .LE. HMIN*1.00001D0) GO TO 670
@@ -5647,15 +5647,15 @@ C-----------------------------------------------------------------------
       DO 480 J = 1,L
         DO 470 I = 1,N
           YH(I,J) = YH(I,J) + EL(J)*ACOR(I)
- 470    CONTINUE 
- 480  CONTINUE 
+ 470    CONTINUE
+ 480  CONTINUE
       IALTH = IALTH - 1
       IF (IALTH .EQ. 0) GO TO 520
       IF (IALTH .GT. 1) GO TO 700
       IF (L .EQ. LMAX) GO TO 700
       DO 490 I = 1,N
         YH(I,LMAX) = ACOR(I)
- 490  CONTINUE 
+ 490  CONTINUE
       GO TO 700
 C-----------------------------------------------------------------------
 C The error test failed.  KFLAG keeps track of multiple failures.
@@ -5672,7 +5672,7 @@ C-----------------------------------------------------------------------
 CDIR$ IVDEP
         DO 510 I = I1,NQNYH
           YH1(I) = YH1(I) - YH1(I+NYH)
- 510    CONTINUE 
+ 510    CONTINUE
  515    CONTINUE
       RMAX = 2.0D0
       IF (ABS(H) .LE. HMIN*1.00001D0) GO TO 660
@@ -5693,7 +5693,7 @@ C-----------------------------------------------------------------------
       IF (L .EQ. LMAX) GO TO 540
       DO 530 I = 1,N
         SAVF(I) = ACOR(I) - YH(I,LMAX)
- 530  CONTINUE 
+ 530  CONTINUE
       DUP = DVNORM (N, SAVF, EWT)/TESCO(3,NQ)
       EXUP = 1.0D0/(L+1)
       RHUP = 1.0D0/(1.4D0*DUP**EXUP + 0.0000014D0)
@@ -5721,7 +5721,7 @@ C-----------------------------------------------------------------------
       R = EL(L)/L
       DO 600 I = 1,N
         YH(I,NEWQ+1) = ACOR(I)*R
- 600  CONTINUE 
+ 600  CONTINUE
       GO TO 630
  610  IALTH = 3
       GO TO 700
@@ -5752,13 +5752,13 @@ C-----------------------------------------------------------------------
       H = H*RH
       DO 645 I = 1,N
         Y(I) = YH(I,1)
- 645  CONTINUE 
+ 645  CONTINUE
 CKS
       CALL F (NEQ, TN, Y, SAVF, rpar, ipar)
       NFE = NFE + 1
       DO 650 I = 1,N
         YH(I,2) = H*SAVF(I)
- 650  CONTINUE 
+ 650  CONTINUE
       IPUP = MITER
       IALTH = 5
       IF (NQ .EQ. 1) GO TO 200
@@ -5791,7 +5791,7 @@ C----------------------- End of Subroutine DSTODPK ---------------------
       EXTERNAL F, JAC
 CKS: added rpar,ipar
       integer ipar(*)
-      double precision rpar(*)      
+      double precision rpar(*)
       INTEGER NEQ, IWM
       DOUBLE PRECISION Y, YSV, EWT, FTEM, SAVF, WM
       DIMENSION NEQ(*), Y(*), YSV(*), EWT(*), FTEM(*), SAVF(*),
@@ -5908,17 +5908,17 @@ C
       HL0 = H*EL0
       DELTA = DELT*EPCON
       IF (MITER .EQ. 1) THEN
-        GOTO 100	  
+        GOTO 100
       ELSE IF (MITER .EQ. 2) THEN
-        GOTO 200	  
+        GOTO 200
       ELSE IF (MITER .EQ. 3) THEN
-        GOTO 300	  
+        GOTO 300
       ELSE IF (MITER .EQ. 4) THEN
-        GOTO 400	  
+        GOTO 400
       ELSE IF (MITER .LE. 9) THEN
-        GOTO 900	  
-      ENDIF	  
-C karline: changed from	  
+        GOTO 900
+      ENDIF
+C karline: changed from
 C    GO TO (100, 200, 300, 400, 900, 900, 900, 900, 900), MITER
 C-----------------------------------------------------------------------
 C Use the SPIOM algorithm to solve the linear system P*x = -f.
@@ -6124,7 +6124,7 @@ C for an immediate return with X = 0 or X = b.
 C-----------------------------------------------------------------------
       DO 10 I = 1,N
         V(I,1) = B(I)*WGHT(I)
- 10   CONTINUE 
+ 10   CONTINUE
       BNRM0 = DNRM2 (N, V, 1)
       BNRM = BNRM0
       IF (BNRM0 .GT. DELTA) GO TO 30
@@ -6133,7 +6133,7 @@ C-----------------------------------------------------------------------
       RETURN
  20   DO 25 I = 1,N
         X(I) = 0.0D0
- 25   CONTINUE 
+ 25   CONTINUE
       RETURN
  30   CONTINUE
 C Apply inverse of left preconditioner to vector b. --------------------
@@ -6145,7 +6145,7 @@ C Apply inverse of left preconditioner to vector b. --------------------
 C Calculate norm of scaled vector V(*,1) and normalize it. -------------
       DO 50 I = 1,N
         V(I,1) = B(I)*WGHT(I)
- 50   CONTINUE 
+ 50   CONTINUE
       BNRM = DNRM2(N, V, 1)
       DELTA = DELTA*(BNRM/BNRM0)
  55   TEM = 1.0D0/BNRM
@@ -6154,7 +6154,7 @@ C Zero out the HES array. ----------------------------------------------
       DO 65 J = 1,MAXL
         DO 60 I = 1,MAXL
           HES(I,J) = 0.0D0
- 60     CONTINUE 
+ 60     CONTINUE
  65     CONTINUE
 C-----------------------------------------------------------------------
 C Main loop on LL = l to compute the vectors V(*,2) to V(*,MAXL).
@@ -6221,12 +6221,12 @@ C-----------------------------------------------------------------------
       LL = LIOM
       DO 210 K = 1,LL
         B(K) = 0.0D0
- 210  CONTINUE 
+ 210  CONTINUE
       B(1) = BNRM
       CALL DHESL (HES, MAXL, LL, IPVT, B)
       DO 220 K = 1,N
         X(K) = 0.0D0
- 220  CONTINUE 
+ 220  CONTINUE
       DO 230 I = 1,LL
         CALL DAXPY (N, B(I), V(1,I), 1, X, 1)
  230    CONTINUE
@@ -6323,7 +6323,7 @@ C
 C Set VTEM = D * V.
       DO 10 I = 1,N
         VTEM(I) = V(I)/WGHT(I)
- 10   CONTINUE 
+ 10   CONTINUE
       IER = 0
       IF (JPRE .GE. 2) GO TO 30
 C
@@ -6331,7 +6331,7 @@ C JPRE = 0 or 1.  Save Y in Z and increment Y by VTEM.
       CALL DCOPY (N, Y, 1, Z, 1)
       DO 20 I = 1,N
         Y(I) = Z(I) + VTEM(I)
- 20   CONTINUE 
+ 20   CONTINUE
       FAC = HL0
       GO TO 60
 C
@@ -6343,14 +6343,14 @@ C JPRE = 2 or 3.  Apply inverse of right preconditioner to VTEM.
 C Calculate L-2 norm of (D-inverse) * VTEM.
       DO 40 I = 1,N
         Z(I) = VTEM(I)*WGHT(I)
- 40   CONTINUE 
+ 40   CONTINUE
       TEMPN = DNRM2 (N, Z, 1)
       RNORM = 1.0D0/TEMPN
 C Save Y in Z and increment Y by VTEM/norm.
       CALL DCOPY (N, Y, 1, Z, 1)
       DO 50 I = 1,N
         Y(I) = Z(I) + VTEM(I)*RNORM
- 50   CONTINUE 
+ 50   CONTINUE
       FAC = HL0*TEMPN
 C
 C For all JPRE, call F with incremented Y argument, and restore Y.
@@ -6362,10 +6362,10 @@ CKS
 C Set Z = (identity - hl0*Jacobian) * VTEM, using difference quotient.
       DO 70 I = 1,N
         Z(I) = FTEM(I) - SAVF(I)
- 70   CONTINUE 
+ 70   CONTINUE
       DO 80 I = 1,N
         Z(I) = VTEM(I) - FAC*Z(I)
- 80   CONTINUE 
+ 80   CONTINUE
 C Apply inverse of left preconditioner to Z, if nontrivial.
       IF (JPRE .EQ. 0 .OR. JPRE .EQ. 2) GO TO 85
       CALL PSOL (NEQ, TN, Y, SAVF, FTEM, HL0, WP, IWP, Z, 1, IER)
@@ -6375,7 +6375,7 @@ C Apply inverse of left preconditioner to Z, if nontrivial.
 C Apply D-inverse to Z and return.
       DO 90 I = 1,N
         Z(I) = Z(I)*WGHT(I)
- 90   CONTINUE 
+ 90   CONTINUE
       RETURN
 C----------------------- End of Subroutine DATV ------------------------
       END
@@ -6574,7 +6574,7 @@ C for an immediate return with X = 0 or X = b.
 C-----------------------------------------------------------------------
       DO 10 I = 1,N
         V(I,1) = B(I)*WGHT(I)
- 10   CONTINUE 
+ 10   CONTINUE
       BNRM0 = DNRM2 (N, V, 1)
       BNRM = BNRM0
       IF (BNRM0 .GT. DELTA) GO TO 30
@@ -6583,7 +6583,7 @@ C-----------------------------------------------------------------------
       RETURN
  20   DO 25 I = 1,N
         X(I) = 0.0D0
- 25   CONTINUE 
+ 25   CONTINUE
       RETURN
  30   CONTINUE
 C Apply inverse of left preconditioner to vector b. --------------------
@@ -6595,7 +6595,7 @@ C Apply inverse of left preconditioner to vector b. --------------------
 C Calculate norm of scaled vector V(*,1) and normalize it. -------------
       DO 50 I = 1,N
         V(I,1) = B(I)*WGHT(I)
- 50   CONTINUE 
+ 50   CONTINUE
       BNRM = DNRM2 (N, V, 1)
       DELTA = DELTA*(BNRM/BNRM0)
  55   TEM = 1.0D0/BNRM
@@ -6604,7 +6604,7 @@ C Zero out the HES array. ----------------------------------------------
       DO 65 J = 1,MAXL
         DO 60 I = 1,MAXLP1
           HES(I,J) = 0.0D0
- 60     CONTINUE 
+ 60     CONTINUE
  65     CONTINUE
 C-----------------------------------------------------------------------
 C Main loop to compute the vectors V(*,2) to V(*,MAXL).
@@ -6644,7 +6644,7 @@ C-----------------------------------------------------------------------
               C = Q(I2-1)
               DO 70 K = 1,N
                 DL(K) = S*DL(K) + C*V(K,IP1)
- 70           CONTINUE 
+ 70           CONTINUE
  75           CONTINUE
             ENDIF
           S = Q(2*LL)
@@ -6652,7 +6652,7 @@ C-----------------------------------------------------------------------
           LLP1 = LL + 1
           DO 80 K = 1,N
             DL(K) = S*DL(K) + C*V(K,LLP1)
- 80       CONTINUE 
+ 80       CONTINUE
           DLNRM = DNRM2 (N, DL, 1)
           RHO = RHO*DLNRM
           ENDIF
@@ -6685,18 +6685,18 @@ C-----------------------------------------------------------------------
       LLP1 = LL + 1
       DO 210 K = 1,LLP1
         B(K) = 0.0D0
- 210  CONTINUE 
+ 210  CONTINUE
       B(1) = BNRM
       CALL DHELS (HES, MAXLP1, LL, Q, B)
       DO 220 K = 1,N
         X(K) = 0.0D0
- 220  CONTINUE 
+ 220  CONTINUE
       DO 230 I = 1,LL
         CALL DAXPY (N, B(I), V(1,I), 1, X, 1)
  230    CONTINUE
       DO 240 I = 1,N
         X(I) = X(I)/WGHT(I)
- 240  CONTINUE 
+ 240  CONTINUE
       IF (JPRE .LE. 1) RETURN
       CALL PSOL (NEQ, TN, Y, SAVF, WK, HL0, WP, IWP, X, 2, IER)
       NPSL = NPSL + 1
@@ -6943,7 +6943,7 @@ C
       LPCG = 0
       DO 10 I = 1,N
         X(I) = 0.0D0
- 10   CONTINUE 
+ 10   CONTINUE
       BNRM = DVNORM (N, R, WGHT)
 C Test for immediate return with X = 0 or X = b. -----------------------
       IF (BNRM .GT. DELTA) GO TO 20
@@ -6974,7 +6974,7 @@ C Loop point for PCG iterations. ---------------------------------------
       BETA = ZTR/ZTR0
       DO 60 I = 1,N
         P(I) = Z(I) + BETA*P(I)
- 60   CONTINUE 
+ 60   CONTINUE
  70   CONTINUE
 C-----------------------------------------------------------------------
 C  Call DATP to compute A*p and return the answer in W.
@@ -6984,7 +6984,7 @@ C
       PTW = 0.0D0
       DO 80 I = 1,N
         PTW = PTW + P(I)*W(I)*WGHT(I)**2
- 80   CONTINUE 
+ 80   CONTINUE
       IF (PTW .EQ. 0.0D0) GO TO 200
       ALPHA = ZTR/PTW
       CALL DAXPY (N, ALPHA, P, 1, X, 1)
@@ -7069,7 +7069,7 @@ C
       CALL DCOPY (N, Y, 1, W, 1)
       DO 20 I = 1,N
         Y(I) = W(I) + P(I)*RPNRM
- 20   CONTINUE 
+ 20   CONTINUE
 CKS
       CALL F (NEQ, TN, Y, WK, rpar, ipar)
       NFE = NFE + 1
@@ -7077,7 +7077,7 @@ CKS
       FAC = HL0*PNRM
       DO 40 I = 1,N
         W(I) = P(I) - FAC*(WK(I) - SAVF(I))
- 40   CONTINUE 
+ 40   CONTINUE
       RETURN
 C----------------------- End of Subroutine DATP ------------------------
       END
@@ -7156,7 +7156,7 @@ C-----------------------------------------------------------------------
       RETURN
  10   DO 20 I = 1,N
         X(I) = 0.0D0
- 20   CONTINUE 
+ 20   CONTINUE
       RETURN
 C Make call to PSOL and copy result from B to X. -----------------------
  30   IER = 0
@@ -7227,7 +7227,7 @@ C                     indicate that DHESL will divide by zero if called.
 C
 C     Modification of LINPACK, by Peter Brown, LLNL.
 C     Written 7/20/83.  This version dated 6/20/01.
-C    
+C
 C     BLAS called: DAXPY, IDAMAX
 C-----------------------------------------------------------------------
       INTEGER IDAMAX, J, K, KM1, KP1, L, NM1
@@ -7744,12 +7744,12 @@ C Estimate the second derivative as a difference quotient in f. --------
       T1 = T0 + HG
       DO 60 I = 1,N
         Y(I) = Y0(I) + HG*YDOT(I)
- 60   CONTINUE 
+ 60   CONTINUE
 CKS
       CALL F (NEQ, T1, Y, TEMP, rpar, ipar)
       DO 70 I = 1,N
         TEMP(I) = (TEMP(I) - YDOT(I))/HG
- 70   CONTINUE 
+ 70   CONTINUE
       YDDNRM = DVNORM (N, TEMP, EWT)
 C Get the corresponding new value of H. --------------------------------
       IF (YDDNRM*HUB*HUB .GT. TWO) THEN

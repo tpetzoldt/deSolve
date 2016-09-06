@@ -1365,7 +1365,7 @@ C MAXORD was reduced below NQ.  Copy YH(*,MAXORD+2) into SAVF. ---------
       DO 80 I = 1,N
         RWORK(I+LSAVF-1) = RWORK(I+LWM-1)
  80   CONTINUE
- 
+
 C Reload WM(1) = RWORK(LWM), since LWM may have changed. ---------------
  90   IF (MITER .GT. 0) RWORK(LWM) = SQRT(UROUND)
       IF (N .EQ. NYH) GO TO 200
@@ -1375,7 +1375,7 @@ C NEQ was reduced.  Zero part of YH to avoid undefined references. -----
       IF (I1 .GT. I2) GO TO 200
       DO 95 I = I1,I2
         RWORK(I) = 0.0D0
- 95   CONTINUE 
+ 95   CONTINUE
       GO TO 200
 C-----------------------------------------------------------------------
 C Block C.
@@ -1410,7 +1410,7 @@ C Initial call to F.  (LF0 points to YH(*,2).) -------------------------
 C Load the initial value vector in YH. ---------------------------------
       DO 115 I = 1,N
         RWORK(I+LYH-1) = Y(I)
- 115  CONTINUE 
+ 115  CONTINUE
 C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       NQ = 1
       H = 1.0D0
@@ -1418,7 +1418,7 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       DO 120 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
- 120  CONTINUE 
+ 120  CONTINUE
 C-----------------------------------------------------------------------
 C The coding below computes the step size, H0, to be attempted on the
 C first step, unless the user has supplied a value for this.
@@ -1443,7 +1443,7 @@ C-----------------------------------------------------------------------
       IF (ITOL .LE. 2) GO TO 140
       DO 130 I = 1,N
         TOL = MAX(TOL,RTOL(I))
- 130  CONTINUE  
+ 130  CONTINUE
  140  IF (TOL .GT. 0.0D0) GO TO 160
       ATOLI = ATOL(1)
       DO 150 I = 1,N
@@ -1465,7 +1465,7 @@ C Load H with H0 and scale YH(*,2) by H0. ------------------------------
       H = H0
       DO 190 I = 1,N
         RWORK(I+LF0-1) = H0*RWORK(I+LF0-1)
- 190  CONTINUE 
+ 190  CONTINUE
       GO TO 270
 C-----------------------------------------------------------------------
 C Block D.
@@ -1551,7 +1551,7 @@ C The following block handles the case of a successful return from the
 C core integrator (KFLAG = 0).  Test for stop conditions.
 C-----------------------------------------------------------------------
  300  INIT = 1
-      
+
       IF (ITASK .EQ. 1) THEN
          GOTO 310
       ELSE IF (ITASK .EQ. 2) THEN
@@ -1562,8 +1562,8 @@ C-----------------------------------------------------------------------
          GOTO 340
       ELSE IF (ITASK .EQ. 5) THEN
          GOTO 350
-      ENDIF		 
-C karline: change from 
+      ENDIF
+C karline: change from
 C      GO TO (310, 400, 330, 340, 350), ITASK
 C ITASK = 1.  If TOUT has been reached, interpolate. -------------------
  310  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
@@ -1598,7 +1598,7 @@ C work arrays before returning.
 C-----------------------------------------------------------------------
  400  DO 410 I = 1,N
         Y(I) = RWORK(I+LYH-1)
- 410  CONTINUE  
+ 410  CONTINUE
       T = TN
       IF (ITASK .NE. 4 .AND. ITASK .NE. 5) GO TO 420
       IF (IHIT) T = TCRIT
@@ -1669,7 +1669,7 @@ C Compute IMXER if relevant. -------------------------------------------
 C Set Y vector, T, and optional outputs. -------------------------------
  580  DO 590 I = 1,N
         Y(I) = RWORK(I+LYH-1)
- 590  CONTINUE 
+ 590  CONTINUE
       T = TN
       RWORK(11) = HU
       RWORK(12) = H
@@ -3258,12 +3258,12 @@ C Move YH.  Move right if LYHD < 0; move left if LYHD > 0. -------------
         DO 72 I = LYHN,IMAX
           J = IMAX + LYHN - I
           RWORK(J) = RWORK(J+LYHD)
- 72     CONTINUE 
+ 72     CONTINUE
       ENDIF
       IF (LYHD .GT. 0) THEN
         DO 76 I = LYHN,IMAX
           RWORK(I) = RWORK(I+LYHD)
- 76     CONTINUE 
+ 76     CONTINUE
       ENDIF
       LYH = LYHN
       IWORK(22) = LYH
@@ -3274,7 +3274,7 @@ C Temporarily load EWT if MITER = 1 or 2 and MOSS = 2. -----------------
       DO 82 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
- 82   CONTINUE 
+ 82   CONTINUE
  85   CONTINUE
 C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LSAVF = MIN(LSAVF,LRW)
@@ -3300,7 +3300,7 @@ C NEQ was reduced.  Zero part of YH to avoid undefined references. -----
       IF (I1 .GT. I2) GO TO 200
       DO 95 I = I1,I2
         RWORK(I) = 0.0D0
- 95   CONTINUE 
+ 95   CONTINUE
       GO TO 200
 C-----------------------------------------------------------------------
 C Block C.
@@ -3323,7 +3323,7 @@ C-----------------------------------------------------------------------
 C Load the initial value vector in YH. ---------------------------------
       DO 105 I = 1,N
         RWORK(I+LYH-1) = Y(I)
- 105  CONTINUE 
+ 105  CONTINUE
 C Initial call to F.  (LF0 points to YH(*,2).) -------------------------
       LF0 = LYH + NYH
       CALL F (NEQ, T, Y, RWORK(LF0), rpar, ipar)
@@ -3333,7 +3333,7 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       DO 110 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
- 110  CONTINUE 
+ 110  CONTINUE
       IF (MITER .EQ. 0 .OR. MITER .EQ. 3) GO TO 120
 C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LACOR = MIN(LACOR,LRW)
@@ -3358,7 +3358,7 @@ C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
         GOTO 632
       ELSE IF (IPGO .EQ. 7) THEN
         GOTO 633
-      ENDIF		
+      ENDIF
 C karline: change from
 C      GO TO (115, 628, 629, 630, 631, 632, 633), IPGO
  115  IWORK(22) = LYH
@@ -3415,7 +3415,7 @@ C-----------------------------------------------------------------------
       IF (ITOL .LE. 2) GO TO 140
       DO 130 I = 1,N
         TOL = MAX(TOL,RTOL(I))
- 130  CONTINUE 
+ 130  CONTINUE
  140  IF (TOL .GT. 0.0D0) GO TO 160
       ATOLI = ATOL(1)
       DO 150 I = 1,N
@@ -3437,7 +3437,7 @@ C Load H with H0 and scale YH(*,2) by H0. ------------------------------
       H = H0
       DO 190 I = 1,N
         RWORK(I+LF0-1) = H0*RWORK(I+LF0-1)
- 190  CONTINUE 
+ 190  CONTINUE
       GO TO 270
 C-----------------------------------------------------------------------
 C Block D.
@@ -3526,15 +3526,15 @@ C-----------------------------------------------------------------------
       IF (ITASK .EQ. 1) THEN
         GOTO 310
       ELSE IF (ITASK .EQ. 2) THEN
-        GOTO 400	  
+        GOTO 400
       ELSE IF (ITASK .EQ. 3) THEN
-        GOTO 330	  
+        GOTO 330
       ELSE IF (ITASK .EQ. 4) THEN
-        GOTO 340	  
+        GOTO 340
       ELSE IF (ITASK .EQ. 5) THEN
-        GOTO 350	  
-      ENDIF 		
-C karline: changed from 
+        GOTO 350
+      ENDIF
+C karline: changed from
 C      GO TO (310, 400, 330, 340, 350), ITASK
 C ITASK = 1.  if TOUT has been reached, interpolate. -------------------
  310  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
@@ -3569,7 +3569,7 @@ C work arrays before returning.
 C-----------------------------------------------------------------------
  400  DO 410 I = 1,N
         Y(I) = RWORK(I+LYH-1)
- 410  CONTINUE 
+ 410  CONTINUE
       T = TN
       IF (ITASK .NE. 4 .AND. ITASK .NE. 5) GO TO 420
       IF (IHIT) T = TCRIT
@@ -3655,7 +3655,7 @@ C Compute IMXER if relevant. -------------------------------------------
 C Set Y vector, T, and optional outputs. -------------------------------
  580  DO 590 I = 1,N
         Y(I) = RWORK(I+LYH-1)
- 590  CONTINUE 
+ 590  CONTINUE
       T = TN
       RWORK(11) = HU
       RWORK(12) = H
@@ -5007,7 +5007,7 @@ C NEQ was reduced.  Zero part of YH to avoid undefined references. -----
       IF (I1 .GT. I2) GO TO 200
       DO 95 I = I1,I2
         RWORK(I) = 0.0D0
- 95   CONTINUE   
+ 95   CONTINUE
       GO TO 200
 C-----------------------------------------------------------------------
 C Block C.
@@ -5045,7 +5045,7 @@ C Initial call to F.  (LF0 points to YH(*,2).) -------------------------
 C Load the initial value vector in YH. ---------------------------------
       DO 115 I = 1,N
         RWORK(I+LYH-1) = Y(I)
- 115  CONTINUE 
+ 115  CONTINUE
 C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       NQ = 1
       H = 1.0D0
@@ -5053,7 +5053,7 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       DO 120 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
- 120  CONTINUE 
+ 120  CONTINUE
 C-----------------------------------------------------------------------
 C The coding below computes the step size, H0, to be attempted on the
 C first step, unless the user has supplied a value for this.
@@ -5081,7 +5081,7 @@ C-----------------------------------------------------------------------
       IF (ITOL .LE. 2) GO TO 140
       DO 130 I = 1,N
         TOL = MAX(TOL,RTOL(I))
- 130  CONTINUE 
+ 130  CONTINUE
  140  IF (TOL .GT. 0.0D0) GO TO 160
       ATOLI = ATOL(1)
       DO 150 I = 1,N
@@ -5103,7 +5103,7 @@ C Load H with H0 and scale YH(*,2) by H0. ------------------------------
       H = H0
       DO 190 I = 1,N
         RWORK(I+LF0-1) = H0*RWORK(I+LF0-1)
- 190  CONTINUE 
+ 190  CONTINUE
       GO TO 270
 C-----------------------------------------------------------------------
 C Block D.
@@ -5121,10 +5121,10 @@ C-----------------------------------------------------------------------
         GOTO 230
       ELSE IF (ITASK .EQ. 5) THEN
         GOTO 240
-      ENDIF		
-C karline: changed from 
+      ENDIF
+C karline: changed from
 C      GO TO (210, 250, 220, 230, 240), ITASK
-	  
+
  210  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
       CALL DINTDY (TOUT, 0, RWORK(LYH), NYH, Y, IFLAG)
       IF (IFLAG .NE. 0) GO TO 627
@@ -5173,7 +5173,7 @@ C-----------------------------------------------------------------------
       DO 260 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 510
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
- 260  CONTINUE 
+ 260  CONTINUE
  270  TOLSF = UROUND*DMNORM (N, RWORK(LYH), RWORK(LEWT))
       IF (TOLSF .LE. 1.0D0) GO TO 280
       TOLSF = TOLSF*2.0D0
@@ -5205,13 +5205,13 @@ C-----------------------------------------------------------------------
       IF (KGO .EQ. 1) THEN
          GOTO 300
       ELSE IF (KGO .EQ. 2) THEN
-         GOTO 530       	  
+         GOTO 530
       ELSE IF (KGO .EQ. 3) THEN
-         GOTO 540    
-      ENDIF		 
+         GOTO 540
+      ENDIF
 C karline: changed from
 C      GO TO (300, 530, 540), KGO
-	  
+
 C-----------------------------------------------------------------------
 C Block F.
 C The following block handles the case of a successful return from the
@@ -5246,19 +5246,19 @@ c     write(msg,'(A4,D18.10,A9,D18.10)')
 c     &      'at T',TN,' new step', H
 C KS      CALL XERRWD (MSG, 60, 107, 0, 1, NST, 0, 2, TN, H)
 c      CALL DBLEPR(MSG, 60, 0, 0)
- 310  CONTINUE 
+ 310  CONTINUE
       IF (ITASK .EQ. 1) THEN
         GOTO 320
       ELSE IF (ITASK .EQ. 2) THEN
-        GOTO 400	
+        GOTO 400
       ELSE IF (ITASK .EQ. 3) THEN
-        GOTO 330	   
+        GOTO 330
       ELSE IF (ITASK .EQ. 4) THEN
-        GOTO 340	   
+        GOTO 340
       ELSE IF (ITASK .EQ. 5) THEN
-        GOTO 350	   
-      ENDIF		
-C Karline: changed from 
+        GOTO 350
+      ENDIF
+C Karline: changed from
 C GO TO (320, 400, 330, 340, 350), ITASK
 C ITASK = 1.  If TOUT has been reached, interpolate. -------------------
  320  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
@@ -5382,7 +5382,7 @@ C Compute IMXER if relevant. -------------------------------------------
 C Set Y vector, T, and optional outputs. -------------------------------
  580  DO 590 I = 1,N
        Y(I) = RWORK(I+LYH-1)
- 590  CONTINUE   
+ 590  CONTINUE
       T = TN
       RWORK(11) = HU
       RWORK(12) = H
@@ -6879,7 +6879,7 @@ C Initial call to F.  (LF0 points to YH(*,2).) -------------------------
 C Load the initial value vector in YH. ---------------------------------
       DO 115 I = 1,N
         RWORK(I+LYH-1) = Y(I)
- 115  CONTINUE 
+ 115  CONTINUE
 C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       NQ = 1
       H = 1.0D0
@@ -6888,7 +6888,7 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
         RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
  120  CONTINUE
-	  
+
 C-----------------------------------------------------------------------
 C The coding below computes the step size, H0, to be attempted on the
 C first step, unless the user has supplied a value for this.
@@ -6937,7 +6937,7 @@ C Load H with H0 and scale YH(*,2) by H0. ------------------------------
       H = H0
       DO 190 I = 1,N
         RWORK(I+LF0-1) = H0*RWORK(I+LF0-1)
- 190  CONTINUE 
+ 190  CONTINUE
 C
 C Check for a zero of g at T. ------------------------------------------
       IRFND = 0
@@ -7107,10 +7107,10 @@ C
       ELSE IF (ITASK .EQ. 5) THEN
         GOTO 350
       ENDIF
-	  
+
 C karline: changed from
 C      GO TO (320, 400, 330, 340, 350), ITASK
-	  
+
 C ITASK = 1.  If TOUT has been reached, interpolate. -------------------
  320  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
       CALL DINTDY (TOUT, 0, RWORK(LYH), NYH, Y, IFLAG)
@@ -7235,7 +7235,7 @@ C Compute IMXER if relevant. -------------------------------------------
 C Set Y vector, T, and optional outputs. -------------------------------
  580  DO 590 I = 1,N
         Y(I) = RWORK(I+LYH-1)
- 590  CONTINUE  
+ 590  CONTINUE
       T = TN
       RWORK(11) = HU
       RWORK(12) = H
