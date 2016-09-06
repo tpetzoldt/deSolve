@@ -28,6 +28,22 @@
 int isMass;
 double * mass, *dytmp;
 
+
+/* define data types for function pointers */
+
+/* generic function pointer type */
+typedef void (*funcptr)(void); 
+
+/* function pointers for different argument lists */
+typedef void C_daejac_func_type(double *, double *, double *, double *, double *,
+                      double *, int *);
+typedef void C_psol_func_type(int *, double *, double *, double *, double *,
+                      double *, double *, double *, double *, int*, double *,
+                      double *, int*, double *, int*);
+typedef void C_kryljac_func_type(double *, int *, int *, double *, double *,
+                          double *, double *, double *,
+           double *, double *, double *, double *, int*, int*, double *, int*);
+
 /* -----------------  Matrix-Vector Multiplication A*x=c -------------------- */
 void matvecmult (int nr, int nc, double* A, double* x, double* c) {
   int i, j;
@@ -44,7 +60,7 @@ void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*,
 		     int *, double *, double *, double *, double *, 
 		     int *,double *, double *,  int *,  double *,  int *, 
 		     int *, int *, double *, int *,
-		     void (*)/*(double *, double *, double *, double *, double *, double *, int *)*/,
+		     void(*)(void)/*(double *, double *, double *, double *, double *, double *, int *)*/,
 		     void (*)(int *, double *, double *, double *, double *, double *, 
                   double *, double *, double *, int *, double *, double *, 
                         int *, double *, int *));   
@@ -159,16 +175,6 @@ static void C_daejac_func (double *t, double *y, double *yprime,
   my_unprotect(2);
 }
 
-/* give name to data types */
-
-typedef void C_daejac_func_type(double *, double *, double *, double *, double *,
-                      double *, int *);
-typedef void C_psol_func_type(int *, double *, double *, double *, double *,
-                      double *, double *, double *, double *, int*, double *,
-                      double *, int*, double *, int*);
-typedef void C_kryljac_func_type(double *, int *, int *, double *, double *,
-                          double *, double *, double *,
-           double *, double *, double *, double *, int*, int*, double *, int*);
 
 /* MAIN C-FUNCTION, CALLED FROM R-code */
 
@@ -364,17 +370,17 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
     }
 
      repcount = 0;
-     do  /* iterations in case maxsteps>500* or in case islag */
-	   {
-     	if (Info[11] ==0) {        /*ordinary jac*/
-	       F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
-			   Info, Rtol, Atol, &idid, 
-			   rwork, &lrw, iwork, &liw, out, ipar, daejac_func, psol_func);
+     do  /* iterations in case maxsteps > 500* or in case islag */
+     {
+       if (Info[11] == 0) {        /* ordinary jac */
+         F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
+                           Info, Rtol, Atol, &idid, 
+                           rwork, &lrw, iwork, &liw, out, ipar, (funcptr)daejac_func, psol_func);
 
-	      } else {                /* krylov - not yet used */
-      	 F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
-			   Info, Rtol, Atol, &idid, 
-			   rwork, &lrw, iwork, &liw, out, ipar, kryljac_func, psol_func);
+       } else {                   /* krylov - not yet used */
+         F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
+                           Info, Rtol, Atol, &idid, 
+                           rwork, &lrw, iwork, &liw, out, ipar, (funcptr)kryljac_func, psol_func);
         }
     /* in case timestep is asked for... */    
     timesteps [0] = rwork[10];
