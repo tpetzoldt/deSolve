@@ -128,6 +128,6 @@ C       call dblepr('In above message, R1 = ', 22, RVEC, 2)
 
 C  Abort the run if LEVEL = 2.
        if (LEVEL .eq. 2) call rexit ("fatal error")
- 100  RETURN
+      RETURN
 
       END
