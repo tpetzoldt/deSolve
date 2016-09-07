@@ -1044,7 +1044,24 @@ CKS
       IF (IPFLAG .NE. -1) IWORK(23) = IPIAN
       IF (IPFLAG .NE. -1) IWORK(24) = IPJAN
       IPGO = -IPFLAG + 1
-      GO TO (90, 628, 629, 630, 631, 632, 633), IPGO
+
+      IF (IPGO .EQ. 1) THEN
+        GOTO 90 
+      ELSE IF (IPGO .EQ. 2) THEN
+        GOTO 628
+      ELSE IF (IPGO .EQ. 3) THEN
+        GOTO 629
+      ELSE IF (IPGO .EQ. 4) THEN
+        GOTO 630
+      ELSE IF (IPGO .EQ. 5) THEN
+        GOTO 631
+      ELSE IF (IPGO .EQ. 6) THEN
+        GOTO 632
+      ELSE IF (IPGO .EQ. 7) THEN
+        GOTO 633
+      ENDIF           
+C      GO TO (90, 628, 629, 630, 631, 632, 633), IPGO
+      
  90   IWORK(22) = LYH
       IF (LENRW .GT. LRW) GO TO 617
 C Set flag to signal parameter changes to DSTODE. ----------------------
@@ -1055,7 +1072,8 @@ C NEQ was reduced.  Zero part of YH to avoid undefined references. -----
       I2 = LYH + (MAXORD + 1)*NYH - 1
       IF (I1 .GT. I2) GO TO 200
       DO 95 I = I1,I2
- 95     RWORK(I) = 0.0D0
+        RWORK(I) = 0.0D0
+ 95   CONTINUE
       GO TO 200
 C-----------------------------------------------------------------------
 C Block C.
@@ -1077,7 +1095,8 @@ C-----------------------------------------------------------------------
       NZU = 0
 C Load the initial value vector in YH. ---------------------------------
       DO 105 I = 1,N
- 105    RWORK(I+LYH-1) = Y(I)
+        RWORK(I+LYH-1) = Y(I)
+ 105  CONTINUE
 C Initial call to F.  (LF0 points to YH(*,2).) -------------------------
       LF0 = LYH + NYH
       CALL F (NEQ, T, Y, RWORK(LF0), rpar, ipar)
@@ -1086,7 +1105,8 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       CALL DEWSET (N, ITOL, RTOL, ATOL, RWORK(LYH), RWORK(LEWT))
       DO 110 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 621
- 110    RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+        RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+ 110  CONTINUE
       IF (MITER .EQ. 0 .OR. MITER .EQ. 3) GO TO 120
 C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LACOR = MIN(LACOR,LRW)

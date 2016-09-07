@@ -2237,7 +2237,7 @@ C
          END DO
       END IF
 C
-      GOTO (1,2,3,4,5,6,55,55,55,55,11,12,13,13,15), IJOB
+C      GOTO (1,2,3,4,5,6,55,55,55,55,11,12,13,13,15), IJOB
       IF (IJOB .EQ. 1) THEN
         GOTO 1
       ELSE IF (IJOB .EQ. 2) THEN

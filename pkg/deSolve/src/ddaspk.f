@@ -6359,7 +6359,8 @@ C-----------------------------------------------------------------------
         CALL DAXPY (NEQ, R(I), V(1,I), 1, Z, 1)
  230    CONTINUE
       DO 240 I = 1,NEQ
- 240    Z(I) = Z(I)/WGHT(I)
+        Z(I) = Z(I)/WGHT(I)
+ 240  CONTINUE 
 C Load RHO into RHOK.
       RHOK = RHO
       RETURN

@@ -3449,7 +3449,14 @@ c  ******  if not, see if kth column can overlap the previous one  *****
   11    if (jlmin .gt. jlptr)  go to 15
         qm = q(qm)
         do 12 j=jlmin,jlptr
-          if (jl(j) - qm)  12, 13, 15
+          if (jl(j) - qm .LT. 0) then
+            goto 12
+          else if (jl(j) - qm .EQ. 0) then 
+            goto 13
+          else 
+            goto 15
+          endif  
+c          if (jl(j) - qm)  12, 13, 15
   12      continue
         go to 15
   13    ijl(k) = j
@@ -3468,7 +3475,8 @@ c  ******  move column indices from q to jl, update vectors  ***********
           qm = q(np1)
           do 16 j=jlmin,jlptr
             qm = q(qm)
-  16        jl(j) = qm
+            jl(j) = qm
+  16      continue
   17    irl(k) = ijl(k)
         il(k+1) = il(k) + luk
 c
@@ -5779,7 +5787,8 @@ C-----------------------------------------------------------------------
  690  RMAX = 10.0D0
  700  R = 1.0D0/TESCO(2,NQU)
       DO 710 I = 1,N
- 710    ACOR(I) = ACOR(I)*R
+        ACOR(I) = ACOR(I)*R
+ 710  CONTINUE 
  720  HOLD = H
       JSTART = 1
       RETURN
@@ -6795,7 +6804,8 @@ C
       NPSL = 0
       LPCG = 0
       DO 10 I = 1,N
- 10     X(I) = 0.0D0
+        X(I) = 0.0D0
+ 10   CONTINUE
       BNRM = DVNORM (N, R, WGHT)
 C Test for immediate return with X = 0 or X = b. -----------------------
       IF (BNRM .GT. DELTA) GO TO 20
@@ -6823,7 +6833,8 @@ C Loop point for PCG iterations. ---------------------------------------
       IF (ZTR0 .EQ. 0.0D0) GO TO 200
       BETA = ZTR/ZTR0
       DO 60 I = 1,N
- 60     P(I) = Z(I) + BETA*P(I)
+        P(I) = Z(I) + BETA*P(I)
+ 60   CONTINUE
  70   CONTINUE
 C-----------------------------------------------------------------------
 C  Call DATP to compute A*p and return the answer in W.
@@ -6965,7 +6976,8 @@ C Loop point for PCG iterations. ---------------------------------------
       ZTR0 = ZTR
       ZTR = 0.0D0
       DO 45 I = 1,N
- 45     ZTR = ZTR + Z(I)*R(I)*WGHT(I)**2
+        ZTR = ZTR + Z(I)*R(I)*WGHT(I)**2
+ 45   CONTINUE
       IF (LPCG .NE. 1) GO TO 50
       CALL DCOPY (N, Z, 1, P, 1)
       GO TO 70

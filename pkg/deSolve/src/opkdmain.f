@@ -1473,7 +1473,18 @@ C The next code block is for continuation calls only (ISTATE = 2 or 3)
 C and is to check stop conditions before taking a step.
 C-----------------------------------------------------------------------
  200  NSLAST = NST
-      GO TO (210, 250, 220, 230, 240), ITASK
+      IF (ITASK .EQ. 1) THEN
+        GOTO 210
+      ELSE IF (ITASK .EQ. 2) THEN
+        GOTO 250
+      ELSE IF (ITASK .EQ. 3) THEN
+        GOTO 220
+      ELSE IF (ITASK .EQ. 4) THEN
+        GOTO 230
+      ELSE IF (ITASK .EQ. 5) THEN
+        GOTO 240
+      ENDIF
+C      GO TO (210, 250, 220, 230, 240), ITASK
  210  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
       CALL DINTDY (TOUT, 0, RWORK(LYH), NYH, Y, IFLAG)
       IF (IFLAG .NE. 0) GO TO 627
@@ -3488,7 +3499,8 @@ C-----------------------------------------------------------------------
       CALL DEWSET (N, ITOL, RTOL, ATOL, RWORK(LYH), RWORK(LEWT))
       DO 260 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 510
- 260    RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+        RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+ 260  CONTINUE
  270  TOLSF = UROUND*DVNORM (N, RWORK(LYH), RWORK(LEWT))
       IF (TOLSF .LE. 1.0D0) GO TO 280
       TOLSF = TOLSF*2.0D0
@@ -3516,7 +3528,17 @@ C-----------------------------------------------------------------------
      1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), IWK(2*LWM-1),
      2   F, JAC, DPRJS, DSOLSS, rpar,ipar)
       KGO = 1 - KFLAG
-      GO TO (300, 530, 540, 550), KGO
+      IF (KGO .EQ. 1) THEN
+        GOTO 300
+      ELSE IF (KGO .EQ. 2) THEN
+        GOTO 530
+      ELSE IF (KGO .EQ. 3) THEN
+        GOTO 540
+      ELSE IF (KGO .EQ. 4) THEN
+        GOTO 550
+      ENDIF
+
+C      GO TO (300, 530, 540, 550), KGO
 C-----------------------------------------------------------------------
 C Block F.
 C The following block handles the case of a successful return from the
@@ -6915,7 +6937,8 @@ C-----------------------------------------------------------------------
       TOL = RTOL(1)
       IF (ITOL .LE. 2) GO TO 140
       DO 130 I = 1,N
- 130    TOL = MAX(TOL,RTOL(I))
+        TOL = MAX(TOL,RTOL(I))
+ 130  CONTINUE
  140  IF (TOL .GT. 0.0D0) GO TO 160
       ATOLI = ATOL(1)
       DO 150 I = 1,N
@@ -6972,7 +6995,19 @@ C
       IRFND = 0
       IF (IRFP .EQ. 1 .AND. TLAST .NE. TN .AND. ITASK .EQ. 2) GO TO 400
 C
-      GO TO (210, 250, 220, 230, 240), ITASK
+      IF (ITASK .EQ. 1) THEN
+        GOTO 210
+      ELSE IF (ITASK .EQ. 2) THEN
+        GOTO 250
+      ELSE IF (ITASK .EQ. 3) THEN
+        GOTO 220
+      ELSE IF (ITASK .EQ. 4) THEN
+        GOTO 230
+      ELSE IF (ITASK .EQ. 5) THEN
+        GOTO 240
+      ENDIF
+
+C      GO TO (210, 250, 220, 230, 240), ITASK
  210  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
       CALL DINTDY (TOUT, 0, RWORK(LYH), NYH, Y, IFLAG)
       IF (IFLAG .NE. 0) GO TO 627
@@ -7021,7 +7056,8 @@ C-----------------------------------------------------------------------
       CALL DEWSET (N, ITOL, RTOL, ATOL, RWORK(LYH), RWORK(LEWT))
       DO 260 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 510
- 260    RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+        RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+ 260  CONTINUE
  270  TOLSF = UROUND*DMNORM (N, RWORK(LYH), RWORK(LEWT))
       IF (TOLSF .LE. 1.0D0) GO TO 280
       TOLSF = TOLSF*2.0D0
@@ -7049,7 +7085,16 @@ C-----------------------------------------------------------------------
      1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), IWORK(LIWM),
      2   F, JAC, DPRJA, DSOLSY, rpar, ipar)
       KGO = 1 - KFLAG
-      GO TO (300, 530, 540), KGO
+      
+      IF (KGO .EQ. 1) THEN
+        GOTO 300
+      ELSE IF (KGO .EQ. 2) THEN
+        GOTO 530
+      ELSE IF (KGO .EQ. 3) THEN
+        GOTO 540
+      ENDIF
+
+C      GO TO (300, 530, 540), KGO
 C-----------------------------------------------------------------------
 C Block F.
 C The following block handles the case of a successful return from the
@@ -7143,7 +7188,8 @@ C ISTATE is set to 2, and the optional outputs are loaded into the
 C work arrays before returning.
 C-----------------------------------------------------------------------
  400  DO 410 I = 1,N
- 410    Y(I) = RWORK(I+LYH-1)
+        Y(I) = RWORK(I+LYH-1)
+ 410  CONTINUE
       T = TN
       IF (ITASK .NE. 4 .AND. ITASK .NE. 5) GO TO 420
       IF (IHIT) T = TCRIT
