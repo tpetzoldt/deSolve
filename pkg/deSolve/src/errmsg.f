@@ -80,9 +80,9 @@ C
 C  Declare arguments.
 C
       DOUBLE PRECISION R1, R2, RVEC(2), Dummy
-      INTEGER I, NMES, NERR, LEVEL, NI, I1, I2, NR, Ivec(2)
+      INTEGER NMES, NERR, LEVEL, NI, I1, I2, NR, Ivec(2)
       CHARACTER(LEN=*) MSG
-      INTEGER LUNIT, IXSAV, MESFLG
+      INTEGER IXSAV
 
       dummy = 0.d0
 C      call dblepr(MSG, NMES, dummy, 0)

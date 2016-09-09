@@ -2437,7 +2437,7 @@ C-----------------------------------------------------------------------
       GO TO 720
  690  ETAMAX = ETAMX3
       IF (NST .LE. 10) ETAMAX = ETAMX2
- 700  R = ONE/TQ(2)
+      R = ONE/TQ(2)
       CALL DZSCAL (N, R, ACOR, 1)
  720  JSTART = 1
       RETURN
@@ -3590,7 +3590,8 @@ C      GO TO (10, 20, 30, 40), ITOL
       RETURN
  20   CONTINUE
       DO 25 I = 1,N
- 25     EWT(I) = RTOL(1)*ABS(YCUR(I)) + ATOL(I)
+        EWT(I) = RTOL(1)*ABS(YCUR(I)) + ATOL(I)
+ 25   CONTINUE
       RETURN
  30   CONTINUE
       DO 35 I = 1,N
@@ -3790,10 +3791,10 @@ c     internal variables
 c
       COMPLEX(KIND=8) zdotc,t
       integer k,kb,l,nm1
-      double precision dreal,dimag
-      COMPLEX(KIND=8) zdumr,zdumi
-      dreal(zdumr) = zdumr
-      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
+C KS      double precision dreal,dimag
+C KS      COMPLEX(KIND=8) zdumr,zdumi
+C KS     dreal(zdumr) = zdumr
+C KS      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 c
       nm1 = n - 1
       if (job .ne. 0) go to 50
@@ -3939,13 +3940,13 @@ c
       COMPLEX(KIND=8) t
       integer i,izamax,i0,j,ju,jz,j0,j1,k,kp1,l,lm,m,mm,nm1
 c
-      COMPLEX(KIND=8) zdum
+CKS      COMPLEX(KIND=8) zdum
       double precision cabs1
       double precision dreal,dimag
-      COMPLEX(KIND=8) zdumr,zdumi
-      dreal(zdumr) = zdumr
-      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
-      cabs1(zdum) = dabs(dreal(zdum)) + dabs(dimag(zdum))
+C      COMPLEX(KIND=8) zdumr,zdumi
+C      dreal(zdumr) = zdumr
+C      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
+CKS      cabs1(zdum) = dabs(dreal(zdum)) + dabs(dimag(zdum))
 c
       m = ml + mu + 1
       info = 0
@@ -4101,10 +4102,10 @@ c     internal variables
 c
       COMPLEX(KIND=8) zdotc,t
       integer k,kb,l,la,lb,lm,m,nm1
-      double precision dreal,dimag
-      COMPLEX(KIND=8) zdumr,zdumi
-      dreal(zdumr) = zdumr
-      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
+C      double precision dreal,dimag
+C      COMPLEX(KIND=8) zdumr,zdumi
+C      dreal(zdumr) = zdumr
+C      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 c
       m = mu + ml + 1
       nm1 = n - 1

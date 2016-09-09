@@ -1527,7 +1527,8 @@ C-----------------------------------------------------------------------
       CALL DEWSET (N, ITOL, RTOL, ATOL, RWORK(LYH), RWORK(LEWT))
       DO 260 I = 1,N
         IF (RWORK(I+LEWT-1) .LE. 0.0D0) GO TO 510
- 260    RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+        RWORK(I+LEWT-1) = 1.0D0/RWORK(I+LEWT-1)
+ 260  CONTINUE
  270  TOLSF = UROUND*DVNORM (N, RWORK(LYH), RWORK(LEWT))
       IF (TOLSF .LE. 1.0D0) GO TO 280
       TOLSF = TOLSF*2.0D0
@@ -1555,7 +1556,14 @@ C-----------------------------------------------------------------------
      1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), IWORK(LIWM),
      2   F, JAC, DPREPJ, DSOLSY, rpar,ipar)
       KGO = 1 - KFLAG
-      GO TO (300, 530, 540), KGO
+      IF (KGO .EQ. 1) THEN
+         GOTO 300
+      ELSE IF (KGO .EQ. 2) THEN
+         GOTO 530
+      ELSE IF (KGO .EQ. 3) THEN
+         GOTO 540
+      ENDIF
+C      GO TO (300, 530, 540), KGO
 C-----------------------------------------------------------------------
 C Block F.
 C The following block handles the case of a successful return from the
@@ -3299,7 +3307,22 @@ CKS
       IF (IPFLAG .NE. -1) IWORK(23) = IPIAN
       IF (IPFLAG .NE. -1) IWORK(24) = IPJAN
       IPGO = -IPFLAG + 1
-      GO TO (90, 628, 629, 630, 631, 632, 633), IPGO
+      IF (IPGO .EQ. 1) THEN
+        GOTO 90
+      ELSE IF (IPGO .EQ. 2) THEN
+        GOTO 628
+      ELSE IF (IPGO .EQ. 3) THEN
+        GOTO 629
+      ELSE IF (IPGO .EQ. 4) THEN
+        GOTO 630
+      ELSE IF (IPGO .EQ. 5) THEN
+        GOTO 631
+      ELSE IF (IPGO .EQ. 6) THEN
+        GOTO 632
+      ELSE IF (IPGO .EQ. 7) THEN
+        GOTO 633
+      ENDIF
+C      GO TO (90, 628, 629, 630, 631, 632, 633), IPGO
  90   IWORK(22) = LYH
       IF (LENRW .GT. LRW) GO TO 617
 C Set flag to signal parameter changes to DSTODE. ----------------------
@@ -3456,7 +3479,18 @@ C The next code block is for continuation calls only (ISTATE = 2 or 3)
 C and is to check stop conditions before taking a step.
 C-----------------------------------------------------------------------
  200  NSLAST = NST
-      GO TO (210, 250, 220, 230, 240), ITASK
+      IF (ITASK .EQ. 1) THEN
+        GOTO 210
+      ELSE IF (ITASK .EQ. 2) THEN
+        GOTO 250
+      ELSE IF (ITASK .EQ. 3) THEN
+        GOTO 220
+      ELSE IF (ITASK .EQ. 4) THEN
+        GOTO 230
+      ELSE IF (ITASK .EQ. 5) THEN
+        GOTO 240
+      ENDIF
+C      GO TO (210, 250, 220, 230, 240), ITASK
  210  IF ((TN - TOUT)*H .LT. 0.0D0) GO TO 250
       CALL DINTDY (TOUT, 0, RWORK(LYH), NYH, Y, IFLAG)
       IF (IFLAG .NE. 0) GO TO 627
