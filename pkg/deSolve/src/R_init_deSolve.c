@@ -1,5 +1,13 @@
-#include <R.h>
-#include <R_ext/Rdynload.h>
+#ifndef R_R_H
+# include <R.h>
+#endif
+
+
+#ifndef R_EXT_DYNLOAD_H_
+# include <R_ext/Rdynload.h>
+#endif
+
+
 #include "deSolve.h"
 
 SEXP get_deSolve_gparms(void);
