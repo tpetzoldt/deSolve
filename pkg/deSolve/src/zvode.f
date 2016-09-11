@@ -4196,7 +4196,7 @@ C      end function
 
       double precision function cabs1(zdum)
       complex (kind = 8), intent (in) :: zdum
-        cabs1 = dabs(REALPART(zdum)) + dabs(IMAGPART(zdum))
+        cabs1 = dabs(REAL(zdum)) + dabs(AIMAG(zdum))
       end function 
 C KARLINE: end new functions
 
