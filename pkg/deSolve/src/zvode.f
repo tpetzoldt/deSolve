@@ -3942,7 +3942,7 @@ c
 c
 CKS      COMPLEX(KIND=8) zdum
       double precision cabs1
-      double precision dreal,dimag
+C      double precision dreal,dimag
 C      COMPLEX(KIND=8) zdumr,zdumi
 C      dreal(zdumr) = zdumr
 C      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
@@ -4173,6 +4173,9 @@ c
       return
       end
 C KARLINE: created true functions out of these statement functions
+C Thomas: such functions exist already in modern Fortran,
+C      only cabs1 was needed, but even this may have an existing
+C           equvalent
 C      COMPLEX(KIND=8) zdum
 C      double precision cabs1
 C      double precision dreal,dimag
@@ -4181,19 +4184,19 @@ C      dreal(zdumr) = zdumr
 C      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 C      cabs1(zdum) = dabs(dreal(zdum)) + dabs(dimag(zdum))
 
-      double precision function dreal(zdumr)
-      complex (kind = 8), intent (in) :: zdumr
-        dreal = zdumr
-      end function 
+C      double precision function dreal(zdumr)
+C      complex (kind = 8), intent (in) :: zdumr
+C        dreal = zdumr
+C      end function 
 
-      double precision function dimag(zdumi)
-      complex (kind = 8), intent (in) :: zdumi
-        dimag = (0.0d0,-1.0d0)*zdumi
-      end function 
+C      double precision function dimag(zdumi)
+C      complex (kind = 8), intent (in) :: zdumi
+C        dimag = (0.0d0,-1.0d0)*zdumi
+C      end function 
 
       double precision function cabs1(zdum)
       complex (kind = 8), intent (in) :: zdum
-        cabs1 = dabs(dreal(zdum)) + dabs(dimag(zdum))
+        cabs1 = dabs(REALPART(zdum)) + dabs(IMAGPART(zdum))
       end function 
 C KARLINE: end new functions
 
