@@ -33,7 +33,7 @@ The manuals are directly contained in the **deSolve** package::
 
 ### Tutorials
 
-* The [slides](slides/tutorial.pdf) of our pre-conference tutorials at the UseR-conferences in Warwick (UK) and Los Angeles (USA) contain an overview and practical examples in a relatively compact form.
+* The slides of our pre-conference tutorials at the UseR-conferences [2011 in Warwick (UK)](slides/tutorial.pdf) and [2014 in Los Angeles (USA)](user2014/tutorial.pdf) contain an overview and practical examples in a relatively compact form.
 
 
 ### Papers and Books
@@ -71,7 +71,7 @@ community for their tools, documentations, discussions and suggestions.
 
 ----
 
-2016-04-07 The deSolve authors.
+2016-12-12 The deSolve authors.
 
 
 
