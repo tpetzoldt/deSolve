@@ -1,0 +1,25 @@
+---
+title: "useR 2017 Tutorial Examples"
+author: "Karline Soetaert and Thomas Petzoldt"
+date: "March 2nd, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Examples for the useR 2017 Conference, Brussels
+
+
+* This page will contain all examples for the [useR 2017](https://user2017.brussels/) conference tutorial on 
+**Modelling the environment**.
+
+* You can already contribute to the tutorial and discuss with us at the [R-SIG-DYNAMIC-MODELS](https://stat.ethz.ch/mailman/listinfo/r-sig-dynamic-models) mailing list.
+
+## Come to the conference and meet us!
+
+* https://user2017.brussels/
+
+
+The [deSolve](http://desolve.r-forge.r-project.org) authors.
