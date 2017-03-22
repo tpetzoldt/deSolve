@@ -1,6 +1,7 @@
 Package: deSolve
-Version: 1.15
-Title:  Solvers for Initial Value Problems of Differential Equations ('ODE', 'DAE', 'DDE')
+Version: 1.20
+Title: Solvers for Initial Value Problems of Differential Equations
+        ('ODE', 'DAE', 'DDE')
 Authors@R: c(person("Karline","Soetaert", role = c("aut"), 
                      email = "karline.soetaert@nioz.nl"),
              person("Thomas","Petzoldt", role = c("aut", "cre"),
@@ -31,4 +32,3 @@ Description: Functions that solve initial value problems of a system
 License: GPL (>= 2)
 URL: http://desolve.r-forge.r-project.org/
 LazyData: yes
-
