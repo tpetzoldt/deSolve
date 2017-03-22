@@ -1,3 +1,10 @@
+
+
+Changes version 1.20
+================================
+o register native routines
+  (version jump intentionally)
+
 Changes version 1.14
 ================================
 o matplot.deSolve is not anymore exported as matplot to avoid the 
