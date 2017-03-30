@@ -1,0 +1,54 @@
+---
+title: "Modelling the environment in R: from small-scale to global applications"
+author: |
+   | Karline Soetaert^1^ and Thomas Petzoldt^2^
+   |
+   | 1. Netherlands Institute of Sea Research
+   | 2. Technische Universität Dresden
+institute: 
+   - $^1$4401 NT Yerseke, The Netherlands
+   - $^2$01062 Dresden, Germany
+output: html_document
+bibliography: citation.bib
+nocite: | 
+  @RCore
+---
+
+**Keywords**: Environmental model, differential equation, model-data comparison, visualisation.
+
+# Abstract
+The tutorial will show users practical examples of how we apply R to understand environmental processes, and how they are used for prediction. Our models belong to the category of dynamic models, that simulate the "life" of natural and technical systems in space and time. The examples vary from very simple, small-scale applications (level of cell or organism) up to complex spatiotemporal models. 
+We will also explain how we use data in conjunction with models for model calibration and validation. 
+
+# Goals
+The tutorial will consist of two parts, an introductory part and a "modular" outlook:
+
+### Introductory part
+
+* basic R packages for differential equation models: [deSolve](https://CRAN.R-project.org/package=deSolve) [@deSolve], [ReacTran](https://CRAN.R-project.org/package=ReacTran) [@ReacTran], [simecol](https://CRAN.R-project.org/package=simecol) [@simecol], ...
+* useful R packages for specific applications: [marelac](https://CRAN.R-project.org/package=marelac) [@marelac], [AquaEnv](https://CRAN.R-project.org/package=AquaEnv) [@AquaEnv]
+* R packages for model-data comparison, [FME](https://CRAN.R-project.org/package=FME) [@FME], ...
+
+### Outlook
+
+A selection of more advanced features, dependent on the interest of the participants:
+
+* how to make models more realistic by implementing forcing functions and events,
+* how to implement complex models in an efficient way with package [rodeo](https://CRAN.R-project.org/package=rodeo) [@rodeo],
+* how to speed up differential equation models (matrix formulation, code generators, parallel computing),
+* how to visualise complex (e.g. 4-D) model output, using the R-package [plot3D] (https://CRAN.R-project.org/package=plot3D) [@plot3D]
+* how to create web-based model applications with deSolve and shiny [@shiny].
+
+We will provide reproducible example cases, which the user will be allowed to experiment with.
+[**more ...**](http://desolve.r-forge.r-project.org/user2017)
+
+# Pre-requisites
+Knowledge of [R](https://www.r-project.org) is assumed; prior knowledge with differential equation models is recommended but not mandatory. 
+Potential attendees are people involved in dynamic simulation models, or intending to start using these tools. Background information and material are available at the [deSolve-homepage](http://desolve.r-forge.r-project.org) at R-Forge.
+
+# Instructors
+
+[Karline Soetaert](https://www.nioz.nl/en/about/organisation/staff/karline-soetaert) and [Thomas Petzoldt](https://tu-dresden.de/Members/thomas.petzoldt) are both biologists, working in the field of oceanography (KS) or limnology (TP). They have developed several R-packages for environmental modelling, working together (deSolve, FME, marelac) or individually (KS: ReacTran - TP: simecol). 
+Both are active in teaching this subject, making use of R, and regularly give tutorials on the topic.
+
+# References
