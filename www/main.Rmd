@@ -10,7 +10,11 @@ bibliography: deSolve.bib
 Package **deSolve** is an add-on package of the open source data analysis system 
 <a href="http://www.r-project.org" target="_top">**R**</a> for the numerical treatment of systems of differential equations.
 
-The package contains functions that solve initial value problems of a system of first-order ordinary differential equations (ODE), of partial differential equations (PDE), of differential algebraic equations (DAE), and of delay differential equations (DDE). The functions provide an interface to the FORTRAN functions lsoda, lsodar, lsode, lsodes of the ODEPACK collection, to the FORTRAN functions dvode, zvode, daspk and radau5, and a C-implementation of solvers of the Runge-Kutta family with fixed or variable time steps. The package contains also routines designed for solving ODEs resulting from 1-D, 2-D and 3-D partial differential equations (PDE) that have been converted to ODEs by numerical differencing. 
+The package contains functions that solve initial value problems of a system of first-order ordinary differential equations (ODE), of partial differential equations (PDE), of differential algebraic equations (DAE), and of delay differential equations (DDE). The functions provide an interface to the FORTRAN functions lsoda, lsodar, lsode, lsodes of the ODEPACK collection, to the FORTRAN functions dvode, zvode, daspk and radau5, and a C-implementation of solvers of the Runge-Kutta family with fixed or variable time steps. The package contains also routines designed for solving ODEs resulting from 1-D, 2-D and 3-D partial differential equations (PDE) that have been converted to ODEs by numerical differencing.
+
+## News
+
+**2017-07-04:** Tutorial about [Environmental modelling with R](http://desolve.r-forge.r-project.org/user2017) at the [useR!2017 conference in Brussels](https://user2017.brussels/)
 
 ## Software Download
 
