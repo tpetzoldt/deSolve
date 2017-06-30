@@ -75,7 +75,7 @@ community for their tools, documentations, discussions and suggestions.
 
 ----
 
-2016-12-12 The deSolve authors.
+2017-06-30 The deSolve authors.
 
 
 
