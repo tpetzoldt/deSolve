@@ -182,16 +182,16 @@ void denspar(double *FF, double *y0, double *y1, double dt, double *d,
   double ydiff, bspl;
   int i, j;
   for (i = 0; i < neq; i++) {
-   r[i]           = y0[i];
-   ydiff          = y1[i] - y0[i];
-   r[i + neq]     = ydiff;
-   bspl           = dt * FF[i] - ydiff;
-   r[i + 2 * neq] = bspl;
-   r[i + 3 * neq] = ydiff - dt * FF[i + (stage - 1) * neq] - bspl;
-   r[i + 4 * neq] = 0;
-   for (j = 0; j < stage; j++)
-     r[i + 4 * neq] = r[i + 4 * neq] + d[j] * FF[i + j * neq];
-     r[i + 4 * neq] = r[i + 4 * neq] * dt;
+    r[i]           = y0[i];
+    ydiff          = y1[i] - y0[i];
+    r[i + neq]     = ydiff;
+    bspl           = dt * FF[i] - ydiff;
+    r[i + 2 * neq] = bspl;
+    r[i + 3 * neq] = ydiff - dt * FF[i + (stage - 1) * neq] - bspl;
+    r[i + 4 * neq] = 0;
+    for (j = 0; j < stage; j++)
+      r[i + 4 * neq] = r[i + 4 * neq] + d[j] * FF[i + j * neq];
+    r[i + 4 * neq] = r[i + 4 * neq] * dt;
   }
 }
 
