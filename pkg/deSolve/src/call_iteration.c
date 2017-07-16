@@ -10,7 +10,6 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
           SEXP Flist) {
 
   /* Initialization */
-  //long int old_N_Protect = save_N_Protected();
   int nprot = 0;
 
   double *tt = NULL, *xs = NULL;
@@ -93,7 +92,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   y0 = REAL(R_y0);
 
   /* matrix for holding the outputs */
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); //incr_N_Protect(); //5
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); nprot++; //incr_N_Protect(); //5
   yout = REAL(R_yout);
 
   /* attribute that stores state information, similar to lsoda */
@@ -190,6 +189,5 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   timesteps[1] = 0;
 
   UNPROTECT(nprot);
-  //restore_N_Protected(old_N_Protect);
   return(R_yout);
 }
