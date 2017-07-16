@@ -1,4 +1,6 @@
-
+Changes version 1.21
+================================
+ o change way how UNPROTECT is handled (Thomas)
 
 Changes version 1.20
 ================================

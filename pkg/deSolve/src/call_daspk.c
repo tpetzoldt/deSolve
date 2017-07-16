@@ -5,16 +5,16 @@
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    Differential algebraic equation solver daspk.
-   
-   The C-wrappers that provide the interface between FORTRAN codes and R-code 
-   are: C_res_func   : interface with R-code "res", passes function residuals  
-        C_out        : interface with R-code "res", passes output variables  
+
+   The C-wrappers that provide the interface between FORTRAN codes and R-code
+   are: C_res_func   : interface with R-code "res", passes function residuals
+        C_out        : interface with R-code "res", passes output variables
         C_daejac_func: interface with R-code "jacres", passes jacobian
-  
+
    DLL_forc_dae provides the interface between the residual function specified in
    a DLL and daspk, in case there are forcing functions.
-   
-  
+
+
    changes since 1.4
    karline: version 1.5: added forcing functions in DLL
    karline: version 1.6: added events
@@ -32,7 +32,7 @@ double * mass, *dytmp;
 /* define data types for function pointers */
 
 /* generic function pointer type */
-typedef void (*funcptr)(void); 
+typedef void (*funcptr)(void);
 
 /* function pointers for different argument lists */
 typedef void C_daejac_func_type(double *, double *, double *, double *, double *,
@@ -57,13 +57,13 @@ void matvecmult (int nr, int nc, double* A, double* x, double* c) {
 /* definition of the call to the FORTRAN function ddaspk - in file ddaspk.f*/
 void F77_NAME(ddaspk)(void (*)(double *, double *, double *, double*,
                                double *, int*, double *, int*),
-		     int *, double *, double *, double *, double *, 
-		     int *,double *, double *,  int *,  double *,  int *, 
+		     int *, double *, double *, double *, double *,
+		     int *,double *, double *,  int *,  double *,  int *,
 		     int *, int *, double *, int *,
 		     void(*)(void)/*(double *, double *, double *, double *, double *, double *, int *)*/,
-		     void (*)(int *, double *, double *, double *, double *, double *, 
-                  double *, double *, double *, int *, double *, double *, 
-                        int *, double *, int *));   
+		     void (*)(int *, double *, double *, double *, double *, double *,
+                  double *, double *, double *, int *, double *, double *,
+                        int *, double *, int *));
 
 /* func is in a DLL,                                                         */
 static void DLL_res_ode (double *t, double *y, double *yprime, double *cj,
@@ -102,16 +102,16 @@ static void DLL_forc_dae2 (double *t, double *y, double *yprime, double *cj,
 /* not yet implemented                                                       */
 static void C_psol_func (int *neq, double *t, double *y, double *yprime,
                         double *savr, double *wk, double *cj, double* wght,
-                        double *wp, int *iwp, double *b, double *eplin, 
+                        double *wp, int *iwp, double *b, double *eplin,
                         int *ierr, double *RPAR, int *IPAR)
 {
 }
 
 /* interface between FORTRAN function calls and R functions                 */
 
-static void C_res_func (double *t, double *y, double *yprime, double *cj, 
+static void C_res_func (double *t, double *y, double *yprime, double *cj,
                        double *delta, int *ires, double *yout, int *iout)
-{                             
+{
   int i;
   SEXP R_fcall, Time, ans;
 
@@ -120,67 +120,70 @@ static void C_res_func (double *t, double *y, double *yprime, double *cj,
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(Time = ScalarReal(*t));                       incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));                       //incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); //incr_N_Protect();
+  PROTECT(ans = eval(R_fcall, R_envir));                //incr_N_Protect();
 
   for (i = 0; i < n_eq; i++)  	delta[i] = REAL(ans)[i];
 
-  my_unprotect(3);
+  UNPROTECT(3);
+  //my_unprotect(3);
 }
 
 /* deriv output function  */
 
-static void C_out (int *nout, double *t, double *y, 
+static void C_out (int *nout, double *t, double *y,
                        double *yprime, double *yout)
 {
   int i;
   SEXP R_fcall, Time, ans;
 
-  for (i = 0; i < n_eq; i++)  
+  for (i = 0; i < n_eq; i++)
     {
       REAL(Y)[i] = y[i];
-      REAL (YPRIME)[i] = yprime[i];      
+      REAL (YPRIME)[i] = yprime[i];
     }
-     
-  PROTECT(Time = ScalarReal(*t));                       incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                incr_N_Protect();
+
+  PROTECT(Time = ScalarReal(*t));                       //incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); //incr_N_Protect();
+  PROTECT(ans = eval(R_fcall, R_envir));                //incr_N_Protect();
 
   for (i = 0; i < *nout; i++) yout[i] = REAL(ans)[i + n_eq];
 
-  my_unprotect(3);
-}      
+  UNPROTECT(3);
+  //my_unprotect(3);
+}
 
 /* interface between FORTRAN call to jacobian and R function */
 
-static void C_daejac_func (double *t, double *y, double *yprime, 
+static void C_daejac_func (double *t, double *y, double *yprime,
                        double *pd,  double *cj, double *RPAR, int *IPAR)
 {
   int i;
   SEXP R_fcall, ans;
 
-  REAL(Rin)[0] = *t;  
-  REAL(Rin)[1] = *cj;  
+  REAL(Rin)[0] = *t;
+  REAL(Rin)[1] = *cj;
 
   for (i = 0; i < n_eq; i++)
     {
       REAL(Y)[i] = y[i];
-      REAL (YPRIME)[i] = yprime[i];      
+      REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));  incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                    incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));  //incr_N_Protect();
+  PROTECT(ans = eval(R_fcall, R_envir));                    //incr_N_Protect();
   for (i = 0; i < n_eq * nrowpd; i++)  pd[i] = REAL(ans)[i];
 
-  my_unprotect(2);
+  UNPROTECT(2);
+  //my_unprotect(2);
 }
 
 
 /* MAIN C-FUNCTION, CALLED FROM R-code */
 
-SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms, 
-		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc, 
-		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,  
+SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
+		SEXP rtol, SEXP atol, SEXP rho, SEXP tcrit, SEXP jacfunc, SEXP initfunc,
+		SEXP psolfunc, SEXP verbose, SEXP info, SEXP iWork, SEXP rWork,
     SEXP nOut, SEXP maxIt, SEXP bu, SEXP bd, SEXP nRowpd, SEXP Rpar,
     SEXP Ipar, SEXP flist, SEXP elag, SEXP eventfunc, SEXP elist, SEXP Mass)
 {
@@ -195,7 +198,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   int    *Info,  ninfo, idid, mflag, ires = 0;
   int    *iwork, it, ntot= 0, nout, funtype;
   double *rwork;
-  
+
 
   /* pointers to functions passed to FORTRAN */
   C_res_func_type     *res_func = NULL;
@@ -209,20 +212,19 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
   lock_solver(); /* prevent nested call of solvers that have global variables */
 
-/*                      #### initialisation ####                              */    
+/*                      #### initialisation ####                              */
 
-  //init_N_Protect();
-  long int old_N_Protect = save_N_Protected();  
+  //long int old_N_Protect = save_N_Protected();
 
-  ny   = LENGTH(y);  
+  ny   = LENGTH(y);
   n_eq = ny;                          /* n_eq is a global variable */
-  nt = LENGTH(times);  
-  mflag = INTEGER(verbose)[0];        
+  nt = LENGTH(times);
+  mflag = INTEGER(verbose)[0];
 
   ninfo=LENGTH(info);
-  nrowpd = INTEGER(nRowpd)[0];  
+  nrowpd = INTEGER(nRowpd)[0];
   maxit = INTEGER(maxIt)[0];
-  
+
 /* function is a dll ?*/
   if (inherits(resfunc, "NativeSymbol")) {
    isDll = 1;
@@ -230,13 +232,13 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
    isDll = 0;
   }
 
-  initOutC(isDll, &nout, &ntot, n_eq, nOut, Rpar, Ipar); 
+  initOutC(isDll, &nout, &ntot, n_eq, nOut, Rpar, Ipar);
 
   /* copies of all variables that will be changed in the FORTRAN subroutine */
   Info  = (int *) R_alloc(ninfo,sizeof(int));
-   for (j = 0; j < ninfo; j++) Info[j] = INTEGER(info)[j];  
+   for (j = 0; j < ninfo; j++) Info[j] = INTEGER(info)[j];
   if (mflag == 1) Info[17] = 1;
-  
+
   xytmp = (double *) R_alloc(n_eq, sizeof(double));
    for (j = 0; j < n_eq; j++) xytmp[j] = REAL(y)[j];
 
@@ -250,15 +252,15 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   lrtol = LENGTH(rtol);
   Rtol  = (double *) R_alloc((int) lrtol, sizeof(double));
     for (j = 0; j < lrtol; j++) Rtol[j] = REAL(rtol)[j];
-  
+
   liw = LENGTH(iWork);
-  iwork = (int *) R_alloc(liw, sizeof(int));   
-    for (j = 0; j < liw; j++) iwork[j] = INTEGER(iWork)[j];  
+  iwork = (int *) R_alloc(liw, sizeof(int));
+    for (j = 0; j < liw; j++) iwork[j] = INTEGER(iWork)[j];
 
   lrw = LENGTH(rWork);
   rwork = (double *) R_alloc(lrw, sizeof(double));
     for (j = 0; j < lrw; j++) rwork[j] = REAL(rWork)[j];
-    
+
   //timesteps = (double *) R_alloc(2, sizeof(double));
   for (j = 0; j < 2; j++) timesteps[j] = 0.;
 
@@ -270,8 +272,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc, 0);  /* zero roots */
   islag = initLags(elag, 0, 0);
- 
- /* pointers to functions res_func, psol_func and daejac_func, 
+
+ /* pointers to functions res_func, psol_func and daejac_func,
     passed to the FORTRAN subroutine */
   isMass = 0;
   if (isDll == 1)  {       /* DLL address passed to FORTRAN */
@@ -294,7 +296,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
           for (j = 0; j < n_eq * n_eq; j++) mass[j] = REAL(Mass)[j];
           dytmp = (double *) R_alloc(n_eq, sizeof(double));
         }
-        
+
       } else
        error("DLL function type not yet implemented");
 
@@ -305,8 +307,8 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
     } else {
       /* interface function between FORTRAN and R passed to FORTRAN */
       res_func = (C_res_func_type *) C_res_func;
-      /* needed to communicate with R */      
-      R_res_func = resfunc; 
+      /* needed to communicate with R */
+      R_res_func = resfunc;
     }
     R_envir = rho;           /* karline: this to allow merging compiled and R-code (e.g. events)*/
 
@@ -337,14 +339,14 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	    }
     }
 
-/*                      #### initial time step ####                           */    
+/*                      #### initial time step ####                           */
   idid = 1;
   REAL(YOUT)[0] = REAL(times)[0];
   for (j = 0; j < n_eq; j++)
       REAL(YOUT)[j+1] = REAL(y)[j];
 
   if (islag == 1) updatehistini(REAL(times)[0], xytmp, xdytmp, rwork, iwork);
-    
+
   if (nout>0)
     {
      tin = REAL(times)[0];
@@ -352,11 +354,11 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	   if (isDll == 1) res_func (&tin, xytmp, xdytmp, &cj, delta, &ires, out, ipar) ;
 	   else C_out(&nout,&tin,xytmp,xdytmp,out);
 	      for (j = 0; j < nout; j++)
-	       REAL(YOUT)[j + n_eq + 1] = out[j]; 
+	       REAL(YOUT)[j + n_eq + 1] = out[j];
     }
-               
-/*                     ####   main time loop   ####                           */    
-               
+
+/*                     ####   main time loop   ####                           */
+
   for (it = 0; it < nt-1; it++)
   {
       tin = REAL(times)[it];
@@ -374,63 +376,63 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
      {
        if (Info[11] == 0) {        /* ordinary jac */
          F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
-                           Info, Rtol, Atol, &idid, 
+                           Info, Rtol, Atol, &idid,
                            rwork, &lrw, iwork, &liw, out, ipar, (funcptr)daejac_func, psol_func);
 
        } else {                   /* krylov - not yet used */
          F77_CALL(ddaspk) (res_func, &ny, &tin, xytmp, xdytmp, &tout,
-                           Info, Rtol, Atol, &idid, 
+                           Info, Rtol, Atol, &idid,
                            rwork, &lrw, iwork, &liw, out, ipar, (funcptr)kryljac_func, psol_func);
         }
-    /* in case timestep is asked for... */    
+    /* in case timestep is asked for... */
     timesteps [0] = rwork[10];
     timesteps [1] = rwork[11];
-  
-    if (islag == 1) updatehist(tin, xytmp, xdytmp, rwork, iwork);    
-        
+
+    if (islag == 1) updatehist(tin, xytmp, xdytmp, rwork, iwork);
+
 	  repcount ++;
-	  if (idid == -1) 
+	  if (idid == -1)
       {Info[0]=1;
        } else     if (idid == -2)   {
 	      warning("Excessive precision requested.  scale up `rtol' and `atol' e.g. by the factor %g\n",10.0);
-       Info[0]=1;          
+       Info[0]=1;
 	      repcount=maxit+2;
 	    }   else    if (idid == -3)   {
        warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
        repcount=maxit+2;
       }   else    if (idid == -5)   {
-	      warning("jacfun routine failed with the Krylov method"); 
-        repcount = maxit+2;     
+	      warning("jacfun routine failed with the Krylov method");
+        repcount = maxit+2;
       }   else    if (idid == -6)   {
        warning("repeated error test failures on a step - singularity ?");
-        repcount = maxit+2;     
+        repcount = maxit+2;
       }  else    if (idid == -7)    {
        warning("repeated convergence test failures on a step - inaccurate Jacobian or preconditioner?");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -8)    {
        warning("matrix of partial derivatives is singular with direct method-some equations redundant");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -9)    {
        warning("repeated convergence test failures and error test failures ?");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -10)   {
        warning("repeated convergence test failures on a step, because ires was -1");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -11)   {
        warning("unrecoverable error from inside noninear solver, ires=-2 ");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -12)   {
        warning("failed to compute initial y and yprime vectors");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -13)   {
        warning("unrecoverable error inside the PSOL routine");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -14)   {
        warning("Krylov linear system solver failed to converge");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }  else    if (idid == -33)   {
        warning("fatal error");
-       repcount = maxit+2; 
+       repcount = maxit+2;
       }
 
 	} while (tin < tout && repcount < maxit);
@@ -443,10 +445,10 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 	    if (isDll == 1) res_func (&tin, xytmp, xdytmp, &cj, delta, &ires, out, ipar) ;
  	    else C_out(&nout,&tin,xytmp,xdytmp,out);
       for (j = 0; j < nout; j++)
-	       REAL(YOUT)[(it+1)*(ntot + 1) + j + n_eq + 1] = out[j]; 
+	       REAL(YOUT)[(it+1)*(ntot + 1) + j + n_eq + 1] = out[j];
                }
-               
-/*                    ####  an error occurred   ####                          */                     
+
+/*                    ####  an error occurred   ####                          */
     if (repcount > maxit || tin < tout || idid <= 0) {
       idid = 0;
       returnearly(1, it, ntot);
@@ -454,14 +456,13 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
     }
   }    /* end main time loop */
 
-/*                   ####   returning output   ####                           */    
+/*                   ####   returning output   ####                           */
   terminate(idid, iwork, 23, 0, rwork, 3, 1);
   REAL(RWORK)[0] = rwork[6];
-    
-  //unprotect_all();
-  restore_N_Protected(old_N_Protect);  
+
+  //restore_N_Protected(old_N_Protect);
   unlock_solver();
-  
+
   if (idid > 0)
     return(YOUT);
   else

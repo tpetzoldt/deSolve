@@ -11,7 +11,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 	      SEXP Rpar, SEXP Ipar, SEXP Flist) {
 
   /*  Initialization */
-  long int old_N_Protect = save_N_Protected();
+  //long int old_N_Protect = save_N_Protected();
 
   double *tt = NULL, *xs = NULL;
   double *tmp, *FF, *out;
@@ -29,11 +29,11 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Processing of Arguments                                                */
   /*------------------------------------------------------------------------*/
-  PROTECT(Times = AS_NUMERIC(Times)); incr_N_Protect();
+  PROTECT(Times = AS_NUMERIC(Times)); //incr_N_Protect(); //1
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
 
-  PROTECT(Xstart = AS_NUMERIC(Xstart)); incr_N_Protect();
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); //incr_N_Protect(); //2
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
 
@@ -70,7 +70,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     lipar = 3;                    /* in lsoda = 1; */
     lrpar = nout;                 /* in lsoda = 1; */
   }
-  out   = (double *) R_alloc(lrpar, sizeof(double)); 
+  out   = (double *) R_alloc(lrpar, sizeof(double));
   ipar  = (int *) R_alloc(lipar, sizeof(int));
 
   ipar[0] = nout;              /* first 3 elements of ipar are special */
@@ -81,20 +81,20 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     for (j = 0; j < LENGTH(Ipar); j++) ipar[j+3] = INTEGER(Ipar)[j];
     /* out:  first nout elements of out are reserved for output variables
        other elements are set via argument *rpar* */
-    for (j = 0; j < nout; j++)         out[j] = 0.0;                
+    for (j = 0; j < nout; j++)         out[j] = 0.0;
     for (j = 0; j < LENGTH(Rpar); j++) out[nout+j] = REAL(Rpar)[j];
   }
 
   /*------------------------------------------------------------------------*/
   /* Allocation of Workspace                                                */
   /*------------------------------------------------------------------------*/
-  PROTECT(R_y0 = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_f  = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_y  = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_f1 = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_f2 = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_f3 = allocVector(REALSXP, neq)); incr_N_Protect();
-  PROTECT(R_f4 = allocVector(REALSXP, neq)); incr_N_Protect();
+  PROTECT(R_y0 = allocVector(REALSXP, neq)); //incr_N_Protect(); //3
+  PROTECT(R_f  = allocVector(REALSXP, neq)); //incr_N_Protect(); //4
+  PROTECT(R_y  = allocVector(REALSXP, neq)); //incr_N_Protect(); //5
+  PROTECT(R_f1 = allocVector(REALSXP, neq)); //incr_N_Protect(); //6
+  PROTECT(R_f2 = allocVector(REALSXP, neq)); //incr_N_Protect(); //7
+  PROTECT(R_f3 = allocVector(REALSXP, neq)); //incr_N_Protect(); //8
+  PROTECT(R_f4 = allocVector(REALSXP, neq)); //incr_N_Protect(); //9
   y0 = REAL(R_y0);
   f  = REAL(R_f);
   y  = REAL(R_y);
@@ -104,13 +104,13 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   f4 = REAL(R_f4);
 
   /* matrix for holding the outputs */
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); //incr_N_Protect(); //10
   yout = REAL(R_yout);
 
   /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
-  PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
+  PROTECT(R_istate = allocVector(INTSXP, 22)); //incr_N_Protect(); //11
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
@@ -120,7 +120,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
 
   initParms(Initfunc, Parms);
-  isForcing = initForcings(Flist); 
+  isForcing = initForcings(Flist);
   /*------------------------------------------------------------------------*/
   /* Initialization of Integration Loop                                     */
   /*------------------------------------------------------------------------*/
@@ -138,7 +138,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     dt = tt[it + 1] - t;
     timesteps[0] = timesteps[1];
     timesteps[1] = dt;
-  
+
     if (verbose)
       Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
     derivs(Func, t, y0, Parms, Rho, f1, out, 0, neq, ipar, isDll, isForcing);
@@ -191,7 +191,7 @@ SEXP call_rk4(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* release R resources */
   timesteps[0] = 0;
   timesteps[1] = 0;
-  
-  restore_N_Protected(old_N_Protect);
+  UNPROTECT(11);
+  //restore_N_Protected(old_N_Protect);
   return(R_yout);
 }

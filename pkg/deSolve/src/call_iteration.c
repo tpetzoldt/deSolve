@@ -10,7 +10,8 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
           SEXP Flist) {
 
   /* Initialization */
-  long int old_N_Protect = save_N_Protected();
+  //long int old_N_Protect = save_N_Protected();
+  int nprot = 0;
 
   double *tt = NULL, *xs = NULL;
   double *ytmp, *out;
@@ -30,11 +31,11 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   int nsteps = INTEGER(Nsteps)[0];
 
-  PROTECT(Times = AS_NUMERIC(Times));         incr_N_Protect();
+  PROTECT(Times = AS_NUMERIC(Times)); nprot++; //incr_N_Protect(); //1
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
 
-  PROTECT(Xstart = AS_NUMERIC(Xstart));       incr_N_Protect();
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); nprot++; //incr_N_Protect(); //2
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
 
@@ -67,7 +68,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
     isOut = FALSE;
     lipar = 3;
     lrpar = nout;
-    PROTECT(R_y = allocVector(REALSXP, neq)); incr_N_Protect();
+    PROTECT(R_y = allocVector(REALSXP, neq)); nprot++; //incr_N_Protect(); //3 !!
   }
   out   = (double *) R_alloc(lrpar, sizeof(double));
   ipar  = (int *) R_alloc(lipar, sizeof(int));
@@ -88,17 +89,17 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   /* Allocation of Workspace                                                */
   /*------------------------------------------------------------------------*/
-  PROTECT(R_y0 = allocVector(REALSXP, neq));  incr_N_Protect();
+  PROTECT(R_y0 = allocVector(REALSXP, neq)); nprot++; //incr_N_Protect(); //4
   y0 = REAL(R_y0);
 
   /* matrix for holding the outputs */
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); incr_N_Protect();
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); //incr_N_Protect(); //5
   yout = REAL(R_yout);
 
   /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
-  PROTECT(R_istate = allocVector(INTSXP, 22)); incr_N_Protect();
+  PROTECT(R_istate = allocVector(INTSXP, 22)); nprot++; //incr_N_Protect(); //6
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
@@ -135,14 +136,14 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
         Rprintf("Time steps = %d / %d time = %e\n", it + 1, nt, t);
 
     if (it == (nt - 1)) nsteps = 1;  /* to make sure last step is saved */
-    
+
     for (nst = 0; nst < nsteps; nst++) {
 
       if (nst == 0) {
         yout[it] = t;
         for (i = 0; i < neq; i++)  yout[it + nt * (1 + i)] = y0[i];
       }
-      
+
       if (isDll) {
         if (isForcing) updatedeforc(&t);
         cderivs(&neq, &t, y0, ytmp, out, ipar);
@@ -150,12 +151,12 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
 
       } else {
         yy = REAL(R_y);
-        PROTECT(R_t = ScalarReal(t));                    incr_N_Protect();
+        PROTECT(R_t = ScalarReal(t)); nprot++;      //incr_N_Protect(); //i1
 
         for (i = 0; i < neq; i++) yy[i] = y0[i];
 
-        PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms)); incr_N_Protect();
-        PROTECT(Val = eval(R_fcall, Rho));               incr_N_Protect();
+        PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms)); nprot++; //incr_N_Protect(); //i2
+        PROTECT(Val = eval(R_fcall, Rho)); nprot++;       //incr_N_Protect(); //i3
 
         for (i = 0; i < neq; i++)  y0[i] = REAL(VECTOR_ELT(Val, 0))[i];
 
@@ -171,7 +172,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
             ii++;
           }
         }
-        my_unprotect(3);
+        //my_unprotect(3);
       }  /* isDLL*/
       t = t + dt;
 
@@ -187,6 +188,8 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /* reset timesteps pointer to saved state, release R resources */
   timesteps[0] = 0;
   timesteps[1] = 0;
-  restore_N_Protected(old_N_Protect);
+
+  UNPROTECT(nprot);
+  //restore_N_Protected(old_N_Protect);
   return(R_yout);
 }
