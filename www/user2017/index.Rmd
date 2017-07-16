@@ -8,61 +8,32 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## UseR!2017 Conference, Brussels, 2017-07-04 14:00
+### UseR!2017 Conference, Brussels, 2017-07-04
 
 
-This page will eventually contain all examples for the [useR 2017](https://user2017.brussels/) conference tutorial. The [abstract of the tutorial](https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html) is available from [the conference home page](https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html)
+**Thank you very much for attending the tutorial. It was a great pleasure for us!** 
+We are planning to make main parts of the course material permamently available. Currently, everything is still there:
+
+* online readable at: http://limno-live.hydro.tu-dresden.de/user2017 or
+* as ZIP-file for download from http://limno-live.hydro.tu-dresden.de/download
+
+<!---
+### Part 1: Introduction
+
+* [Introduction and basics](1.0-basics/tutorial.pdf)
+* [Forcing functions and events](2.1-forcing+events/desolve-forcing.html) 
+* [Fitting parameters](2.2-fitting-parameters/index.html)
+
+### Part 2: Special topics
+
+* [Speeding up](2.4-compiled-code/desolve-compiled.html)
+* [Web interfaces with shiny](2.5-desolve-shiny/desolve-shiny.html)
+* [Complex models with rodeo](2.6-rodeo)
+* [A multidimensional model](2.7-ocean)
+--->
 
 
-## Last minute information
-
-**2017-07-27** The useR conference is approaching soon and we are currently updating our material for the tutorial. Here a few short notes. Please have the following software installed on your laptop
-
-### Recommended
-
-* a laptop with Linux, Windows or MacOS
-* a recent version of [**R**](https://cran.r-project.org/) (current is 3.4.0)
-* a recent version of [**RStudio**](https://www.rstudio.com/products/rstudio/download/)
-* packages **deSolve**, **FME**, **OceanView** and **shiny** (together with some dependencies, that are automatically installed)
-* WiFi
-
-
-### Optional
-
-#### Execute the following function 
-
-in **R** to install the packages above and some others that we use from time to time.
-
-```{r eval=FALSE}
-install.packages(c("deSolve", "marelac", "OceanView", "rootSolve", "bvpSolve",
- "deTestSet", "FME", "ReacTran", "marelac", "cOde", "scatterplot3d", "shiny",
- "AquaEnv", "rMarkdown", "devtools", "rodeo"))
-```
-
-#### Install the development tools
-
-* Windows: https://cran.r-project.org/bin/windows/Rtools/
-* Linux: 
-    - Debian/Ubuntu `sudo apt-get r-base-dev`
-    - Fedora `sudo yum install R`
-* Mac: see https://cran.r-project.org/bin/macosx/    
-
-### What are your most interested in?
-
-The tentative plan of the tutorial can be found on https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html
-It consists of two parts, an introductory part and an outlook. You will see, that the outlook contains several options that cannot be covered in equal detail.
-
-Please let us know what you are mostly interested in:
-
-* how to make models more realistic by implementing forcing functions and events,
-* how to implement complex models in an efficient way with package **rodeo**,
-* how to speed up differential equation models (matrix formulation, code generators, parallel computing),
-* how to create web-based model applications with **deSolve** and **shiny**.
-
-Just send an email to us. karline.soetaert@nioz.nl and thomas.petzoldt@tu-dresden.de
-
-
-## Links
+### Links
 
 * [Abstract of the Tutorial](https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html)
 * [useR!2017 Brussels](https://user2017.brussels/)
@@ -70,7 +41,7 @@ Just send an email to us. karline.soetaert@nioz.nl and thomas.petzoldt@tu-dresde
 * mailig list  [R-SIG-DYNAMIC-MODELS](https://stat.ethz.ch/mailman/listinfo/r-sig-dynamic-models)
 * this page: http://desolve.r-forge.r-project.org/user2017
 
-See you in Brussels!
+Many thanks to the conference organizers! It was great!
 
 [Karline](http://www.marinebiology.ugent.be/node/78331) and [Thomas](https://tu-dresden.de/Members/thomas.petzoldt)
 

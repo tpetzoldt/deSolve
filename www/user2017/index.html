@@ -122,60 +122,30 @@ $(document).ready(function () {
 </div>
 
 
-<div id="user2017-conference-brussels-2017-07-04-1400" class="section level2">
-<h2>UseR!2017 Conference, Brussels, 2017-07-04 14:00</h2>
-<p>This page will eventually contain all examples for the <a href="https://user2017.brussels/">useR 2017</a> conference tutorial. The <a href="https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html">abstract of the tutorial</a> is available from <a href="https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html">the conference home page</a></p>
-</div>
-<div id="last-minute-information" class="section level2">
-<h2>Last minute information</h2>
-<p><strong>2017-07-27</strong> The useR conference is approaching soon and we are currently updating our material for the tutorial. Here a few short notes. Please have the following software installed on your laptop</p>
-<div id="recommended" class="section level3">
-<h3>Recommended</h3>
+<div id="user2017-conference-brussels-2017-07-04" class="section level3">
+<h3>UseR!2017 Conference, Brussels, 2017-07-04</h3>
+<p><strong>Thank you very much for attending the tutorial. It was a great pleasure for us!</strong> We are planning to make main parts of the course material permamently available. Currently, everything is still there:</p>
 <ul>
-<li>a laptop with Linux, Windows or MacOS</li>
-<li>a recent version of <a href="https://cran.r-project.org/"><strong>R</strong></a> (current is 3.4.0)</li>
-<li>a recent version of <a href="https://www.rstudio.com/products/rstudio/download/"><strong>RStudio</strong></a></li>
-<li>packages <strong>deSolve</strong>, <strong>FME</strong>, <strong>OceanView</strong> and <strong>shiny</strong> (together with some dependencies, that are automatically installed)</li>
-<li>WiFi</li>
+<li>online readable at: <a href="http://limno-live.hydro.tu-dresden.de/user2017" class="uri">http://limno-live.hydro.tu-dresden.de/user2017</a> or</li>
+<li>as ZIP-file for download from <a href="http://limno-live.hydro.tu-dresden.de/download" class="uri">http://limno-live.hydro.tu-dresden.de/download</a></li>
 </ul>
+<!---
+### Part 1: Introduction
+
+* [Introduction and basics](1.0-basics/tutorial.pdf)
+* [Forcing functions and events](2.1-forcing+events/desolve-forcing.html) 
+* [Fitting parameters](2.2-fitting-parameters/index.html)
+
+### Part 2: Special topics
+
+* [Speeding up](2.4-compiled-code/desolve-compiled.html)
+* [Web interfaces with shiny](2.5-desolve-shiny/desolve-shiny.html)
+* [Complex models with rodeo](2.6-rodeo)
+* [A multidimensional model](2.7-ocean)
+--->
 </div>
-<div id="optional" class="section level3">
-<h3>Optional</h3>
-<div id="execute-the-following-function" class="section level4">
-<h4>Execute the following function</h4>
-<p>in <strong>R</strong> to install the packages above and some others that we use from time to time.</p>
-<pre class="r"><code>install.packages(c(&quot;deSolve&quot;, &quot;marelac&quot;, &quot;OceanView&quot;, &quot;rootSolve&quot;, &quot;bvpSolve&quot;,
- &quot;deTestSet&quot;, &quot;FME&quot;, &quot;ReacTran&quot;, &quot;marelac&quot;, &quot;cOde&quot;, &quot;scatterplot3d&quot;, &quot;shiny&quot;,
- &quot;AquaEnv&quot;, &quot;rMarkdown&quot;, &quot;devtools&quot;, &quot;rodeo&quot;))</code></pre>
-</div>
-<div id="install-the-development-tools" class="section level4">
-<h4>Install the development tools</h4>
-<ul>
-<li>Windows: <a href="https://cran.r-project.org/bin/windows/Rtools/" class="uri">https://cran.r-project.org/bin/windows/Rtools/</a></li>
-<li>Linux:
-<ul>
-<li>Debian/Ubuntu <code>sudo apt-get r-base-dev</code></li>
-<li>Fedora <code>sudo yum install R</code></li>
-</ul></li>
-<li>Mac: see <a href="https://cran.r-project.org/bin/macosx/" class="uri">https://cran.r-project.org/bin/macosx/</a></li>
-</ul>
-</div>
-</div>
-<div id="what-are-your-most-interested-in" class="section level3">
-<h3>What are your most interested in?</h3>
-<p>The tentative plan of the tutorial can be found on <a href="https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html" class="uri">https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html</a> It consists of two parts, an introductory part and an outlook. You will see, that the outlook contains several options that cannot be covered in equal detail.</p>
-<p>Please let us know what you are mostly interested in:</p>
-<ul>
-<li>how to make models more realistic by implementing forcing functions and events,</li>
-<li>how to implement complex models in an efficient way with package <strong>rodeo</strong>,</li>
-<li>how to speed up differential equation models (matrix formulation, code generators, parallel computing),</li>
-<li>how to create web-based model applications with <strong>deSolve</strong> and <strong>shiny</strong>.</li>
-</ul>
-<p>Just send an email to us. <a href="mailto:karline.soetaert@nioz.nl">karline.soetaert@nioz.nl</a> and <a href="mailto:thomas.petzoldt@tu-dresden.de">thomas.petzoldt@tu-dresden.de</a></p>
-</div>
-</div>
-<div id="links" class="section level2">
-<h2>Links</h2>
+<div id="links" class="section level3">
+<h3>Links</h3>
 <ul>
 <li><a href="https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html">Abstract of the Tutorial</a></li>
 <li><a href="https://user2017.brussels/">useR!2017 Brussels</a></li>
@@ -183,7 +153,7 @@ $(document).ready(function () {
 <li>mailig list <a href="https://stat.ethz.ch/mailman/listinfo/r-sig-dynamic-models">R-SIG-DYNAMIC-MODELS</a></li>
 <li>this page: <a href="http://desolve.r-forge.r-project.org/user2017" class="uri">http://desolve.r-forge.r-project.org/user2017</a></li>
 </ul>
-<p>See you in Brussels!</p>
+<p>Many thanks to the conference organizers! It was great!</p>
 <p><a href="http://www.marinebiology.ugent.be/node/78331">Karline</a> and <a href="https://tu-dresden.de/Members/thomas.petzoldt">Thomas</a></p>
 </div>
 
