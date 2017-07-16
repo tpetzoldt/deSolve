@@ -17,7 +17,7 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
   C_res_func_type *res;
 
   //init_N_Protect();
-  long int old_N_Protect = save_N_Protected();
+  //long int old_N_Protect = save_N_Protected();
 
   ny   = LENGTH(y);
   type = INTEGER(Type)[0];
