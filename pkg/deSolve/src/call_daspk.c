@@ -267,7 +267,14 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   /**************************************************************************/
   /****** Initialization of globals, Parameters and Forcings (DLLs)    ******/
   /**************************************************************************/
-  initdaeglobals(nt, ntot);
+  //thpe 2017-07-17: internalize this to make PROTECT/UNPROTECT more transparent
+  //initdaeglobals(nt, ntot);
+  PROTECT(Rin  = NEW_NUMERIC(2));
+  PROTECT(Y = allocVector(REALSXP,n_eq));
+  PROTECT(YPRIME = allocVector(REALSXP,n_eq));
+  PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));
+  // end
+
   initParms(initfunc, parms);
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc, 0);  /* zero roots */
@@ -460,6 +467,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   terminate(idid, iwork, 23, 0, rwork, 3, 1);
   REAL(RWORK)[0] = rwork[6];
 
+  UNPROTECT(4); // thpe 2017-07-16
   //restore_N_Protected(old_N_Protect);
   unlock_solver();
 
