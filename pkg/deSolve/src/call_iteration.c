@@ -10,7 +10,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
           SEXP Flist) {
 
   /* Initialization */
-  int nprotect = 0;
+  int nprot = 0;
 
   double *tt = NULL, *xs = NULL;
   double *ytmp, *out;
@@ -30,11 +30,11 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   int nsteps = INTEGER(Nsteps)[0];
 
-  PROTECT(Times = AS_NUMERIC(Times)); nprotect++; //incr_N_Protect(); //1
+  PROTECT(Times = AS_NUMERIC(Times)); nprot++;
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
 
-  PROTECT(Xstart = AS_NUMERIC(Xstart)); nprotect++; //incr_N_Protect(); //2
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); nprot++;
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
 
@@ -67,7 +67,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
     isOut = FALSE;
     lipar = 3;
     lrpar = nout;
-    PROTECT(R_y = allocVector(REALSXP, neq)); nprotect++; //incr_N_Protect(); //3 !!
+    PROTECT(R_y = allocVector(REALSXP, neq)); nprot++;
   }
   out   = (double *) R_alloc(lrpar, sizeof(double));
   ipar  = (int *) R_alloc(lipar, sizeof(int));
@@ -88,17 +88,17 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   /* Allocation of Workspace                                                */
   /*------------------------------------------------------------------------*/
-  PROTECT(R_y0 = allocVector(REALSXP, neq)); nprotect++; //incr_N_Protect(); //4
+  PROTECT(R_y0 = allocVector(REALSXP, neq)); nprot++;
   y0 = REAL(R_y0);
 
   /* matrix for holding the outputs */
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); nprotect++; //incr_N_Protect(); //5
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); nprot++;
   yout = REAL(R_yout);
 
   /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
-  PROTECT(R_istate = allocVector(INTSXP, 22)); nprotect++; //incr_N_Protect(); //6
+  PROTECT(R_istate = allocVector(INTSXP, 22)); nprot++;
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
@@ -106,7 +106,17 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  initParms(Initfunc, Parms);
+  //initParms(Initfunc, Parms);
+  if (Initfunc != NA_STRING) {
+    if (inherits(Initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = Parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(Initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(Flist);
 
   /*------------------------------------------------------------------------*/
@@ -188,6 +198,6 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   timesteps[0] = 0;
   timesteps[1] = 0;
 
-  UNPROTECT(nprotect);
+  UNPROTECT(nprot);
   return(R_yout);
 }
