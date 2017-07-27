@@ -120,14 +120,13 @@ static void C_res_func (double *t, double *y, double *yprime, double *cj,
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(Time = ScalarReal(*t));                       //incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < n_eq; i++)  	delta[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* deriv output function  */
@@ -144,14 +143,13 @@ static void C_out (int *nout, double *t, double *y,
       REAL (YPRIME)[i] = yprime[i];
     }
 
-  PROTECT(Time = ScalarReal(*t));                       //incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME)); //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang4(R_res_func,Time, Y, YPRIME));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *nout; i++) yout[i] = REAL(ans)[i + n_eq];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* interface between FORTRAN call to jacobian and R function */
@@ -170,12 +168,11 @@ static void C_daejac_func (double *t, double *y, double *yprime,
       REAL(Y)[i] = y[i];
       REAL (YPRIME)[i] = yprime[i];
     }
-  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));  //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));                    //incr_N_Protect();
+  PROTECT(R_fcall = lang4(R_daejac_func, Rin, Y, YPRIME));
+  PROTECT(ans = eval(R_fcall, R_envir));
   for (i = 0; i < n_eq * nrowpd; i++)  pd[i] = REAL(ans)[i];
 
   UNPROTECT(2);
-  //my_unprotect(2);
 }
 
 
@@ -214,8 +211,7 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 
 /*                      #### initialisation ####                              */
 
-  //long int old_N_Protect = save_N_Protected();
-
+  int nprot = 0;
   ny   = LENGTH(y);
   n_eq = ny;                          /* n_eq is a global variable */
   nt = LENGTH(times);
@@ -269,13 +265,23 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
   /**************************************************************************/
   //thpe 2017-07-17: internalize this to make PROTECT/UNPROTECT more transparent
   //initdaeglobals(nt, ntot);
-  PROTECT(Rin  = NEW_NUMERIC(2));
-  PROTECT(Y = allocVector(REALSXP,n_eq));
-  PROTECT(YPRIME = allocVector(REALSXP,n_eq));
-  PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));
+  PROTECT(Rin  = NEW_NUMERIC(2)); nprot++;
+  PROTECT(Y = allocVector(REALSXP,n_eq));  nprot++;
+  PROTECT(YPRIME = allocVector(REALSXP,n_eq)); nprot++;
+  PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt)); nprot++;
   // end
 
-  initParms(initfunc, parms);
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc, 0);  /* zero roots */
   islag = initLags(elag, 0, 0);
@@ -458,17 +464,19 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
 /*                    ####  an error occurred   ####                          */
     if (repcount > maxit || tin < tout || idid <= 0) {
       idid = 0;
+      PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
       returnearly(1, it, ntot);
-    	break;
+      break;
     }
   }    /* end main time loop */
 
 /*                   ####   returning output   ####                           */
+  PROTECT(ISTATE = allocVector(INTSXP, 23)); nprot++;
+  PROTECT(RWORK = allocVector(REALSXP, 3)); nprot++;
   terminate(idid, iwork, 23, 0, rwork, 3, 1);
   REAL(RWORK)[0] = rwork[6];
 
-  UNPROTECT(4); // thpe 2017-07-16
-  //restore_N_Protected(old_N_Protect);
+  UNPROTECT(nprot);
   unlock_solver();
 
   if (idid > 0)
