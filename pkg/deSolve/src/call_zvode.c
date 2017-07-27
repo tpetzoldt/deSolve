@@ -46,17 +46,17 @@ static void C_zderiv_func (int *neq, double *t, Rcomplex *y,
 {
   int i;
   SEXP R_fcall, Time, ans;
+  int nprot = 0;
 
   for (i = 0; i < *neq; i++)  COMPLEX(cY)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_zderiv_func,Time,cY)); //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_vode_envir));      //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t)); nprot++;
+  PROTECT(R_fcall = lang3(R_zderiv_func,Time,cY)); nprot++;
+  PROTECT(ans = eval(R_fcall, R_vode_envir)); nprot++;
 
   for (i = 0; i < *neq; i++)	ydot[i] = COMPLEX(VECTOR_ELT(ans,0))[i];
 
-  UNPROTECT(3);
-  //my_unprotect(3);
+  UNPROTECT(nprot);
 }
 
 /* interface between FORTRAN call to jacobian and R function */
@@ -66,17 +66,17 @@ static void C_zjac_func (int *neq, double *t, Rcomplex *y, int *ml,
 {
   int i;
   SEXP R_fcall, Time, ans;
+  int nprot = 0;
 
   for (i = 0; i < *neq; i++)  COMPLEX(cY)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_zjac_func,Time,cY));  //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_vode_envir));     //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t)); nprot++;
+  PROTECT(R_fcall = lang3(R_zjac_func,Time,cY)); nprot++;
+  PROTECT(ans = eval(R_fcall, R_vode_envir)); nprot++;
 
   for (i = 0; i < *neq * *nrowpd; i++)  pd[i ] = COMPLEX(ans)[i ];
 
-  UNPROTECT(3);
-  //my_unprotect(3);
+  UNPROTECT(nprot);
 }
 
 /* wrapper above the derivate function that first estimates the
@@ -124,8 +124,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 /*                      #### initialisation ####                              */
 
-  //long int old_N_Protect = save_N_Protected();
-  int nprot=0;
+  int nprot = 0;
 
   jt = INTEGER(jT)[0];
   neq = LENGTH(y);
@@ -180,13 +179,23 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   /* initialise global R-variables... */
 
-  PROTECT(cY = allocVector(CPLXSXP , neq) ); nprot++;      //incr_N_Protect(); //1
-  PROTECT(YOUT = allocMatrix(CPLXSXP,ntot+1,nt)); nprot++; //incr_N_Protect(); //2
+  PROTECT(cY = allocVector(CPLXSXP , neq) ); nprot++;
+  PROTECT(YOUT = allocMatrix(CPLXSXP,ntot+1,nt)); nprot++;
 
   /**************************************************************************/
   /****** Initialization of Parameters and Forcings (DLL functions)    ******/
   /**************************************************************************/
-  initParms(initfunc, parms);
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(flist);
 
 /* pointers to functions zderiv_func and zjac_func, passed to the FORTRAN subroutine */
@@ -276,16 +285,15 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
     if (istate == -3) {
 	    error("illegal input detected before taking any integration steps - see written message");
-      //unprotect_all(); //thpe 2017-07-15, not sure if obsolete or need to replace with UNPROTECT(2)
   	} else {
     	/*   REAL(YOUT)[(it+1)*(ntot+1)] = tin;*/
       for (j = 0; j < neq; j++)
 	    COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + 1] = xytmp[j];
 
 	    if (isOut == 1) {
-        zderiv_func (&neq, &tin, xytmp, dy, zout, ipar) ;
+              zderiv_func (&neq, &tin, xytmp, dy, zout, ipar) ;
 	      for (j = 0; j < nout; j++)
-        COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + neq + 1] = zout[j];
+                COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + neq + 1] = zout[j];
       }
     }
 
@@ -294,7 +302,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 	    warning("Returning early from dvode  Results are accurate, as far as they go\n");
 
     	/* redimension YOUT */
-	    PROTECT(YOUT2 = allocMatrix(CPLXSXP,ntot+1,(it+2))); nprot++; //incr_N_Protect();
+	    PROTECT(YOUT2 = allocMatrix(CPLXSXP,ntot+1,(it+2))); nprot++;
 
   	  for (k = 0; k < it+2; k++)
   	    for (j = 0; j < ntot+1; j++)
@@ -304,12 +312,13 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }  /* end main time loop */
 
 /*                   ####   returning output   ####                           */
+  PROTECT(ISTATE = allocVector(INTSXP, 23)); nprot++;
+  PROTECT(RWORK = allocVector(REALSXP, 4)); nprot++;
   terminate(istate, iwork, 23, 0, rwork, 4, 10);
 
   unlock_solver();
 
   UNPROTECT(nprot);
-  //restore_N_Protected(old_N_Protect);
 
   if (istate > 0)
     return(YOUT);
