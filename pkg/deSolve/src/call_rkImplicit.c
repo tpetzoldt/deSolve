@@ -5,6 +5,7 @@
 /*==========================================================================*/
 
 #include "rk_util.h"
+#include "externalptr.h"
 
 SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP Parms, SEXP eventfunc, SEXP elist, SEXP Nout, SEXP Rho,
@@ -12,7 +13,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 		  SEXP Method, SEXP Maxsteps, SEXP Flist) {
 
   /**  Initialization **/
-  //long int old_N_Protect = save_N_Protected();
+  int nprot = 0;
 
   double *tt = NULL, *xs = NULL;
 
@@ -45,22 +46,22 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   SEXP R_A, R_B1, R_C;
   double  *A, *bb1, *cc=NULL;
 
-  PROTECT(R_A = getListElement(Method, "A")); //incr_N_Protect(); //1
+  PROTECT(R_A = getListElement(Method, "A")); nprot++;
   A = REAL(R_A);
 
-  PROTECT(R_B1 = getListElement(Method, "b1")); //incr_N_Protect(); //2
+  PROTECT(R_B1 = getListElement(Method, "b1")); nprot++;
   bb1 = REAL(R_B1);
 
-  PROTECT(R_C = getListElement(Method, "c")); //incr_N_Protect(); //3
+  PROTECT(R_C = getListElement(Method, "c")); nprot++;
   if (length(R_C)) cc = REAL(R_C);
 
     double  qerr  = REAL(getListElement(Method, "Qerr"))[0];
 
-  PROTECT(Times = AS_NUMERIC(Times)); //incr_N_Protect(); //4
+  PROTECT(Times = AS_NUMERIC(Times)); nprot++;
   tt = NUMERIC_POINTER(Times);
   nt = length(Times);
 
-  PROTECT(Xstart = AS_NUMERIC(Xstart)); //incr_N_Protect(); //5
+  PROTECT(Xstart = AS_NUMERIC(Xstart)); nprot++;
   xs  = NUMERIC_POINTER(Xstart);
   neq = length(Xstart);
 
@@ -132,7 +133,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   int iknots = 0;  /* counter for knots buffer */
   double *yknots;
 
-  PROTECT(R_nknots = getListElement(Method, "nknots")); //incr_N_Protect(); //6
+  PROTECT(R_nknots = getListElement(Method, "nknots")); nprot++;
   if (length(R_nknots)) nknots = INTEGER(R_nknots)[0] + 1;
 
   if (nknots < 2) {nknots=1; interpolate = FALSE;}
@@ -141,7 +142,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
 
 
   /* matrix for holding states and global outputs */
-  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); //incr_N_Protect(); //7
+  PROTECT(R_yout = allocMatrix(REALSXP, nt, neq + nout + 1)); nprot++;
   yout = REAL(R_yout);
   /* initialize outputs with NA first */
   for (i = 0; i < nt * (neq + nout + 1); i++) yout[i] = NA_REAL;
@@ -149,7 +150,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* attribute that stores state information, similar to lsoda */
   SEXP R_istate;
   int *istate;
-  PROTECT(R_istate = allocVector(INTSXP, 22)); //incr_N_Protect(); //8
+  PROTECT(R_istate = allocVector(INTSXP, 22)); nprot++;
   istate = INTEGER(R_istate);
   istate[0] = 0; /* assume succesful return */
   for (i = 0; i < 22; i++) istate[i] = 0;
@@ -157,9 +158,19 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  PROTECT(Y = allocVector(REALSXP,(neq)));        //incr_N_Protect(); //9
+  PROTECT(Y = allocVector(REALSXP,(neq))); nprot++;
 
-  initParms(Initfunc, Parms);
+  //initParms(Initfunc, Parms);
+  if (Initfunc != NA_STRING) {
+    if (inherits(Initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = Parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(Initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(Flist);
   isEvent = initEvents(elist, eventfunc,0);
   if (isEvent) interpolate = FALSE;
@@ -261,8 +272,7 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* release R resources */
   timesteps[0] = 0;
   timesteps[1] = 0;
-  UNPROTECT(9);
-  //restore_N_Protected(old_N_Protect);
+  UNPROTECT(nprot);
   return(R_yout);
 }
 

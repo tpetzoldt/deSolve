@@ -121,14 +121,13 @@ static void C_deriv_func (int *neq, double *t, double *y,
 
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));           //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* deriv output function  */
@@ -142,15 +141,14 @@ static void C_deriv_out (int *nOut, double *t, double *y,
   for (i = 0; i < n_eq; i++)
       REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                   //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));            //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < n_eq; i++)  ydot[i] = REAL (ans)[i] ;
   for (i = 0; i < *nOut; i++) yout[i] = REAL(ans)[i + n_eq];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* only if lsodar, lsoder, lsodesr:
@@ -162,14 +160,13 @@ static void C_root_func (int *neq, double *t, double *y, int *ng, double *gout)
   SEXP R_fcall, Time, ans;
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_root_func,Time,Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_root_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *ng; i++)   gout[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* interface between FORTRAN call to jacobian and R function */
@@ -182,14 +179,13 @@ static void C_jac_func (int *neq, double *t, double *y, int *ml,
 
   for (i = 0; i < *neq; i++) REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));    //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *neq * *nrowpd; i++)  pd[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* only if lsodes:
@@ -200,18 +196,17 @@ static void C_jac_vec (int *neq, double *t, double *y, int *j,
 {
   int i;
   SEXP R_fcall, ans, Time, J;
-  PROTECT(J = NEW_INTEGER(1));                    //incr_N_Protect();
-                             INTEGER(J)[0] = *j;
+  PROTECT(J = NEW_INTEGER(1));
+  INTEGER(J)[0] = *j;
   for (i = 0; i < *neq; i++) REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang4(R_jac_vec,Time,Y,J));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang4(R_jac_vec,Time,Y,J));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *neq ; i++)  pdj[i] = REAL(ans)[i];
 
   UNPROTECT(4);
-  //my_unprotect(4);
 }
 
 
@@ -259,7 +254,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   lock_solver(); /* prevent nested call of solvers that have global variables */
 
 /*                      #### initialisation ####                              */
-  //long int old_N_Protect = save_N_Protected();
   int nprot = 0;
 
   jt  = INTEGER(jT)[0];         /* method flag */
@@ -324,10 +318,23 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   }
 
 /* initialise global R-variables...  */
-  initglobals (nt, ntot);
+  //initglobals (nt, ntot);
+  PROTECT(Y = allocVector(REALSXP, (n_eq))); nprot++;
+  PROTECT(YOUT = allocMatrix(REALSXP, ntot+1, nt)); nprot++;
+
 
 /* Initialization of Parameters and Forcings (DLL functions)  */
-  initParms(initfunc, parms);
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc, nroot); /* added nroot */
   islag = initLags(elag, solver, nroot);
@@ -559,7 +566,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
   if (istate == -3)  {
     error("illegal input detected before taking any integration steps - see written message");
-      // thpe: no unprotect needed in case of error
     }  else {
       REAL(YOUT)[(it+1)*(ntot+1)] = tin;
       for (j = 0; j < n_eq; j++)
@@ -578,11 +584,12 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 /*                    ####  an error occurred   ####                          */
    if (istate < 0 || tin < tout) {
+      PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
       if (istate > -20)
-      returnearly (1, it, ntot);
-    else
-      returnearly (0, it, ntot);  /* stop because a root was found */
-    break;
+        returnearly (1, it, ntot);
+      else
+        returnearly (0, it, ntot);  /* stop because a root was found */
+      break;
     }
   }     /* end main time loop */
 
@@ -593,32 +600,33 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   if (isEvent && rootevent && iroot > 0)
     for (j=0; j<3; j++) iwork[10+j] = evals[j];
 
-  // thpe-test: reduce ilen from 23 to 21
-  terminate(istate, iwork, 21, 0, rwork, 5,10);    /* istate, iwork, rwork */
+  PROTECT(ISTATE = allocVector(INTSXP, 21)); nprot++;
+  PROTECT(RWORK = allocVector(REALSXP, 5)); nprot++;
+  terminate(istate, iwork, 21, 0, rwork, 5, 10);    /* istate, iwork, rwork */
 
   if (istate <= -20) INTEGER(ISTATE)[0] = 3;
 
   if (istate == -20 && nroot > 0)  {
-    PROTECT(IROOT = allocVector(INTSXP, nroot)); nprot++; //incr_N_Protect(); //a1
+    PROTECT(IROOT = allocVector(INTSXP, nroot)); nprot++;
     for (k = 0;k<nroot;k++) INTEGER(IROOT)[k] = jroot[k];
     setAttrib(YOUT2, install("iroot"), IROOT);
-    PROTECT(TROOT = allocVector(REALSXP, 1)); nprot++; //incr_N_Protect(); //a2
+    PROTECT(TROOT = allocVector(REALSXP, 1)); nprot++;
     REAL(TROOT)[0] = tin;
     setAttrib(YOUT2, install("troot"), TROOT);
   }
   if (iroot > 0) {                                 /* root + events */
-    PROTECT(NROOT = allocVector(INTSXP, 1)); nprot++; //incr_N_Protect(); //b1
+    PROTECT(NROOT = allocVector(INTSXP, 1)); nprot++;
     INTEGER(NROOT)[0] = iroot;
 
     if (iroot > Rootsave) iroot = Rootsave;
 
-    PROTECT(TROOT = allocVector(REALSXP, iroot)); nprot++; //incr_N_Protect(); //b2
+    PROTECT(TROOT = allocVector(REALSXP, iroot)); nprot++;
     for (k = 0; k < iroot; k++) REAL(TROOT)[k] = troot[k];
 
-    PROTECT(VROOT = allocVector(REALSXP, iroot*n_eq)); nprot++; //incr_N_Protect(); //b3
+    PROTECT(VROOT = allocVector(REALSXP, iroot*n_eq)); nprot++;
     for (k = 0; k < iroot*n_eq; k++) REAL(VROOT)[k] = valroot[k];
 
-    PROTECT(IROOT = allocVector(INTSXP, iroot)); nprot++; //incr_N_Protect(); //b4
+    PROTECT(IROOT = allocVector(INTSXP, iroot)); nprot++;
     for (k = 0; k < iroot; k++) INTEGER(IROOT)[k] = nrroot[k];
 
     if (istate > 0 ) {
@@ -637,8 +645,6 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 /*                       ####   termination   ####                            */
 
   UNPROTECT(nprot);
-
-  //restore_N_Protected(old_N_Protect);
   unlock_solver();
 
   if (istate > 0)
