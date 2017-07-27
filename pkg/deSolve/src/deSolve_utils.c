@@ -94,7 +94,7 @@ void initglobals(int nt, int ntot) {
 }
 
 // thpe: obsolete, 2017-07-17
-/* 
+/*
 void initdaeglobals(int nt, int ntot) {
 //  PROTECT(Time = NEW_NUMERIC(1));                    incr_N_Protect();
   PROTECT(Rin  = NEW_NUMERIC(2));                    //incr_N_Protect();
@@ -162,10 +162,12 @@ void returnearly (int Print, int it, int ntot) {
   int j, k;
   if (Print)
     warning("Returning early. Results are accurate, as far as they go\n");
+  // thpe: protect before the call
   PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); //incr_N_Protect();
   for (k = 0; k < it+2; k++)
     for (j = 0; j < ntot+1; j++)
       REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
+  UNPROTECT(1); // thpe
 }
 
 /* add ISTATE and RSTATE */
@@ -191,6 +193,7 @@ void terminate(int istate, int * iwork, int ilen, int ioffset,
   /* timestep = 0 - for use in getTimestep */
   timesteps[0] = 0;
   timesteps[1] = 0;
+  UNPROTECT(2); //thpe
 }
 
 /*==================================================

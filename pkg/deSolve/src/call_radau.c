@@ -77,14 +77,13 @@ static void C_deriv_func_rad (int *neq, double *t, double *y,
 
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                  //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));           //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_deriv_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *neq; i++)   ydot[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* mass matrix function                                                       */
@@ -95,18 +94,17 @@ static void C_mas_func_rad (int *neq, double *am, int *lmas,
   int i;
   SEXP NEQ, LM, R_fcall, ans;
 
-  PROTECT(NEQ = NEW_INTEGER(1));                  //incr_N_Protect();
-  PROTECT(LM = NEW_INTEGER(1));                   //incr_N_Protect();
+  PROTECT(NEQ = NEW_INTEGER(1));
+  PROTECT(LM = NEW_INTEGER(1));
 
-                              INTEGER(NEQ)[0] = *neq;
-                              INTEGER(LM) [0] = *lmas;
-  PROTECT(R_fcall = lang3(R_mas_func,NEQ,LM));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));         //incr_N_Protect();
+  INTEGER(NEQ)[0] = *neq;
+  INTEGER(LM) [0] = *lmas;
+  PROTECT(R_fcall = lang3(R_mas_func,NEQ,LM));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i <*lmas * *neq; i++)   am[i] = REAL(ans)[i];
 
   UNPROTECT(4);
-  //my_unprotect(4);
 }
 
 /* deriv output function - for ordinary output variables                      */
@@ -120,14 +118,13 @@ static void C_deriv_out_rad (int *nOut, double *t, double *y,
   for (i = 0; i < n_eq; i++)
       REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                   //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));            //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_deriv_func,Time, Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *nOut; i++) yout[i] = REAL(ans)[i + n_eq];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 
 /* save output in R-variables                                                 */
@@ -175,14 +172,13 @@ static void C_root_radau (int *neq, double *t, double *y, int *ng, double *gout)
 
   for (i = 0; i < *neq; i++)  REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_root_func,Time,Y));   //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_root_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *ng; i++)   gout[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(3);
 }
 /* function for brent's root finding algorithm                                */
 
@@ -300,14 +296,13 @@ static void C_jac_func_rad(int *neq, double *t, double *y, int *ml,
 
   for (i = 0; i < *neq; i++) REAL(Y)[i] = y[i];
 
-  PROTECT(Time = ScalarReal(*t));                 //incr_N_Protect();
-  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));    //incr_N_Protect();
-  PROTECT(ans = eval(R_fcall, R_envir));          //incr_N_Protect();
+  PROTECT(Time = ScalarReal(*t));
+  PROTECT(R_fcall = lang3(R_jac_func,Time,Y));
+  PROTECT(ans = eval(R_fcall, R_envir));
 
   for (i = 0; i < *neq * *nrowpd; i++)  pd[i] = REAL(ans)[i];
 
   UNPROTECT(3);
-  //my_unprotect(2);
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -343,6 +338,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   int  isForcing;
   double *xytmp, tout, *Atol, *Rtol, hini=0;
   int itol, iout, idid;
+  int nprot = 0;
 
   SEXP TROOT, NROOT, VROOT, IROOT;
 
@@ -357,8 +353,6 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /*                      #### initialisation ####                              */
 
   lock_solver(); /* prevent nested call of solvers that have global variables */
-  //long int old_N_Protect = save_N_Protected();
-  int nprot=0;
   
   n_eq = LENGTH(y);             /* number of equations */
   nt   = LENGTH(times);         /* number of output times */
@@ -414,12 +408,25 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   for (j=length(rWork); j<lrw; j++) rwork[j] = 0.;
 
   /* initialise global R-variables...  */
-  initglobals (nt, ntot);
+  //initglobals (nt, ntot);
+  PROTECT(Y = allocVector(REALSXP, (n_eq))); nprot++;
+  PROTECT(YOUT = allocMatrix(REALSXP, ntot+1, nt)); nprot++;
+
   //timesteps = (double *) R_alloc(2, sizeof(double));
   for (j=0; j<2; j++) timesteps[j] = 0.;
 
   /* Initialization of Parameters, Forcings (DLL), lags */
-  initParms (initfunc, parms);
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
   isForcing = initForcings(flist);
   isEvent = initEvents(elist, eventfunc, nroot);
   islag = initLags(elag, 10, nroot);
@@ -519,8 +526,10 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   if(it <= nt-1) saveOut (tin, xytmp);              /* save final condition */
   if (idid < 0) {
     it = it-1;
+    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
     returnearly (1, it, ntot);
   } else if (idid == 2) {
+    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
     it = it-1;
     returnearly (0, it, ntot);
     idid = -2;
@@ -531,24 +540,24 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
   terminate(idid,iwork,7,13,rwork,5,0);
 
   if (iroot >= 0 || nr_root > 0)  {
-    PROTECT(IROOT = allocVector(INTSXP, nroot)); nprot++; //incr_N_Protect(); //a1
+    PROTECT(IROOT = allocVector(INTSXP, nroot)); nprot++;
     for (j = 0; j < nroot; j++) INTEGER(IROOT)[j] = jroot[j];
-    PROTECT(NROOT = allocVector(INTSXP, 1)); nprot++; //incr_N_Protect(); //a2
+    PROTECT(NROOT = allocVector(INTSXP, 1)); nprot++;
     INTEGER(NROOT)[0] = nr_root;
 
     if (nr_root == 0) {
-      PROTECT(TROOT = allocVector(REALSXP, 1)); nprot++; //incr_N_Protect(); //b1
+      PROTECT(TROOT = allocVector(REALSXP, 1)); nprot++;
       REAL(TROOT)[0] = tin;
     } else {
       if (nr_root > Rootsave) nr_root = Rootsave;
 
-      PROTECT(TROOT = allocVector(REALSXP, nr_root)); nprot++; //incr_N_Protect(); //c1
+      PROTECT(TROOT = allocVector(REALSXP, nr_root)); nprot++;
       for (j = 0; j < nr_root; j++) REAL(TROOT)[j] = troot[j];
 
-      PROTECT(VROOT = allocVector(REALSXP, nr_root*n_eq)); nprot++; //incr_N_Protect(); //c2
+      PROTECT(VROOT = allocVector(REALSXP, nr_root*n_eq)); nprot++;
       for (j = 0; j < nr_root*n_eq; j++) REAL(VROOT)[j] = valroot[j];
 
-      PROTECT(IROOT = allocVector(INTSXP, nr_root)); nprot++; //incr_N_Protect(); //c3
+      PROTECT(IROOT = allocVector(INTSXP, nr_root)); nprot++;
       for (j = 0; j < nr_root; j++) INTEGER(IROOT)[j] = nrroot[j];
 
       if (idid == 1) {
@@ -570,11 +579,10 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
       setAttrib(YOUT2, install("nroot"), NROOT);
     }
   }
+
 /*                   ####     termination      ####                           */
   unlock_solver();
-
   UNPROTECT(nprot);
-  //restore_N_Protected(old_N_Protect);
 
   if (idid > 0)
     return(YOUT);
