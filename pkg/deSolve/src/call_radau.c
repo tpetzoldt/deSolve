@@ -529,8 +529,8 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
     PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
     returnearly (1, it, ntot);
   } else if (idid == 2) {
-    PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;
     it = it-1;
+	PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); nprot++;   
     returnearly (0, it, ntot);
     idid = -2;
   }
@@ -586,10 +586,22 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /*                   ####     termination      ####                           */
   unlock_solver();
   UNPROTECT(nprot);
+  						
+// thpe: after reworking PROTECT/UNPROTECT, I checked how YOUT, YOUT2 is handled
+// and see that the following is not consistent, because YOUT is only set when idid==1
+// Is this a (still) hidden bug?
+//
 
+// original version
+//  if (idid > 0)
+//    return(YOUT);
+//  else
+//    return(YOUT2);
+
+// thpe: test version (currently disabled)
   if (idid > 0)
     return(YOUT);
   else
-    return(YOUT2);
+    return(YOUT2);	
 }
 
