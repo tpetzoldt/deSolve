@@ -87,12 +87,14 @@ SEXP de_gparms;
 SEXP initialisation functions
 =======================================================*/
 
+// obsolete
+/*
 void initglobals(int nt, int ntot) {
-/*  PROTECT(Time = NEW_NUMERIC(1));                  incr_N_Protect(); */
+  //  PROTECT(Time = NEW_NUMERIC(1)); incr_N_Protect();
   PROTECT(Y = allocVector(REALSXP,(n_eq)));        //incr_N_Protect();
   PROTECT(YOUT = allocMatrix(REALSXP,ntot+1,nt));  //incr_N_Protect();
 }
-
+*/
 // thpe: obsolete, 2017-07-17
 /*
 void initdaeglobals(int nt, int ntot) {
@@ -155,7 +157,7 @@ SEXP getTimestep() {
   return(value);
 }
 
-/*============================ ======================
+/*==================================================
  Termination
 ===================================================*/
 
