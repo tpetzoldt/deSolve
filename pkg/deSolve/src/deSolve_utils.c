@@ -109,6 +109,8 @@ Parameter initialisation functions
 note: forcing initialisation function is in forcings.c
 =======================================================*/
 
+// thpe: obsolete ??
+/*
 void initParms(SEXP Initfunc, SEXP Parms) {
   if (Initfunc == NA_STRING) return;
   if (inherits(Initfunc, "NativeSymbol")) {
@@ -118,7 +120,7 @@ void initParms(SEXP Initfunc, SEXP Parms) {
     initializer(Initdeparms);
   }
 }
-
+*/
 
 void Initdeparms(int *N, double *parms) {
   int i, Nparms;
@@ -163,11 +165,11 @@ void returnearly (int Print, int it, int ntot) {
   if (Print)
     warning("Returning early. Results are accurate, as far as they go\n");
   // thpe: protect before the call
-  PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); //incr_N_Protect();
+  //PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); //incr_N_Protect();
   for (k = 0; k < it+2; k++)
     for (j = 0; j < ntot+1; j++)
       REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
-  UNPROTECT(1); // thpe
+  //UNPROTECT(1); // thpe
 }
 
 /* add ISTATE and RSTATE */
@@ -176,11 +178,11 @@ void terminate(int istate, int * iwork, int ilen, int ioffset,
 
   int k;
 
-  PROTECT(ISTATE = allocVector(INTSXP, ilen)); //incr_N_Protect();
+  //PROTECT(ISTATE = allocVector(INTSXP, ilen)); //incr_N_Protect();
   for (k = 0; k < ilen-1; k++) INTEGER(ISTATE)[k+1] = iwork[k +ioffset];
   INTEGER(ISTATE)[0] = istate;
 
-  PROTECT(RWORK = allocVector(REALSXP, rlen)); //incr_N_Protect();
+  //PROTECT(RWORK = allocVector(REALSXP, rlen)); //incr_N_Protect();
   for (k = 0; k < rlen; k++) REAL(RWORK)[k] = rwork[k+roffset];
   if (istate > 0) {
     setAttrib(YOUT, install("istate"), ISTATE);
@@ -193,7 +195,7 @@ void terminate(int istate, int * iwork, int ilen, int ioffset,
   /* timestep = 0 - for use in getTimestep */
   timesteps[0] = 0;
   timesteps[1] = 0;
-  UNPROTECT(2); //thpe
+  //UNPROTECT(2); //thpe
 }
 
 /*==================================================

@@ -353,7 +353,7 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /*                      #### initialisation ####                              */
 
   lock_solver(); /* prevent nested call of solvers that have global variables */
-  
+
   n_eq = LENGTH(y);             /* number of equations */
   nt   = LENGTH(times);         /* number of output times */
   maxt = nt;
@@ -537,6 +537,9 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 /*                   ####   returning output   ####                           */
   rwork[0] = hini;
   rwork[1] = tin ;
+
+  PROTECT(ISTATE = allocVector(INTSXP, 7)); nprot++;
+  PROTECT(RWORK = allocVector(REALSXP, 5)); nprot++;
   terminate(idid,iwork,7,13,rwork,5,0);
 
   if (iroot >= 0 || nr_root > 0)  {

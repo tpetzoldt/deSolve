@@ -16,8 +16,7 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
   C_deriv_func_type *derivs;
   C_res_func_type *res;
 
-  //init_N_Protect();
-  //long int old_N_Protect = save_N_Protected();
+  int nprot = 0;
 
   ny   = LENGTH(y);
   type = INTEGER(Type)[0];
@@ -31,10 +30,22 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
 
 /* initialise output, parameters, forcings ... */
   initOutR(isDll,  &nout, &ntot, ny, nOut, Rpar, Ipar);
-  initParms(initfunc, parms);
+
+  //initParms(initfunc, parms);
+  if (initfunc != NA_STRING) {
+    if (inherits(initfunc, "NativeSymbol")) {
+      init_func_type *initializer;
+      PROTECT(de_gparms = parms); nprot++;
+      initializer = (init_func_type *) R_ExternalPtrAddrFn_(initfunc);
+      initializer(Initdeparms);
+    }
+  }
+  // end inline initParms
+
+
   isForcing = initForcings(flist);
 
-  PROTECT(yout = allocVector(REALSXP,ntot)); //incr_N_Protect(); //1
+  PROTECT(yout = allocVector(REALSXP,ntot)); nprot++;
 
   tin = REAL(time)[0];
 
@@ -69,8 +80,6 @@ SEXP call_DLL(SEXP y, SEXP dY, SEXP time, SEXP func, SEXP initfunc, SEXP parms,
 	       REAL(yout)[j + ny] = out[j];
   }
 
-  UNPROTECT(1);
-  //restore_N_Protected(old_N_Protect);
-
+  UNPROTECT(nprot);
   return(yout);
 }
