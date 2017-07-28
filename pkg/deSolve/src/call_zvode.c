@@ -317,7 +317,6 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   terminate(istate, iwork, 23, 0, rwork, 4, 10);
 
   unlock_solver();
-
   UNPROTECT(nprot);
 
   if (istate > 0)
