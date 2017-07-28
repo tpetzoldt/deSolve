@@ -106,7 +106,6 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
   /*------------------------------------------------------------------------*/
   /* Initialization of Parameters (for DLL functions)                       */
   /*------------------------------------------------------------------------*/
-  //initParms(Initfunc, Parms);
   if (Initfunc != NA_STRING) {
     if (inherits(Initfunc, "NativeSymbol")) {
       init_func_type *initializer;
@@ -115,8 +114,7 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
       initializer(Initdeparms);
     }
   }
-  // end inline initParms
-
+  
   isForcing = initForcings(Flist);
 
   /*------------------------------------------------------------------------*/
@@ -159,13 +157,16 @@ SEXP call_iteration(SEXP Xstart, SEXP Times, SEXP Nsteps, SEXP Func, SEXP Initfu
         for (i = 0; i < neq; i++)  y0[i] = ytmp[i];
 
       } else {
+        /* the following PROTECTs are considered local and will quickly be
+           removed thereafter */
+        
         yy = REAL(R_y);
-        PROTECT(R_t = ScalarReal(t));                       //i1
+        PROTECT(R_t = ScalarReal(t));                       /* i1 */
 
         for (i = 0; i < neq; i++) yy[i] = y0[i];
 
-        PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms));    //i2
-        PROTECT(Val = eval(R_fcall, Rho));                  //i3
+        PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms));    /* i2 */
+        PROTECT(Val = eval(R_fcall, Rho));                  /* i3 */
 
         for (i = 0; i < neq; i++)  y0[i] = REAL(VECTOR_ELT(Val, 0))[i];
 

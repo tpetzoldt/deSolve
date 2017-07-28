@@ -258,6 +258,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     for (j = 0; j < nout; j++)
       COMPLEX(YOUT)[j + neq + 1] = zout[j];
   }
+
 /*                     ####   main time loop   ####                           */
   for (it = 0; it < nt-1; it++) {
     tin = REAL(times)[it];
@@ -288,12 +289,12 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
   	} else {
     	/*   REAL(YOUT)[(it+1)*(ntot+1)] = tin;*/
       for (j = 0; j < neq; j++)
-	    COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + 1] = xytmp[j];
+	      COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + 1] = xytmp[j];
 
 	    if (isOut == 1) {
-              zderiv_func (&neq, &tin, xytmp, dy, zout, ipar) ;
+        zderiv_func (&neq, &tin, xytmp, dy, zout, ipar) ;
 	      for (j = 0; j < nout; j++)
-                COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + neq + 1] = zout[j];
+          COMPLEX(YOUT)[(it+1)*(ntot + 1) + j + neq + 1] = zout[j];
       }
     }
 

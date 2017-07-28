@@ -73,21 +73,18 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /****** DLL, ipar, rpar (to be compatible with lsoda)                ******/
   /**************************************************************************/
   int isDll = FALSE;
-  //int ntot  = 0;
   int lrpar= 0, lipar = 0;
   int *ipar = NULL;
 
   if (inherits(Func, "NativeSymbol")) { /* function is a dll */
     isDll = TRUE;
     if (nout > 0) isOut = TRUE;
-    //ntot  = neq + nout;         /* length of yout */
     lrpar = nout + LENGTH(Rpar);  /* length of rpar; LENGTH(Rpar) is always >0 */
     lipar = 3    + LENGTH(Ipar);  /* length of ipar */
 
   } else {                              /* function is not a dll */
     isDll = FALSE;
     isOut = FALSE;
-    //ntot = neq;
     lipar = 3;    /* in lsoda = 1 */
     lrpar = nout; /* in lsoda = 1 */
   }
@@ -149,7 +146,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   PROTECT(Y = allocVector(REALSXP,(neq))); nprot++;
 
-  //initParms(Initfunc, Parms);
   if (Initfunc != NA_STRING) {
     if (inherits(Initfunc, "NativeSymbol")) {
       init_func_type *initializer;
@@ -158,8 +154,6 @@ SEXP call_rkFixed(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       initializer(Initdeparms);
     }
   }
-  // end inline initParms
-
 
   isForcing = initForcings(Flist);
   isEvent = initEvents(elist, eventfunc, 0);

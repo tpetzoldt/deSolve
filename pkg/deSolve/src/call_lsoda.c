@@ -519,8 +519,8 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
               troot[iroot] = tin;
               for (j = 0; j < nroot; j++)
                 if (jroot[j] == 1) nrroot[iroot] = j+1;
-                for (j = 0; j < n_eq; j++)
-                  valroot[iroot*n_eq+j] = xytmp[j];
+              for (j = 0; j < n_eq; j++)
+                valroot[iroot*n_eq+j] = xytmp[j];
             }
             iroot ++;
             iterm = 0;      /* check if simulation should be terminated */
@@ -528,19 +528,19 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
             for (j = 0; j < nroot; j++)
               if (jroot[j] == 1 && termroot[j] == 1) iterm = 1;
 
-              if (iterm == 0) {
-                updateevent(&tin, xytmp, &istate);
-                tEvent = pt;
-                istate = 1;
-                repcount = 0;
-                if (mflag ==1) Rprintf("root found at time %g\n",tin);
-              } else {
-                istate = - 30;
-                repcount = 50;
-                if (mflag ==1) Rprintf("TERMINAL root found at time %g\n",tin);
-              }
+            if (iterm == 0) {
+              updateevent(&tin, xytmp, &istate);
+              tEvent = pt;
+              istate = 1;
+              repcount = 0;
+              if (mflag ==1) Rprintf("root found at time %g\n",tin);
+            } else {
+              istate = - 30;
+              repcount = 50;
+              if (mflag ==1) Rprintf("TERMINAL root found at time %g\n",tin);
+            }
 
-          } else{
+          } else {
             istate = -20;  repcount = 50;
           }
         } else if (istate == -2)  {
@@ -588,7 +588,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
           returnearly (1, it, ntot);
         else
           returnearly (0, it, ntot);  /* stop because a root was found */
-      break;
+        break;
       }
     }     /* end main time loop */
 

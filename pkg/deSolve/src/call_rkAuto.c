@@ -28,8 +28,7 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /* Use polynomial interpolation if not disabled by the method
      or when events come in to play (stop-and-go mode).
      Methods with dense output interpolate by default,
-     all others do not.
-  */
+     all others do not. */
   int interpolate = TRUE;
 
   int i = 0, j = 0, it = 0, it_tot = 0, it_ext = 0, nt = 0, neq = 0, it_rej = 0;
@@ -117,7 +116,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /* function is a dll */
     isDll = TRUE;
     if (nout > 0) isOut = TRUE;
-    //ntot  = neq + nout;           /* length of yout */
     lrpar = nout + LENGTH(Rpar);  /* length of rpar; LENGTH(Rpar) is always >0 */
     lipar = 3    + LENGTH(Ipar);  /* length of ipar */
 
@@ -125,7 +123,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     /* function is not a dll */
     isDll = FALSE;
     isOut = FALSE;
-    //ntot = neq;
     lipar = 3;    /* in lsoda = 1 */
     lrpar = nout; /* in lsoda = 1 */
   }
@@ -192,7 +189,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
   /*------------------------------------------------------------------------*/
   PROTECT(Y = allocVector(REALSXP,(neq))); nprot++;
 
-  //initParms(Initfunc, Parms);
   if (Initfunc != NA_STRING) {
     if (inherits(Initfunc, "NativeSymbol")) {
       init_func_type *initializer;
@@ -201,7 +197,6 @@ SEXP call_rkAuto(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
       initializer(Initdeparms);
     }
   }
-  // end inline initParms
 
   isForcing = initForcings(Flist);
   isEvent = initEvents(elist, eventfunc, 0);
