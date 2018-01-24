@@ -166,6 +166,10 @@ SEXP call_rkImplicit(SEXP Xstart, SEXP Times, SEXP Func, SEXP Initfunc,
     }
   }
 
+  /* assign global variables of the event function */
+  n_eq = neq;
+  R_envir = Rho;
+
   isForcing = initForcings(Flist);
   isEvent = initEvents(elist, eventfunc,0);
   if (isEvent) interpolate = FALSE;

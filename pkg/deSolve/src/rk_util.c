@@ -136,13 +136,13 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
     /*------------------------------------------------------------------------*/
     /* Function is an R function                                              */
     /*------------------------------------------------------------------------*/
-    PROTECT(R_t = ScalarReal(t)); //incr_N_Protect(); //1
-    PROTECT(R_y = allocVector(REALSXP, neq)); //incr_N_Protect(); //2
+    PROTECT(R_t = ScalarReal(t));
+    PROTECT(R_y = allocVector(REALSXP, neq));
     yy = REAL(R_y);
     for (i=0; i< neq; i++) yy[i] = y[i];
 
-    PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms)); //incr_N_Protect(); //3
-    PROTECT(Val = eval(R_fcall, Rho)); //incr_N_Protect(); //4
+    PROTECT(R_fcall = lang4(Func, R_t, R_y, Parms));
+    PROTECT(Val = eval(R_fcall, Rho));
 
     /* extract the states from first list element of "Val" */
     if (j >= 0)
@@ -166,7 +166,6 @@ void derivs(SEXP Func, double t, double* y, SEXP Parms, SEXP Rho,
       }
     }
     UNPROTECT(4);
-    //my_unprotect(4);
   }
 }
 
