@@ -29,7 +29,7 @@
     Package: \tab deSolve\cr
     Type:    \tab Package\cr
     Version: \tab 1.21\cr
-    Date:    \tab 2017-08-01\cr
+    Date:    \tab 2018-05-08\cr
     License: \tab GNU Public License 2 or above\cr
   }
 
