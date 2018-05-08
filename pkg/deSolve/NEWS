@@ -1,7 +1,9 @@
 Changes version 1.21
 ================================
  o change way how PROTECT/UNPROTECT is handled (Thomas)
-   (request from Tomas Kalibera / R-Core)
+   (suggested by Tomas Kalibera / R-Core)
+ o fixed inconsistency in the aphid model example
+   (suggested by Sarah K.)
    
 Changes version 1.20
 ================================
