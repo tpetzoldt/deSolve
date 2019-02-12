@@ -12,10 +12,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 **Thank you very much for attending the tutorial. It was a great pleasure for us!** 
+
+
+**Update 2019-02-12**
+
+Essential parts of the material were now moved to github, see https://tpetzoldt.github.io
+
+<!---
 We are planning to make main parts of the course material permamently available. Currently, everything is still there:
 
 * online readable at: http://limno-live.hydro.tu-dresden.de/user2017 or
 * as ZIP-file for download from http://limno-live.hydro.tu-dresden.de/download
+--->
 
 <!---
 ### Part 1: Introduction
