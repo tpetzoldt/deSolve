@@ -6,7 +6,7 @@
 ### To date, "1D", "2D", "3D" are supported as special types.
 ### These are the sparsity associated with 1- 2- and 3-Dimensional PDE models
 ###
-### as from deSolve 1.9.1, lsode1 finds the root of at least one of a set
+### as from deSolve 1.9.1, lsodes finds the root of at least one of a set
 ### of constraint functions g(i) of the independent and dependent variables.
 ### It finds only those roots for which some g(i), as a function
 ### of t, changes sign in the interval of integration.
