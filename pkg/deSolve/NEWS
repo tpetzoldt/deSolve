@@ -1,6 +1,7 @@
 Changes version 1.22
 ================================
   o small updates of examples (Thomas)
+  o improve Fortran compiler compatibility (Thomas)
 
 Changes version 1.21
 ================================
