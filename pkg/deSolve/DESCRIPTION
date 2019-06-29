@@ -16,7 +16,7 @@ Author: Karline Soetaert [aut],
 Maintainer: Thomas Petzoldt <thomas.petzoldt@tu-dresden.de>
 Depends: R (>= 2.15.0)
 Imports: methods, graphics, grDevices, stats
-Suggests: scatterplot3d
+Suggests: scatterplot3d, FME
 Description: Functions that solve initial value problems of a system
         of first-order ordinary differential equations ('ODE'), of
         partial differential equations ('PDE'), of differential
