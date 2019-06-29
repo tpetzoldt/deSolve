@@ -1,3 +1,7 @@
+Changes version 1.23
+================================
+  o add FME to 'Suggests'
+
 Changes version 1.22
 ================================
   o small updates of examples (Thomas)
