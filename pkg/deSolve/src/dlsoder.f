@@ -730,7 +730,7 @@ C----------------------- END OF SUBROUTINE DLSODER ----------------------
 *DECK DLSODESR
 C DLSODESR was created by merging DLSODES with DLSODAR - Karline Soetaert
       SUBROUTINE DLSODESR (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,
-     1            ISTATE, IOPT, RWORK, LRW, IWORK, LIW, JAC, MF, 
+     1            ISTATE, IOPT, RWORK, LRW, IWORK, LIW, IWK, JAC, MF, 
      2            G, NG, JROOT, rpar, ipar)
       IMPLICIT NONE
       EXTERNAL F, JAC, G
@@ -741,6 +741,7 @@ CKS: added rpar, ipar, and G
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LRW, IWORK, LIW, MF
       INTEGER NG, JROOT
       DOUBLE PRECISION Y, T, TOUT, RTOL, ATOL, RWORK
+      INTEGER IWK(2*LRW)
       DIMENSION NEQ(*), Y(*), RTOL(*), ATOL(*), RWORK(LRW), IWORK(LIW),
      &   JROOT(NG)
 
@@ -1037,7 +1038,7 @@ C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LEWT = MIN(LEWT,LRW)
       LACOR = MIN(LACOR,LRW)
 CKS
-      CALL DIPREP (NEQ, Y, RWORK, IWORK(LIA),IWORK(LJA), IPFLAG, F, JAC,
+      CALL DIPREP (NEQ,Y,RWORK,IWK,IWORK(LIA),IWORK(LJA),IPFLAG,F,JAC,
      & rpar, ipar )
       LENRW = LWM - 1 + LENWK + LREST
       IWORK(17) = LENRW
@@ -1110,7 +1111,7 @@ C Load and invert the EWT array.  (H is temporarily set to 1.0.) -------
       IF (MITER .EQ. 0 .OR. MITER .EQ. 3) GO TO 120
 C DIPREP and DPREP do sparse matrix preprocessing if MITER = 1 or 2. ---
       LACOR = MIN(LACOR,LRW)
-      CALL DIPREP (NEQ, Y, RWORK, IWORK(LIA),IWORK(LJA), IPFLAG, F, JAC,
+      CALL DIPREP (NEQ,Y,RWORK,IWK,IWORK(LIA),IWORK(LJA),IPFLAG,F,JAC,
      & rpar, ipar)
       LENRW = LWM - 1 + LENWK + LREST
       IWORK(17) = LENRW
@@ -1329,7 +1330,7 @@ C-----------------------------------------------------------------------
 C    CALL DSTODE(NEQ,Y,YH,NYH,YH,EWT,SAVF,ACOR,WM,WM,F,JAC,DPRJS,DSOLSS)
 C-----------------------------------------------------------------------
       CALL DSTODE (NEQ, Y, RWORK(LYH), NYH, RWORK(LYH), RWORK(LEWT),
-     1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), RWORK(LWM),
+     1   RWORK(LSAVF), RWORK(LACOR), RWORK(LWM), IWK(2*LWM-1),
      2   F, JAC, DPRJS, DSOLSS, rpar,ipar)
       KGO = 1 - KFLAG
       IF (KGO .EQ. 1) THEN
