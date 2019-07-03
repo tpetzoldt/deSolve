@@ -5039,10 +5039,10 @@ C----------------------- End of Subroutine DRCHEK ----------------------
       INTEGER NG, JFLAG, JROOT
       DOUBLE PRECISION HMIN, X0, X1, G0, G1, GX, X
       DIMENSION G0(NG), G1(NG), GX(NG), JROOT(NG)
-      INTEGER IOWND3, IMAX, LAST, IDUM3
-      DOUBLE PRECISION ALPHA, X2, RDUM3
-      COMMON /DLSR01/ ALPHA, X2, RDUM3(3),
-     1   IOWND3(3), IMAX, LAST, IDUM3(4)
+      INTEGER  LG0, LG1, LGX, IMAX, LAST, IRFND, ITASKC, NGC, NGE
+      DOUBLE PRECISION ALPHA, X2, T0, TLAST, TOUTC
+      COMMON /DLSR01/ ALPHA, X2, T0, TLAST, TOUTC,
+     1   LG0, LG1, LGX, IMAX, LAST, IRFND, ITASKC, NGC, NGE 
 C-----------------------------------------------------------------------
 C This subroutine finds the leftmost root of a set of arbitrary
 C functions gi(x) (i = 1,...,NG) in an interval (X0,X1).  Only roots
