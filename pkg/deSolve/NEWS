@@ -1,5 +1,10 @@
 Changes version 1.23
 ================================
+  o improve Fortran compiler compatibility (Thomas, Karline, Woody)
+  o thanks to Brian Ripley and Kurt Hornick
+
+Changes version 1.23
+================================
   o add FME to 'Suggests'
 
 Changes version 1.22
