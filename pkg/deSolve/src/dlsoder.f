@@ -49,13 +49,13 @@ C  Declare all other variables.
      2   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
      3   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
 C KS: added next line
-      INTEGER LG0, LG1, LGX, IOWNR3, IRFND, ITASKC, NGC, NGE
+      INTEGER LG0, LG1, LGX, IMAX, LAST, IRFND, ITASKC, NGC, NGE
       INTEGER I, I1, I2, IFLAG, IMXER, KGO, LF0,
      1   LENIW, LENRW, LENWM, ML, MORD, MU, MXHNL0, MXSTP0
       INTEGER IRFP, IRT, LENYH, LYHNEW
       DOUBLE PRECISION ROWNS,
      1   CCMAX, EL0, H, HMIN, HMXI, HU, RC, TN, UROUND
-      DOUBLE PRECISION ROWNR3, T0, TLAST, TOUTC
+      DOUBLE PRECISION  ALPHA, X2, T0, TLAST, TOUTC
       DOUBLE PRECISION ATOLI, AYI, BIG, EWTI, H0, HMAX, HMX, RH, RTOLI,
      1   TCRIT, TDIST, TNEXT, TOL, TOLSF, TP, SIZE, SUM, W0
       DIMENSION MORD(2)
@@ -80,8 +80,8 @@ C-----------------------------------------------------------------------
      4   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
      5   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
 C karline: added next common block
-      COMMON /DLSR01/ ROWNR3(2), T0, TLAST, TOUTC,
-     1   LG0, LG1, LGX, IOWNR3(2), IRFND, ITASKC, NGC, NGE
+      COMMON /DLSR01/ ALPHA, X2, T0, TLAST, TOUTC,
+     1   LG0, LG1, LGX, IMAX, LAST, IRFND, ITASKC, NGC, NGE
 C
       DATA  MORD(1),MORD(2)/12,5/, MXSTP0/500/, MXHNL0/10/
 C-----------------------------------------------------------------------
