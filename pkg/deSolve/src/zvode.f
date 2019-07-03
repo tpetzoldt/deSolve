@@ -3,7 +3,7 @@
      1            ISTATE, IOPT, ZWORK, LZW, RWORK, LRW, IWORK, LIW,
      2            JAC, MF, RPAR, IPAR)
       EXTERNAL F, JAC
-      COMPLEX(KIND=8) Y, ZWORK, RPAR
+      COMPLEX(KIND=8) Y, ZWORK
       DOUBLE PRECISION T, TOUT, RTOL, ATOL, RWORK
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LZW, LRW, IWORK, LIW,
      1        MF, IPAR
@@ -1736,7 +1736,7 @@ C----------------------- End of Subroutine ZVODE -----------------------
       SUBROUTINE ZVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,
      1   EWT, ITOL, ATOL, Y, TEMP, H0, NITER, IER)
       EXTERNAL F
-      COMPLEX(KIND=8) Y0, YDOT, Y, TEMP, RPAR
+      COMPLEX(KIND=8) Y0, YDOT, Y, TEMP
       DOUBLE PRECISION T0, TOUT, UROUND, EWT, ATOL, H0
       INTEGER N, IPAR, ITOL, NITER, IER
       DIMENSION Y0(*), YDOT(*), EWT(*), ATOL(*), Y(*),
@@ -2004,7 +2004,7 @@ C----------------------- End of Subroutine ZVINDY ----------------------
       SUBROUTINE ZVSTEP (Y, YH, LDYH, YH1, EWT, SAVF, VSAV, ACOR,
      1                  WM, IWM, F, JAC, PSOL, VNLS, RPAR, IPAR)
       EXTERNAL F, JAC, PSOL, VNLS
-      COMPLEX(KIND=8) Y, YH, YH1, SAVF, VSAV, ACOR, WM, RPAR
+      COMPLEX(KIND=8) Y, YH, YH1, SAVF, VSAV, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IPAR
       DIMENSION Y(*), YH(LDYH,*), YH1(*), EWT(*), SAVF(*), VSAV(*),
@@ -2837,7 +2837,7 @@ C----------------------- End of Subroutine ZVJUST ----------------------
       SUBROUTINE ZVNLSD (Y, YH, LDYH, VSAV, SAVF, EWT, ACOR, IWM, WM,
      1                 F, JAC, PDUM, NFLAG, RPAR, IPAR)
       EXTERNAL F, JAC, PDUM
-      COMPLEX(KIND=8) Y, YH, VSAV, SAVF, ACOR, WM, RPAR
+      COMPLEX(KIND=8) Y, YH, VSAV, SAVF, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, NFLAG, IPAR
       DIMENSION Y(*), YH(LDYH,*), VSAV(*), SAVF(*), EWT(*), ACOR(*),
@@ -3073,7 +3073,7 @@ C----------------------- End of Subroutine ZVNLSD ----------------------
       SUBROUTINE ZVJAC (Y, YH, LDYH, EWT, FTEM, SAVF, WM, IWM, F, JAC,
      1                 IERPJ, RPAR, IPAR)
       EXTERNAL F, JAC
-      COMPLEX(KIND=8) Y, YH, FTEM, SAVF, WM, RPAR
+      COMPLEX(KIND=8) Y, YH, FTEM, SAVF, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IERPJ, IPAR
       DIMENSION Y(*), YH(LDYH,*), EWT(*), FTEM(*), SAVF(*),
