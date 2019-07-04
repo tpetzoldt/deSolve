@@ -14,12 +14,6 @@ void F77_SUB(rprintf)(const char* msg FCLEN) {
    Rprintf("\n");
 }
 
-// may be redundant
-void F77_SUB(rprintf2)(const char* msg FCLEN) {
-   Rprintf(msg);
-   Rprintf("\n");
-}
-
 void F77_SUB(rprintfid)(const char* msg, int *i, double *d FCLEN) {
    Rprintf(msg, *i, *d);
    Rprintf("\n");
