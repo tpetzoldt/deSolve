@@ -1,7 +1,8 @@
-Changes version 1.23
+Changes version 1.24
 ================================
-  o improve Fortran compiler compatibility (Thomas, Karline, Woody)
-  o thanks to Brian Ripley and Kurt Hornick
+  o fix compiler warnings to improve Fortran compatibility 
+    (Thomas, Karline, Woody)
+  o thanks to Brian Ripley and Kurt Hornik
 
 Changes version 1.23
 ================================
