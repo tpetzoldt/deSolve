@@ -24,14 +24,6 @@
   It includes root-finding (or event location) and provides access to lagged
   variables and derivatives.
 }
-\details{
-  \tabular{ll}{
-    Package: \tab deSolve\cr
-    Type:    \tab Package\cr
-    Version: \tab 1.22\cr
-    Date:    \tab 2019-06-29\cr
-    License: \tab GNU Public License 2 or above\cr
-  }
 
   The system of differential equations is written as an \R function or
   defined in compiled code that has been dynamically loaded, see
