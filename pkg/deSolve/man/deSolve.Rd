@@ -15,7 +15,7 @@
 
   The functions provide an interface to the FORTRAN functions lsoda,
   lsodar, lsode, lsodes of the ODEPACK collection,
-  to the FORTRAN functions dvode and daspk and a C-implementation of
+  to the FORTRAN functions dvode, zvode and daspk and a C-implementation of
   solvers of the Runge-Kutta family with fixed or variable time steps.
 
   The package contains routines designed for solving ODEs
@@ -23,14 +23,13 @@
   that have been converted to ODEs by numerical differencing.
   It includes root-finding (or event location) and provides access to lagged
   variables and derivatives.
-}
 
-  The system of differential equations is written as an \R function or
+  The system of differential equations is written as an \R{} function or
   defined in compiled code that has been dynamically loaded, see
   package vignette \href{../doc/compiledCode.pdf}{compiledCode} for details. The
   solvers may be used as part of a modeling package for differential
   equations, or for parameter estimation using any appropriate
-  modeling tool for non-linear models in \R such as
+  modeling tool for non-linear models in \R{} such as
   \code{\link{optim}}, \code{\link{nls}}, \code{\link{nlm}} or
   \code{\link[nlme]{nlme}}, or \code{\link[FME]{FME}}.
 
