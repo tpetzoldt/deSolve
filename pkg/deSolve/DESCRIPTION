@@ -4,14 +4,21 @@ Title: Solvers for Initial Value Problems of Differential Equations
         ('ODE', 'DAE', 'DDE')
 Authors@R: c(person("Karline","Soetaert", role = c("aut"), 
                      email = "karline.soetaert@nioz.nl",
-					 comment = c(ORCID = "0000-0003-4603-7100")),
+                     comment = c(ORCID = "0000-0003-4603-7100")),
              person("Thomas","Petzoldt", role = c("aut", "cre"),
                      email = "thomas.petzoldt@tu-dresden.de",
-					 comment = c(ORCID = "0000-0002-4951-6468")),
+                     comment = c(ORCID = "0000-0002-4951-6468")),
              person("R. Woodrow","Setzer", role = c("aut"),
                      email = "setzer.woodrow@epa.gov",
-					 comment = c(ORCID = "0000-0002-6709-9186")),
-             person("odepack authors", role = "cph"))
+                     comment = c(ORCID = "0000-0002-6709-9186")),
+             person("Peter N.","Brown", role = "cph", comment = "ODEPACK author"),
+             person("George D.","Byrne", role = "cph", comment = "ODEPACK author"),
+             person("Ernst","Hairer", role = "cph", comment = "Radau algorithm"),
+             person("Alan C.","Hindmarsh", role = "cph", comment = "ODEPACK author"),
+             person("Linda R.","Petzold", role = "cph", comment = "ODEPACK author"),
+             person("Clement W.","Ulrich", role = "cph", comment = "ODEPACK author"),
+             person("Cleve","Moler", role = "cph", comment = "author of LINPACK functions")
+            )
 Author: Karline Soetaert [aut] (<https://orcid.org/0000-0003-4603-7100>),  
         Thomas Petzoldt [aut, cre] (<https://orcid.org/0000-0002-4951-6468>),  
         R. Woodrow Setzer [aut] (<https://orcid.org/0000-0002-6709-9186>), 
@@ -27,7 +34,7 @@ Description: Functions that solve initial value problems of a system
         equations.  The functions provide an interface to the FORTRAN
         functions 'lsoda', 'lsodar', 'lsode', 'lsodes' of the 'ODEPACK'
         collection, to the FORTRAN functions 'dvode', 'zvode' and 'daspk'
-	and a C-implementation of solvers of the 'Runge-Kutta' family with
+        and a C-implementation of solvers of the 'Runge-Kutta' family with
         fixed or variable time steps.  The package contains routines
         designed for solving 'ODEs' resulting from 1-D, 2-D and 3-D
         partial differential equations ('PDE') that have been converted
