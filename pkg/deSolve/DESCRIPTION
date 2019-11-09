@@ -11,14 +11,23 @@ Authors@R: c(person("Karline","Soetaert", role = c("aut"),
              person("R. Woodrow","Setzer", role = c("aut"),
                      email = "setzer.woodrow@epa.gov",
                      comment = c(ORCID = "0000-0002-6709-9186")),
-             person("Peter N.","Brown", role = "cph", comment = "ODEPACK author"),
-             person("George D.","Byrne", role = "cph", comment = "ODEPACK author"),
-             person("Ernst","Hairer", role = "cph", comment = "Radau algorithm"),
-             person("Alan C.","Hindmarsh", role = "cph", comment = "ODEPACK author"),
-             person("Linda R.","Petzold", role = "cph", comment = "ODEPACK author"),
-             person("Clement W.","Ulrich", role = "cph", comment = "ODEPACK author"),
-             person("Cleve","Moler", role = "cph", comment = "author of LINPACK functions")
-            )
+             person("Peter N.","Brown", role = "ctb", 
+                     comment = "files ddaspk.f, dvode.f, zvode.f"),
+             person("George D.","Byrne", role = "ctb", 
+                     comment = "files dvode.f, zvode.f"),
+             person("Ernst","Hairer", role = "ctb", 
+                     comment = "files radau5.f, radau5a"),
+             person("Alan C.","Hindmarsh", role = "ctb", 
+                     comment = "files ddaspk.f, dlsode.f, dvode.f, zvode.f, opdkmain.f, opdka1.f"),
+             person("Linda R.","Petzold", role = "ctb", 
+                     comment = "files ddaspk.f, dlsoda.f"),
+             person("Clement W.","Ulrich", role = "ctb", 
+                     comment = "file ddaspk.f"),
+             person("Cleve","Moler", role = "ctb", 
+                     comment = "file dlinpck.f"),
+             person("Youcef", "Saad", role = "ctb", 
+                     comment = "file dsparsk.f")
+           )
 Depends: R (>= 2.15.0)
 Imports: methods, graphics, grDevices, stats
 Suggests: scatterplot3d, FME
