@@ -1,3 +1,8 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
+
       DOUBLE PRECISION FUNCTION D1MACH (IDUM)
       INTEGER IDUM
 C-----------------------------------------------------------------------

@@ -1,3 +1,8 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
+
 c----------------------------------------------------------------------c
 c                          S P A R S K I T                             c
 c----------------------------------------------------------------------c

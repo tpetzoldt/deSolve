@@ -1,3 +1,8 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
+
 *DECK DUMACH
       DOUBLE PRECISION FUNCTION DUMACH ()
 C***BEGIN PROLOGUE  DUMACH

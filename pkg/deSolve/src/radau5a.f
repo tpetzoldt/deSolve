@@ -1,6 +1,15 @@
+C     Note: this file was modified for use in package deSolve 
+
+C           by the deSolve author.
+C
+
 c-----------------------------------------------------------------------
 c     additional linear algebra routines required by RADAU5
 c-----------------------------------------------------------------------
+
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
 
 c KS: changed sol -> solradau , ... 
 C KS: write statements rewritten

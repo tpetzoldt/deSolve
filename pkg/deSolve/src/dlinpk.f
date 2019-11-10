@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
       subroutine dgefa(a,lda,n,ipvt,info)
       integer lda,n,ipvt(*),info
       double precision a(lda,*)

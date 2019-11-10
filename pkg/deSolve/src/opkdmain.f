@@ -1,3 +1,8 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
+
 *DECK DLSODE
       SUBROUTINE DLSODE (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,
      1                  ISTATE, IOPT, RWORK, LRW, IWORK, LIW, JAC, MF,

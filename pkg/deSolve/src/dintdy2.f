@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
       SUBROUTINE INTERPOLY(T, K, I, YH, NYH, DKY, nq, tn, h)
 
 C***PURPOSE  Interpolate solution derivatives to be used in C-code.

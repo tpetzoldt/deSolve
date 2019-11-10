@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
 C Work performed under the auspices of the U.S. Department of Energy
 C by Lawrence Livermore National Laboratory under contract number 
 C W-7405-Eng-48.

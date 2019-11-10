@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
 *DECK DLSODER
 C DLSODER was created by merging DLSODE with DLSODAR - Karline Soetaert
       SUBROUTINE DLSODER (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,

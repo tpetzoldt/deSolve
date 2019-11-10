@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
 *DECK ZVODE
       SUBROUTINE ZVODE (F, NEQ, Y, T, TOUT, ITOL, RTOL, ATOL, ITASK,
      1            ISTATE, IOPT, ZWORK, LZW, RWORK, LRW, IWORK, LIW,

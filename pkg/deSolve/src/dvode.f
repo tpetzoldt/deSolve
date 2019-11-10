@@ -1,3 +1,7 @@
+C     Note: this file was modified for use in package deSolve 
+C           by the deSolve authors.
+C
+
 C*********************************************************************
 C       MAIN VODE DRIVER
 C*********************************************************************
