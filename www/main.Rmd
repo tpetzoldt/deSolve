@@ -12,9 +12,25 @@ Package **deSolve** is an add-on package of the open source data analysis system
 
 The package contains functions that solve initial value problems of a system of first-order ordinary differential equations (ODE), of partial differential equations (PDE), of differential algebraic equations (DAE), and of delay differential equations (DDE). The functions provide an interface to the FORTRAN functions lsoda, lsodar, lsode, lsodes of the ODEPACK collection, to the FORTRAN functions dvode, zvode, daspk and radau5, and a C-implementation of solvers of the Runge-Kutta family with fixed or variable time steps. The package contains also routines designed for solving ODEs resulting from 1-D, 2-D and 3-D partial differential equations (PDE) that have been converted to ODEs by numerical differencing.
 
-## News
+## Material to start with
 
-**2017-07-04:** Tutorial about [Environmental modelling with R](http://desolve.r-forge.r-project.org/user2017) at the [useR!2017 conference in Brussels](https://user2017.brussels/)
+### Overview and papers
+
+* [Tutorial slides](user2014/tutorial.pdf)
+* [Solving Initial Value Differential Equations in R](http://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf): introductory tutorial about using the package. (pdf)
+* [R Journal paper](https://journal.r-project.org/archive/2010-2/RJournal_2010-2_Soetaert~et~al.pdf) (pdf)
+* [JSS paper](https://www.jstatsoft.org/index.php/jss/article/view/v033i09/v33i09.pdf) (pdf)
+
+### Special topics
+
+* [Data input: Forcing functions and events](https://tpetzoldt.github.io/deSolve-forcing/deSolve-forcing.html) (html)
+* [Speedup: use compiled code](https://tpetzoldt.github.io/deSolve-compiled/deSolve-compiled.html) (html)
+* [More about "Writing Code in Compiled Languages"](http://cran.r-project.org/web/packages/deSolve/vignettes/compiledCode.pdf) (pdf)
+* [Model calibration with package FME](user2014/examples/FME/index.html) (interactive poster)
+* [Interactive web apps with shiny](https://tpetzoldt.github.io/deSolve-shiny/deSolve-shiny.html) (html)
+
+
+
 
 ## Software Download
 
@@ -75,7 +91,7 @@ community for their tools, documentations, discussions and suggestions.
 
 ----
 
-2017-06-30 The deSolve authors.
+2019-11-12 The deSolve authors.
 
 
 
