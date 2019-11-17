@@ -1,6 +1,9 @@
-C     Note: this file was modified for use in package deSolve 
-C           by the deSolve authors.
+C     The code in this file is based on ODEPACK from netlib
+C     https://www.netlib.org/odepack/
+C 
+C     Adapted for use in R package deSolve by the deSolve authors.
 C
+
 
 
       DOUBLE PRECISION FUNCTION D1MACH (IDUM)
