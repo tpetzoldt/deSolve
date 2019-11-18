@@ -1,5 +1,7 @@
-C     Note: this file was modified for use in package deSolve 
-C           by the deSolve authors.
+C Original authors: Peter N. Brown, Alan C. Hindmarsh, 
+C   Geore D. Byrne (see original author statement below)
+C
+C  Adapted for use in R package deSolve by the deSolve authors.
 C
 
 *DECK ZVODE

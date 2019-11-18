@@ -1,15 +1,10 @@
-C     Note: this file was modified for use in package deSolve 
-
-C           by the deSolve author.
+C  Original author: Ernst Hairer, see copyright statement in radau5.f
+C  Adapted for use in R package deSolve by the deSolve authors.
 C
 
 c-----------------------------------------------------------------------
 c     additional linear algebra routines required by RADAU5
 c-----------------------------------------------------------------------
-
-C     Note: this file was modified for use in package deSolve 
-C           by the deSolve authors.
-C
 
 c KS: changed sol -> solradau , ... 
 C KS: write statements rewritten

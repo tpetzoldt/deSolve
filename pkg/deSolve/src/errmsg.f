@@ -1,7 +1,7 @@
-C     The code in this file is was taken from 
-C     https://www.netlib.org/odepack/
-C     Original author: Hindmarsh, Alan C., (LLNL)
-C     Rewritten to be used with R by Karline Soetaert
+C  The code in this file is was taken from 
+C    https://www.netlib.org/odepack/
+C  Original author: Hindmarsh, Alan C. (LLNL)
+C  Rewritten to be used with R by Karline Soetaert.
 C
 
       subroutine rprintd1(msg, d1)
