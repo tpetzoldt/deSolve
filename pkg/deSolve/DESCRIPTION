@@ -19,16 +19,16 @@ Authors@R: c(person("Karline","Soetaert", role = c("aut"),
                      comment = "files radau5.f, radau5a"),
              person("Alan C.","Hindmarsh", role = "ctb", 
                      comment = "files ddaspk.f, dlsode.f, dvode.f, zvode.f, opdkmain.f, opdka1.f"),
+             person("Cleve","Moler", role = "ctb", 
+                     comment = "file dlinpck.f")
              person("Linda R.","Petzold", role = "ctb", 
                      comment = "files ddaspk.f, dlsoda.f"),
-             person("Clement W.","Ulrich", role = "ctb", 
-                     comment = "file ddaspk.f"),
-             person("Cleve","Moler", role = "ctb", 
-                     comment = "file dlinpck.f"),
              person("Youcef", "Saad", role = "ctb", 
-                     comment = "file dsparsk.f")
+                     comment = "file dsparsk.f"),
+             person("Clement W.","Ulrich", role = "ctb", 
+                     comment = "file ddaspk.f")
            )
-Depends: R (>= 2.15.0)
+Depends: R (>= 3.3.0)
 Imports: methods, graphics, grDevices, stats
 Suggests: scatterplot3d, FME
 Description: Functions that solve initial value problems of a system
