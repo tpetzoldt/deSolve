@@ -1,5 +1,5 @@
 Package: deSolve
-Version: 1.26
+Version: 1.27
 Title: Solvers for Initial Value Problems of Differential Equations
         ('ODE', 'DAE', 'DDE')
 Authors@R: c(person("Karline","Soetaert", role = c("aut"), 
