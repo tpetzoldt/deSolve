@@ -1,7 +1,3 @@
-#ifndef DESOLVE_H
-#define DESOLVE_H
-
-
 #ifndef R_R_H
 #  include <R.h>
 #endif
@@ -172,4 +168,3 @@ extern int    *histord;
 extern int    histsize, offset;
 extern int    initialisehist, lyh, lhh, lo;
 
-#endif
