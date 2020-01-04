@@ -12,7 +12,7 @@ Changes version 1.26
 ================================
   o fix outdated class checks to ensure R 4.0.0 compatibility
     (Karline, Thomas)
-  o Fortran modernization: initialization ov variables (Karline)
+  o Fortran modernization: initialization of variables (Karline)
 
 Changes version 1.25
 ================================
