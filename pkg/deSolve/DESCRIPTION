@@ -60,6 +60,3 @@ License: GPL (>= 2)
 URL: http://desolve.r-forge.r-project.org/
 LazyData: yes
 NeedsCompilation: yes
-Packaged: 2020-01-02 15:43:34 UTC; ripley
-Repository: CRAN
-Date/Publication: 2020-01-02 17:36:18 UTC
