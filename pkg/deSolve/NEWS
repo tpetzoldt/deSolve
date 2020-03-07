@@ -1,3 +1,7 @@
+Changes version 1.28
+================================
+   o minor: avoid an implicit type conversion at the C level
+
 Changes version 1.27.1
 ================================
   o C level change to fix symbol clash on MacOS
