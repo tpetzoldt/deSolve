@@ -53,7 +53,12 @@ The manuals are directly contained in the **deSolve** package::
 
 ### Tutorials
 
-* The slides of our pre-conference tutorials at the UseR-conferences [2011 in Warwick (UK)](slides/tutorial.pdf) and [2014 in Los Angeles (USA)](user2014/tutorial.pdf) contain an overview and practical examples in a relatively compact form.
+* The slides of our pre-conference tutorials at the UseR!-conferences [2011 in Warwick (UK)](slides/tutorial.pdf) and [2014 in Los Angeles (USA)](user2014/tutorial.pdf) contain an overview and practical examples in a relatively compact form.
+
+* The tutorial material of the UseR!2017 conference is was moved to [github](https://tpetzoldt.github.io/) and is [linked here](http://desolve.r-forge.r-project.org/user2017/). 
+* Live recordings of the 2017 tutorial can be found at Channel9.msdn.com:
+[Part I](https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Modelling-the-environment-in-R-from-small-scale-to-global-applications), 
+[Part II](https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Modelling-the-environment-in-R-from-small-scale-to-global-applications-II).
 
 
 ### Papers and Books
@@ -91,7 +96,7 @@ community for their tools, documentations, discussions and suggestions.
 
 ----
 
-2019-11-12 The deSolve authors.
+2021-03-03 The deSolve authors.
 
 
 
