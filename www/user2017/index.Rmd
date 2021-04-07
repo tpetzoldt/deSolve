@@ -14,9 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 **Thank you very much for attending the tutorial. It was a great pleasure for us!** 
 
 
-**Update 2019-02-12**
+**Updates: 2019-02-12, 2021-04-07**
 
-Essential parts of the material were now moved to github, see https://tpetzoldt.github.io
+* [**Abstract**](Rtutorial2017.html)
+* Essential parts of the material were moved to github, see links below and https://tpetzoldt.github.io
 
 <!---
 We are planning to make main parts of the course material permamently available. Currently, everything is still there:
@@ -25,25 +26,24 @@ We are planning to make main parts of the course material permamently available.
 * as ZIP-file for download from http://limno-live.hydro.tu-dresden.de/download
 --->
 
-<!---
+
 ### Part 1: Introduction
 
-* [Introduction and basics](1.0-basics/tutorial.pdf)
-* [Forcing functions and events](2.1-forcing+events/desolve-forcing.html) 
-* [Fitting parameters](2.2-fitting-parameters/index.html)
+* [Introduction and basics](../slides/tutorial.pdf)
+* [Forcing functions and events](https://tpetzoldt.github.io/deSolve-forcing/deSolve-forcing.html) 
+* [Fitting parameters](../user2014/examples/FME/index.html)
 
 ### Part 2: Special topics
 
-* [Speeding up](2.4-compiled-code/desolve-compiled.html)
-* [Web interfaces with shiny](2.5-desolve-shiny/desolve-shiny.html)
-* [Complex models with rodeo](2.6-rodeo)
-* [A multidimensional model](2.7-ocean)
---->
+* [Speeding up](https://tpetzoldt.github.io/deSolve-compiled/deSolve-compiled.html)
+* [Web interfaces with shiny](https://tpetzoldt.github.io/deSolve-shiny/deSolve-shiny.html)
+* [Complex models with rodeo](https://tpetzoldt.github.io/deSolve-rodeo/rodeo-lv3.html)
+* A multidimensional ocean model
+
 
 
 ### Links
 
-* [Abstract of the Tutorial](https://www.user2017.brussels/uploads/Karline_Rtutorial2017.html)
 * [useR!2017 Brussels](https://user2017.brussels/)
 * package [deSolve](http://desolve.r-forge.r-project.org)
 * mailig list  [R-SIG-DYNAMIC-MODELS](https://stat.ethz.ch/mailman/listinfo/r-sig-dynamic-models)
