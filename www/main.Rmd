@@ -16,7 +16,8 @@ The package contains functions that solve initial value problems of a system of 
 
 ### Overview and papers
 
-* [Tutorial slides](user2014/tutorial.pdf)
+* [Tutorial slides](user2014/tutorial.pdf) (Warwick 2011, Los Angeles 2014)
+* [useR!2017 tutorial](user2017/) Brussels (updated 2019, 2021)
 * [Solving Initial Value Differential Equations in R](http://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf): introductory tutorial about using the package. (pdf)
 * [R Journal paper](https://journal.r-project.org/archive/2010-2/RJournal_2010-2_Soetaert~et~al.pdf) (pdf)
 * [JSS paper](https://www.jstatsoft.org/index.php/jss/article/view/v033i09/v33i09.pdf) (pdf)
@@ -92,11 +93,12 @@ All questions related to **deSolve** and other related questions about dynamic m
 
 The authors of this package want to thank R. Woodrow Setzer who developed and to Martin Maechler, who contributed
 to the predecessor package **odesolve**. We are grateful to the R Core Team who made this possible and to the whole
-community for their tools, documentations, discussions and suggestions.
+community for their tools, documentations, discussions and suggestions. Special thanks go to the original
+authors of the differential equation algorithms for providing their codes as free software. 
 
 ----
 
-2021-03-03 The deSolve authors.
+2021-04-07 The deSolve authors.
 
 
 
