@@ -101,7 +101,7 @@ initial value problems, R}
    \\
   R. Woodrow Setzer\\
   National Center for Computational Toxicology\\
-  US Environmental Protection Agency}
+  US Environmental Protection Agency
 }
 
 
