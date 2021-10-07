@@ -78,6 +78,7 @@
 
   P. N. Brown, G. D. Byrne, A. C. Hindmarsh (1989):  VODE: A Variable
   Coefficient ODE Solver, SIAM J. Sci. Stat. Comput., 10, pp. 1038-1051.
+  \doi{10.1137/0910062}
 
   See also the references given on the specific help pages of the
   different methods.
