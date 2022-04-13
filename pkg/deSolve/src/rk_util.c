@@ -3,6 +3,11 @@
 /* Definitions and Utilities needed by Runge-Kutta Solvers                  */
 /*==========================================================================*/
 
+/* USE_FC_LEN_T to ensure compatibility with Fortran BLAS/LAPACK */
+#ifndef USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
+
 /* Load headers needed by the R interface */
 #include <R_ext/Rdynload.h>
 #include <R_ext/Applic.h> /* for dgemm */
@@ -70,7 +75,7 @@ void blas_matprod1(double *x, int nrx, int ncx,
 
     if (nrx > 0 && ncx > 0 && nry > 0 && ncy > 0) {
 	    F77_CALL(dgemm)(transa, transb, &nrx, &ncy, &ncx, &one,
-			    x, &nrx, y, &nry, &zero, z, &nrx);
+			    x, &nrx, y, &nry, &zero, z, &nrx FCONE FCONE);
     } else /* zero-extent operations should return zeroes */
     	for(i = 0; i < nrx*ncy; i++) z[i] = 0;
 }
