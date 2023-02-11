@@ -21,11 +21,17 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   ipar=NULL, nout=0, outnames=NULL, forcings=NULL,
   initforc = NULL, fcontrol = NULL, events = NULL, lags=NULL, ...)   {
 
-###
+### patch to support pre-indentified symbols
   if (inherits(func, "deSolve.symbols")) {
+    if (! is.null(rootfunc))
+      stop("rootfunc for call with pre-defined symbols not supported")
     symbols <- func
-    func <- ""
+
+    ## thpe: the following dummies are still needed by called functions
+    ## todo: improve this and allow NULL or NA
+    func <- initfunc <- dllname <- ""
   } else {
+    ## standard procedure
     symbols <- NULL
   }
 
@@ -63,9 +69,15 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
      func <- func$func
   }
 
-  if (inherits(func, "deSolve.symbols")) {
+  if (!inherits(func, "deSolve.symbols")) {
     hmax <- checkInput (y, times, func, rtol, atol,
       jacfunc, tcrit, hmin, hmax, hini, dllname)
+  } else {
+    if (is.null(hmax))
+      hmax <- if (is.null(times)) 0 else max(abs(diff(times)))
+    if (!is.numeric(hmax))   stop("`hmax' must be numeric")
+    if (hmax < 0)            stop("`hmax' must be a non-negative value")
+    if (hmax == Inf)  hmax <- 0
   }
 
   n <- length(y)
@@ -111,13 +123,13 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   if (jt == 4 && banddown>0)
     erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
 
-  if (is.character(func) | inherits(func, "CFunc")) {   # function specified in a DLL or inline compiled
-    if (inherits(func, "deSolve.symbols")) {
+  # function specified in a DLL or inline compiled
+  if (is.character(func) | inherits(func, "CFunc") | !is.null(symbols)) {
+    if (is.null(symbols)) {
       DLL <- checkDLL(func, jacfunc, dllname, initfunc, verbose, nout, outnames)
     } else {
       DLL <- symbols
-    }
-
+   }
 
     ModelInit <- DLL$ModelInit
     Func    <- DLL$Func

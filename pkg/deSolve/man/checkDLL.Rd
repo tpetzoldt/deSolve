@@ -57,13 +57,13 @@ checkDLL(func, jacfunc, dllname, initfunc, verbose, nout, outnames, JT = 1)
 }
 
 \value{
-List of class \code{deSolve.symbols}
+List of class \code{deSolve.symbols} with:
 
-\item{ModelInit}{pointer to the init function of the DLL (class "externalptr").}
-\item{Func}     {pointer to the derivative function in the DLL (class "externalptr").}
-\item{JacFunc}  {pointer to the Jacobi function in the DLL (class "externalptr").}
-\item{Nglobal}  {number of output variables calculated in the compiled function.}
-\item{Nmtot}    {list of names of derivatives and output variables.}
+\item{ModelInit }{pointer to the init function of the DLL (class "externalptr").}
+\item{Func }{pointer to the derivative function in the DLL (class "externalptr").}
+\item{JacFunc }{pointer to the Jacobi function in the DLL (class "externalptr").}
+\item{Nglobal }{number of output variables calculated in the compiled function.}
+\item{Nmtot }{list of names of derivatives and output variables.}
 }
 \seealso{
 \code{\link{lsoda}}
