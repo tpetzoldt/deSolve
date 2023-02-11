@@ -1,4 +1,4 @@
-# ks 21-12-09: Func <- unlist() ... output variables now set in C-code
+## tpetzoldt, based on code from the deSolve package, 2022-11-16
 
 ### ============================================================================
 ### lsoda -- solves ordinary differential equation systems
@@ -7,6 +7,9 @@
 ### This means that the user does not have to determine whether the
 ### problem is stiff or not, and the solver will automatically choose the
 ### appropriate method.  It always starts with the nonstiff method.
+### 2023-02-11 thpe:
+## patched version for compiled models with pre-identified
+## symbols (.e. pointers) of the DLL functions.
 ### ============================================================================
 
 lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
@@ -17,6 +20,14 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   dllname=NULL, initfunc=dllname, initpar=parms, rpar=NULL,
   ipar=NULL, nout=0, outnames=NULL, forcings=NULL,
   initforc = NULL, fcontrol = NULL, events = NULL, lags=NULL, ...)   {
+
+###
+  if (inherits(func, "deSolve.symbols")) {
+    symbols <- func
+    func <- ""
+  } else {
+    symbols <- NULL
+  }
 
 ### check input
   if (! is.null(rootfunc))
@@ -52,9 +63,10 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
      func <- func$func
   }
 
-
-  hmax <- checkInput (y, times, func, rtol, atol,
-    jacfunc, tcrit, hmin, hmax, hini, dllname)
+  if (inherits(func, "deSolve.symbols")) {
+    hmax <- checkInput (y, times, func, rtol, atol,
+      jacfunc, tcrit, hmin, hmax, hini, dllname)
+  }
 
   n <- length(y)
 
@@ -100,8 +112,12 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
     erow<-matrix(data=0, ncol=n, nrow=banddown) else erow<-NULL
 
   if (is.character(func) | inherits(func, "CFunc")) {   # function specified in a DLL or inline compiled
-    DLL <- checkDLL(func, jacfunc, dllname,
-                    initfunc, verbose, nout, outnames)
+    if (inherits(func, "deSolve.symbols")) {
+      DLL <- checkDLL(func, jacfunc, dllname, initfunc, verbose, nout, outnames)
+    } else {
+      DLL <- symbols
+    }
+
 
     ModelInit <- DLL$ModelInit
     Func    <- DLL$Func
@@ -237,7 +253,7 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
 ### saving results
   out <- saveOut(out, y, n, Nglobal, Nmtot, func, Func2,
-                 iin=c(1,12:21), iout=c(1:3,14,5:9,15:16), nr = 5)
+           iin=c(1,12:21), iout=c(1:3,14,5:9,15:16), nr = 5)
 
   attr(out, "type") <- "lsoda"
   if (verbose) diagnostics(out)

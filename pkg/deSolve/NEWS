@@ -1,7 +1,7 @@
 Changes version 1.35
 ================================
-  o speedup multiple solver calls  with pre-identified symbol table for compiled models
-  o experimental, work in progress to be finished
+  o speedup multiple lsoda solver calls with pre-identified symbol table 
+    for compiled models. Feature request and idea from Johannes Ranke.
 
 Changes version 1.34
 ================================
