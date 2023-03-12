@@ -4,7 +4,8 @@ Changes version 1.35
   symbol table for compiled models.
   Feature request and idea from Johannes Ranke.
 * use new CITATION format
-* convert NEWS to NEWS.md in markdown format.
+* convert NEWS to NEWS.md in markdown format
+* documentation fixes
 
 Changes version 1.34
 ================================

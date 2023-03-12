@@ -78,7 +78,8 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     to avoid overhead from repeated internal calls to this function. It
     is an experimental feature for special situations, when a small compiled
     model with a low number of integration steps is repeatedly called. It is
-    currently only available for the \code{lsoda} solver.
+    currently only available for the \code{lsoda} solver, see
+    \href{../doc/dynload-fastlsoda}{example}.
   }
   \item{parms }{vector or list of parameters used in \code{func} or
     \code{jacfunc}.
