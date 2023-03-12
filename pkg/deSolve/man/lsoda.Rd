@@ -75,8 +75,8 @@ lsoda(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
     details.
 
     \code{func} can also be a list of symbols returned by \code{\link{checkDLL}}
-    to avoid overhead due to repeated internal calls to this function. It
-    is an experimental feature that for special situations, when a small compiled
+    to avoid overhead from repeated internal calls to this function. It
+    is an experimental feature for special situations, when a small compiled
     model with a low number of integration steps is repeatedly called. It is
     currently only available for the \code{lsoda} solver.
   }

@@ -2,10 +2,10 @@
 \alias{checkDLL}
 
 \title{
-Check DLL/.so of compiled model.
+Check shared library (DLL/.so) of a compiled model.
 }
 \description{
-Check DLL/.so of a compiled model and create a list of symbols.
+Check shared library (DLL/.so) of a compiled model and create a list of symbols.
 }
 \usage{
 checkDLL(func, jacfunc, dllname, initfunc, verbose, nout, outnames, JT = 1)

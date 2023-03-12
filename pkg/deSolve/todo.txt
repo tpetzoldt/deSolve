@@ -11,12 +11,12 @@ Thomas:
 - add timelags and root finding to Runge-Kutta solvers
 - allow reverted time vector for dense output methods
 
-Karline + Thomas: 
+Karline + Thomas:
 
 - add dopri 8(5,3) - Fortran??
 
 - extend diagnostics: ?
-  e.g. to return number of timesteps, number of ftion evaluations, etc...
+  e.g. to return number of timesteps, number of function evaluations, etc...
 
 - document rootfinding better
 
