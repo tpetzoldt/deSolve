@@ -9,7 +9,7 @@ C
      1            ISTATE, IOPT, ZWORK, LZW, RWORK, LRW, IWORK, LIW,
      2            JAC, MF, RPAR, IPAR)
       EXTERNAL F, JAC
-      COMPLEX(KIND=8) Y, ZWORK
+      DOUBLE COMPLEX Y, ZWORK
       DOUBLE PRECISION T, TOUT, RTOL, ATOL, RWORK
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LZW, LRW, IWORK, LIW,
      1        MF, IPAR
@@ -4187,7 +4187,7 @@ C     We may consider to use 'real' and 'imag' consistently for
 C        future versions.
 C Thomas 2023: recent standard is aimag
       double precision function cabs1(zdum)
-      complex (kind = 8), intent (in) :: zdum
+      double complex zdum
         cabs1 = dabs(real(zdum)) + dabs(aimag(zdum))
       end function 
 C KARLINE: end new functions
@@ -4243,13 +4243,13 @@ c     fortran dabs
 c
 c     internal variables
 c
-      COMPLEX(KIND=8) t
+      DOUBLE COMPLEX t
       integer izamax,j,k,kp1,l,nm1
 c
-C KS      COMPLEX(KIND=8) zdum
+C KS    COMPLEX(KIND=8) zdum
       double precision cabs1
-C      double precision dreal,dimag
-C KS      COMPLEX(KIND=8) zdumr,zdumi
+C     double precision dreal,dimag
+C KS    COMPLEX(KIND=8) zdumr,zdumi
 C Karline: next three statement functions replaced with true functions above
 C      dreal(zdumr) = zdumr
 C      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
