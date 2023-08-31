@@ -1,4 +1,4 @@
-C Original authors: Peter N. Brown, Alan C. Hindmarsh, 
+C Original authors: Peter N. Brown, Alan C. Hindmarsh,
 C   Geore D. Byrne (see original author statement below)
 C
 C  Adapted for use in R package deSolve by the deSolve authors.
@@ -9,7 +9,7 @@ C
      1            ISTATE, IOPT, ZWORK, LZW, RWORK, LRW, IWORK, LIW,
      2            JAC, MF, RPAR, IPAR)
       EXTERNAL F, JAC
-      DOUBLE COMPLEX Y, ZWORK
+      COMPLEX(KIND=KIND(0.0d0)) Y, ZWORK
       DOUBLE PRECISION T, TOUT, RTOL, ATOL, RWORK
       INTEGER NEQ, ITOL, ITASK, ISTATE, IOPT, LZW, LRW, IWORK, LIW,
      1        MF, IPAR
@@ -61,7 +61,7 @@ C problem (with program and output) following this summary.
 C
 C A. First provide a subroutine of the form:
 C           SUBROUTINE F (NEQ, T, Y, YDOT, RPAR, IPAR)
-C           DOUBLE COMPLEX Y(NEQ), YDOT(NEQ)
+C           COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), YDOT(NEQ)
 C           DOUBLE PRECISION T
 C which supplies the vector function f by loading YDOT(i) with f(i).
 C
@@ -87,7 +87,7 @@ C directly (MF = 21 or 24), but if this is not feasible, ZVODE will
 C compute it internally by difference quotients (MF = 22 or 25).
 C If you are supplying the Jacobian, provide a subroutine of the form:
 C           SUBROUTINE JAC (NEQ, T, Y, ML, MU, PD, NROWPD, RPAR, IPAR)
-C           DOUBLE COMPLEX Y(NEQ), PD(NROWPD,NEQ)
+C           COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), PD(NROWPD,NEQ)
 C           DOUBLE PRECISION T
 C which supplies df/dy by loading PD as follows:
 C     For a full Jacobian (MF = 21), load PD(i,j) with df(i)/dy(j),
@@ -105,7 +105,7 @@ C by ZVODE.  On the first call to ZVODE, supply arguments as follows:
 C F      = Name of subroutine for right-hand side vector f.
 C          This name must be declared external in calling program.
 C NEQ    = Number of first order ODEs.
-C Y      = Double complex array of initial values, of length NEQ.
+C Y      = COMPLEX(KIND=KIND(0.0d0)) array of initial values, of length NEQ.
 C T      = The initial value of the independent variable.
 C TOUT   = First point where output is desired (.ne. T).
 C ITOL   = 1 or 2 according as ATOL (below) is a scalar or array.
@@ -151,7 +151,7 @@ C RPAR   = user-defined real or complex array passed to F and JAC.
 C IPAR   = user-defined integer array passed to F and JAC.
 C Note that the main program must declare arrays Y, ZWORK, RWORK, IWORK,
 C and possibly ATOL, RPAR, and IPAR.  RPAR may be declared REAL, DOUBLE,
-C COMPLEX, or DOUBLE COMPLEX, depending on the user's needs.
+C COMPLEX, or COMPLEX(KIND=KIND(0.0d0)), depending on the user's needs.
 C
 C E. The output from the first call (or any call) is:
 C      Y = Array of computed values of y(t) vector.
@@ -179,7 +179,7 @@ C w traces a circle of radius 10/2.1 with center at 11/2.1.
 C For convenience, Main passes RPAR = (imaginary unit i) to FEX and JEX.
 C
 C     EXTERNAL FEX, JEX
-C     DOUBLE COMPLEX Y(2), ZWORK(24), RPAR, WTRU, ERR
+C     COMPLEX(KIND=KIND(0.0d0)) Y(2), ZWORK(24), RPAR, WTRU, ERR
 C     DOUBLE PRECISION ABERR, AEMAX, ATOL, RTOL, RWORK(22), T, TOUT
 C     DIMENSION IWORK(32)
 C     NEQ = 2
@@ -229,7 +229,7 @@ C     STOP
 C     END
 C
 C     SUBROUTINE FEX (NEQ, T, Y, YDOT, RPAR, IPAR)
-C     DOUBLE COMPLEX Y(NEQ), YDOT(NEQ), RPAR
+C     COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), YDOT(NEQ), RPAR
 C     DOUBLE PRECISION T
 C     YDOT(1) = -RPAR*Y(1)*Y(1)*Y(2)
 C     YDOT(2) = RPAR*Y(2)
@@ -237,7 +237,7 @@ C     RETURN
 C     END
 C
 C     SUBROUTINE JEX (NEQ, T, Y, ML, MU, PD, NRPD, RPAR, IPAR)
-C     DOUBLE COMPLEX Y(NEQ), PD(NRPD,NEQ), RPAR
+C     COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), PD(NRPD,NEQ), RPAR
 C     DOUBLE PRECISION T
 C     PD(1,1) = -2.0D0*RPAR*Y(1)*Y(2)
 C     PD(1,2) = -RPAR*Y(1)*Y(1)
@@ -344,10 +344,10 @@ C          form dy/dt = f(t,y), where f is a vector-valued function
 C          of the scalar t and the vector y.  Subroutine F is to
 C          compute the function f.  It is to have the form
 C               SUBROUTINE F (NEQ, T, Y, YDOT, RPAR, IPAR)
-C               DOUBLE COMPLEX Y(NEQ), YDOT(NEQ)
+C               COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), YDOT(NEQ)
 C               DOUBLE PRECISION T
 C          where NEQ, T, and Y are input, and the array YDOT = f(t,y)
-C          is output.  Y and YDOT are double complex arrays of length
+C          is output.  Y and YDOT are COMPLEX(KIND=KIND(0.0d0)) arrays of length
 C          NEQ.  Subroutine F should not alter Y(1),...,Y(NEQ).
 C          F must be declared EXTERNAL in the calling program.
 C
@@ -627,7 +627,7 @@ C          compute the Jacobian matrix, df/dy, as a function of
 C          the scalar t and the vector y.  It is to have the form
 C               SUBROUTINE JAC (NEQ, T, Y, ML, MU, PD, NROWPD,
 C                               RPAR, IPAR)
-C               DOUBLE COMPLEX Y(NEQ), PD(NROWPD,NEQ)
+C               COMPLEX(KIND=KIND(0.0d0)) Y(NEQ), PD(NROWPD,NEQ)
 C               DOUBLE PRECISION T
 C          where NEQ, T, Y, ML, MU, and NROWPD are input and the array
 C          PD is to be loaded with partial derivatives (elements of the
@@ -697,7 +697,7 @@ C          parameters to user-supplied subroutines.  If RPAR is an
 C          array, it must be dimensioned in the user's calling program;
 C          if it is unused or it is a scalar, then it need not be
 C          dimensioned.  The type of RPAR may be REAL, DOUBLE, COMPLEX,
-C          or DOUBLE COMPLEX, depending on the user program's needs.
+C          or COMPLEX(KIND=KIND(0.0d0)), depending on the user program's needs.
 C          RPAR is not type-declared within ZVODE, but simply passed
 C          (by address) to the user's F and JAC routines.
 C
@@ -923,7 +923,7 @@ C NYH       = Column length of YH, equal to the initial value of NEQ.
 C
 C The output parameters are:
 C
-C DKY       = A double complex array of length NEQ containing the
+C DKY       = A COMPLEX(KIND=KIND(0.0d0)) array of length NEQ containing the
 C             computed value of the K-th derivative of y(t).
 C IFLAG     = Integer flag, returned as 0 if K and T were legal,
 C             -1 if K was illegal, and -2 if T was illegal.
@@ -961,7 +961,7 @@ C integration step, and sets the array of error weights, EWT, as
 C described under ITOL/RTOL/ATOL above:
 C     SUBROUTINE ZEWSET (NEQ, ITOL, RTOL, ATOL, YCUR, EWT)
 C where NEQ, ITOL, RTOL, and ATOL are as in the ZVODE call sequence,
-C YCUR contains the current (double complex) dependent variable vector,
+C YCUR contains the current (COMPLEX(KIND=KIND(0.0d0))) dependent variable vector,
 C and EWT is the array of weights set by ZEWSET.
 C
 C If the user supplies this subroutine, it must return in EWT(i)
@@ -995,7 +995,7 @@ C root-mean-square norm of a vector v:
 C     D = ZVNORM (N, V, W)
 C where:
 C   N = the length of the vector,
-C   V = double complex array of length N containing the vector,
+C   V = COMPLEX(KIND=KIND(0.0d0)) array of length N containing the vector,
 C   W = real array of length N containing weights,
 C   D = sqrt( (1/N) * sum(abs(V(i))*W(i))**2 ).
 C ZVNORM is called with N = NEQ and with W(i) = 1.0/EWT(i), where
@@ -1029,7 +1029,7 @@ C  ZVSOL     manages solution of linear system in chord iteration.
 C  ZVJUST    adjusts the history array on a change of order.
 C  ZEWSET    sets the error weight vector EWT before each step.
 C  ZVNORM    computes the weighted r.m.s. norm of a vector.
-C  ZABSSQ    computes the squared absolute value of a double complex z.
+C  ZABSSQ    computes the squared absolute value of a COMPLEX(KIND=KIND(0.0d0)) z.
 C  ZVSRCO    is a user-callable routine to save and restore
 C            the contents of the internal COMMON blocks.
 C  ZACOPY    is a routine to copy one two-dimensional array to another.
@@ -1037,7 +1037,7 @@ C  ZGEFA and ZGESL   are routines from LINPACK for solving full
 C            systems of linear algebraic equations.
 C  ZGBFA and ZGBSL   are routines from LINPACK for solving banded
 C            linear systems.
-C  DZSCAL    scales a double complex array by a double prec. scalar.
+C  DZSCAL    scales a COMPLEX(KIND=KIND(0.0d0)) array by a double prec. scalar.
 C  DZAXPY    adds a D.P. scalar times one complex vector to another.
 C  ZCOPY     is a basic linear algebra module from the BLAS.
 C  DUMACH    sets the unit roundoff of the machine.
@@ -1744,7 +1744,7 @@ C----------------------- End of Subroutine ZVODE -----------------------
       SUBROUTINE ZVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,
      1   EWT, ITOL, ATOL, Y, TEMP, H0, NITER, IER)
       EXTERNAL F
-      DOUBLE COMPLEX Y0, YDOT, Y, TEMP
+      COMPLEX(KIND=KIND(0.0d0)) Y0, YDOT, Y, TEMP
       DOUBLE PRECISION T0, TOUT, UROUND, EWT, ATOL, H0
       INTEGER N, IPAR, ITOL, NITER, IER
       DIMENSION Y0(*), YDOT(*), EWT(*), ATOL(*), Y(*),
@@ -1841,7 +1841,7 @@ C Estimate the second derivative as a difference quotient in f. --------
       CALL F (N, T1, Y, TEMP, RPAR, IPAR)
       DO 70 I = 1, N
         TEMP(I) = (TEMP(I) - YDOT(I))/H
- 70   CONTINUE 
+ 70   CONTINUE
       YDDNRM = ZVNORM (N, TEMP, EWT)
 C Get the corresponding new value of h. --------------------------------
       IF (YDDNRM*HUB*HUB .GT. TWO) THEN
@@ -1882,7 +1882,7 @@ C----------------------- End of Subroutine ZVHIN -----------------------
       END
 *DECK ZVINDY
       SUBROUTINE ZVINDY (T, K, YH, LDYH, DKY, IFLAG)
-      DOUBLE COMPLEX YH, DKY
+      COMPLEX(KIND=KIND(0.0d0)) YH, DKY
       DOUBLE PRECISION T
       INTEGER K, LDYH, IFLAG
       DIMENSION YH(LDYH,*), DKY(*)
@@ -1985,7 +1985,7 @@ C
         JJ1 = JP1 - K
         DO 30 JJ = JJ1, J
           IC = IC*JJ
- 30     CONTINUE 
+ 30     CONTINUE
  35     C = REAL(IC)
         DO 40 I = 1, N
           DKY(I) = C*YH(I,JP1) + S*DKY(I)
@@ -2012,7 +2012,7 @@ C----------------------- End of Subroutine ZVINDY ----------------------
       SUBROUTINE ZVSTEP (Y, YH, LDYH, YH1, EWT, SAVF, VSAV, ACOR,
      1                  WM, IWM, F, JAC, PSOL, VNLS, RPAR, IPAR)
       EXTERNAL F, JAC, PSOL, VNLS
-      DOUBLE COMPLEX Y, YH, YH1, SAVF, VSAV, ACOR, WM
+      COMPLEX(KIND=KIND(0.0d0)) Y, YH, YH1, SAVF, VSAV, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IPAR
       DIMENSION Y(*), YH(LDYH,*), YH1(*), EWT(*), SAVF(*), VSAV(*),
@@ -2667,7 +2667,7 @@ C----------------------- End of Subroutine ZVSET -----------------------
       END
 *DECK ZVJUST
       SUBROUTINE ZVJUST (YH, LDYH, IORD)
-      DOUBLE COMPLEX YH
+      COMPLEX(KIND=KIND(0.0d0)) YH
       INTEGER LDYH, IORD
       DIMENSION YH(LDYH,*)
 C-----------------------------------------------------------------------
@@ -2845,7 +2845,7 @@ C----------------------- End of Subroutine ZVJUST ----------------------
       SUBROUTINE ZVNLSD (Y, YH, LDYH, VSAV, SAVF, EWT, ACOR, IWM, WM,
      1                 F, JAC, PDUM, NFLAG, RPAR, IPAR)
       EXTERNAL F, JAC, PDUM
-      DOUBLE COMPLEX Y, YH, VSAV, SAVF, ACOR, WM
+      COMPLEX(KIND=KIND(0.0d0)) Y, YH, VSAV, SAVF, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, NFLAG, IPAR
       DIMENSION Y(*), YH(LDYH,*), VSAV(*), SAVF(*), EWT(*), ACOR(*),
@@ -3081,7 +3081,7 @@ C----------------------- End of Subroutine ZVNLSD ----------------------
       SUBROUTINE ZVJAC (Y, YH, LDYH, EWT, FTEM, SAVF, WM, IWM, F, JAC,
      1                 IERPJ, RPAR, IPAR)
       EXTERNAL F, JAC
-      DOUBLE COMPLEX Y, YH, FTEM, SAVF, WM
+      COMPLEX(KIND=KIND(0.0d0)) Y, YH, FTEM, SAVF, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IERPJ, IPAR
       DIMENSION Y(*), YH(LDYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -3157,7 +3157,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      DOUBLE COMPLEX DI, R1, YI, YJ, YJJ
+      COMPLEX(KIND=KIND(0.0d0)) DI, R1, YI, YJ, YJJ
       DOUBLE PRECISION CON, FAC, ONE, PT1, R, R0, THOU, ZERO
       INTEGER I, I1, I2, IER, II, J, J1, JJ, JOK, LENP, MBA, MBAND,
      1        MEB1, MEBAND, ML, ML1, MU, NP1
@@ -3316,7 +3316,7 @@ C If MITER = 5, make ML+MU+1 calls to F to approximate the Jacobian. ---
           YI = Y(I)
           R = MAX(SRUR*ABS(YI),R0/EWT(I))
           Y(I) = Y(I) + R
- 530    CONTINUE 
+ 530    CONTINUE
         CALL F (N, TN, Y, FTEM, RPAR, IPAR)
         DO 550 JJ = J,N,MBAND
           Y(JJ) = YH(JJ,1)
@@ -3359,7 +3359,7 @@ C----------------------- End of Subroutine ZVJAC -----------------------
       END
 *DECK ZACOPY
       SUBROUTINE ZACOPY (NROW, NCOL, A, NROWA, B, NROWB)
-      DOUBLE COMPLEX A, B
+      COMPLEX(KIND=KIND(0.0d0)) A, B
       INTEGER NROW, NCOL, NROWA, NROWB
       DIMENSION A(NROWA,NCOL), B(NROWB,NCOL)
 C-----------------------------------------------------------------------
@@ -3385,7 +3385,7 @@ C----------------------- End of Subroutine ZACOPY ----------------------
       END
 *DECK ZVSOL
       SUBROUTINE ZVSOL (WM, IWM, X, IERSL)
-      DOUBLE COMPLEX WM, X
+      COMPLEX(KIND=KIND(0.0d0)) WM, X
       INTEGER IWM, IERSL
       DIMENSION WM(*), IWM(*), X(*)
 C-----------------------------------------------------------------------
@@ -3428,7 +3428,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      DOUBLE COMPLEX DI
+      COMPLEX(KIND=KIND(0.0d0)) DI
       DOUBLE PRECISION ONE, PHRL1, R, ZERO
       INTEGER I, MEBAND, ML, MU
 C-----------------------------------------------------------------------
@@ -3574,7 +3574,7 @@ C***ROUTINES CALLED  (NONE)
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DEWSET of 930809.
 C***END PROLOGUE  ZEWSET
-      DOUBLE COMPLEX YCUR
+      COMPLEX(KIND=KIND(0.0d0)) YCUR
       DOUBLE PRECISION RTOL, ATOL, EWT
       INTEGER N, ITOL
       INTEGER I
@@ -3618,12 +3618,12 @@ C----------------------- END OF SUBROUTINE ZEWSET ----------------------
 C***BEGIN PROLOGUE  ZVNORM
 C***SUBSIDIARY
 C***PURPOSE  Weighted root-mean-square vector norm.
-C***TYPE      DOUBLE COMPLEX (SVNORM-S, DVNORM-D, ZVNORM-Z)
+C***TYPE      COMPLEX(KIND=KIND(0.0d0)) (SVNORM-S, DVNORM-D, ZVNORM-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
 C
 C  This function routine computes the weighted root-mean-square norm
-C  of the vector of length N contained in the double complex array V,
+C  of the vector of length N contained in the COMPLEX(KIND=KIND(0.0d0)) array V,
 C  with weights contained in the array W of length N:
 C    ZVNORM = SQRT( (1/N) * SUM( abs(V(i))**2 * W(i)**2 )
 C  The squared absolute value abs(v)**2 is computed by ZABSSQ.
@@ -3633,7 +3633,7 @@ C***ROUTINES CALLED  ZABSSQ
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DVNORM of 930809.
 C***END PROLOGUE  ZVNORM
-      DOUBLE COMPLEX V
+      COMPLEX(KIND=KIND(0.0d0)) V
       DOUBLE PRECISION W,   SUM, ZABSSQ
       INTEGER N,   I
       DIMENSION V(N), W(N)
@@ -3651,7 +3651,7 @@ C----------------------- END OF FUNCTION ZVNORM ------------------------
       DOUBLE PRECISION FUNCTION ZABSSQ(Z)
 C***BEGIN PROLOGUE  ZABSSQ
 C***SUBSIDIARY
-C***PURPOSE  Squared absolute value of a double complex number.
+C***PURPOSE  Squared absolute value of a COMPLEX(KIND=KIND(0.0d0)) number.
 C***TYPE      DOUBLE PRECISION (ZABSSQ-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
@@ -3662,7 +3662,7 @@ C    ZABSSQ = DREAL(Z)**2 * DIMAG(Z)**2
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN.
 C***END PROLOGUE  ZABSSQ
-      DOUBLE COMPLEX Z
+      COMPLEX(KIND=KIND(0.0d0)) Z
       ZABSSQ = DREAL(Z)**2 + DIMAG(Z)**2
       RETURN
 C----------------------- END OF FUNCTION ZABSSQ ------------------------
@@ -3671,16 +3671,16 @@ C----------------------- END OF FUNCTION ZABSSQ ------------------------
       SUBROUTINE DZSCAL(N, DA, ZX, INCX)
 C***BEGIN PROLOGUE  DZSCAL
 C***SUBSIDIARY
-C***PURPOSE  Scale a double complex vector by a double prec. constant.
+C***PURPOSE  Scale a COMPLEX(KIND=KIND(0.0d0)) vector by a double prec. constant.
 C***TYPE      DOUBLE PRECISION (DZSCAL-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
-C  Scales a double complex vector by a double precision constant.
+C  Scales a COMPLEX(KIND=KIND(0.0d0)) vector by a double precision constant.
 C  Minor modification of BLAS routine ZSCAL.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZSCAL
-      DOUBLE COMPLEX ZX(*)
+      COMPLEX(KIND=KIND(0.0d0)) ZX(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,IX,N
 C
@@ -3711,7 +3711,7 @@ C  Minor modification of BLAS routine ZAXPY.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZAXPY
-      DOUBLE COMPLEX ZX(*),ZY(*)
+      COMPLEX(KIND=KIND(0.0d0)) ZX(*),ZY(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,INCY,IX,IY,N
       IF(N.LE.0)RETURN
@@ -3738,7 +3738,7 @@ C Code for both increments equal to 1
 
       subroutine zgesl(a,lda,n,ipvt,b,job)
       integer lda,n,ipvt(1),job
-      DOUBLE COMPLEX a(lda,*),b(*)
+      COMPLEX(KIND=KIND(0.0d0)) a(lda,*),b(*)
 c
 c     zgesl solves the COMPLEX(KIND=8) system
 c     a * x = b  or  ctrans(a) * x = b
@@ -3797,7 +3797,7 @@ c     fortran dconjg
 c
 c     internal variables
 c
-      DOUBLE COMPLEX zdotc,t
+      COMPLEX(KIND=KIND(0.0d0)) zdotc,t
       integer k,kb,l,nm1
 C KS      double precision dreal,dimag
 C KS      COMPLEX(KIND=8) zdumr,zdumi
@@ -3861,7 +3861,7 @@ c
 
       subroutine zgbfa(abd,lda,n,ml,mu,ipvt,info)
       integer lda,n,ml,mu,ipvt(*),info
-      DOUBLE COMPLEX abd(lda,*)
+      COMPLEX(KIND=KIND(0.0d0)) abd(lda,*)
 c
 c     zgbfa factors a COMPLEX(KIND=8) band matrix by elimination.
 c
@@ -3945,7 +3945,7 @@ c     fortran dabs,max0,min0
 c
 c     internal variables
 c
-      DOUBLE COMPLEX t
+      COMPLEX(KIND=KIND(0.0d0)) t
       integer i,izamax,i0,j,ju,jz,j0,j1,k,kp1,l,lm,m,mm,nm1
 c
 CKS      COMPLEX(KIND=8) zdum
@@ -4043,7 +4043,7 @@ c
 
       subroutine zgbsl(abd,lda,n,ml,mu,ipvt,b,job)
       integer lda,n,ml,mu,ipvt(1),job
-      DOUBLE COMPLEX abd(lda,*),b(*)
+      COMPLEX(KIND=KIND(0.0d0)) abd(lda,*),b(*)
 c
 c     zgbsl solves the COMPLEX(KIND=8) band system
 c     a * x = b  or  ctrans(a) * x = b
@@ -4108,7 +4108,7 @@ c     fortran dconjg,min0
 c
 c     internal variables
 c
-      DOUBLE COMPLEX zdotc,t
+      COMPLEX(KIND=KIND(0.0d0)) zdotc,t
       integer k,kb,l,la,lb,lm,m,nm1
 C      double precision dreal,dimag
 C      COMPLEX(KIND=8) zdumr,zdumi
@@ -4187,15 +4187,15 @@ C     We may consider to use 'real' and 'imag' consistently for
 C        future versions.
 C Thomas 2023: recent standard is aimag
       double precision function cabs1(zdum)
-      double complex zdum
+      COMPLEX(KIND=KIND(0.0d0)) zdum
         cabs1 = dabs(real(zdum)) + dabs(aimag(zdum))
-      end function 
+      end function
 C KARLINE: end new functions
 
 
       subroutine zgefa(a,lda,n,ipvt,info)
       integer lda,n,ipvt(*),info
-      DOUBLE COMPLEX a(lda,*)
+      COMPLEX(KIND=KIND(0.0d0)) a(lda,*)
 c
 c     zgefa factors a COMPLEX(KIND=8) matrix by gaussian elimination.
 c
@@ -4243,7 +4243,7 @@ c     fortran dabs
 c
 c     internal variables
 c
-      DOUBLE COMPLEX t
+      COMPLEX(KIND=KIND(0.0d0)) t
       integer izamax,j,k,kp1,l,nm1
 c
 C KS    COMPLEX(KIND=8) zdum
