@@ -1744,7 +1744,7 @@ C----------------------- End of Subroutine ZVODE -----------------------
       SUBROUTINE ZVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,
      1   EWT, ITOL, ATOL, Y, TEMP, H0, NITER, IER)
       EXTERNAL F
-      COMPLEX(KIND=8) Y0, YDOT, Y, TEMP
+      DOUBLE COMPLEX Y0, YDOT, Y, TEMP
       DOUBLE PRECISION T0, TOUT, UROUND, EWT, ATOL, H0
       INTEGER N, IPAR, ITOL, NITER, IER
       DIMENSION Y0(*), YDOT(*), EWT(*), ATOL(*), Y(*),
@@ -1882,7 +1882,7 @@ C----------------------- End of Subroutine ZVHIN -----------------------
       END
 *DECK ZVINDY
       SUBROUTINE ZVINDY (T, K, YH, LDYH, DKY, IFLAG)
-      COMPLEX(KIND=8) YH, DKY
+      DOUBLE COMPLEX YH, DKY
       DOUBLE PRECISION T
       INTEGER K, LDYH, IFLAG
       DIMENSION YH(LDYH,*), DKY(*)
@@ -2012,7 +2012,7 @@ C----------------------- End of Subroutine ZVINDY ----------------------
       SUBROUTINE ZVSTEP (Y, YH, LDYH, YH1, EWT, SAVF, VSAV, ACOR,
      1                  WM, IWM, F, JAC, PSOL, VNLS, RPAR, IPAR)
       EXTERNAL F, JAC, PSOL, VNLS
-      COMPLEX(KIND=8) Y, YH, YH1, SAVF, VSAV, ACOR, WM
+      DOUBLE COMPLEX Y, YH, YH1, SAVF, VSAV, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IPAR
       DIMENSION Y(*), YH(LDYH,*), YH1(*), EWT(*), SAVF(*), VSAV(*),
@@ -2667,7 +2667,7 @@ C----------------------- End of Subroutine ZVSET -----------------------
       END
 *DECK ZVJUST
       SUBROUTINE ZVJUST (YH, LDYH, IORD)
-      COMPLEX(KIND=8) YH
+      DOUBLE COMPLEX YH
       INTEGER LDYH, IORD
       DIMENSION YH(LDYH,*)
 C-----------------------------------------------------------------------
@@ -2845,7 +2845,7 @@ C----------------------- End of Subroutine ZVJUST ----------------------
       SUBROUTINE ZVNLSD (Y, YH, LDYH, VSAV, SAVF, EWT, ACOR, IWM, WM,
      1                 F, JAC, PDUM, NFLAG, RPAR, IPAR)
       EXTERNAL F, JAC, PDUM
-      COMPLEX(KIND=8) Y, YH, VSAV, SAVF, ACOR, WM
+      DOUBLE COMPLEX Y, YH, VSAV, SAVF, ACOR, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, NFLAG, IPAR
       DIMENSION Y(*), YH(LDYH,*), VSAV(*), SAVF(*), EWT(*), ACOR(*),
@@ -3081,7 +3081,7 @@ C----------------------- End of Subroutine ZVNLSD ----------------------
       SUBROUTINE ZVJAC (Y, YH, LDYH, EWT, FTEM, SAVF, WM, IWM, F, JAC,
      1                 IERPJ, RPAR, IPAR)
       EXTERNAL F, JAC
-      COMPLEX(KIND=8) Y, YH, FTEM, SAVF, WM
+      DOUBLE COMPLEX Y, YH, FTEM, SAVF, WM
       DOUBLE PRECISION EWT
       INTEGER LDYH, IWM, IERPJ, IPAR
       DIMENSION Y(*), YH(LDYH,*), EWT(*), FTEM(*), SAVF(*),
@@ -3157,7 +3157,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      COMPLEX(KIND=8) DI, R1, YI, YJ, YJJ
+      DOUBLE COMPLEX DI, R1, YI, YJ, YJJ
       DOUBLE PRECISION CON, FAC, ONE, PT1, R, R0, THOU, ZERO
       INTEGER I, I1, I2, IER, II, J, J1, JJ, JOK, LENP, MBA, MBAND,
      1        MEB1, MEBAND, ML, ML1, MU, NP1
@@ -3359,7 +3359,7 @@ C----------------------- End of Subroutine ZVJAC -----------------------
       END
 *DECK ZACOPY
       SUBROUTINE ZACOPY (NROW, NCOL, A, NROWA, B, NROWB)
-      COMPLEX(KIND=8) A, B
+      DOUBLE COMPLEX A, B
       INTEGER NROW, NCOL, NROWA, NROWB
       DIMENSION A(NROWA,NCOL), B(NROWB,NCOL)
 C-----------------------------------------------------------------------
@@ -3385,7 +3385,7 @@ C----------------------- End of Subroutine ZACOPY ----------------------
       END
 *DECK ZVSOL
       SUBROUTINE ZVSOL (WM, IWM, X, IERSL)
-      COMPLEX(KIND=8) WM, X
+      DOUBLE COMPLEX WM, X
       INTEGER IWM, IERSL
       DIMENSION WM(*), IWM(*), X(*)
 C-----------------------------------------------------------------------
@@ -3428,7 +3428,7 @@ C
 C
 C Type declarations for local variables --------------------------------
 C
-      COMPLEX(KIND=8) DI
+      DOUBLE COMPLEX DI
       DOUBLE PRECISION ONE, PHRL1, R, ZERO
       INTEGER I, MEBAND, ML, MU
 C-----------------------------------------------------------------------
@@ -3574,7 +3574,7 @@ C***ROUTINES CALLED  (NONE)
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DEWSET of 930809.
 C***END PROLOGUE  ZEWSET
-      COMPLEX(KIND=8) YCUR
+      DOUBLE COMPLEX YCUR
       DOUBLE PRECISION RTOL, ATOL, EWT
       INTEGER N, ITOL
       INTEGER I
@@ -3633,7 +3633,7 @@ C***ROUTINES CALLED  ZABSSQ
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN, modified from DVNORM of 930809.
 C***END PROLOGUE  ZVNORM
-      COMPLEX(KIND=8) V
+      DOUBLE COMPLEX V
       DOUBLE PRECISION W,   SUM, ZABSSQ
       INTEGER N,   I
       DIMENSION V(N), W(N)
@@ -3662,7 +3662,7 @@ C    ZABSSQ = DREAL(Z)**2 * DIMAG(Z)**2
 C***REVISION HISTORY  (YYMMDD)
 C   060502  DATE WRITTEN.
 C***END PROLOGUE  ZABSSQ
-      COMPLEX(KIND=8) Z
+      DOUBLE COMPLEX Z
       ZABSSQ = DREAL(Z)**2 + DIMAG(Z)**2
       RETURN
 C----------------------- END OF FUNCTION ZABSSQ ------------------------
@@ -3680,7 +3680,7 @@ C  Minor modification of BLAS routine ZSCAL.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZSCAL
-      COMPLEX(KIND=8) ZX(*)
+      DOUBLE COMPLEX ZX(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,IX,N
 C
@@ -3711,7 +3711,7 @@ C  Minor modification of BLAS routine ZAXPY.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
 C***END PROLOGUE  DZAXPY
-      COMPLEX(KIND=8) ZX(*),ZY(*)
+      DOUBLE COMPLEX ZX(*),ZY(*)
       DOUBLE PRECISION DA
       INTEGER I,INCX,INCY,IX,IY,N
       IF(N.LE.0)RETURN
@@ -3738,7 +3738,7 @@ C Code for both increments equal to 1
 
       subroutine zgesl(a,lda,n,ipvt,b,job)
       integer lda,n,ipvt(1),job
-      COMPLEX(KIND=8) a(lda,*),b(*)
+      DOUBLE COMPLEX a(lda,*),b(*)
 c
 c     zgesl solves the COMPLEX(KIND=8) system
 c     a * x = b  or  ctrans(a) * x = b
@@ -3797,7 +3797,7 @@ c     fortran dconjg
 c
 c     internal variables
 c
-      COMPLEX(KIND=8) zdotc,t
+      DOUBLE COMPLEX zdotc,t
       integer k,kb,l,nm1
 C KS      double precision dreal,dimag
 C KS      COMPLEX(KIND=8) zdumr,zdumi
@@ -3861,7 +3861,7 @@ c
 
       subroutine zgbfa(abd,lda,n,ml,mu,ipvt,info)
       integer lda,n,ml,mu,ipvt(*),info
-      COMPLEX(KIND=8) abd(lda,*)
+      DOUBLE COMPLEX abd(lda,*)
 c
 c     zgbfa factors a COMPLEX(KIND=8) band matrix by elimination.
 c
@@ -3945,7 +3945,7 @@ c     fortran dabs,max0,min0
 c
 c     internal variables
 c
-      COMPLEX(KIND=8) t
+      DOUBLE COMPLEX t
       integer i,izamax,i0,j,ju,jz,j0,j1,k,kp1,l,lm,m,mm,nm1
 c
 CKS      COMPLEX(KIND=8) zdum
@@ -4043,7 +4043,7 @@ c
 
       subroutine zgbsl(abd,lda,n,ml,mu,ipvt,b,job)
       integer lda,n,ml,mu,ipvt(1),job
-      COMPLEX(KIND=8) abd(lda,*),b(*)
+      DOUBLE COMPLEX abd(lda,*),b(*)
 c
 c     zgbsl solves the COMPLEX(KIND=8) band system
 c     a * x = b  or  ctrans(a) * x = b
@@ -4108,7 +4108,7 @@ c     fortran dconjg,min0
 c
 c     internal variables
 c
-      COMPLEX(KIND=8) zdotc,t
+      DOUBLE COMPLEX zdotc,t
       integer k,kb,l,la,lb,lm,m,nm1
 C      double precision dreal,dimag
 C      COMPLEX(KIND=8) zdumr,zdumi
@@ -4195,7 +4195,7 @@ C KARLINE: end new functions
 
       subroutine zgefa(a,lda,n,ipvt,info)
       integer lda,n,ipvt(*),info
-      COMPLEX(KIND=8) a(lda,*)
+      DOUBLE COMPLEX a(lda,*)
 c
 c     zgefa factors a COMPLEX(KIND=8) matrix by gaussian elimination.
 c
