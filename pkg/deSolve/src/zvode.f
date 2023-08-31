@@ -1744,7 +1744,7 @@ C----------------------- End of Subroutine ZVODE -----------------------
       SUBROUTINE ZVHIN (N, T0, Y0, YDOT, F, RPAR, IPAR, TOUT, UROUND,
      1   EWT, ITOL, ATOL, Y, TEMP, H0, NITER, IER)
       EXTERNAL F
-      COMPLEX(KIND=8) Y0, YDOT, Y, TEMP
+      COMPLEX(KIND=KIND(0.0d0)) Y0, YDOT, Y, TEMP
       DOUBLE PRECISION T0, TOUT, UROUND, EWT, ATOL, H0
       INTEGER N, IPAR, ITOL, NITER, IER
       DIMENSION Y0(*), YDOT(*), EWT(*), ATOL(*), Y(*),
