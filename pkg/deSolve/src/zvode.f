@@ -61,7 +61,7 @@ C problem (with program and output) following this summary.
 C
 C A. First provide a subroutine of the form:
 C           SUBROUTINE F (NEQ, T, Y, YDOT, RPAR, IPAR)
-C           COMPLEX(KIND=8) Y(NEQ), YDOT(NEQ)
+C           DOUBLE COMPLEX Y(NEQ), YDOT(NEQ)
 C           DOUBLE PRECISION T
 C which supplies the vector function f by loading YDOT(i) with f(i).
 C
@@ -87,7 +87,7 @@ C directly (MF = 21 or 24), but if this is not feasible, ZVODE will
 C compute it internally by difference quotients (MF = 22 or 25).
 C If you are supplying the Jacobian, provide a subroutine of the form:
 C           SUBROUTINE JAC (NEQ, T, Y, ML, MU, PD, NROWPD, RPAR, IPAR)
-C           COMPLEX(KIND=8) Y(NEQ), PD(NROWPD,NEQ)
+C           DOUBLE COMPLEX Y(NEQ), PD(NROWPD,NEQ)
 C           DOUBLE PRECISION T
 C which supplies df/dy by loading PD as follows:
 C     For a full Jacobian (MF = 21), load PD(i,j) with df(i)/dy(j),
@@ -105,7 +105,7 @@ C by ZVODE.  On the first call to ZVODE, supply arguments as follows:
 C F      = Name of subroutine for right-hand side vector f.
 C          This name must be declared external in calling program.
 C NEQ    = Number of first order ODEs.
-C Y      = COMPLEX(KIND=8) array of initial values, of length NEQ.
+C Y      = Double complex array of initial values, of length NEQ.
 C T      = The initial value of the independent variable.
 C TOUT   = First point where output is desired (.ne. T).
 C ITOL   = 1 or 2 according as ATOL (below) is a scalar or array.
@@ -151,7 +151,7 @@ C RPAR   = user-defined real or complex array passed to F and JAC.
 C IPAR   = user-defined integer array passed to F and JAC.
 C Note that the main program must declare arrays Y, ZWORK, RWORK, IWORK,
 C and possibly ATOL, RPAR, and IPAR.  RPAR may be declared REAL, DOUBLE,
-C COMPLEX, or COMPLEX(KIND=8), depending on the user's needs.
+C COMPLEX, or DOUBLE COMPLEX, depending on the user's needs.
 C
 C E. The output from the first call (or any call) is:
 C      Y = Array of computed values of y(t) vector.
@@ -179,7 +179,7 @@ C w traces a circle of radius 10/2.1 with center at 11/2.1.
 C For convenience, Main passes RPAR = (imaginary unit i) to FEX and JEX.
 C
 C     EXTERNAL FEX, JEX
-C     COMPLEX(KIND=8) Y(2), ZWORK(24), RPAR, WTRU, ERR
+C     DOUBLE COMPLEX Y(2), ZWORK(24), RPAR, WTRU, ERR
 C     DOUBLE PRECISION ABERR, AEMAX, ATOL, RTOL, RWORK(22), T, TOUT
 C     DIMENSION IWORK(32)
 C     NEQ = 2
@@ -229,7 +229,7 @@ C     STOP
 C     END
 C
 C     SUBROUTINE FEX (NEQ, T, Y, YDOT, RPAR, IPAR)
-C     COMPLEX(KIND=8) Y(NEQ), YDOT(NEQ), RPAR
+C     DOUBLE COMPLEX Y(NEQ), YDOT(NEQ), RPAR
 C     DOUBLE PRECISION T
 C     YDOT(1) = -RPAR*Y(1)*Y(1)*Y(2)
 C     YDOT(2) = RPAR*Y(2)
@@ -237,7 +237,7 @@ C     RETURN
 C     END
 C
 C     SUBROUTINE JEX (NEQ, T, Y, ML, MU, PD, NRPD, RPAR, IPAR)
-C     COMPLEX(KIND=8) Y(NEQ), PD(NRPD,NEQ), RPAR
+C     DOUBLE COMPLEX Y(NEQ), PD(NRPD,NEQ), RPAR
 C     DOUBLE PRECISION T
 C     PD(1,1) = -2.0D0*RPAR*Y(1)*Y(2)
 C     PD(1,2) = -RPAR*Y(1)*Y(1)
@@ -344,10 +344,10 @@ C          form dy/dt = f(t,y), where f is a vector-valued function
 C          of the scalar t and the vector y.  Subroutine F is to
 C          compute the function f.  It is to have the form
 C               SUBROUTINE F (NEQ, T, Y, YDOT, RPAR, IPAR)
-C               COMPLEX(KIND=8) Y(NEQ), YDOT(NEQ)
+C               DOUBLE COMPLEX Y(NEQ), YDOT(NEQ)
 C               DOUBLE PRECISION T
 C          where NEQ, T, and Y are input, and the array YDOT = f(t,y)
-C          is output.  Y and YDOT are COMPLEX(KIND=8) arrays of length
+C          is output.  Y and YDOT are double complex arrays of length
 C          NEQ.  Subroutine F should not alter Y(1),...,Y(NEQ).
 C          F must be declared EXTERNAL in the calling program.
 C
@@ -627,7 +627,7 @@ C          compute the Jacobian matrix, df/dy, as a function of
 C          the scalar t and the vector y.  It is to have the form
 C               SUBROUTINE JAC (NEQ, T, Y, ML, MU, PD, NROWPD,
 C                               RPAR, IPAR)
-C               COMPLEX(KIND=8) Y(NEQ), PD(NROWPD,NEQ)
+C               DOUBLE COMPLEX Y(NEQ), PD(NROWPD,NEQ)
 C               DOUBLE PRECISION T
 C          where NEQ, T, Y, ML, MU, and NROWPD are input and the array
 C          PD is to be loaded with partial derivatives (elements of the
@@ -697,7 +697,7 @@ C          parameters to user-supplied subroutines.  If RPAR is an
 C          array, it must be dimensioned in the user's calling program;
 C          if it is unused or it is a scalar, then it need not be
 C          dimensioned.  The type of RPAR may be REAL, DOUBLE, COMPLEX,
-C          or COMPLEX(KIND=8), depending on the user program's needs.
+C          or DOUBLE COMPLEX, depending on the user program's needs.
 C          RPAR is not type-declared within ZVODE, but simply passed
 C          (by address) to the user's F and JAC routines.
 C
@@ -923,7 +923,7 @@ C NYH       = Column length of YH, equal to the initial value of NEQ.
 C
 C The output parameters are:
 C
-C DKY       = A COMPLEX(KIND=8) array of length NEQ containing the
+C DKY       = A double complex array of length NEQ containing the
 C             computed value of the K-th derivative of y(t).
 C IFLAG     = Integer flag, returned as 0 if K and T were legal,
 C             -1 if K was illegal, and -2 if T was illegal.
@@ -961,7 +961,7 @@ C integration step, and sets the array of error weights, EWT, as
 C described under ITOL/RTOL/ATOL above:
 C     SUBROUTINE ZEWSET (NEQ, ITOL, RTOL, ATOL, YCUR, EWT)
 C where NEQ, ITOL, RTOL, and ATOL are as in the ZVODE call sequence,
-C YCUR contains the current (COMPLEX(KIND=8)) dependent variable vector,
+C YCUR contains the current (double complex) dependent variable vector,
 C and EWT is the array of weights set by ZEWSET.
 C
 C If the user supplies this subroutine, it must return in EWT(i)
@@ -995,7 +995,7 @@ C root-mean-square norm of a vector v:
 C     D = ZVNORM (N, V, W)
 C where:
 C   N = the length of the vector,
-C   V = COMPLEX(KIND=8) array of length N containing the vector,
+C   V = double complex array of length N containing the vector,
 C   W = real array of length N containing weights,
 C   D = sqrt( (1/N) * sum(abs(V(i))*W(i))**2 ).
 C ZVNORM is called with N = NEQ and with W(i) = 1.0/EWT(i), where
@@ -1029,7 +1029,7 @@ C  ZVSOL     manages solution of linear system in chord iteration.
 C  ZVJUST    adjusts the history array on a change of order.
 C  ZEWSET    sets the error weight vector EWT before each step.
 C  ZVNORM    computes the weighted r.m.s. norm of a vector.
-C  ZABSSQ    computes the squared absolute value of a COMPLEX(KIND=8) z.
+C  ZABSSQ    computes the squared absolute value of a double complex z.
 C  ZVSRCO    is a user-callable routine to save and restore
 C            the contents of the internal COMMON blocks.
 C  ZACOPY    is a routine to copy one two-dimensional array to another.
@@ -1037,7 +1037,7 @@ C  ZGEFA and ZGESL   are routines from LINPACK for solving full
 C            systems of linear algebraic equations.
 C  ZGBFA and ZGBSL   are routines from LINPACK for solving banded
 C            linear systems.
-C  DZSCAL    scales a COMPLEX(KIND=8) array by a double prec. scalar.
+C  DZSCAL    scales a double complex array by a double prec. scalar.
 C  DZAXPY    adds a D.P. scalar times one complex vector to another.
 C  ZCOPY     is a basic linear algebra module from the BLAS.
 C  DUMACH    sets the unit roundoff of the machine.
@@ -3618,12 +3618,12 @@ C----------------------- END OF SUBROUTINE ZEWSET ----------------------
 C***BEGIN PROLOGUE  ZVNORM
 C***SUBSIDIARY
 C***PURPOSE  Weighted root-mean-square vector norm.
-C***TYPE      COMPLEX(KIND=8) (SVNORM-S, DVNORM-D, ZVNORM-Z)
+C***TYPE      DOUBLE COMPLEX (SVNORM-S, DVNORM-D, ZVNORM-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
 C
 C  This function routine computes the weighted root-mean-square norm
-C  of the vector of length N contained in the COMPLEX(KIND=8) array V,
+C  of the vector of length N contained in the double complex array V,
 C  with weights contained in the array W of length N:
 C    ZVNORM = SQRT( (1/N) * SUM( abs(V(i))**2 * W(i)**2 )
 C  The squared absolute value abs(v)**2 is computed by ZABSSQ.
@@ -3651,7 +3651,7 @@ C----------------------- END OF FUNCTION ZVNORM ------------------------
       DOUBLE PRECISION FUNCTION ZABSSQ(Z)
 C***BEGIN PROLOGUE  ZABSSQ
 C***SUBSIDIARY
-C***PURPOSE  Squared absolute value of a COMPLEX(KIND=8) number.
+C***PURPOSE  Squared absolute value of a double complex number.
 C***TYPE      DOUBLE PRECISION (ZABSSQ-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
@@ -3671,11 +3671,11 @@ C----------------------- END OF FUNCTION ZABSSQ ------------------------
       SUBROUTINE DZSCAL(N, DA, ZX, INCX)
 C***BEGIN PROLOGUE  DZSCAL
 C***SUBSIDIARY
-C***PURPOSE  Scale a COMPLEX(KIND=8) vector by a double prec. constant.
+C***PURPOSE  Scale a double complex vector by a double prec. constant.
 C***TYPE      DOUBLE PRECISION (DZSCAL-Z)
 C***AUTHOR  Hindmarsh, Alan C., (LLNL)
 C***DESCRIPTION
-C  Scales a COMPLEX(KIND=8) vector by a double precision constant.
+C  Scales a double complex vector by a double precision constant.
 C  Minor modification of BLAS routine ZSCAL.
 C***REVISION HISTORY  (YYMMDD)
 C   060530  DATE WRITTEN.
@@ -3801,7 +3801,7 @@ c
       integer k,kb,l,nm1
 C KS      double precision dreal,dimag
 C KS      COMPLEX(KIND=8) zdumr,zdumi
-C KS     dreal(zdumr) = zdumr
+C KS      dreal(zdumr) = zdumr
 C KS      dimag(zdumi) = (0.0d0,-1.0d0)*zdumi
 c
       nm1 = n - 1
@@ -4182,8 +4182,7 @@ c
       end
 C KARLINE: created true functions out of these statement functions
 C Thomas:  removed function definitions for dreal and dimag,
-C     as 'real' and 'imag' are the new standards.
-C Thomas 2023: recent standard is aimag
+C          as 'real' and 'aimag' are now standards.
       double precision function cabs1(zdum)
       COMPLEX(KIND=KIND(0.0d0)) zdum
         cabs1 = dabs(real(zdum)) + dabs(aimag(zdum))
