@@ -23,7 +23,7 @@
 
   \code{events} should be a list that contains one of the following:
 
-  \enumerate{
+  \describe{
     \item{func: }{an R-function or the name of a function in compiled
       code that specifies the event,
     }
