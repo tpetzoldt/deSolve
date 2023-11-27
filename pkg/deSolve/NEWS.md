@@ -1,3 +1,7 @@
+Changes version 1.40
+================================
+* compacted vignettes
+
 Changes version 1.39
 ================================
 * small documentation fix
