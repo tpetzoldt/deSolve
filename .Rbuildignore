@@ -1,0 +1,15 @@
+inst/.*[.]dll
+inst/doc/.*[.]dll
+inst/doc/.*[.]d
+inst/doc/.*[.]o
+inst/doc/.*[.]rc
+vignettes/jss.cls
+vignettes/jss.bst
+^Rplots.pdf$
+work
+www
+incoming
+todo.txt
+^.*\.Rproj$
+^\.Rproj\.user$
+README.md
