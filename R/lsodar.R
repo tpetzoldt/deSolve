@@ -200,7 +200,7 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (!is.vector(tmp2))
         stop("root function 'rootfunc' must return a vector\n")
       nroot <- length(tmp2)
-    } else nroot = 0
+    } else nroot <- 0
 
     if (jt %in% c(1,4)) {
       tmp <- eval(JacFunc(times[1], y), rho)
@@ -218,10 +218,10 @@ lsodar <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
 
   if(jt %in% c(1,2)) lmat <- n^2+2 else
   if(jt %in% c(4,5)) lmat <- (2*banddown+bandup+1)*n+2
-  lrn = 20+n*(maxordn+1)+ 3*n +3*nroot       # length in case non-stiff method
-  lrs = 20+n*(maxords+1)+ 3*n +lmat+3*nroot  # length in case stiff method
-  lrw = max(lrn,lrs)                         # actual length: max of both
-  liw = 20 + n
+  lrn <- 20+n*(maxordn+1)+ 3*n +3*nroot       # length in case non-stiff method
+  lrs <- 20+n*(maxords+1)+ 3*n +lmat+3*nroot  # length in case stiff method
+  lrw <- max(lrn,lrs)                         # actual length: max of both
+  liw <- 20 + n
 
 ## only first 20 elements passed to solver; other will be allocated in C-code
   iwork <- vector("integer",20)

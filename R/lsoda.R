@@ -217,10 +217,10 @@ lsoda <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
   # length of rwork and iwork
   if(jt %in% c(1,2)) lmat <- n^2+2 else
   if(jt %in% c(4,5)) lmat <- (2*banddown+bandup+1)*n+2
-  lrn = 20+n*(maxordn+1)+ 3*n              # length in case non-stiff method
-  lrs = 20+n*(maxords+1)+ 3*n +lmat        # length in case stiff method
-  lrw = max(lrn,lrs)                       # actual length: max of both
-  liw = 20 + n
+  lrn <- 20+n*(maxordn+1)+ 3*n              # length in case non-stiff method
+  lrs <- 20+n*(maxords+1)+ 3*n +lmat        # length in case stiff method
+  lrw <- max(lrn,lrs)                       # actual length: max of both
+  liw <- 20 + n
 
   # only first 20 elements passed to solver; other will be allocated in C-code
   iwork <- vector("integer",20)

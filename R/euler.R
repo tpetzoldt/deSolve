@@ -131,7 +131,7 @@ euler.1D <- function(y, times, func, parms,
   N     <- length(y)
   if (is.null(dimens)) dimens  <- N/nspec
   if (is.null(nspec))
-    nspec = N/dimens
+    nspec <- N/dimens
   if (N %% nspec != 0    )
     stop ("cannot run ode.1D: nspec is not an integer fraction of number of state variables")
 

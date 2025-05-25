@@ -213,7 +213,7 @@ lsode <- function(y, times, func, parms, rtol=1e-6, atol=1e-6,
       if (!is.vector(tmp2))
         stop("root function 'rootfunc' must return a vector\n")
       nroot <- length(tmp2)
-    } else nroot = 0
+    } else nroot <- 0
 
     if (miter %in% c(1,4)) {
       tmp <- eval(JacFunc(times[1], y), rho)

@@ -273,7 +273,7 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
       if (!is.vector(tmp2))
         stop("root function 'rootfunc' must return a vector\n")
       nroot <- length(tmp2)
-    } else nroot = 0
+    } else nroot <- 0
 
   }
 
@@ -282,14 +282,14 @@ lsodes <- function(y, times, func, parms, rtol = 1e-6, atol = 1e-6,
   moss  <- imp%/%100         # method to be used to obtain sparsity
   meth  <- imp%%100%/%10     # basic linear multistep method
   miter <- imp%%10           # corrector iteration method
-  lenr = 2     # real to integer wordlength ratio (2 due to double precision)
+  lenr <- 2     # real to integer wordlength ratio (2 due to double precision)
 
   if (is.null(lrw)) {         # make a guess of real work space needed
-    lrw = 20+n*(maxord+1)+3*n +20  #extra 20 to make sure
+    lrw <- 20+n*(maxord+1)+3*n +20  #extra 20 to make sure
 
-    if(miter == 1) lrw = lrw + 2*nnz + 2*n + (nnz+9*n)/lenr
-    if(miter == 2) lrw = lrw + 2*nnz + 2*n + (nnz+10*n)/lenr
-    if(miter == 3) lrw = lrw + n + 2
+    if(miter == 1) lrw <- lrw + 2*nnz + 2*n + (nnz+9*n)/lenr
+    if(miter == 2) lrw <- lrw + 2*nnz + 2*n + (nnz+10*n)/lenr
+    if(miter == 3) lrw <- lrw + n + 2
 
     if (sparsetype == "1D") lrw <- lrw*1.2 # increase to be sure it is enough...
   }
