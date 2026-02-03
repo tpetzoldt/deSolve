@@ -1715,13 +1715,13 @@ in our models and the codes of our students:
   variables (\code{y}).
 \end{itemize}
 
-The solvers included in package \ds are thorougly tested, however they
+The solvers included in package \ds are thoroughly tested, however they
 come with \textbf{no warranty} and the user is solely responsible for their
 correct application. If you encounter unexpected behavior, first check
 your model and read the documentation. If this doesn't help, feel free
 to ask a question to an appropriate mailing list,
-e.g. \url{r-help@r-project.org} or, more specific,
-\url{r-sig-dynamic-models@r-project.org}.
+e.g. \email{r-help@r-project.org} or, more specific,
+\email{r-sig-dynamic-models@r-project.org}.
 
 \subsection{Making sense of deSolve's error messages}
 

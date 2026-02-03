@@ -1,3 +1,9 @@
+Changes version 1.41
+================================
+* add nls to Suggests
+* convert URIs in vignettes to links
+
+
 Changes version 1.40
 ================================
 * compacted vignettes

@@ -317,7 +317,7 @@ void jac(int *neq, double *t, double *y, int *ml,
 
   For \code{radau}, \code{*nrowpd} will be equal to \code{*mu + *ml + 1}
 
-  See example ``odeband'' in the directory \url{doc/examples/dynload},
+  See example \url{dynload/odeband.R} in the directory \texttt{doc/dynload},
   and chapter \ref{band}.
 \end{enumerate}
 
@@ -543,7 +543,7 @@ on the interval t = [0, 2 $\pi$]
 
 The example is implemented in \proglang{FORTRAN}%
 \footnote{this can be found in file "zvodedll.f",
-in the dynload subdirectory of the package},
+in the \texttt{doc/dynload} subdirectory of the package},
 \code{FEX} implements the function \code{func}:
 
 \begin{verbatim}
@@ -1410,8 +1410,8 @@ consumer (C) model with time-variable input (signal) - see text for R-code}
 \end{figure}
 
 The C-code, in file \url{Forcing\_lv.c}, can be found in the packages
-\url{/doc/examples/dynload} subdirectory\footnote{this can be opened by typing
-\code{browseURL(paste(system.file(package = "deSolve"), "/doc/examples/dynload", sep = ""))}}.
+\texttt{doc/dynload} subdirectory\footnote{this can be opened by typing
+\code{browseURL(paste(system.file(package = "deSolve"), "/doc/dynload", sep = ""))}}.
 It can be compiled, from within R by
 
 \begin{verbatim}
@@ -1556,19 +1556,19 @@ the consumer removed every 10 days - see text for R-code}
 
 \section{Delay differential equations}
 
-It is now also very simple to implement delay 
+It is now also very simple to implement delay
 differential equations in compiled code and solve them with \code{dede}.
 In order to do so, you need to get access to the R-functions \code{lagvalue} and \code{lagderiv}
-that will give you the past value of the state variable or its derivative 
+that will give you the past value of the state variable or its derivative
 respectively.
 
 \subsection{Delays implemented in Fortran}
 
-If you use \proglang{Fortran}, then the easiest way is to link your code with a file called 
-\code{dedeUtils.c} that you will find in the packages subdirectory \code{inst/doc/dynload-dede}. 
+If you use \proglang{Fortran}, then the easiest way is to link your code with a file called
+\url{dynload-dede/dedeUtils.c} that you will find in the packages subdirectory \texttt{doc/dynload-dede}.
 This file contains Fortran-callable interfaces to the delay-differential utility
 functions from package \pkg{deSolve}, and that are written in \proglang{C}.
-Its content is: 
+Its content is:
 \begin{verbatim}
 void F77_SUB(lagvalue)(double *T, int *nr, int *N, double *ytau) {
   static void(*fun)(double, int*, int, double*) = NULL;
@@ -1587,14 +1587,14 @@ void F77_SUB(lagderiv)(double *T, int *nr, int *N, double *ytau) {
 }
 \end{verbatim}
 
-Here \code{T} is the time at which the value needs to be retrieved, 
+Here \code{T} is the time at which the value needs to be retrieved,
 \code{nr} is an integer that defines the number of the state variable or its
-derivative whose delay we want, \code{N} is the total number of state variabes 
+derivative whose delay we want, \code{N} is the total number of state variabes
 and \code{ytau} will have the result.
 
 We start with an example, a Lotka-Volterra system with delay, that we will implement
  in \proglang{Fortran} (you will find this example in the package directory
-\code{inst/doc/dynload-dede}, in file \code{dede_lvF.f}
+\texttt{doc/dynload-dede}, in file \texttt{dede\_lvF.f}
 
 The R-code would be:
 <<>>=
@@ -1650,7 +1650,7 @@ In Fortran the code looks like this:
       nr(2) = 1
       ytau(1) = 1.0
       ytau(2) = 1.0
- 
+
       tlag = t - tau
       if (tlag .GT. 0.0) call lagvalue(tlag, nr, 2, ytau)
 
@@ -1665,7 +1665,7 @@ In Fortran the code looks like this:
 \end{verbatim}
 
 During compilation, we need to also compile the file \code{dedeUtils.c}. Assuming that the
-above \proglang{Fortran} code is in file \code{dede_lvF.f}, which is found in the working directory that 
+above \proglang{Fortran} code is in file \code{dede_lvF.f}, which is found in the working directory that
 also contains file \code{dedeUtils.c}, the problem is compiled and run as:
 \begin{verbatim}
 system("R CMD SHLIB dede_lvF.f dedeUtils.c")
@@ -1676,7 +1676,7 @@ yout3 <- dede(yinit, times = times, func = "derivs", parms = parms,
 
 \subsection{Delays implemented in C}
 
-We now give the same example in \proglang{C}-code (you will find this in directory \code{inst/doc/dynload-dede/dede_lv.c}).
+We now give the same example in \proglang{C}-code (you will find this file as \url{dynload-dede/dede_lv.c}).
 
 \begin{verbatim}
 #include <R.h>
@@ -1722,12 +1722,12 @@ void derivs (int *neq, double *t, double *y, double *ydot,
   double P = y[1];
 
   int Nout  = 2;                  // number of returned lags  ( <= n_eq !!)
-  int nr[2] = {0, 1};             // which lags are needed? 
+  int nr[2] = {0, 1};             // which lags are needed?
                                   // numbering starts from zero !
   double ytau[2] = {1.0, 1.0};    // array; initialize with default values !
 
   double T = *t - tau;
-  
+
   if (*t > tau) {
     lagvalue(T, nr, Nout, ytau);
   }
