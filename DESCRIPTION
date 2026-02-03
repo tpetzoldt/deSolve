@@ -57,6 +57,6 @@ Description: Functions that solve initial value problems of a system
         partial differential equations ('PDE') that have been converted
         to 'ODEs' by numerical differencing.
 License: GPL (>= 2)
-URL: http://desolve.r-forge.r-project.org/
+URL: https://github.com/tpetzoldt/deSolve/
 LazyData: yes
 NeedsCompilation: yes
