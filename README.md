@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/deSolve)](https://CRAN.R-project.org/package=deSolve)
+[![Dev version](https://img.shields.io/github/r-package/v/tpetzoldt/deSolve?label=dev%20version)](https://github.com/tpetzoldt/deSolve)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/deSolve)](https://cran.r-project.org/package=deSolve)
 [![CRAN downloads per month](https://cranlogs.r-pkg.org/badges/deSolve)](https://cran.r-project.org/package=deSolve)
 <!-- badges: end -->
