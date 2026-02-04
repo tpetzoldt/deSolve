@@ -1,5 +1,11 @@
 ## R Package deSolve
 
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/deSolve)](https://CRAN.R-project.org/package=deSolve)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/deSolve)](https://cran.r-project.org/package=deSolve)
+[![CRAN downloads per month](https://cranlogs.r-pkg.org/badges/deSolve)](https://cran.r-project.org/package=deSolve)
+<!-- badges: end -->
+
 Solvers for Initial Value Problems of Differential Equations (ODE, DAE, DDE)
 
 ### Overview
