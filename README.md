@@ -26,10 +26,6 @@ The package can be used in scientific computing, ecological modeling, pharmacoki
 * Support for compiled code (C, Fortran) for improved performance
 * Forcing functions, event handling, and plotting
 
-## License 
-
-[GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
-
 ### Installation
 
 **Stable version from CRAN (recommended)**
@@ -69,6 +65,13 @@ out <- ode(y = state, times = times, func = Lorenz, parms = parameters)
 
 plot(out)
 ```
+
+## License 
+
+**deSolve** is Free and Open Source Software, released under the
+[GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) or 
+[GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+
 
 ### Documentation
 
