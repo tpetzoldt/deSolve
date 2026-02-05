@@ -208,8 +208,8 @@ rkMethod(method = NULL, ...)
   Runge, C. (1895) Ueber die numerische Aufloesung von
   Differentialgleichungen, Math. Ann. \bold{46}, 167--178.
 
-  MATLAB (R) is a registed property of The Mathworks
-  Inc. \url{https://www.mathworks.com/} }
+  MATLAB (R) is a registed property of The Mathworks Inc.
+}
 
 \author{Thomas Petzoldt \email{thomas.petzoldt@tu-dresden.de}}
 

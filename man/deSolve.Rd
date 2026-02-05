@@ -42,7 +42,6 @@
     \item Writing Code in Compiled Languages
       (\href{../doc/compiledCode.pdf}{pdf}, \href{../doc/compiledCode.R}{R code})
     \item Examples in R (\href{../doc/examples}{code}), and in Fortran or C (\href{../doc/dynload}{doc/dynload}, \href{../doc/dynload-dede}{doc/dynload-dede})
-    \item deSolve homepage: \url{https://desolve.r-forge.r-project.org} (Papers, Books, PDFs)
     \item Mailing list: \url{mailto:r-sig-dynamic-models@r-project.org}
    }
 
@@ -63,7 +62,7 @@
   Karline Soetaert, Thomas Petzoldt (2011): Solving ODEs, DAEs, DDEs and
   PDEs in R. Journal of Numerical Analysis, Industrial and Applied
   Mathematics (JNAIAM) 6(1-2),
-  51-65. %\href{http://jnaiam.org/uploads/jnaiam_6_4.pdf}{pdf}
+  51-65. %\href{https://jnaiam.org/uploads/jnaiam_6_4.pdf}{pdf}
 
   Karline Soetaert, Jeff Cash, Francesca Mazzia, (2012):
   Solving Differential Equations in R. Springer, 248 pp.
