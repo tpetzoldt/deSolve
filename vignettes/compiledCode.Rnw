@@ -1409,9 +1409,9 @@ consumer (C) model with time-variable input (signal) - see text for R-code}
 \label{fig:lv}
 \end{figure}
 
-The C-code, in file \url{Forcing\_lv.c}, can be found in the packages
-\texttt{doc/dynload} subdirectory\footnote{this can be opened by typing
-\code{browseURL(paste(system.file(package = "deSolve"), "/doc/dynload", sep = ""))}}.
+The C-code, in file \url{dynload/Forcing\_lv.c}, can be found in the packages
+\texttt{doc/dynload} subdirectory.
+
 It can be compiled, from within R by
 
 \begin{verbatim}

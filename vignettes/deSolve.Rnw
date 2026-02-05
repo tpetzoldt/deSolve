@@ -1279,7 +1279,7 @@ or initial values, with one single call to \code{plot}.
 
 % Scholarpedia not anymore well maintained; no https available
 As an example we implement the simple combustion model, which can be found on
-\texttt{http://www.scholarpedia.org/article/Stiff_systems}:
+\texttt{http://www.scholarpedia.org/article/Stiff\_systems}:
 
 \[
 y' = y^2 \cdot (1-y)
