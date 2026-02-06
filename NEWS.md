@@ -1,7 +1,7 @@
 Changes version 1.41
 ================================
 * add nls to Suggests
-* convert URIs in vignettes to links
+* fix web and file links in vignettes and help files
 
 
 Changes version 1.40
