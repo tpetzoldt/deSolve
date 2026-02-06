@@ -1,8 +1,8 @@
 Changes version 1.41
 ================================
-* add nls to Suggests
-* fix web and file links in vignettes and help files
-
+* source code repository moved to Github
+* added nls to Suggests
+* fixed web and file links in vignettes and help files
 
 Changes version 1.40
 ================================

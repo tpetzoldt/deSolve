@@ -41,7 +41,8 @@
       (\href{../doc/deSolve.pdf}{pdf}, \href{../doc/deSolve.R}{R code})
     \item Writing Code in Compiled Languages
       (\href{../doc/compiledCode.pdf}{pdf}, \href{../doc/compiledCode.R}{R code})
-    \item Examples in R (\href{../doc/examples}{code}), and in Fortran or C (\href{../doc/dynload}{doc/dynload}, \href{../doc/dynload-dede}{doc/dynload-dede})
+    \item Examples in R (\href{../doc/examples}{code}), and in Fortran or C 
+	  (\href{../doc/dynload}{doc/dynload}, \href{../doc/dynload-dede}{doc/dynload-dede})
     \item Mailing list: \url{mailto:r-sig-dynamic-models@r-project.org}
    }
 
