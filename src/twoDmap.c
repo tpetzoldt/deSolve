@@ -36,7 +36,7 @@ void sparsity2Dmap (SEXP Type, int* iwork, int neq, int liw) {
       for( j = 0; j < nx; j++) {
         for( k = 0; k < ny; k++) {
           if (ij > liw-8-nspec)  
-            error("not enough memory allocated in iwork - increase liw %i ",liw);
+            Rf_error("not enough memory allocated in iwork - increase liw %i ",liw);
           Mnew = ipres[m-1];
           if (Mnew > 0) {
           
@@ -69,7 +69,7 @@ void interactmap (int *ij, int nnz, int *iwork, int *ipres, int ival) {
 /* check if not yet present for current state */
      if (ipres[ival-1] > 0) {
        if (*ij > nnz) 
-         error ("not enough memory allocated in iwork - increase liw %i ", nnz);
+         Rf_error ("not enough memory allocated in iwork - increase liw %i ", nnz);
      iwork[(*ij)++] = ipres[ival-1];
 
   }
@@ -112,7 +112,7 @@ void sparsity3Dmap (SEXP Type, int* iwork, int neq, int liw) {
           for( ll = 0; ll < nz; ll++) {
             
             if (ij > liw-6-nspec)  
-              error ("not enough memory allocated in iwork - increase liw %i ", liw);
+              Rf_error ("not enough memory allocated in iwork - increase liw %i ", liw);
 
             Mnew = ipres[m-1];
             if (Mnew > 0) {

@@ -109,7 +109,7 @@ void derivsccl4 (int *neq, double *t, double *y, double *ydot,
       double vconc[5], tconc[5], CA, CX, RAM;
       int i;
       
-      if (ip[0] < 3) error("nout should be at least 3"); 
+      if (ip[0] < 3) Rf_error("nout should be at least 3"); 
       
 /*c y = AI, AAM, AT, AF, AL CLT, AM
  where clt = the area under the concentration-time curve in the liver 

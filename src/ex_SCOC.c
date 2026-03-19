@@ -28,7 +28,7 @@ static double forcs[1];
 void scocder (int *neq, double *t, double *y, double *ydot,
              double *out, int *ip)
 {      
-    if (ip[0] <2) error("nout should be at least 2");
+    if (ip[0] <2) Rf_error("nout should be at least 2");
 
       ydot[0] = -k*y[0] + depo;
 

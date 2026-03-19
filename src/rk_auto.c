@@ -113,7 +113,7 @@ void rk_auto(
 
     if (dtnew < hmin) {
       accept = TRUE;
-      if (verbose) Rprintf("warning, h < Hmin\n");
+      if (verbose) Rf_warning("h < hmin");
       istate[0] = -2;
       dtnew = hmin;
     }
@@ -203,12 +203,12 @@ void rk_auto(
     } /* else rejected time step */
     dt = fmin(dtnew, tmax - t);
     if (it_ext > nt) {
-      Rprintf("error in RK solver rk_auto.c: output buffer overflow\n");
+      Rf_error("error in RK solver rk_auto.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {
       istate[0] = -1;
-      warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
+      Rf_warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
       break;
     }
     /* tolerance to avoid rounding errors */

@@ -408,44 +408,44 @@ SEXP call_daspk(SEXP y, SEXP yprime, SEXP times, SEXP resfunc, SEXP parms,
         if (idid == -1)  {
           Info[0]=1;
         }   else   if (idid == -2)   {
-          warning("Excessive precision requested.  scale up `rtol' and `atol' e.g. by the factor %g\n",10.0);
+          Rf_warning("Excessive precision requested.  scale up `rtol' and `atol' e.g. by the factor %g\n",10.0);
           Info[0]=1;
           repcount=maxit+2;
         }   else    if (idid == -3)   {
-          warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
+          Rf_warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
           repcount=maxit+2;
         }   else    if (idid == -5)   {
-          warning("jacfun routine failed with the Krylov method");
+          Rf_warning("jacfun routine failed with the Krylov method");
           repcount = maxit+2;
         }   else    if (idid == -6)   {
-          warning("repeated error test failures on a step - singularity ?");
+          Rf_warning("repeated error test failures on a step - singularity ?");
           repcount = maxit+2;
         }  else    if (idid == -7)    {
-          warning("repeated convergence test failures on a step - inaccurate Jacobian or preconditioner?");
+          Rf_warning("repeated convergence test failures on a step - inaccurate Jacobian or preconditioner?");
           repcount = maxit+2;
         }  else    if (idid == -8)    {
-          warning("matrix of partial derivatives is singular with direct method-some equations redundant");
+          Rf_warning("matrix of partial derivatives is singular with direct method-some equations redundant");
           repcount = maxit+2;
         }  else    if (idid == -9)    {
-          warning("repeated convergence test failures and error test failures ?");
+          Rf_warning("repeated convergence test failures and error test failures ?");
           repcount = maxit+2;
         }  else    if (idid == -10)   {
-          warning("repeated convergence test failures on a step, because ires was -1");
+          Rf_warning("repeated convergence test failures on a step, because ires was -1");
           repcount = maxit+2;
         }  else    if (idid == -11)   {
-          warning("unrecoverable error from inside noninear solver, ires=-2 ");
+          Rf_warning("unrecoverable error from inside noninear solver, ires=-2 ");
           repcount = maxit+2;
         }  else    if (idid == -12)   {
-          warning("failed to compute initial y and yprime vectors");
+          Rf_warning("failed to compute initial y and yprime vectors");
           repcount = maxit+2;
         }  else    if (idid == -13)   {
-          warning("unrecoverable error inside the PSOL routine");
+          Rf_warning("unrecoverable error inside the PSOL routine");
           repcount = maxit+2;
         }  else    if (idid == -14)   {
-          warning("Krylov linear system solver failed to converge");
+          Rf_warning("Krylov linear system solver failed to converge");
           repcount = maxit+2;
         }  else    if (idid == -33)   {
-          warning("fatal error");
+          Rf_warning("fatal error");
           repcount = maxit+2;
         }
       }

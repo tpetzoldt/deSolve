@@ -273,19 +273,19 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
     timesteps [1] = rwork[11];
 
     if (istate == -1) {
-      warning("an excessive amount of work (> mxstep ) was done, but integration was not successful - increase maxsteps ?");
+      Rf_warning("an excessive amount of work (> mxstep ) was done, but integration was not successful - increase maxsteps ?");
     } else if (istate == -2)  {
-	    warning("Excessive precision requested.  scale up `rtol' and `atol' e.g by the factor %g\n",10.0);
+	    Rf_warning("Excessive precision requested.  scale up `rtol' and `atol' e.g by the factor %g\n",10.0);
 	  } else if (istate == -4)  {
-      warning("repeated error test failures on a step, but integration was successful - singularity ?");
+      Rf_warning("repeated error test failures on a step, but integration was successful - singularity ?");
     } else if (istate == -5)  {
-      warning("repeated convergence test failures on a step, but integration was successful - inaccurate Jacobian matrix?");
+      Rf_warning("repeated convergence test failures on a step, but integration was successful - inaccurate Jacobian matrix?");
     } else if (istate == -6)  {
-      warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
+      Rf_warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
     }
 
     if (istate == -3) {
-	    error("illegal input detected before taking any integration steps - see written message");
+	    Rf_error("illegal input detected before taking any integration steps - see written message");
   	} else {
     	/*   REAL(YOUT)[(it+1)*(ntot+1)] = tin;*/
       for (j = 0; j < neq; j++)
@@ -300,7 +300,7 @@ SEXP call_zvode(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
 
 /*                    ####  an error occurred   ####                          */
     if (istate < 0 || tin < tout) {
-	    warning("Returning early from dvode  Results are accurate, as far as they go\n");
+	    Rf_warning("Returning early from dvode  Results are accurate, as far as they go\n");
 
     	/* redimension YOUT */
 	    PROTECT(YOUT2 = allocMatrix(CPLXSXP,ntot+1,(it+2))); nprot++;

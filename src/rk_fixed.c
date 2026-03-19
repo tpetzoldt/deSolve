@@ -116,12 +116,12 @@ void rk_fixed(
     it++;
     for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in RK solver rk_fixed.c: output buffer overflow\n");
+      Rf_error("error in RK solver rk_fixed.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {
       istate[0] = -1;
-      warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
+      Rf_warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
       break;
     }
     /* tolerance to avoid rounding errors */

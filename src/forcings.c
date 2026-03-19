@@ -91,7 +91,7 @@ int initForcings(SEXP flist) {
 void Initdeforc(int *N, double *forc) {
   int i, ii;
   if ((*N) != nforc) {
-    warning("Number of forcings passed to solver, %ld; number in DLL, %i\n", nforc, *N);
+    Rf_warning("Number of forcings passed to solver, %ld; number in DLL, %i\n", nforc, *N);
     Rf_error("Confusion over the length of forc.");
   }
 
@@ -125,7 +125,7 @@ void updatedeforc(double *time) {
 
   /* check if initialised? */
   if (finit == 0)
-    error ("error in forcing function: not initialised");
+    Rf_error ("error in forcing function: not initialised");
 
   for (i=0; i<nforc; i++) {
     ii = findex[i];

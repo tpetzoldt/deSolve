@@ -19,10 +19,10 @@ void lu_solve(double *alfa, int n, int *index, double *bet) {
 
   F77_CALL(dgefa)(alfa, &n, &n, index, &info);
 	if (info != 0)
-    error("error during factorisation of matrix (dgefa), singular matrix");
+    Rf_error("error during factorisation of matrix (dgefa), singular matrix");
   F77_CALL(dgesl)(alfa, &n, &n, index, bet, &info);
 	if (info != 0)
-    error("error during backsubstitution");
+    Rf_error("error during backsubstitution");
 }
 
 /* function that returns -k + dt*derivs(t+c[i]*dt, y+sum(a[i,)*k
@@ -201,12 +201,12 @@ void rk_implicit( double * alfa,  /* neq*stage * neq*stage */
     it++;
     for (i = 0; i < neq; i++) y0[i] = y1[i];
     if (it_ext > nt) {
-      Rprintf("error in RK solver rk_implicit.c: output buffer overflow\n");
+      Rf_error("error in RK solver rk_implicit.c: output buffer overflow\n");
       break;
     }
     if (it_tot > maxsteps) {
       istate[0] = -1;
-      warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
+      Rf_warning("Number of time steps %i exceeded maxsteps at t = %g\n", it, t);
       break;
     }
     /* tolerance to avoid rounding errors */

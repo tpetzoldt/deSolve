@@ -46,7 +46,7 @@ void chemres (double *t, double *y, double *ydot, double *cj, double *delta,
               int *ires, double *out, int *ip)  {
 
     double ra, rb;
-    if (ip[0] <2) error("nout should be at least 2");
+    if (ip[0] <2) Rf_error("nout should be at least 2");
 
     ra  = ka* y[2];            /* forward rate */
     rb  = ka/K *y[0] * y[1];   /* backward rate */

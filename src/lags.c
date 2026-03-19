@@ -46,12 +46,12 @@ double interpolate(int i, int k, double t0, double hh, double t,
   double  res;
  
   if (nq > 12)
-    error("illegal nq in interpolate, %i, at time %g", nq, t);
+    Rf_error("illegal nq in interpolate, %i, at time %g", nq, t);
   if (k > nq)
-    error("illegal k %i, nq in interpolate, %i, at time %g", k, nq, t);
+    Rf_error("illegal k %i, nq in interpolate, %i, at time %g", k, nq, t);
                 
   if (i > n_eq || i <1)
-    error("illegal i %i, n_eq %i, at time %g", i, n_eq, t);
+    Rf_error("illegal i %i, n_eq %i, at time %g", i, n_eq, t);
 
   F77_CALL(interpoly) (&t, &k, &i, Yh, &n_eq, &res, &nq, &t0, &hh); 
   return(res);
@@ -127,7 +127,7 @@ void inithist(int max, int maxlags, int solver, int nroot) {
   /* interpolMethod = HigherOrder, Livermore solvers */
   } else if (interpolMethod == 2) {
     if (solver == 0) 
-      error("illegal input in lags - cannot combine interpol=2 with chosen solver");
+      Rf_error("illegal input in lags - cannot combine interpol=2 with chosen solver");
     maxord  = 12;   /* 5(bdf) or 12 (adams) */
     lyh     = 20;   /* position of history array in rwork (C-index) */
     lhh     = 11;   /* position of h in rwork (C-index)
@@ -240,7 +240,7 @@ double past(int i, int interval, double t, int val)
 
   /* error checking */
   if ( i >= n_eq)
-    error("illegal input in lagvalue - var nr too high, %i", i+1);
+    Rf_error("illegal input in lagvalue - var nr too high, %i", i+1);
   
   /* equal to current value... */   
   if ( interval == indexhist && t == histtime[interval]) {   
@@ -301,7 +301,7 @@ double past(int i, int interval, double t, int val)
   /* dense interpolation - radau - gets all values (i not used) */
   } else {
  //   if (val == 2)
- //     error("radau interpol = 2 does not work for lagderiv");
+ //     Rf_error("radau interpol = 2 does not work for lagderiv");
     j  = interval;
     Yh  = &histvar [j * offset];
     histsave  = &histvar [j * offset + 4*n_eq];
@@ -322,7 +322,7 @@ int findHistInt2 (double t) {
   if ( t >= histtime[indexhist]) 
     return(indexhist);
   if ( t < histtime[starthist])
-    error("illegal input in lagvalue - lag, %g, too large, at time = %g\n",
+    Rf_error("illegal input in lagvalue - lag, %g, too large, at time = %g\n",
       t, histtime[indexhist]);
  
    /* find embracing time starting from beginning  */
@@ -343,7 +343,7 @@ int findHistInt (double t) {
   if ( t >= histtime[indexhist]) 
     return(indexhist);
   if ( t < histtime[starthist])
-    error("illegal input in lagvalue - lag, %g, too large, at time = %g\n",
+    Rf_error("illegal input in lagvalue - lag, %g, too large, at time = %g\n",
       t, histtime[indexhist]);
 
   if (endreached == 0) {  /* still filling buffer; not yet wrapped */
@@ -387,8 +387,8 @@ SEXP getLagValue(SEXP T, SEXP nr)
 
   ilen = LENGTH(nr);
   if (initialisehist == 0)
-    error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
-  if (!isNumeric(T)) error("'t' should be numeric");
+    Rf_error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
+  if (!isNumeric(T)) Rf_error("'t' should be numeric");
 
   t = *NUMERIC_POINTER(T);
   interval = findHistInt (t);
@@ -420,8 +420,8 @@ SEXP getLagDeriv(SEXP T, SEXP nr)
 
   ilen = LENGTH(nr);
   if (initialisehist == 0)
-    error("pastgradient can only be called from 'func' or 'res' when triggered by appropriate integrator.");
-  if (!isNumeric(T)) error("'t' should be numeric");
+    Rf_error("pastgradient can only be called from 'func' or 'res' when triggered by appropriate integrator.");
+  if (!isNumeric(T)) Rf_error("'t' should be numeric");
 
   t = *NUMERIC_POINTER(T);
   interval = findHistInt (t);
@@ -462,7 +462,7 @@ int initLags(SEXP elag, int solver, int nroot) {
    if (interpolMethod < 1) interpolMethod = 1;
    if ((interpolMethod == 2) && (solver == 10)) interpolMethod = 3; /* radau */
 //   if((solver == 7 || solver == 3) && interpolMethod == 2)
-//     error("cannot combine lags in lsodes, with interpol=2");
+//     Rf_error("cannot combine lags in lsodes, with interpol=2");
    inithist(mxhist, 1, solver, nroot);
   } else {
     mxhist = 0;
@@ -482,7 +482,7 @@ void lagvalue(double T, int *nr, int N, double *ytau) {
   int i, interval;
 
   if (initialisehist == 0)
-    error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
+    Rf_error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
 
   interval = findHistInt(T);
   for(i = 0; i < N; i++)  ytau[i] = past(nr[i], interval, T, 1);
@@ -492,7 +492,7 @@ void lagderiv(double T, int *nr, int N, double *ytau) {
   int i, interval;
 
   if (initialisehist == 0)
-    error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
+    Rf_error("pastvalue can only be called from 'func' or 'res' when triggered by appropriate integrator.");
 
   interval = findHistInt(T);
 

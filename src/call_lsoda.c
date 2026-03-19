@@ -475,7 +475,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
         if (istate == -2) {
           for (j = 0; j < lrtol; j++) Rtol[j] *= 10.0;
           for (j = 0; j < latol; j++) Atol[j] *= 10.0;
-          warning("Excessive precision requested.  `rtol' and `atol' have been scaled upwards by the factor %g\n",10.0);
+          Rf_warning("Excessive precision requested.  `rtol' and `atol' have been scaled upwards by the factor %g\n",10.0);
           istate = 3;
         }
 
@@ -517,7 +517,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
         timesteps [1] = rwork[11];
 
         if (istate == -1)  {
-          warning("an excessive amount of work (> maxsteps ) was done, but integration was not successful - increase maxsteps");
+          Rf_warning("an excessive amount of work (> maxsteps ) was done, but integration was not successful - increase maxsteps");
         } else if (istate == 3 && (solver == 4 || solver == 6 || solver == 7)){
 
           /* root found - take into account if an EVENT */
@@ -556,13 +556,13 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
             istate = -20;  repcount = 50;
           }
         } else if (istate == -2)  {
-          warning("Excessive precision requested.  scale up `rtol' and `atol' e.g by the factor %g\n",10.0);
+          Rf_warning("Excessive precision requested.  scale up `rtol' and `atol' e.g by the factor %g\n",10.0);
         } else if (istate == -4)  {
-          warning("repeated error test failures on a step, but integration was successful - singularity ?");
+          Rf_warning("repeated error test failures on a step, but integration was successful - singularity ?");
         } else if (istate == -5)  {
-          warning("repeated convergence test failures on a step, but integration was successful - inaccurate Jacobian matrix?");
+          Rf_warning("repeated convergence test failures on a step, but integration was successful - inaccurate Jacobian matrix?");
         } else if (istate == -6)  {
-          warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
+          Rf_warning("Error term became zero for some i: pure relative error control (ATOL(i)=0.0) for a variable which is now vanished");
         }
         if (islag == 1) {
           if (isDll == 1)   /* function in DLL and output */         // + thpe
@@ -576,7 +576,7 @@ SEXP call_lsoda(SEXP y, SEXP times, SEXP derivfunc, SEXP parms, SEXP rtol,
       } while (tin < tout && istate >= 0 && repcount < maxit);
 
       if (istate == -3)  {
-        error("illegal input detected before taking any integration steps - see written message");
+        Rf_error("illegal input detected before taking any integration steps - see written message");
       }  else {
         REAL(YOUT)[(it+1)*(ntot+1)] = tin;
         for (j = 0; j < n_eq; j++)

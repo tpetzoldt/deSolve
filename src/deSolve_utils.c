@@ -19,7 +19,7 @@ void lock_solver(void) {
   if (solver_locked) {
     /* important: unlock for the next call *after* error */
     solver_locked = 0;
-    error("The used combination of solvers cannot be nested.\n");
+    Rf_error("The used combination of solvers cannot be nested.\n");
   }
   solver_locked = 1;
 }
@@ -59,7 +59,7 @@ void Initdeparms(int *N, double *parms) {
   int i, Nparms;
   Nparms = LENGTH(de_gparms);
   if ((*N) != Nparms) {
-    warning("Number of parameters passed to solver, %i; number in DLL, %i\n",
+    Rf_warning("Number of parameters passed to solver, %i; number in DLL, %i\n",
       Nparms, *N);
     Rf_error("Confusion over the length of parms.");
   } else {
@@ -95,7 +95,7 @@ SEXP getTimestep(void) {
 void returnearly (int Print, int it, int ntot) {
   int j, k;
   if (Print)
-    warning("Returning early. Results are accurate, as far as they go\n");
+    Rf_warning("Returning early. Results are accurate, as far as they go\n");
   // thpe: protect before the call
   //PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); //incr_N_Protect();
   for (k = 0; k < it+2; k++)
@@ -238,7 +238,7 @@ void sparsity1D (SEXP Type, int* iwork, int neq, int liw) {
     k = 1;
     for( i = 0; i < nspec; i++) {
       for( j = 0; j < nx; j++) {
-        if (ij > liw-3-nspec)  error ("not enough memory allocated in iwork - increase liw %i ",liw);
+        if (ij > liw-3-nspec)  Rf_error ("not enough memory allocated in iwork - increase liw %i ",liw);
         iwork[ij++] = k;
         if (j < nx-1) iwork[ij++] = k+1 ;
         if (j > 0)    iwork[ij++] = k-1 ;
@@ -273,7 +273,7 @@ void sparsity2D (SEXP Type, int* iwork, int neq, int liw) {
       for( j = 0; j < nx; j++) {
         for( k = 0; k < ny; k++) {
           if (ij > liw-8-nspec)
-            error("not enough memory allocated in iwork - increase liw %i ",liw);
+            Rf_error("not enough memory allocated in iwork - increase liw %i ",liw);
           iwork[ij++] = m;
           if (k < ny-1)     iwork[ij++] = m+1;
           if (j < nx-1)     iwork[ij++] = m+ny;
@@ -310,7 +310,7 @@ void interact (int *ij, int nnz, int *iwork, int is, int ival) {
 /* save */
 	if (isave == 1) {
     if (*ij > nnz)
-       error ("not enough memory allocated in iwork - increase liw %i ", nnz);
+       Rf_error ("not enough memory allocated in iwork - increase liw %i ", nnz);
      iwork[(*ij)++] = ival;
   }
 }
@@ -346,7 +346,7 @@ void sparsity3D (SEXP Type, int* iwork, int neq, int liw) {
             is = ij;
 
             if (ij > liw-6-nspec)
-              error ("not enough memory allocated in iwork - increase liw %i ", liw);
+              Rf_error ("not enough memory allocated in iwork - increase liw %i ", liw);
                             interact (&ij, liw, iwork, is, m);
             if (ll < nz-1)
               interact (&ij, liw, iwork, is, m+1);

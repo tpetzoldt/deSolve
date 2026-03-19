@@ -86,7 +86,7 @@ void aquaphy (int *neq, double *t, double *y, double *ydot, double *out, int *ip
 double PhytoC,PhytoN,PartLMW,Limfac,Exudation,MonodQuotum,hourofday,                     
        ProteinSynthesis,Storage,Respiration,Catabolism;
         
-      if(ip[0] < 6) error("nout should at least be 6");
+      if(ip[0] < 6) Rf_error("nout should at least be 6");
       
 
 /* PAR, on-off function depending on the hour within a day*/
@@ -144,7 +144,7 @@ void aquaphyforc (int *neq, double *t, double *y, double *ydot, double *out, int
 double PhytoC,PhytoN,PartLMW,Limfac,Exudation,MonodQuotum,                      
        ProteinSynthesis,Storage,Respiration,Catabolism;
 
-      if(ip[0] < 6) error("nout should at least be 6");
+      if(ip[0] < 6) Rf_error("nout should at least be 6");
 
       PAR = Light;
       

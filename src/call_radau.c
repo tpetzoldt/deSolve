@@ -514,13 +514,13 @@ SEXP call_radau(SEXP y, SEXP times, SEXP derivfunc, SEXP masfunc, SEXP jacfunc,
 	} while (tin < tout && idid >= 0 && endsim == 0);
 
   if (idid == -1)
-     warning("input is not consistent");
+     Rf_warning("input is not consistent");
   else if (idid == -2)
-     warning("larger maxsteps needed");
+     Rf_warning("larger maxsteps needed");
   else if (idid == -3)
-     warning("step size becomes too small");
+     Rf_warning("step size becomes too small");
   else if (idid == -4)
-     warning("problem is probably stiff - interrupted");
+     Rf_warning("problem is probably stiff - interrupted");
 
 /*                   ####  an error occurred   ####                           */
   if(it <= nt-1) saveOut (tin, xytmp);              /* save final condition */

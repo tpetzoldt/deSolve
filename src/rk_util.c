@@ -68,7 +68,7 @@ SEXP getvar(SEXP name, SEXP Rho) {
 }
 
 SEXP getInputs(SEXP symbol, SEXP Rho) {
-  if(!isEnvironment(Rho)) error("Rho should be an environment");
+  if(!isEnvironment(Rho)) Rf_error("Rho should be an environment");
   return(getvar(symbol, Rho));
 }
 
