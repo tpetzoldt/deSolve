@@ -50,11 +50,25 @@ void R_unload_test_call(DllInfo *info) {
 /* -------- getvar from environment ------------------------------------------*/
 SEXP getvar(SEXP name, SEXP Rho) {
   SEXP ans;
-  if(!isString(name) || length(name) != 1)
+  int error = 0;
+
+  if (!isString(name) || length(name) != 1)
     error("name is not a single string");
-  if(!isEnvironment(Rho))
+  if (!isEnvironment(Rho))
     error("Rho should be an environment");
+
+#if (R_VERSION >= R_Version(4, 5, 0))
+  ans = R_getVarEx(install(CHAR(STRING_ELT(name, 0))), Rho, &error);
+  if (error) {
+    error("Variable not found in the environment");
+  }
+#else
   ans = findVar(install(CHAR(STRING_ELT(name, 0))), Rho);
+  if (ans == R_UnboundValue) {
+    error("Variable not found in the environment");
+  }
+#endif
+
   return(ans);
 }
 
