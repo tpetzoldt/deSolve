@@ -1,7 +1,7 @@
 Changes version 1.42
 ================================
 * rk_util.c: replace non-API function findVar with R_getVarEx
-
+* replace error, warning with Rf_error, Rf_warning
 
 Changes version 1.41
 ================================

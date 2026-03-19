@@ -96,25 +96,19 @@ void returnearly (int Print, int it, int ntot) {
   int j, k;
   if (Print)
     Rf_warning("Returning early. Results are accurate, as far as they go\n");
-  // thpe: protect before the call
-  //PROTECT(YOUT2 = allocMatrix(REALSXP,ntot+1,(it+2))); //incr_N_Protect();
   for (k = 0; k < it+2; k++)
     for (j = 0; j < ntot+1; j++)
       REAL(YOUT2)[k*(ntot+1) + j] = REAL(YOUT)[k*(ntot+1) + j];
-  //UNPROTECT(1); // thpe
 }
 
 /* add ISTATE and RSTATE */
 void terminate(int istate, int * iwork, int ilen, int ioffset,
   double * rwork, int rlen, int roffset) {
-
   int k;
 
-  //PROTECT(ISTATE = allocVector(INTSXP, ilen)); //incr_N_Protect();
   for (k = 0; k < ilen-1; k++) INTEGER(ISTATE)[k+1] = iwork[k +ioffset];
   INTEGER(ISTATE)[0] = istate;
 
-  //PROTECT(RWORK = allocVector(REALSXP, rlen)); //incr_N_Protect();
   for (k = 0; k < rlen; k++) REAL(RWORK)[k] = rwork[k+roffset];
   if (istate > 0) {
     setAttrib(YOUT, install("istate"), ISTATE);
@@ -127,7 +121,6 @@ void terminate(int istate, int * iwork, int ilen, int ioffset,
   /* timestep = 0 - for use in getTimestep */
   timesteps[0] = 0;
   timesteps[1] = 0;
-  //UNPROTECT(2); //thpe
 }
 
 /*==================================================
@@ -162,12 +155,12 @@ void initOutR(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SE
 
   int j, lrpar, lipar;
   *nout = INTEGER(nOut)[0];       /* number of output variables */
-  if (isDll) {                   /* function is a dll */
+  if (isDll) {                    /* function is a dll */
     if (*nout > 0) isOut = 1;
-    *ntot  = neq + *nout;          /* length of yout */
+    *ntot  = neq + *nout;         /* length of yout */
     lrpar = *nout + LENGTH(Rpar); /* length of rpar; LENGTH(Rpar) is always >0 */
-    lipar = 3 + LENGTH(Ipar);    /* length of ipar */
-  } else {                       /* function is not a dll */
+    lipar = 3 + LENGTH(Ipar);     /* length of ipar */
+  } else {                        /* function is not a dll */
     isOut = 0;
     *ntot = neq;
     lipar = 1;
@@ -201,7 +194,7 @@ void initOutC(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SE
   *ntot  = n_eq+*nout;
 
   if (isDll == 1) {                /* function is a dll */
-    lrpar = *nout + LENGTH(Rpar);   /* length of rpar */
+    lrpar = *nout + LENGTH(Rpar);  /* length of rpar */
     lipar = 3    + LENGTH(Ipar);   /* length of ipar */
   } else {                         /* function is not a dll */
     lipar = 3;
@@ -230,8 +223,8 @@ void initOutC(int isDll, int *nout, int *ntot, int neq, SEXP nOut, SEXP Rpar, SE
 void sparsity1D (SEXP Type, int* iwork, int neq, int liw) {
 
     int nspec, nx, ij, i, j, k, l;
-    nspec = INTEGER(Type)[1]; /* number of components*/
-    nx    = INTEGER(Type)[2]; /* dimension x*/
+    nspec = INTEGER(Type)[1]; /* number of components */
+    nx    = INTEGER(Type)[2]; /* dimension x */
 
     ij    = 31 + neq;
     iwork[30] = 1;
@@ -259,11 +252,11 @@ void sparsity2D (SEXP Type, int* iwork, int neq, int liw) {
 
     int nspec, nx, ny, bndx, bndy, Nt, ij, isp, i, j, k, l, m;
 
-    nspec = INTEGER(Type)[1]; /* number components*/
-    nx    = INTEGER(Type)[2]; /* dimension x*/
-    ny    = INTEGER(Type)[3]; /* dimension y*/
-    bndx  = INTEGER(Type)[4]; /* cyclic boundary x*/
-    bndy  = INTEGER(Type)[5]; /* cyclic boundary y*/
+    nspec = INTEGER(Type)[1]; /* number components */
+    nx    = INTEGER(Type)[2]; /* dimension x */
+    ny    = INTEGER(Type)[3]; /* dimension y */
+    bndx  = INTEGER(Type)[4]; /* cyclic boundary x */
+    bndy  = INTEGER(Type)[5]; /* cyclic boundary y */
     Nt    = nx*ny;
     ij    = 31 + neq;
     iwork[30] = 1;
