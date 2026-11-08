@@ -1,4 +1,5 @@
-## R Package deSolve
+## R Package deSolve <img src="man/figures/logo.png" align="right" alt="deSolve logo" />
+
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/deSolve)](https://CRAN.R-project.org/package=deSolve)

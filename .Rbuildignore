@@ -13,3 +13,4 @@ todo.txt
 ^.*\.Rproj$
 ^\.Rproj\.user$
 README.md
+^inst/logo/.*\.(aux|log)$
