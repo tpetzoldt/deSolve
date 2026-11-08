@@ -1,3 +1,8 @@
+Changes version 1.43
+================================
+* add logo
+
+
 Changes version 1.42
 ================================
 * rk_util.c: replace non-API function findVar with R_getVarEx
